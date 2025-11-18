@@ -1,0 +1,2374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js Particle Effect Editor v0.19.7</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a1a;
+            color: #e0e0e0;
+            overflow: hidden;
+        }
+
+        #container {
+            display: flex;
+            height: 100vh;
+        }
+
+        #template-sidebar {
+            width: 280px;
+            background: #2a2a2a;
+            border-right: 1px solid #444;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #template-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        #template-actions {
+            padding: 10px;
+            border-top: 1px solid #444;
+        }
+
+        #canvas-container {
+            flex: 1;
+            position: relative;
+        }
+
+        #controls-sidebar {
+            width: 380px;
+            background: #2a2a2a;
+            border-left: 1px solid #444;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        #atlas-viewer {
+            margin: 15px 0;
+            border: 1px solid #444;
+            background: #1a1a1a;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        
+        #atlas-canvas {
+            width: 100%;
+            height: 300px;
+            background: #000;
+            border: 1px solid #666;
+            cursor: crosshair;
+            image-rendering: pixelated;
+        }
+        
+        .atlas-info {
+            font-size: 11px;
+            color: #888;
+            margin-top: 5px;
+        }
+        
+        .uv-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        
+        .uv-input {
+            background: #333;
+            border: 1px solid #555;
+            color: #e0e0e0;
+            padding: 5px;
+            font-size: 11px;
+            border-radius: 3px;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        h1 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #4CAF50;
+            text-align: center;
+            padding: 20px;
+            background: #333;
+            border-bottom: 1px solid #444;
+        }
+
+        h2 {
+            font-size: 16px;
+            margin: 20px 0 10px 0;
+            color: #81C784;
+            border-bottom: 1px solid #444;
+            padding-bottom: 5px;
+        }
+
+        .control-group {
+            margin-bottom: 8px;
+        }
+
+        .control-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .control-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .compact-control {
+            margin-bottom: 5px;
+        }
+
+        .compact-control label {
+            font-size: 11px;
+            margin-bottom: 2px;
+        }
+
+        .compact-control input[type="range"] {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3px;
+            font-size: 11px;
+            color: #aaa;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            margin-bottom: 0;
+        }
+
+        .value-input {
+            width: 60px;
+            background: #333;
+            border: 1px solid #555;
+            color: #e0e0e0;
+            padding: 3px 5px;
+            border-radius: 3px;
+            font-size: 11px;
+            margin-bottom: 0;
+        }
+        
+        input[type="number"],
+        input[type="text"],
+        input[type="color"],
+        select {
+            width: 100%;
+            padding: 8px;
+            background: #333;
+            border: 1px solid #555;
+            color: #e0e0e0;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        input[type="number"]:focus,
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .value-display {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        button.secondary {
+            background: #2196F3;
+        }
+
+        button.secondary:hover {
+            background: #1976D2;
+        }
+
+        button.danger {
+            background: #f44336;
+        }
+
+        button.danger:hover {
+            background: #d32f2f;
+        }
+
+        #saveNotification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 4px;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 10000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        #saveNotification.show {
+            opacity: 1;
+        }
+
+        #template-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .template-item {
+            padding: 8px 10px;
+            background: #333;
+            margin: 3px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .template-item:hover {
+            background: #3a3a3a;
+            border-color: #4CAF50;
+        }
+
+        .template-item.active {
+            background: #3a3a3a;
+            border-color: #4CAF50;
+        }
+
+        .template-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .template-name {
+            font-weight: bold;
+            color: #4CAF50;
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 13px;
+        }
+
+        .template-item-header > div {
+            display: flex;
+            gap: 3px;
+            align-items: center;
+        }
+
+        .delete-btn {
+            padding: 2px;
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        .delete-btn:hover {
+            background: #d32f2f;
+        }
+
+        .duplicate-btn {
+            padding: 2px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        .duplicate-btn:hover {
+            background: #1976D2;
+        }
+
+        .template-name {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .template-name:hover {
+            text-decoration: underline;
+        }
+
+        #playback-controls {
+            padding: 15px;
+            background: #333;
+            border-top: 1px solid #444;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .playback-btn {
+            flex: 1;
+            padding: 12px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .playback-btn:hover {
+            background: #45a049;
+        }
+
+        .playback-btn.stop {
+            background: #f44336;
+        }
+
+        .playback-btn.stop:hover {
+            background: #d32f2f;
+        }
+
+        .playback-btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .checkbox-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 10px 0;
+        }
+
+        .checkbox-control input[type="checkbox"] {
+            width: auto;
+            cursor: pointer;
+        }
+
+        .checkbox-control label {
+            margin: 0;
+            cursor: pointer;
+        }
+
+        #stats {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: monospace;
+        }
+
+        #camera-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(42, 42, 42, 0.95);
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .camera-btn {
+            padding: 8px 16px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .camera-btn:hover {
+            background: #45a049;
+        }
+
+        .camera-btn.active {
+            background: #2196F3;
+        }
+
+        .camera-label {
+            font-size: 12px;
+            color: #aaa;
+            margin-right: 5px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #2a2a2a;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid #444;
+        }
+
+        .modal-content h3 {
+            margin-bottom: 20px;
+            color: #4CAF50;
+        }
+
+        .modal-content input,
+        .modal-content textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            background: #333;
+            border: 1px solid #555;
+            color: #e0e0e0;
+            border-radius: 4px;
+        }
+
+        .modal-content textarea {
+            min-height: 200px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #4CAF50;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="template-sidebar">
+            <h1>Particle Templates</h1>
+            
+            <div style="padding: 0 10px 10px 10px;">
+                <label style="font-size: 12px; color: #aaa; margin-bottom: 5px;">Sort By:</label>
+                <select id="sortSelect" onchange="updateSort()" style="width: 100%; padding: 5px; background: #333; color: #e0e0e0; border: 1px solid #555; border-radius: 3px;">
+                    <option value="updated">Last Updated</option>
+                    <option value="name">Name (A-Z)</option>
+                </select>
+            </div>
+            
+            <div id="template-list"></div>
+            
+            <div id="template-actions">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
+                    <button onclick="showNewTemplateModal()" style="font-size: 12px; padding: 8px;">+ New</button>
+                    <button class="secondary" onclick="showExportModal()" style="font-size: 12px; padding: 8px;">📤 Export</button>
+                    <button class="secondary" onclick="showImportModal()" style="font-size: 12px; padding: 8px;">📥 Import</button>
+                    <button class="secondary" onclick="saveCurrentTemplate()" style="font-size: 12px; padding: 8px;">💾 Save</button>
+                </div>
+                <button class="danger" onclick="deleteCurrentTemplate()" style="width: 100%; margin-top: 5px;">🗑️ Delete Template</button>
+                
+                <div id="playback-controls" style="margin-top: 10px; padding: 0; border-top: none;">
+                    <button class="playback-btn" id="playBtn" onclick="playEffect()">▶ Play</button>
+                    <button class="playback-btn stop" id="stopBtn" onclick="stopEffect()">⏹ Stop</button>
+                </div>
+                
+                <div class="checkbox-control" style="padding: 10px 0 0 0; margin: 0;">
+                    <input type="checkbox" id="loopCheckbox" checked onchange="updateLoop()">
+                    <label for="loopCheckbox" style="margin: 0; cursor: pointer;">Loop</label>
+                </div>
+            </div>
+        </div>
+
+        <div id="canvas-container">
+            <div id="stats">
+                Active Particles: <span id="activeCount">0</span>
+            </div>
+            <div id="camera-controls">
+                <span class="camera-label">Camera:</span>
+                <button class="camera-btn" id="orbitBtn" onclick="setCameraMode('orbit')">Orbit</button>
+                <button class="camera-btn" id="rotateBtn" onclick="setCameraMode('rotate')">Rotate</button>
+                <button class="camera-btn active" id="staticBtn" onclick="setCameraMode('static')">Static</button>
+            </div>
+        </div>
+
+        <div id="controls-sidebar">
+            <h2>Texture Atlas</h2>
+            <div class="control-group">
+                <label>Atlas File</label>
+                <select id="atlasSelect" onchange="loadAtlas()">
+                    <option value="">None (Solid Color)</option>
+                    <option value="effect/smoke_effects.png">Smoke Effects</option>
+                    <option value="effect/atlas_a.png">Atlas A</option>
+                    <option value="effect/atlas_b.png">Atlas B</option>
+                    <option value="effect/atlas_c.png">Atlas C</option>
+                    <option value="effect/atlas_d.png">Atlas D</option>
+                    <option value="effect/atlas_e.png">Atlas E</option>
+                    <option value="effect/atlas_f.png">Atlas F</option>
+                    <option value="effect/atlas_g.png">Atlas G</option>
+                </select>
+            </div>
+            
+            <div id="atlas-viewer" style="display: none;">
+                <canvas id="atlas-canvas"></canvas>
+                <div class="atlas-info">Click to select sprite region</div>
+                <div class="uv-grid">
+                    <div>
+                        <label style="font-size: 11px;">U Start</label>
+                        <input type="number" class="uv-input" id="uvStartX" min="0" max="1" step="0.0001" value="0" onchange="updateUV()">
+                    </div>
+                    <div>
+                        <label style="font-size: 11px;">V Start</label>
+                        <input type="number" class="uv-input" id="uvStartY" min="0" max="1" step="0.0001" value="0" onchange="updateUV()">
+                    </div>
+                    <div>
+                        <label style="font-size: 11px;">U End</label>
+                        <input type="number" class="uv-input" id="uvEndX" min="0" max="1" step="0.0001" value="1" onchange="updateUV()">
+                    </div>
+                    <div>
+                        <label style="font-size: 11px;">V End</label>
+                        <input type="number" class="uv-input" id="uvEndY" min="0" max="1" step="0.0001" value="1" onchange="updateUV()">
+                    </div>
+                </div>
+                <div class="control-group" style="margin-top: 10px;">
+                    <label style="font-size: 11px;">Grid Cols <span class="value-display" id="gridColsValue">6</span></label>
+                    <input type="range" id="gridCols" min="1" max="16" value="6" step="1" onchange="updateGridOverlay()">
+                </div>
+                <div class="control-group">
+                    <label style="font-size: 11px;">Grid Rows <span class="value-display" id="gridRowsValue">6</span></label>
+                    <input type="range" id="gridRows" min="1" max="16" value="6" step="1" onchange="updateGridOverlay()">
+                </div>
+            </div>
+            
+            <h2>Emission</h2>
+            <div class="control-row">
+                <div class="compact-control">
+                    <label>Count <input type="number" class="value-input" id="countValue" value="100" min="1" max="10000" step="1" onchange="document.getElementById('particleCount').value = this.value; updateCurrentTemplateFromControls(); restartEffect();"></label>
+                    <input type="range" id="particleCount" min="1" max="5000" value="100" step="1" oninput="document.getElementById('countValue').value = this.value;">
+                </div>
+                <div class="compact-control">
+                    <label>Rate (p/s) <input type="number" class="value-input" id="rateValue" value="50" min="0" max="2000" step="1" onchange="document.getElementById('emissionRate').value = this.value; updateCurrentTemplateFromControls(); restartEffect();"></label>
+                    <input type="range" id="emissionRate" min="0" max="1000" value="50" step="1" oninput="document.getElementById('rateValue').value = this.value;">
+                </div>
+            </div>
+
+            <div class="control-row">
+                <div class="compact-control">
+                    <label>Duration (s) <input type="number" class="value-input" id="durationValue" value="2.0" min="0" max="100" step="0.1" onchange="document.getElementById('emitDuration').value = this.value; updateCurrentTemplateFromControls(); restartEffect();"></label>
+                    <input type="range" id="emitDuration" min="0.1" max="60" value="2" step="0.1" oninput="document.getElementById('durationValue').value = parseFloat(this.value).toFixed(1);">
+                </div>
+                <div class="compact-control">
+                    <label>Lifetime (s) <input type="number" class="value-input" id="lifetimeValue" value="2.0" min="0" max="500" step="0.1" onchange="document.getElementById('lifetime').value = this.value; updateCurrentTemplateFromControls(); restartEffect();"></label>
+                    <input type="range" id="lifetime" min="0.1" max="60" value="2" step="0.1" oninput="document.getElementById('lifetimeValue').value = parseFloat(this.value).toFixed(1);">
+                </div>
+            </div>
+
+            <div class="compact-control">
+                <label>Emission Shape</label>
+                <select id="emissionShape">
+                    <option value="point">Point</option>
+                    <option value="sphere">Sphere</option>
+                    <option value="box">Box</option>
+                    <option value="cone">Cone</option>
+                    <option value="ring">Ring</option>
+                </select>
+            </div>
+
+            <h2>Size & Opacity</h2>
+            <div class="control-row">
+                <div class="compact-control">
+                    <label>Size Start <input type="number" class="value-input" id="sizeStartValue" value="0.5" min="0" max="100" step="0.1" onchange="document.getElementById('sizeStart').value = this.value; updateCurrentTemplateFromControls(); restartEffect();"></label>
+                    <input type="range" id="sizeStart" min="0" max="20" value="0.5" step="0.1" oninput="document.getElementById('sizeStartValue').value = parseFloat(this.value).toFixed(1);">
+                </div>
+                <div class="compact-control">
+                    <label>Size End <input type="number" class="value-input" id="sizeEndValue" value="0.1" min="0" max="100" step="0.1" onchange="document.getElementById('sizeEnd').value = this.value; updateCurrentTemplateFromControls(); restartEffect();"></label>
+                    <input type="range" id="sizeEnd" min="0" max="20" value="0.1" step="0.1" oninput="document.getElementById('sizeEndValue').value = parseFloat(this.value).toFixed(1);">
+                </div>
+            </div>
+
+            <div class="control-row">
+                <div class="compact-control">
+                    <label>Opacity Start <input type="number" class="value-input" id="opacityStartValue" value="1.0" min="0" max="1" step="0.01" onchange="document.getElementById('opacityStart').value = this.value; updateCurrentTemplateFromControls(); restartEffect();"></label>
+                    <input type="range" id="opacityStart" min="0" max="1" value="1" step="0.01" oninput="document.getElementById('opacityStartValue').value = parseFloat(this.value).toFixed(2);">
+                </div>
+                <div class="compact-control">
+                    <label>Opacity End <input type="number" class="value-input" id="opacityEndValue" value="0.0" min="0" max="1" step="0.01" onchange="document.getElementById('opacityEnd').value = this.value; updateCurrentTemplateFromControls(); restartEffect();"></label>
+                    <input type="range" id="opacityEnd" min="0" max="1" value="0" step="0.01" oninput="document.getElementById('opacityEndValue').value = parseFloat(this.value).toFixed(2);">
+                </div>
+            </div>
+
+            <div class="control-row">
+                <div class="compact-control">
+                    <label>Start Color</label>
+                    <input type="color" id="colorStart" value="#ffffff">
+                </div>
+                <div class="compact-control">
+                    <label>End Color</label>
+                    <input type="color" id="colorEnd" value="#888888">
+                </div>
+            </div>
+
+            <h2>Velocity</h2>
+            <div class="control-row">
+                <div class="compact-control">
+                    <label>Speed <input type="number" class="value-input" id="velocityValue" value="5" min="0" max="500" step="0.5" onchange="document.getElementById('velocity').value = this.value; updateCurrentTemplateFromControls(); restartEffect();"></label>
+                    <input type="range" id="velocity" min="0" max="100" value="5" step="0.5" oninput="document.getElementById('velocityValue').value = parseFloat(this.value).toFixed(1);">
+                </div>
+                <div class="compact-control">
+                    <label>Spread (°) <input type="number" class="value-input" id="spreadValue" value="45" min="0" max="360" step="1" onchange="document.getElementById('spread').value = this.value; updateCurrentTemplateFromControls(); restartEffect();"></label>
+                    <input type="range" id="spread" min="0" max="180" value="45" step="1" oninput="document.getElementById('spreadValue').value = this.value;">
+                </div>
+            </div>
+
+            <div class="control-row-3">
+                <div class="compact-control">
+                    <label>Dir X <input type="number" class="value-input" id="velocityDirXValue" value="0" min="-100" max="100" step="0.5" onchange="document.getElementById('velocityDirX').value = this.value; updateCurrentTemplateFromControls(); restartEffect();"></label>
+                    <input type="range" id="velocityDirX" min="-50" max="50" value="0" step="0.5" oninput="document.getElementById('velocityDirXValue').value = parseFloat(this.value).toFixed(1);">
+                </div>
+                <div class="compact-control">
+                    <label>Dir Y <input type="number" class="value-input" id="velocityDirYValue" value="0" min="-100" max="100" step="0.5" onchange="document.getElementById('velocityDirY').value = this.value; updateCurrentTemplateFromControls(); restartEffect();"></label>
+                    <input type="range" id="velocityDirY" min="-50" max="50" value="0" step="0.5" oninput="document.getElementById('velocityDirYValue').value = parseFloat(this.value).toFixed(1);">
+                </div>
+                <div class="compact-control">
+                    <label>Dir Z <input type="number" class="value-input" id="velocityDirZValue" value="0" min="-100" max="100" step="0.5" onchange="document.getElementById('velocityDirZ').value = this.value; updateCurrentTemplateFromControls(); restartEffect();"></label>
+                    <input type="range" id="velocityDirZ" min="-50" max="50" value="0" step="0.5" oninput="document.getElementById('velocityDirZValue').value = parseFloat(this.value).toFixed(1);">
+                </div>
+            </div>
+
+            <h2>Rotation</h2>
+            <div class="control-row">
+                <div class="compact-control">
+                    <label>Rot. Speed <input type="number" class="value-input" id="rotationValue" value="0" min="-100" max="100" step="0.5" onchange="document.getElementById('rotationSpeed').value = this.value; updateCurrentTemplateFromControls(); restartEffect();"></label>
+                    <input type="range" id="rotationSpeed" min="-20" max="20" value="0" step="0.5" oninput="document.getElementById('rotationValue').value = parseFloat(this.value).toFixed(1);">
+                </div>
+                <div class="compact-control">
+                    <label>Spawn Rot. (°) <input type="number" class="value-input" id="spawnRotationValue" value="0" min="-360" max="360" step="1" onchange="document.getElementById('spawnRotation').value = this.value; updateCurrentTemplateFromControls(); restartEffect();"></label>
+                    <input type="range" id="spawnRotation" min="-360" max="360" value="0" step="1" oninput="document.getElementById('spawnRotationValue').value = parseFloat(this.value).toFixed(0);">
+                </div>
+            </div>
+
+            <div class="control-row">
+                <div class="checkbox-control">
+                    <input type="checkbox" id="randomRotation" onchange="updateCurrentTemplateFromControls(); restartEffect();">
+                    <label for="randomRotation" style="margin: 0; cursor: pointer;">Random Spawn Rotation</label>
+                </div>
+                <div class="checkbox-control">
+                    <input type="checkbox" id="randomRotationSpeed" onchange="updateCurrentTemplateFromControls(); restartEffect();">
+                    <label for="randomRotationSpeed" style="margin: 0; cursor: pointer;">Random Rotation Speed</label>
+                </div>
+            </div>
+
+            <h2>Physics</h2>
+            <div class="compact-control">
+                <label>Turbulence <input type="number" class="value-input" id="turbulenceValue" value="0" min="0" max="50" step="0.1" onchange="document.getElementById('turbulence').value = this.value; updateCurrentTemplateFromControls(); restartEffect();"></label>
+                    <input type="range" id="turbulence" min="0" max="10" value="0" step="0.1" oninput="document.getElementById('turbulenceValue').value = parseFloat(this.value).toFixed(1);">
+                </div>
+
+                <h2>Rendering</h2>
+                <div class="control-row">
+                    <div class="compact-control">
+                        <label>Blend Mode</label>
+                        <select id="blendMode">
+                            <option value="normal">Normal</option>
+                            <option value="additive">Additive</option>
+                            <option value="multiply">Multiply</option>
+                        </select>
+                    </div>
+                    <div class="compact-control">
+                        <label>Particle Type</label>
+                        <select id="particleType">
+                            <option value="sprite">Sprite (Billboard)</option>
+                            <option value="plane">Plane</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="control-row">
+                    <div class="compact-control">
+                        <label>Face Camera</label>
+                        <select id="faceCamera">
+                            <option value="true">Yes (Billboard)</option>
+                            <option value="false">No (World Aligned)</option>
+                        </select>
+                    </div>
+                    <div class="compact-control">
+                        <label>Double Sided</label>
+                        <select id="doubleSided">
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button onclick="restartEffect()" style="margin-top: 20px;">🔄 Restart Effect</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save Notification Toast -->
+    <div id="saveNotification">✓ Template Saved!</div>
+
+    <!-- Modals -->
+    <div id="newTemplateModal" class="modal">
+        <div class="modal-content">
+            <h3>Create New Template</h3>
+            <input type="text" id="newTemplateName" placeholder="Template Name">
+            <div class="modal-buttons">
+                <button onclick="createNewTemplate()">Create</button>
+                <button class="secondary" onclick="closeModal('newTemplateModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="exportModal" class="modal">
+        <div class="modal-content">
+            <h3>Export Template</h3>
+            <textarea id="exportJson" readonly></textarea>
+            <div class="modal-buttons">
+                <button onclick="copyToClipboard()">Copy to Clipboard</button>
+                <button class="secondary" onclick="downloadJson()">Download File</button>
+                <button class="secondary" onclick="closeModal('exportModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="importModal" class="modal">
+        <div class="modal-content">
+            <h3>Import Template</h3>
+            <input type="file" id="importFile" accept=".json" style="margin-bottom: 10px;" onchange="loadJsonFile()">
+            <textarea id="importJson" placeholder="Paste JSON here or select a file above..."></textarea>
+            <div class="modal-buttons">
+                <button onclick="importTemplate()">Import</button>
+                <button class="secondary" onclick="closeModal('importModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script>
+        // Three.js setup
+        let scene, camera, renderer;
+        let controls;
+        let particles = [];
+        let particleSystem;
+        let emissionTimer = 0;
+        let particleAccumulator = 0; // Accumulate fractional particles
+        let isEmitting = false;
+        let isPlaying = false;
+        let loopEnabled = true;
+        let cameraMode = 'static'; // 'orbit', 'rotate', 'static'
+        let cameraAngle = 0;
+        let currentTemplate = null;
+        
+        // Atlas texture support
+        let currentAtlasTexture = null;
+        let atlasImage = null;
+        let atlasCanvas = null;
+        let atlasCtx = null;
+        let gridCols = 6;
+        let gridRows = 6;
+        let selectedUV = { startX: 0, startY: 0, endX: 1, endY: 1 };
+        let sortMode = 'updated'; // 'updated' or 'name'
+
+        // Default templates
+        const defaultTemplates = [
+            {
+                name: "Firework Burst",
+                particleCount: 200,
+                emissionRate: 200,
+                emitDuration: 0.1,
+                lifetime: 2,
+                sizeStart: 0.5,
+                sizeEnd: 0,
+                colorStart: "#ffaa00",
+                colorEnd: "#ff0000",
+                opacityStart: 1,
+                opacityEnd: 0,
+                velocity: 10,
+                spread: 180,
+                emissionShape: "point",
+                velocityDirX: 0,
+                velocityDirY: -5,
+                velocityDirZ: 0,
+                rotationSpeed: 0,
+                spawnRotation: 0,
+                randomRotation: false,
+                randomRotationSpeed: false,
+                turbulence: 0,
+                blendMode: "additive",
+                atlasPath: "effect/misc1_effects.png",
+                uvStartX: 0,
+                uvStartY: 0,
+                uvEndX: 0.125,
+                uvEndY: 0.2,
+                particleType: "sprite",
+                faceCamera: true,
+                doubleSided: true
+            },
+            {
+                name: "Smoke Plume",
+                particleCount: 150,
+                emissionRate: 30,
+                emitDuration: 5,
+                lifetime: 4,
+                sizeStart: 0.5,
+                sizeEnd: 2,
+                colorStart: "#666666",
+                colorEnd: "#222222",
+                opacityStart: 0.7,
+                opacityEnd: 0,
+                velocity: 3,
+                spread: 30,
+                emissionShape: "point",
+                velocityDirX: 0,
+                velocityDirY: 3,
+                velocityDirZ: 0,
+                rotationSpeed: 1,
+                turbulence: 1.5,
+                blendMode: "normal",
+                atlasPath: "effect/smoke_effects.png",
+                uvStartX: 0.125,
+                uvStartY: 0,
+                uvEndX: 0.25,
+                uvEndY: 0.2,
+                particleType: "sprite",
+                faceCamera: true,
+                doubleSided: true
+            },
+            {
+                name: "Magic Sparkles",
+                particleCount: 300,
+                emissionRate: 50,
+                emitDuration: 10,
+                lifetime: 1.5,
+                sizeStart: 0.3,
+                sizeEnd: 0,
+                colorStart: "#88ffff",
+                colorEnd: "#ff88ff",
+                opacityStart: 1,
+                opacityEnd: 0,
+                velocity: 3,
+                spread: 180,
+                emissionShape: "sphere",
+                velocityDirX: 0,
+                velocityDirY: 0,
+                velocityDirZ: 0,
+                rotationSpeed: 5,
+                turbulence: 2,
+                blendMode: "additive",
+                atlasPath: "effect/misc1_effects.png",
+                uvStartX: 0.25,
+                uvStartY: 0,
+                uvEndX: 0.375,
+                uvEndY: 0.2,
+                particleType: "sprite",
+                faceCamera: true,
+                doubleSided: true
+            },
+            {
+                name: "Waterfall",
+                particleCount: 500,
+                emissionRate: 100,
+                emitDuration: 10,
+                lifetime: 3,
+                sizeStart: 0.3,
+                sizeEnd: 0.2,
+                colorStart: "#4488ff",
+                colorEnd: "#ffffff",
+                opacityStart: 0.8,
+                opacityEnd: 0.4,
+                velocity: 0,
+                spread: 20,
+                emissionShape: "box",
+                gravity: -15,
+                rotationSpeed: 0,
+                turbulence: 0.5,
+                blendMode: "normal",
+                atlasPath: "effect/misc1_effects.png",
+                uvStartX: 0.375,
+                uvStartY: 0,
+                uvEndX: 0.5,
+                uvEndY: 0.2,
+                particleType: "sprite",
+                faceCamera: true,
+                doubleSided: true
+            },
+            {
+                name: "Fire",
+                particleCount: 300,
+                emissionRate: 60,
+                emitDuration: 10,
+                lifetime: 1.5,
+                sizeStart: 0.8,
+                sizeEnd: 0.2,
+                colorStart: "#ffff00",
+                colorEnd: "#ff2200",
+                opacityStart: 1,
+                opacityEnd: 0,
+                velocity: 5,
+                spread: 40,
+                emissionShape: "cone",
+                gravity: 3,
+                rotationSpeed: 2,
+                turbulence: 1,
+                blendMode: "additive",
+                atlasPath: "effect/smoke_effects.png",
+                uvStartX: 0.5,
+                uvStartY: 0,
+                uvEndX: 0.625,
+                uvEndY: 0.2,
+                particleType: "sprite",
+                faceCamera: true,
+                doubleSided: true
+            },
+            {
+                name: "Snow",
+                particleCount: 400,
+                emissionRate: 40,
+                emitDuration: 10,
+                lifetime: 8,
+                sizeStart: 0.2,
+                sizeEnd: 0.2,
+                colorStart: "#ffffff",
+                colorEnd: "#ffffff",
+                opacityStart: 0.9,
+                opacityEnd: 0.5,
+                velocity: 0,
+                spread: 0,
+                emissionShape: "box",
+                gravity: -2,
+                rotationSpeed: 1,
+                turbulence: 0.8,
+                blendMode: "normal",
+                atlasPath: "effect/misc1_effects.png",
+                uvStartX: 0.625,
+                uvStartY: 0,
+                uvEndX: 0.75,
+                uvEndY: 0.2,
+                particleType: "sprite",
+                faceCamera: true,
+                doubleSided: true
+            },
+            {
+                name: "Energy Beam",
+                particleCount: 200,
+                emissionRate: 100,
+                emitDuration: 10,
+                lifetime: 0.5,
+                sizeStart: 0.4,
+                sizeEnd: 0.1,
+                colorStart: "#00ffff",
+                colorEnd: "#0088ff",
+                opacityStart: 1,
+                opacityEnd: 0,
+                velocity: 20,
+                spread: 5,
+                emissionShape: "point",
+                gravity: 0,
+                rotationSpeed: 0,
+                turbulence: 0,
+                blendMode: "additive",
+                atlasPath: "effect/misc1_effects.png",
+                uvStartX: 0.75,
+                uvStartY: 0,
+                uvEndX: 0.875,
+                uvEndY: 0.2,
+                particleType: "sprite",
+                faceCamera: true,
+                doubleSided: true
+            },
+            {
+                name: "Dust Cloud",
+                particleCount: 250,
+                emissionRate: 50,
+                emitDuration: 2,
+                lifetime: 3,
+                sizeStart: 0.3,
+                sizeEnd: 1.5,
+                colorStart: "#aa8866",
+                colorEnd: "#664422",
+                opacityStart: 0.6,
+                opacityEnd: 0,
+                velocity: 4,
+                spread: 90,
+                emissionShape: "sphere",
+                gravity: 0,
+                rotationSpeed: 0.5,
+                turbulence: 2,
+                blendMode: "normal",
+                atlasPath: "effect/smoke_effects.png",
+                uvStartX: 0.875,
+                uvStartY: 0,
+                uvEndX: 1.0,
+                uvEndY: 0.2,
+                particleType: "sprite",
+                faceCamera: true,
+                doubleSided: true
+            },
+            {
+                name: "Lightning Sparks",
+                particleCount: 150,
+                emissionRate: 150,
+                emitDuration: 0.2,
+                lifetime: 0.8,
+                sizeStart: 0.4,
+                sizeEnd: 0,
+                colorStart: "#aaffff",
+                colorEnd: "#ffffff",
+                opacityStart: 1,
+                opacityEnd: 0,
+                velocity: 15,
+                spread: 120,
+                emissionShape: "point",
+                gravity: -8,
+                rotationSpeed: 0,
+                turbulence: 0,
+                blendMode: "additive",
+                atlasPath: "effect/misc1_effects.png",
+                uvStartX: 0,
+                uvStartY: 0.2,
+                uvEndX: 0.125,
+                uvEndY: 0.4,
+                particleType: "sprite",
+                faceCamera: true,
+                doubleSided: true
+            },
+            {
+                name: "Healing Aura",
+                particleCount: 200,
+                emissionRate: 40,
+                emitDuration: 10,
+                lifetime: 2,
+                sizeStart: 0.4,
+                sizeEnd: 0.8,
+                colorStart: "#44ff44",
+                colorEnd: "#88ff88",
+                opacityStart: 0.8,
+                opacityEnd: 0,
+                velocity: 2,
+                spread: 180,
+                emissionShape: "ring",
+                gravity: 1,
+                rotationSpeed: 3,
+                turbulence: 0.5,
+                blendMode: "additive",
+                atlasPath: "effect/misc1_effects.png",
+                uvStartX: 0.125,
+                uvStartY: 0.2,
+                uvEndX: 0.25,
+                uvEndY: 0.4,
+                particleType: "sprite",
+                faceCamera: true,
+                doubleSided: true
+            },
+            {
+                name: "Explosion",
+                particleCount: 300,
+                emissionRate: 300,
+                emitDuration: 0.1,
+                lifetime: 1.5,
+                sizeStart: 1,
+                sizeEnd: 0.2,
+                colorStart: "#ffff88",
+                colorEnd: "#ff4400",
+                opacityStart: 1,
+                opacityEnd: 0,
+                velocity: 12,
+                spread: 180,
+                emissionShape: "sphere",
+                gravity: -3,
+                rotationSpeed: 0,
+                turbulence: 0,
+                blendMode: "additive",
+                atlasPath: "effect/smoke_effects.png",
+                uvStartX: 0.25,
+                uvStartY: 0.2,
+                uvEndX: 0.375,
+                uvEndY: 0.4,
+                particleType: "sprite",
+                faceCamera: true,
+                doubleSided: true
+            },
+            {
+                name: "Plasma Trail",
+                particleCount: 250,
+                emissionRate: 80,
+                emitDuration: 10,
+                lifetime: 1,
+                sizeStart: 0.6,
+                sizeEnd: 0,
+                colorStart: "#ff00ff",
+                colorEnd: "#8800ff",
+                opacityStart: 1,
+                opacityEnd: 0,
+                velocity: 0,
+                spread: 30,
+                emissionShape: "point",
+                gravity: 0,
+                rotationSpeed: 8,
+                turbulence: 0.3,
+                blendMode: "additive",
+                atlasPath: "effect/misc1_effects.png",
+                uvStartX: 0.375,
+                uvStartY: 0.2,
+                uvEndX: 0.5,
+                uvEndY: 0.4,
+                particleType: "sprite",
+                faceCamera: true,
+                doubleSided: true
+            },
+            {
+                name: "Bubbles",
+                particleCount: 200,
+                emissionRate: 30,
+                emitDuration: 10,
+                lifetime: 5,
+                sizeStart: 0.5,
+                sizeEnd: 0.6,
+                colorStart: "#88ccff",
+                colorEnd: "#aaeeff",
+                opacityStart: 0.5,
+                opacityEnd: 0,
+                velocity: 1,
+                spread: 45,
+                emissionShape: "point",
+                gravity: 3,
+                rotationSpeed: 1,
+                turbulence: 1,
+                blendMode: "normal",
+                atlasPath: "effect/misc1_effects.png",
+                uvStartX: 0.5,
+                uvStartY: 0.2,
+                uvEndX: 0.625,
+                uvEndY: 0.4,
+                particleType: "sprite",
+                faceCamera: true,
+                doubleSided: true
+            },
+            {
+                name: "Poison Gas",
+                particleCount: 300,
+                emissionRate: 50,
+                emitDuration: 5,
+                lifetime: 4,
+                sizeStart: 0.6,
+                sizeEnd: 1.8,
+                colorStart: "#88ff00",
+                colorEnd: "#226600",
+                opacityStart: 0.7,
+                opacityEnd: 0,
+                velocity: 2,
+                spread: 60,
+                emissionShape: "sphere",
+                gravity: 1,
+                rotationSpeed: 1.5,
+                turbulence: 2,
+                blendMode: "normal",
+                atlasPath: "effect/smoke_effects.png",
+                uvStartX: 0.625,
+                uvStartY: 0.2,
+                uvEndX: 0.75,
+                uvEndY: 0.4,
+                particleType: "sprite",
+                faceCamera: true,
+                doubleSided: true
+            },
+            {
+                name: "Star Field",
+                particleCount: 500,
+                emissionRate: 10,
+                emitDuration: 10,
+                lifetime: 10,
+                sizeStart: 0.2,
+                sizeEnd: 0.2,
+                colorStart: "#ffffff",
+                colorEnd: "#ffffff",
+                opacityStart: 1,
+                opacityEnd: 1,
+                velocity: 0,
+                spread: 0,
+                emissionShape: "box",
+                gravity: 0,
+                rotationSpeed: 0,
+                turbulence: 0,
+                blendMode: "additive",
+                atlasPath: "effect/misc1_effects.png",
+                uvStartX: 0.75,
+                uvStartY: 0.2,
+                uvEndX: 0.875,
+                uvEndY: 0.4,
+                particleType: "sprite",
+                faceCamera: true,
+                doubleSided: true
+            },
+            {
+                name: "Confetti",
+                particleCount: 400,
+                emissionRate: 200,
+                emitDuration: 1,
+                lifetime: 3,
+                sizeStart: 0.4,
+                sizeEnd: 0.4,
+                colorStart: "#ff88ff",
+                colorEnd: "#ffff00",
+                opacityStart: 1,
+                opacityEnd: 0.5,
+                velocity: 8,
+                spread: 120,
+                emissionShape: "cone",
+                gravity: -10,
+                rotationSpeed: 10,
+                turbulence: 1,
+                blendMode: "normal",
+                atlasPath: "effect/misc1_effects.png",
+                uvStartX: 0.875,
+                uvStartY: 0.2,
+                uvEndX: 1.0,
+                uvEndY: 0.4,
+                particleType: "sprite",
+                faceCamera: true,
+                doubleSided: true
+            },
+            {
+                name: "Portal Vortex",
+                particleCount: 300,
+                emissionRate: 60,
+                emitDuration: 10,
+                lifetime: 2,
+                sizeStart: 0.5,
+                sizeEnd: 0,
+                colorStart: "#8800ff",
+                colorEnd: "#ff00ff",
+                opacityStart: 1,
+                opacityEnd: 0,
+                velocity: 6,
+                spread: 15,
+                emissionShape: "ring",
+                gravity: 0,
+                rotationSpeed: 12,
+                turbulence: 0,
+                blendMode: "additive",
+                atlasPath: "effect/misc1_effects.png",
+                uvStartX: 0,
+                uvStartY: 0.4,
+                uvEndX: 0.125,
+                uvEndY: 0.6,
+                particleType: "sprite",
+                faceCamera: true,
+                doubleSided: true
+            },
+            {
+                name: "Rain",
+                particleCount: 600,
+                emissionRate: 150,
+                emitDuration: 10,
+                lifetime: 2,
+                sizeStart: 0.2,
+                sizeEnd: 0.2,
+                colorStart: "#6688aa",
+                colorEnd: "#4466aa",
+                opacityStart: 0.7,
+                opacityEnd: 0.3,
+                velocity: 0,
+                spread: 5,
+                emissionShape: "box",
+                gravity: -20,
+                rotationSpeed: 0,
+                turbulence: 0.2,
+                blendMode: "normal",
+                atlasPath: "effect/misc1_effects.png",
+                uvStartX: 0.125,
+                uvStartY: 0.4,
+                uvEndX: 0.25,
+                uvEndY: 0.6,
+                particleType: "sprite",
+                faceCamera: true,
+                doubleSided: true
+            },
+            {
+                name: "Blood Splatter",
+                particleCount: 200,
+                emissionRate: 200,
+                emitDuration: 0.1,
+                lifetime: 1,
+                sizeStart: 0.4,
+                sizeEnd: 0.2,
+                colorStart: "#ff0000",
+                colorEnd: "#880000",
+                opacityStart: 1,
+                opacityEnd: 0.5,
+                velocity: 10,
+                spread: 120,
+                emissionShape: "sphere",
+                gravity: -15,
+                rotationSpeed: 0,
+                turbulence: 0,
+                blendMode: "normal",
+                atlasPath: "effect/misc1_effects.png",
+                uvStartX: 0.25,
+                uvStartY: 0.4,
+                uvEndX: 0.375,
+                uvEndY: 0.6,
+                particleType: "sprite",
+                faceCamera: true,
+                doubleSided: true
+            },
+            {
+                name: "Holy Light",
+                particleCount: 250,
+                emissionRate: 50,
+                emitDuration: 10,
+                lifetime: 3,
+                sizeStart: 0.3,
+                sizeEnd: 0,
+                colorStart: "#ffffaa",
+                colorEnd: "#ffffff",
+                opacityStart: 1,
+                opacityEnd: 0,
+                velocity: 4,
+                spread: 180,
+                emissionShape: "cone",
+                gravity: 5,
+                rotationSpeed: 5,
+                turbulence: 0.5,
+                blendMode: "additive",
+                atlasPath: "effect/misc1_effects.png",
+                uvStartX: 0.375,
+                uvStartY: 0.4,
+                uvEndX: 0.5,
+                uvEndY: 0.6,
+                particleType: "sprite",
+                faceCamera: true,
+                doubleSided: true
+            }
+        ];
+
+        let templates = [];
+
+        function init() {
+            // Scene setup
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0a0a0a);
+
+            // Camera
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 5, 15);
+            camera.lookAt(0, 0, 0);
+
+            // Renderer
+            const container = document.getElementById('canvas-container');
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+
+            // OrbitControls for mouse interaction
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.target.set(0, 2, 0);
+            controls.update();
+            
+            // Grid helper
+            const gridHelper = new THREE.GridHelper(20, 20, 0x444444, 0x222222);
+            scene.add(gridHelper);
+
+            // Lights
+            const ambientLight = new THREE.AmbientLight(0x404040);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+            directionalLight.position.set(5, 10, 5);
+            scene.add(directionalLight);
+
+            // Setup atlas canvas
+            atlasCanvas = document.getElementById('atlas-canvas');
+            atlasCtx = atlasCanvas.getContext('2d');
+            atlasCanvas.addEventListener('click', onAtlasClick);
+
+            window.addEventListener('resize', onWindowResize);
+            
+            setupControls();
+            
+            // Load saved templates from localStorage
+            loadTemplatesFromStorage();
+
+            renderTemplateList();
+            if (templates.length > 0) {
+                loadTemplate(templates[0]);
+            }
+
+            animate();
+        }
+        
+        // Atlas texture functions
+        function loadAtlas() {
+            const atlasPath = document.getElementById('atlasSelect').value;
+            
+            if (!atlasPath) {
+                currentAtlasTexture = null;
+                atlasImage = null;
+                document.getElementById('atlas-viewer').style.display = 'none';
+                if (currentTemplate) {
+                    currentTemplate.atlasPath = '';
+                }
+                restartEffect();
+                return;
+            }
+            
+            const loader = new THREE.TextureLoader();
+            loader.load(atlasPath, (texture) => {
+                currentAtlasTexture = texture;
+                currentAtlasTexture.magFilter = THREE.LinearFilter;
+                currentAtlasTexture.minFilter = THREE.LinearMipMapLinearFilter;
+                
+                // Load image for canvas preview
+                atlasImage = new Image();
+                atlasImage.src = atlasPath;
+                atlasImage.onload = () => {
+                    atlasCanvas.width = atlasImage.width;
+                    atlasCanvas.height = atlasImage.height;
+                    document.getElementById('atlas-viewer').style.display = 'block';
+                    drawAtlasPreview();
+                };
+                
+                if (currentTemplate) {
+                    currentTemplate.atlasPath = atlasPath;
+                    restartEffect();
+                }
+            });
+        }
+        
+        function drawAtlasPreview() {
+            if (!atlasImage) return;
+            
+            atlasCtx.clearRect(0, 0, atlasCanvas.width, atlasCanvas.height);
+            
+            // Flip vertically to match Three.js texture coordinates
+            atlasCtx.save();
+            atlasCtx.translate(0, atlasCanvas.height);
+            atlasCtx.scale(1, -1);
+            atlasCtx.drawImage(atlasImage, 0, 0);
+            atlasCtx.restore();
+            
+            // Draw grid overlay
+            atlasCtx.strokeStyle = 'rgba(0, 255, 0, 0.5)';
+            atlasCtx.lineWidth = 1;
+            
+            const cellWidth = atlasCanvas.width / gridCols;
+            const cellHeight = atlasCanvas.height / gridRows;
+            
+            for (let i = 0; i <= gridCols; i++) {
+                atlasCtx.beginPath();
+                atlasCtx.moveTo(i * cellWidth, 0);
+                atlasCtx.lineTo(i * cellWidth, atlasCanvas.height);
+                atlasCtx.stroke();
+            }
+            
+            for (let i = 0; i <= gridRows; i++) {
+                atlasCtx.beginPath();
+                atlasCtx.moveTo(0, i * cellHeight);
+                atlasCtx.lineTo(atlasCanvas.width, i * cellHeight);
+                atlasCtx.stroke();
+            }
+            
+            // Draw selected UV region
+            const x1 = selectedUV.startX * atlasCanvas.width;
+            const y1 = selectedUV.startY * atlasCanvas.height;
+            const x2 = selectedUV.endX * atlasCanvas.width;
+            const y2 = selectedUV.endY * atlasCanvas.height;
+            
+            atlasCtx.strokeStyle = 'rgba(255, 255, 0, 1)';
+            atlasCtx.lineWidth = 3;
+            atlasCtx.strokeRect(x1, y1, x2 - x1, y2 - y1);
+        }
+        
+        function onAtlasClick(event) {
+            if (!atlasImage) return;
+            
+            const rect = atlasCanvas.getBoundingClientRect();
+            const x = (event.clientX - rect.left) / rect.width;
+            const y = (event.clientY - rect.top) / rect.height;
+            
+            const cellWidth = 1 / gridCols;
+            const cellHeight = 1 / gridRows;
+            
+            const col = Math.floor(x / cellWidth);
+            const row = Math.floor(y / cellHeight);
+            
+            selectedUV.startX = col * cellWidth;
+            selectedUV.startY = row * cellHeight;
+            selectedUV.endX = (col + 1) * cellWidth;
+            selectedUV.endY = (row + 1) * cellHeight;
+            
+            document.getElementById('uvStartX').value = selectedUV.startX.toFixed(4);
+            document.getElementById('uvStartY').value = selectedUV.startY.toFixed(4);
+            document.getElementById('uvEndX').value = selectedUV.endX.toFixed(4);
+            document.getElementById('uvEndY').value = selectedUV.endY.toFixed(4);
+            
+            if (currentTemplate) {
+                currentTemplate.uvStartX = selectedUV.startX;
+                currentTemplate.uvStartY = selectedUV.startY;
+                currentTemplate.uvEndX = selectedUV.endX;
+                currentTemplate.uvEndY = selectedUV.endY;
+                saveTemplatesToStorage();
+            }
+            
+            drawAtlasPreview();
+            restartEffect();
+        }
+        
+        function updateUV() {
+            selectedUV.startX = parseFloat(document.getElementById('uvStartX').value);
+            selectedUV.startY = parseFloat(document.getElementById('uvStartY').value);
+            selectedUV.endX = parseFloat(document.getElementById('uvEndX').value);
+            selectedUV.endY = parseFloat(document.getElementById('uvEndY').value);
+            
+            if (currentTemplate) {
+                currentTemplate.uvStartX = selectedUV.startX;
+                currentTemplate.uvStartY = selectedUV.startY;
+                currentTemplate.uvEndX = selectedUV.endX;
+                currentTemplate.uvEndY = selectedUV.endY;
+                saveTemplatesToStorage();
+            }
+            
+            drawAtlasPreview();
+            restartEffect();
+        }
+        
+        function updateGridOverlay() {
+            gridCols = parseInt(document.getElementById('gridCols').value);
+            gridRows = parseInt(document.getElementById('gridRows').value);
+            
+            document.getElementById('gridColsValue').textContent = gridCols;
+            document.getElementById('gridRowsValue').textContent = gridRows;
+            
+            drawAtlasPreview();
+        }
+
+        function setupControls() {
+            const controls = [
+                'particleCount', 'emissionRate', 'emitDuration', 'lifetime',
+                'sizeStart', 'sizeEnd', 'opacityStart', 'opacityEnd',
+                'velocity', 'spread', 'velocityDirX', 'velocityDirY', 'velocityDirZ', 'rotationSpeed', 'turbulence'
+            ];
+
+            controls.forEach(id => {
+                const element = document.getElementById(id);
+                const valueInput = document.getElementById(id + 'Value');
+                
+                element.addEventListener('input', () => {
+                    updateCurrentTemplateFromControls();
+                    restartEffect();
+                });
+                
+                if (valueInput) {
+                    valueInput.addEventListener('change', () => {
+                        updateCurrentTemplateFromControls();
+                        restartEffect();
+                    });
+                }
+            });
+
+            ['colorStart', 'colorEnd', 'emissionShape', 'blendMode', 'particleType', 'faceCamera', 'doubleSided'].forEach(id => {
+                document.getElementById(id).addEventListener('change', () => {
+                    updateCurrentTemplateFromControls();
+                    restartEffect();
+                });
+            });
+        }
+
+        function updateCurrentTemplateFromControls() {
+            if (!currentTemplate) return;
+
+            currentTemplate.particleCount = parseInt(document.getElementById('particleCount').value);
+            currentTemplate.emissionRate = parseFloat(document.getElementById('emissionRate').value);
+            currentTemplate.emitDuration = parseFloat(document.getElementById('emitDuration').value);
+            currentTemplate.lifetime = parseFloat(document.getElementById('lifetime').value);
+            currentTemplate.sizeStart = parseFloat(document.getElementById('sizeStart').value);
+            currentTemplate.sizeEnd = parseFloat(document.getElementById('sizeEnd').value);
+            currentTemplate.colorStart = document.getElementById('colorStart').value;
+            currentTemplate.colorEnd = document.getElementById('colorEnd').value;
+            currentTemplate.opacityStart = parseFloat(document.getElementById('opacityStart').value);
+            currentTemplate.opacityEnd = parseFloat(document.getElementById('opacityEnd').value);
+            currentTemplate.velocity = parseFloat(document.getElementById('velocity').value);
+            currentTemplate.spread = parseFloat(document.getElementById('spread').value);
+            currentTemplate.emissionShape = document.getElementById('emissionShape').value;
+            currentTemplate.velocityDirX = parseFloat(document.getElementById('velocityDirX').value);
+            currentTemplate.velocityDirY = parseFloat(document.getElementById('velocityDirY').value);
+            currentTemplate.velocityDirZ = parseFloat(document.getElementById('velocityDirZ').value);
+            currentTemplate.rotationSpeed = parseFloat(document.getElementById('rotationSpeed').value);
+            currentTemplate.spawnRotation = parseFloat(document.getElementById('spawnRotation').value);
+            currentTemplate.randomRotation = document.getElementById('randomRotation').checked;
+            currentTemplate.randomRotationSpeed = document.getElementById('randomRotationSpeed').checked;
+            currentTemplate.turbulence = parseFloat(document.getElementById('turbulence').value);
+            currentTemplate.blendMode = document.getElementById('blendMode').value;
+            currentTemplate.particleType = document.getElementById('particleType').value;
+            currentTemplate.faceCamera = document.getElementById('faceCamera').value === 'true';
+            currentTemplate.doubleSided = document.getElementById('doubleSided').value === 'true';
+            currentTemplate.gridCols = gridCols;
+            currentTemplate.gridRows = gridRows;
+            currentTemplate.lastUpdated = Date.now();
+            
+            saveTemplatesToStorage();
+        }
+
+        function loadTemplate(template) {
+            currentTemplate = template;
+
+            // Update controls
+            document.getElementById('particleCount').value = template.particleCount;
+            document.getElementById('emissionRate').value = template.emissionRate;
+            document.getElementById('emitDuration').value = template.emitDuration;
+            document.getElementById('lifetime').value = template.lifetime;
+            document.getElementById('sizeStart').value = template.sizeStart;
+            document.getElementById('sizeEnd').value = template.sizeEnd;
+            document.getElementById('colorStart').value = template.colorStart;
+            document.getElementById('colorEnd').value = template.colorEnd;
+            document.getElementById('opacityStart').value = template.opacityStart;
+            document.getElementById('opacityEnd').value = template.opacityEnd;
+            document.getElementById('velocity').value = template.velocity;
+            document.getElementById('spread').value = template.spread;
+            document.getElementById('emissionShape').value = template.emissionShape;
+            document.getElementById('velocityDirX').value = template.velocityDirX || 0;
+            document.getElementById('velocityDirY').value = template.velocityDirY || 0;
+            document.getElementById('velocityDirZ').value = template.velocityDirZ || 0;
+            document.getElementById('rotationSpeed').value = template.rotationSpeed;
+            document.getElementById('spawnRotation').value = template.spawnRotation || 0;
+            document.getElementById('randomRotation').checked = template.randomRotation || false;
+            document.getElementById('randomRotationSpeed').checked = template.randomRotationSpeed || false;
+            document.getElementById('turbulence').value = template.turbulence;
+            document.getElementById('blendMode').value = template.blendMode;
+            document.getElementById('particleType').value = template.particleType || 'sprite';
+            document.getElementById('faceCamera').value = (template.faceCamera !== false).toString();
+            document.getElementById('doubleSided').value = (template.doubleSided !== false).toString();
+            
+            // Load atlas settings
+            if (template.atlasPath) {
+                document.getElementById('atlasSelect').value = template.atlasPath;
+                selectedUV.startX = template.uvStartX || 0;
+                selectedUV.startY = template.uvStartY || 0;
+                selectedUV.endX = template.uvEndX || 1;
+                selectedUV.endY = template.uvEndY || 1;
+                
+                document.getElementById('uvStartX').value = selectedUV.startX.toFixed(4);
+                document.getElementById('uvStartY').value = selectedUV.startY.toFixed(4);
+                document.getElementById('uvEndX').value = selectedUV.endX.toFixed(4);
+                document.getElementById('uvEndY').value = selectedUV.endY.toFixed(4);
+                
+                // Load grid settings
+                gridCols = template.gridCols || 6;
+                gridRows = template.gridRows || 6;
+                document.getElementById('gridCols').value = gridCols;
+                document.getElementById('gridRows').value = gridRows;
+                document.getElementById('gridColsValue').textContent = gridCols;
+                document.getElementById('gridRowsValue').textContent = gridRows;
+                
+                loadAtlas();
+            } else {
+                document.getElementById('atlasSelect').value = '';
+                document.getElementById('atlas-viewer').style.display = 'none';
+            }
+
+            // Update value displays
+            document.getElementById('countValue').value = template.particleCount;
+            document.getElementById('rateValue').value = template.emissionRate;
+            document.getElementById('durationValue').value = template.emitDuration.toFixed(1);
+            document.getElementById('lifetimeValue').value = template.lifetime.toFixed(1);
+            document.getElementById('sizeStartValue').value = template.sizeStart.toFixed(1);
+            document.getElementById('sizeEndValue').value = template.sizeEnd.toFixed(1);
+            document.getElementById('opacityStartValue').value = template.opacityStart.toFixed(2);
+            document.getElementById('opacityEndValue').value = template.opacityEnd.toFixed(2);
+            document.getElementById('velocityValue').value = template.velocity;
+            document.getElementById('spreadValue').value = template.spread;
+            document.getElementById('velocityDirXValue').value = (template.velocityDirX || 0).toFixed(1);
+            document.getElementById('velocityDirYValue').value = (template.velocityDirY || 0).toFixed(1);
+            document.getElementById('velocityDirZValue').value = (template.velocityDirZ || 0).toFixed(1);
+            document.getElementById('rotationValue').value = template.rotationSpeed;
+            document.getElementById('spawnRotationValue').value = template.spawnRotation || 0;
+            document.getElementById('turbulenceValue').value = template.turbulence.toFixed(1);
+
+            renderTemplateList();
+            restartEffect();
+            updatePlaybackButtons();
+        }
+
+        function renderTemplateList() {
+            const list = document.getElementById('template-list');
+            list.innerHTML = '';
+
+            // Sort templates based on current sort mode
+            let sortedTemplates = [...templates];
+            if (sortMode === 'name') {
+                sortedTemplates.sort((a, b) => a.name.localeCompare(b.name));
+            } else if (sortMode === 'updated') {
+                sortedTemplates.sort((a, b) => (b.lastUpdated || 0) - (a.lastUpdated || 0));
+            }
+
+            sortedTemplates.forEach((template) => {
+                const index = templates.indexOf(template);
+                const item = document.createElement('div');
+                item.className = 'template-item';
+                if (currentTemplate === template) {
+                    item.classList.add('active');
+                }
+
+                item.innerHTML = `
+                    <div class="template-item-header">
+                        <span class="template-name" ondblclick="renameTemplate(${index}); event.stopPropagation();">${template.name}</span>
+                        <div>
+                            <button class="duplicate-btn" onclick="duplicateTemplate(${index}); event.stopPropagation();" title="Duplicate">⎘</button>
+                            <button class="delete-btn" onclick="deleteTemplate(${index}); event.stopPropagation();">✕</button>
+                        </div>
+                    </div>
+                `;
+
+                item.onclick = () => loadTemplate(template);
+                list.appendChild(item);
+            });
+        }
+
+        function updateSort() {
+            sortMode = document.getElementById('sortSelect').value;
+            renderTemplateList();
+        }
+
+        function createParticle() {
+            const config = currentTemplate;
+            let geometry, material, particle;
+            
+            const blendModes = {
+                'normal': THREE.NormalBlending,
+                'additive': THREE.AdditiveBlending,
+                'multiply': THREE.MultiplyBlending
+            };
+            
+            const particleType = config.particleType || 'sprite';
+            const faceCamera = config.faceCamera !== false;
+            const doubleSided = config.doubleSided !== false;
+
+            // Use sprite or plane with texture
+            if (currentAtlasTexture) {
+                const textureClone = currentAtlasTexture.clone();
+                textureClone.needsUpdate = true;
+                
+                // Set UV coordinates for sprite sheet (V is NOT inverted for offset/repeat)
+                if (config.uvStartX !== undefined) {
+                    textureClone.offset.set(config.uvStartX, config.uvStartY);
+                    textureClone.repeat.set(
+                        config.uvEndX - config.uvStartX,
+                        config.uvEndY - config.uvStartY
+                    );
+                }
+                
+                if (particleType === 'sprite' || faceCamera) {
+                    // Use sprite (always billboards)
+                    const spriteMaterial = new THREE.SpriteMaterial({
+                        map: textureClone,
+                        color: new THREE.Color(config.colorStart),
+                        transparent: true,
+                        opacity: config.opacityStart,
+                        blending: blendModes[config.blendMode]
+                    });
+                    
+                    particle = new THREE.Sprite(spriteMaterial);
+                    particle.scale.set(config.sizeStart, config.sizeStart, 1);
+                } else {
+                    // Use plane geometry
+                    geometry = new THREE.PlaneGeometry(1, 1);
+                    material = new THREE.MeshBasicMaterial({
+                        map: textureClone,
+                        color: new THREE.Color(config.colorStart),
+                        transparent: true,
+                        opacity: config.opacityStart,
+                        blending: blendModes[config.blendMode],
+                        side: doubleSided ? THREE.DoubleSide : THREE.FrontSide
+                    });
+                    particle = new THREE.Mesh(geometry, material);
+                    particle.scale.set(config.sizeStart, config.sizeStart, 1);
+                }
+            } else {
+                // Fallback to sphere geometry
+                geometry = new THREE.SphereGeometry(0.1, 8, 8);
+                material = new THREE.MeshBasicMaterial({
+                    color: new THREE.Color(config.colorStart),
+                    transparent: true,
+                    opacity: config.opacityStart,
+                    blending: blendModes[config.blendMode]
+                });
+                particle = new THREE.Mesh(geometry, material);
+            }
+
+            // Set initial position based on emission shape
+            switch(config.emissionShape) {
+                case 'point':
+                    particle.position.set(0, 0, 0);
+                    break;
+                case 'sphere':
+                    const theta = Math.random() * Math.PI * 2;
+                    const phi = Math.acos(2 * Math.random() - 1);
+                    const radius = Math.random();
+                    particle.position.x = radius * Math.sin(phi) * Math.cos(theta);
+                    particle.position.y = radius * Math.sin(phi) * Math.sin(theta);
+                    particle.position.z = radius * Math.cos(phi);
+                    break;
+                case 'box':
+                    particle.position.x = (Math.random() - 0.5) * 4;
+                    particle.position.y = 2;
+                    particle.position.z = (Math.random() - 0.5) * 4;
+                    break;
+                case 'cone':
+                    const angle = Math.random() * Math.PI * 2;
+                    const coneRadius = Math.random() * 0.5;
+                    particle.position.x = coneRadius * Math.cos(angle);
+                    particle.position.y = 0;
+                    particle.position.z = coneRadius * Math.sin(angle);
+                    break;
+                case 'ring':
+                    const ringAngle = Math.random() * Math.PI * 2;
+                    const ringRadius = 1 + Math.random() * 0.3;
+                    particle.position.x = ringRadius * Math.cos(ringAngle);
+                    particle.position.y = 0;
+                    particle.position.z = ringRadius * Math.sin(ringAngle);
+                    break;
+            }
+
+            // Calculate velocity with spread
+            const spreadRad = (config.spread * Math.PI) / 180;
+            const theta = (Math.random() - 0.5) * spreadRad; // Horizontal spread
+            const phi = (Math.random() - 0.5) * spreadRad; // Vertical spread
+
+            // Base direction (normalized) with velocity magnitude
+            const baseVelX = config.velocityDirX || 0;
+            const baseVelY = config.velocityDirY || 0;
+            const baseVelZ = config.velocityDirZ || 0;
+            
+            // Add spread randomness
+            const velX = baseVelX + Math.sin(theta) * config.velocity;
+            const velY = baseVelY + Math.sin(phi) * config.velocity;
+            const velZ = baseVelZ + Math.cos(theta) * config.velocity;
+
+            // Calculate spawn rotation
+            const spawnRotationRad = ((config.spawnRotation || 0) * Math.PI) / 180;
+            const initialRotation = config.randomRotation ? Math.random() * Math.PI * 2 : spawnRotationRad;
+            const rotSpeed = config.randomRotationSpeed ? config.rotationSpeed * (Math.random() - 0.5) : config.rotationSpeed;
+
+            particle.userData = {
+                velocity: new THREE.Vector3(velX, velY, velZ),
+                lifetime: config.lifetime,
+                age: 0,
+                rotation: initialRotation,
+                rotationSpeed: rotSpeed,
+                startColor: new THREE.Color(config.colorStart),
+                endColor: new THREE.Color(config.colorEnd),
+                startSize: config.sizeStart,
+                endSize: config.sizeEnd,
+                startOpacity: config.opacityStart,
+                endOpacity: config.opacityEnd,
+                faceCamera: config.faceCamera !== false
+            };
+
+            scene.add(particle);
+            particles.push(particle);
+        }
+
+        function updateParticles(deltaTime) {
+            const config = currentTemplate;
+
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const particle = particles[i];
+                const data = particle.userData;
+
+                data.age += deltaTime;
+
+                if (data.age >= data.lifetime) {
+                    scene.remove(particle);
+                    particles.splice(i, 1);
+                    continue;
+                }
+
+                const lifeRatio = data.age / data.lifetime;
+
+                // Update position with velocity
+                particle.position.add(data.velocity.clone().multiplyScalar(deltaTime));
+
+                // Apply continuous directional movement (no acceleration, constant velocity change)
+                const velDirX = config.velocityDirX || 0;
+                const velDirY = config.velocityDirY || 0;
+                const velDirZ = config.velocityDirZ || 0;
+                particle.position.x += velDirX * deltaTime;
+                particle.position.y += velDirY * deltaTime;
+                particle.position.z += velDirZ * deltaTime;
+
+                // Apply turbulence
+                if (config.turbulence > 0) {
+                    particle.position.x += Math.sin(data.age * 5) * config.turbulence * deltaTime;
+                    particle.position.z += Math.cos(data.age * 5) * config.turbulence * deltaTime;
+                }
+
+                // Update rotation
+                data.rotation += data.rotationSpeed * deltaTime;
+                if (particle.isSprite) {
+                    particle.material.rotation = data.rotation;
+                } else {
+                    particle.rotation.z = data.rotation;
+                }
+                
+                // Billboard effect for planes if faceCamera is enabled
+                if (!particle.isSprite && data.faceCamera) {
+                    particle.lookAt(camera.position);
+                    particle.rotateZ(data.rotation);
+                }
+
+                // Update size
+                const size = THREE.MathUtils.lerp(data.startSize, data.endSize, lifeRatio);
+                if (particle.isSprite) {
+                    particle.scale.set(size, size, 1);
+                } else {
+                    particle.scale.set(size, size, 1);
+                }
+
+                // Update color
+                const color = data.startColor.clone().lerp(data.endColor, lifeRatio);
+                particle.material.color = color;
+
+                // Update opacity
+                const opacity = THREE.MathUtils.lerp(data.startOpacity, data.endOpacity, lifeRatio);
+                particle.material.opacity = opacity;
+            }
+
+            document.getElementById('activeCount').textContent = particles.length;
+        }
+
+        function setCameraMode(mode) {
+            cameraMode = mode;
+            
+            // Update button states
+            document.getElementById('orbitBtn').classList.remove('active');
+            document.getElementById('rotateBtn').classList.remove('active');
+            document.getElementById('staticBtn').classList.remove('active');
+            document.getElementById(mode + 'Btn').classList.add('active');
+            
+            // Enable/disable controls based on mode
+            if (mode === 'static') {
+                controls.enabled = true; // Allow manual control
+                camera.position.set(0, 5, 15);
+                camera.lookAt(0, 2, 0);
+                controls.target.set(0, 2, 0);
+                controls.update();
+            } else {
+                controls.enabled = false; // Disable manual control for auto modes
+            }
+        }
+
+        function restartEffect() {
+            // Clear all particles
+            particles.forEach(particle => scene.remove(particle));
+            particles = [];
+            emissionTimer = 0;
+            particleAccumulator = 0;
+            isEmitting = true;
+            isPlaying = true;
+            updatePlaybackButtons();
+        }
+
+        function playEffect() {
+            restartEffect();
+        }
+
+        function stopEffect() {
+            isEmitting = false;
+            isPlaying = false;
+            particles.forEach(particle => scene.remove(particle));
+            particles = [];
+            emissionTimer = 0;
+            particleAccumulator = 0;
+            updatePlaybackButtons();
+        }
+
+        function updateLoop() {
+            loopEnabled = document.getElementById('loopCheckbox').checked;
+        }
+
+        function updatePlaybackButtons() {
+            const playBtn = document.getElementById('playBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            
+            if (isPlaying) {
+                playBtn.disabled = true;
+                stopBtn.disabled = false;
+            } else {
+                playBtn.disabled = false;
+                stopBtn.disabled = true;
+            }
+        }
+
+        let lastTime = 0;
+        function animate(time = 0) {
+            requestAnimationFrame(animate);
+
+            const deltaTime = (time - lastTime) / 1000;
+            lastTime = time;
+
+            // Emit particles
+            if (isEmitting && currentTemplate) {
+                emissionTimer += deltaTime;
+
+                if (emissionTimer <= currentTemplate.emitDuration) {
+                    // Accumulate fractional particles over time
+                    particleAccumulator += currentTemplate.emissionRate * deltaTime;
+                    
+                    // Emit whole particles from accumulator
+                    while (particleAccumulator >= 1 && particles.length < currentTemplate.particleCount) {
+                        createParticle();
+                        particleAccumulator -= 1;
+                    }
+                } else {
+                    isEmitting = false;
+                }
+            }
+
+            // Update particles
+            updateParticles(deltaTime);
+            
+            // Check loop restart based on emission duration only
+            if (!isEmitting && isPlaying && loopEnabled && currentTemplate) {
+                emissionTimer = 0;
+                particleAccumulator = 0;
+                isEmitting = true;
+            } else if (!isEmitting && particles.length === 0 && isPlaying) {
+                isPlaying = false;
+                updatePlaybackButtons();
+            }
+
+            // Update camera based on mode
+            if (cameraMode === 'rotate') {
+                // Continuous rotation
+                const radius = 15;
+                cameraAngle += deltaTime * 0.3;
+                camera.position.x = Math.sin(cameraAngle) * radius;
+                camera.position.z = Math.cos(cameraAngle) * radius;
+                camera.lookAt(0, 2, 0);
+            } else if (cameraMode === 'orbit') {
+                // Slow orbit using time
+                const radius = 15;
+                camera.position.x = Math.sin(time * 0.0001) * radius;
+                camera.position.z = Math.cos(time * 0.0001) * radius;
+                camera.lookAt(0, 2, 0);
+            }
+            // else cameraMode === 'static' - camera doesn't move
+            
+            // Update OrbitControls for damping
+            controls.update();
+
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            const container = document.getElementById('canvas-container');
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        }
+
+        // Template management
+        function showNewTemplateModal() {
+            document.getElementById('newTemplateModal').style.display = 'flex';
+            document.getElementById('newTemplateName').value = '';
+            document.getElementById('newTemplateName').focus();
+        }
+
+        function createNewTemplate() {
+            const name = document.getElementById('newTemplateName').value.trim();
+            if (!name) {
+                alert('Please enter a template name');
+                return;
+            }
+
+            const newTemplate = {
+                name: name,
+                particleCount: 100,
+                emissionRate: 50,
+                emitDuration: 2,
+                lifetime: 2,
+                sizeStart: 0.5,
+                sizeEnd: 0.1,
+                colorStart: "#ffffff",
+                colorEnd: "#888888",
+                opacityStart: 1,
+                opacityEnd: 0,
+                velocity: 5,
+                spread: 45,
+                emissionShape: "point",
+                gravity: 0,
+                rotationSpeed: 0,
+                turbulence: 0,
+                blendMode: "normal",
+                atlasPath: "",
+                uvStartX: 0,
+                uvStartY: 0,
+                uvEndX: 1,
+                uvEndY: 1,
+                particleType: "sprite",
+                faceCamera: true,
+                doubleSided: true
+            };
+
+            templates.push(newTemplate);
+            saveTemplatesToStorage();
+            loadTemplate(newTemplate);
+            closeModal('newTemplateModal');
+        }
+
+        function deleteTemplate(index) {
+            if (confirm(`Delete template "${templates[index].name}"?`)) {
+                if (templates[index] === currentTemplate) {
+                    currentTemplate = templates[0] || null;
+                }
+                templates.splice(index, 1);
+                saveTemplatesToStorage();
+                renderTemplateList();
+                if (currentTemplate) {
+                    loadTemplate(currentTemplate);
+                }
+            }
+        }
+
+        function duplicateTemplate(index) {
+            const original = templates[index];
+            const copy = JSON.parse(JSON.stringify(original));
+            copy.name = original.name + '_copy';
+            copy.lastUpdated = Date.now();
+            templates.push(copy);
+            saveTemplatesToStorage();
+            renderTemplateList();
+            loadTemplate(copy);
+        }
+
+        function renameTemplate(index) {
+            const template = templates[index];
+            const newName = prompt('Rename template:', template.name);
+            if (newName && newName.trim()) {
+                template.name = newName.trim();
+                saveTemplatesToStorage();
+                renderTemplateList();
+            }
+        }
+
+        function deleteCurrentTemplate() {
+            const index = templates.indexOf(currentTemplate);
+            if (index !== -1) {
+                deleteTemplate(index);
+            }
+        }
+
+        function saveCurrentTemplate() {
+            if (!currentTemplate) return;
+            saveTemplatesToStorage();
+            showSaveNotification();
+        }
+
+        function showSaveNotification() {
+            const notification = document.getElementById('saveNotification');
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 2000);
+        }
+
+        function showExportModal() {
+            if (!currentTemplate) return;
+            const json = JSON.stringify(currentTemplate, null, 2);
+            document.getElementById('exportJson').value = json;
+            document.getElementById('exportModal').style.display = 'flex';
+        }
+
+        function showImportModal() {
+            document.getElementById('importJson').value = '';
+            document.getElementById('importFile').value = '';
+            document.getElementById('importModal').style.display = 'flex';
+        }
+        
+        function loadJsonFile() {
+            const fileInput = document.getElementById('importFile');
+            const file = fileInput.files[0];
+            
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('importJson').value = e.target.result;
+            };
+            reader.readAsText(file);
+        }
+
+        function importTemplate() {
+            try {
+                const json = document.getElementById('importJson').value;
+                const template = JSON.parse(json);
+                
+                // Validate template has required fields
+                const required = ['name', 'particleCount', 'emissionRate', 'lifetime'];
+                for (const field of required) {
+                    if (!(field in template)) {
+                        throw new Error(`Missing required field: ${field}`);
+                    }
+                }
+
+                templates.push(template);
+                saveTemplatesToStorage();
+                loadTemplate(template);
+                closeModal('importModal');
+            } catch (e) {
+                alert('Invalid JSON: ' + e.message);
+            }
+        }
+
+        function copyToClipboard() {
+            const textarea = document.getElementById('exportJson');
+            textarea.select();
+            document.execCommand('copy');
+            alert('Copied to clipboard!');
+        }
+
+        function downloadJson() {
+            if (!currentTemplate) return;
+            const json = JSON.stringify(currentTemplate, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${currentTemplate.name.replace(/\s+/g, '_')}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Local storage
+        function saveTemplatesToStorage() {
+            localStorage.setItem('particleTemplates', JSON.stringify(templates));
+        }
+
+        function loadTemplatesFromStorage() {
+            const stored = localStorage.getItem('particleTemplates');
+            if (stored) {
+                try {
+                    templates = JSON.parse(stored);
+                } catch (e) {
+                    templates = [...defaultTemplates];
+                }
+            } else {
+                templates = [...defaultTemplates];
+            }
+        }
+
+        // Close modals on ESC key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal('newTemplateModal');
+                closeModal('exportModal');
+                closeModal('importModal');
+            }
+        });
+
+        // Close modals on background click
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+
+        // Initialize
+        init();
+    </script>
+</body>
+</html>
