@@ -2,6 +2,30 @@
 
 # Changelog
 
+## v0.19.42 - Linux GLB Binary Serving Fix (2025-11-18)
+- **Summary:**
+  - Fixed critical GLB model loading issue on Linux Mint servers
+  - Created custom Python HTTP server with proper binary MIME types
+  - Resolved "Invalid typed array length" errors in GLTFLoader
+
+- **Server Implementation:**
+  - Created `zlock_server.py` - Custom HTTP server with binary file support
+  - Explicitly sets `model/gltf-binary` MIME type for `.glb` files
+  - Added CORS headers for proper cross-origin asset loading
+  - Disabled caching for development workflow
+  - Proper binary file handling prevents data corruption
+
+- **Bug Fix:**
+  - **Issue:** GLB files loaded fine on Windows but failed on Linux Mint with `RangeError: Invalid typed array length`
+  - **Root Cause:** Python's default `http.server` served GLB files with incorrect MIME type on Linux
+  - **Solution:** Custom server forces correct binary MIME types, preventing browser misinterpretation
+  - Models now load identically on Windows and Linux platforms
+
+- **Updated:**
+  - `zlock_server.sh` now launches `zlock_server.py` instead of basic http.server
+  - Added support for audio MIME types (.mp3, .wav, .ogg)
+  - Added support for image MIME types (.png, .jpg, .jpeg)
+
 ## v0.19.41 - Linux Hosting Compatibility Fix
 - **Summary:**
   - Fixed case-sensitive file path for QR code image (Linux compatibility)
