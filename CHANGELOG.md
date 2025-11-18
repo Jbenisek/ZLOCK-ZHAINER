@@ -2,6 +2,21 @@
 
 # Changelog
 
+## v0.19.41 - Linux Hosting Compatibility Fix
+- **Summary:**
+  - Fixed case-sensitive file path for QR code image (Linux compatibility)
+  - Reverted Zooko model path after testing
+
+- **File Path Fixes:**
+  - QR code image: `CyberAxeZcashWalletQR.png` → `CyberAxeZcashWalletQR.PNG`
+  - Fixed 404 error on Linux servers (case-sensitive filesystems)
+  - Zooko model: Tested `zooko_b.glb` for GLB loading issues, reverted to `zooko_a.glb`
+
+- **Web Hosting:**
+  - Created `zlock_server.sh` bash script for easy server start/stop on Linux
+  - Port: 4243 with public access (0.0.0.0 binding)
+  - Includes firewall configuration, PID management, and status checking
+
 ## v0.19.40 - UI Compacting & Color Picker Positioning
 - **Summary:**
   - Compacted theme settings panel (gameControls) to reduce screen space usage
