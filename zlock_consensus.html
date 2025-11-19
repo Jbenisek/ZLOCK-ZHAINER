@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.19.50</title>
+    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.7</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -96,57 +96,67 @@
         }
         
         .button {
-            background: #F2C94C;
-            color: #0B0E12;
-            border: 2px solid #26313B;
-            border-radius: 14px;
-            padding: 16px 48px;
-            font-size: 24px;
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
+            color: #E9F0F7;
+            border: 2px solid #2A9D8F;
+            border-radius: 8px;
+            padding: 14px 40px;
+            font-size: 18px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
-            margin: 10px;
+            margin: 8px;
             pointer-events: all;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            min-width: 280px;
         }
         
         .button:hover {
-            background: #FFD85A;
-            box-shadow: 0 0 20px rgba(255, 216, 90, 0.5);
-            transform: scale(1.05);
+            background: linear-gradient(135deg, rgba(20, 27, 34, 0.95), rgba(42, 157, 143, 0.2));
+            box-shadow: 0 6px 25px rgba(42, 157, 143, 0.4);
+            transform: translateY(-2px);
+            border-color: #4ECDC4;
         }
         
         .button:active {
-            background: #C9A43F;
-            transform: scale(0.98);
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.98), rgba(15, 19, 24, 0.95));
+            transform: translateY(0px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
         }
         
         .skipButton {
             position: absolute;
             left: 60px;
-            top: 50%;
+            top: 50.5%;
             transform: translateY(-50%);
-            background: rgba(42, 157, 143, 0.9);
-            color: #F2F6F9;
-            border: 2px solid #26313B;
-            border-radius: 12px;
-            padding: 14px 32px;
-            font-size: 18px;
-            font-weight: 600;
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
+            color: #E9F0F7;
+            border: 2px solid #2D9CDB;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
             pointer-events: all;
             width: 220px;
             text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
         
         .skipButton:hover {
-            background: rgba(42, 157, 143, 1);
-            box-shadow: 0 0 20px rgba(42, 157, 143, 0.5);
-            transform: translateY(-50%) scale(1.05);
+            background: linear-gradient(135deg, rgba(20, 27, 34, 0.95), rgba(45, 156, 219, 0.2));
+            box-shadow: 0 6px 20px rgba(45, 156, 219, 0.4);
+            transform: translateY(-50%) scale(1.02);
+            border-color: #4ECDC4;
         }
         
         .skipButton:active {
-            background: rgba(32, 127, 113, 1);
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.98), rgba(15, 19, 24, 0.95));
             transform: translateY(-50%) scale(0.98);
         }
         
@@ -154,28 +164,31 @@
             position: absolute;
             left: 60px;
             top: calc(10% - 0px);
-            background: rgba(139, 92, 246, 0.9);
-            color: #F2F6F9;
-            border: 2px solid #26313B;
-            border-radius: 12px;
-            padding: 14px 32px;
-            font-size: 18px;
-            font-weight: 600;
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
+            color: #E9F0F7;
+            border: 2px solid #8B5CF6;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
             pointer-events: all;
             width: 220px;
             text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
         
         .preFillButton:hover {
-            background: rgba(139, 92, 246, 1);
-            box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
-            transform: scale(1.05);
+            background: linear-gradient(135deg, rgba(20, 27, 34, 0.95), rgba(139, 92, 246, 0.2));
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+            transform: scale(1.02);
+            border-color: #A78BFA;
         }
         
         .preFillButton:active {
-            background: rgba(109, 62, 216, 1);
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.98), rgba(15, 19, 24, 0.95));
             transform: scale(0.98);
         }
         
@@ -183,115 +196,127 @@
             position: absolute;
             left: 60px;
             top: calc(50% + 55px);
-            background: rgba(255, 159, 28, 0.9);
-            color: #0B0E12;
-            border: 2px solid #26313B;
-            border-radius: 12px;
-            padding: 14px 32px;
-            font-size: 18px;
-            font-weight: 600;
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
+            color: #E9F0F7;
+            border: 2px solid #FF9F1C;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
             pointer-events: all;
             width: 220px;
             text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
         
         .skipButton50:hover {
-            background: rgba(255, 159, 28, 1);
-            box-shadow: 0 0 20px rgba(255, 159, 28, 0.5);
-            transform: scale(1.05);
+            background: linear-gradient(135deg, rgba(20, 27, 34, 0.95), rgba(255, 159, 28, 0.2));
+            box-shadow: 0 6px 20px rgba(255, 159, 28, 0.4);
+            transform: scale(1.02);
+            border-color: #FFBD59;
         }
         
         .skipButton50:active {
-            background: rgba(235, 139, 8, 1);
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.98), rgba(15, 19, 24, 0.95));
             transform: scale(0.98);
         }
         
         .skipButton100 {
             position: absolute;
             left: 60px;
-            top: calc(50% + 160px);
-            background: rgba(235, 87, 87, 0.9);
-            color: #F2F6F9;
-            border: 2px solid #26313B;
-            border-radius: 12px;
-            padding: 14px 32px;
-            font-size: 18px;
-            font-weight: 600;
+            top: calc(50% + 145px);
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
+            color: #E9F0F7;
+            border: 2px solid #EB5757;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
             pointer-events: all;
             width: 220px;
             text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
         
         .skipButton100:hover {
-            background: rgba(235, 87, 87, 1);
-            box-shadow: 0 0 20px rgba(235, 87, 87, 0.5);
-            transform: scale(1.05);
+            background: linear-gradient(135deg, rgba(20, 27, 34, 0.95), rgba(235, 87, 87, 0.2));
+            box-shadow: 0 6px 20px rgba(235, 87, 87, 0.4);
+            transform: scale(1.02);
+            border-color: #FF6B6B;
         }
         
         .skipButton100:active {
-            background: rgba(215, 67, 67, 1);
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.98), rgba(15, 19, 24, 0.95));
             transform: scale(0.98);
         }
         
         .skipButton1000 {
             position: absolute;
             left: 60px;
-            top: calc(50% + 265px);
-            background: rgba(138, 43, 226, 0.9);
-            color: #F2F6F9;
-            border: 2px solid #26313B;
-            border-radius: 12px;
-            padding: 14px 32px;
-            font-size: 18px;
-            font-weight: 600;
+            top: calc(50% + 232px);
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
+            color: #E9F0F7;
+            border: 2px solid #8B5CF6;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
             pointer-events: all;
             width: 220px;
             text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
         
         .skipButton1000:hover {
-            background: rgba(138, 43, 226, 1);
-            box-shadow: 0 0 20px rgba(138, 43, 226, 0.7);
-            transform: scale(1.05);
+            background: linear-gradient(135deg, rgba(20, 27, 34, 0.95), rgba(139, 92, 246, 0.2));
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+            transform: scale(1.02);
+            border-color: #A78BFA;
         }
         
         .skipButton1000:active {
-            background: rgba(118, 23, 206, 1);
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.98), rgba(15, 19, 24, 0.95));
             transform: scale(0.98);
         }
         
         .skipButton10000 {
             position: absolute;
             left: 60px;
-            top: calc(50% + 370px);
-            background: rgba(255, 0, 255, 0.9);
-            color: #F2F6F9;
-            border: 2px solid #26313B;
-            border-radius: 12px;
-            padding: 14px 32px;
-            font-size: 18px;
-            font-weight: 600;
+            top: calc(50% + 315px);
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
+            color: #E9F0F7;
+            border: 2px solid #F012BE;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
             pointer-events: all;
             width: 220px;
             text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
         
         .skipButton10000:hover {
-            background: rgba(255, 0, 255, 1);
-            box-shadow: 0 0 30px rgba(255, 0, 255, 0.9);
-            transform: scale(1.05);
+            background: linear-gradient(135deg, rgba(20, 27, 34, 0.95), rgba(240, 18, 190, 0.2));
+            box-shadow: 0 6px 30px rgba(240, 18, 190, 0.6);
+            transform: scale(1.02);
+            border-color: #FF6FD8;
         }
         
         .skipButton10000:active {
-            background: rgba(235, 0, 235, 1);
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.98), rgba(15, 19, 24, 0.95));
             transform: scale(0.98);
         }
         
@@ -299,28 +324,31 @@
             position: absolute;
             right: 60px;
             bottom: 60px;
-            background: rgba(45, 156, 219, 0.9);
-            color: #F2F6F9;
-            border: 2px solid #26313B;
-            border-radius: 12px;
-            padding: 14px 32px;
-            font-size: 18px;
-            font-weight: 600;
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
+            color: #E9F0F7;
+            border: 2px solid #2A9D8F;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
             pointer-events: all;
             width: 220px;
             text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
         
         .aboutButton:hover {
-            background: rgba(45, 156, 219, 1);
-            box-shadow: 0 0 20px rgba(45, 156, 219, 0.5);
-            transform: scale(1.05);
+            background: linear-gradient(135deg, rgba(20, 27, 34, 0.95), rgba(42, 157, 143, 0.2));
+            box-shadow: 0 6px 20px rgba(42, 157, 143, 0.4);
+            transform: scale(1.02);
+            border-color: #4ECDC4;
         }
         
         .aboutButton:active {
-            background: rgba(25, 136, 199, 1);
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.98), rgba(15, 19, 24, 0.95));
             transform: scale(0.98);
         }
         
@@ -942,15 +970,30 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: #0F1318;
-            border: 2px solid #26313B;
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 800px;
-            max-height: 80vh;
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
+            border: 2px solid #2A9D8F;
+            border-radius: 12px;
+            padding: 25px;
+            max-height: 90vh;
             overflow-y: auto;
             z-index: 200;
             pointer-events: all;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+        }
+        
+        #highScoresPanel {
+            max-width: 1300px;
+            width: 85vw;
+        }
+        
+        #achievementsPanel {
+            max-width: 1200px;
+            width: 85vw;
+        }
+        
+        #settingsPanel, #aboutPanel {
+            max-width: 550px;
         }
         
         #overlay {
@@ -966,27 +1009,37 @@
         }
         
         .panelTitle {
-            font-size: 36px;
+            font-size: 28px;
             font-weight: 900;
-            color: #F2C94C;
-            margin-bottom: 30px;
+            color: #2A9D8F;
+            margin-bottom: 20px;
             text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
         
         .achievementItem {
-            background: #141B22;
+            background: rgba(10, 14, 18, 0.5);
             border: 1px solid #26313B;
-            border-radius: 10px;
-            padding: 15px 20px;
-            margin: 10px 0;
+            border-radius: 6px;
+            padding: 6px;
+            margin: 4px 0;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 6px;
+            transition: all 0.2s;
         }
         
         .achievementItem.unlocked {
-            border-color: #F2C94C;
-            background: linear-gradient(90deg, rgba(242, 201, 76, 0.1), transparent);
+            border-color: #2A9D8F;
+            background: linear-gradient(135deg, rgba(42, 157, 143, 0.2), rgba(78, 205, 196, 0.1));
+            box-shadow: 0 2px 8px rgba(42, 157, 143, 0.3);
+        }
+        
+        .achievementItem:hover {
+            transform: translateX(3px);
+            background: rgba(20, 27, 34, 0.8);
+            filter: brightness(1.2);
         }
         
         .achievementIcon {
@@ -1056,8 +1109,13 @@
         }
         
         .closeButton {
-            margin-top: 30px;
-            width: 100%;
+            background: linear-gradient(135deg, rgba(235, 87, 87, 0.3), rgba(231, 76, 60, 0.2));
+            border-color: #EB5757;
+        }
+        
+        .closeButton:hover {
+            background: linear-gradient(135deg, rgba(235, 87, 87, 0.5), rgba(231, 76, 60, 0.3));
+            border-color: #FF6B6B;
         }
         
         #pauseScreen {
@@ -1549,20 +1607,20 @@
             <span class="settingLabel">AI Player (Testing)</span>
             <input type="checkbox" id="aiEnabled" onchange="updateSettings()">
         </div>
-        <button class="button" style="margin-top: 30px; background: #EB5757;" onclick="clearHighScores()">CLEAR HIGH SCORES<span style="display: inline-block; width: 24px; height: 24px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 14px;">X</span></button>
-        <button class="button closeButton" onclick="closeAllPanels()">CLOSE<span style="display: inline-block; width: 24px; height: 24px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
+        <button class="button" style="margin-top: 30px; background: #EB5757;" onclick="clearHighScores()">CLEAR HIGH SCORES<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">X</span></button>
+        <button class="button closeButton" onclick="closeAllPanels()" style="margin-top: 20px; width: 100%;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
     </div>
     
     <div id="highScoresPanel">
         <div class="panelTitle">HIGH SCORES</div>
-        <button class="button closeButton" onclick="closeAllPanels()" style="margin-bottom: 20px;">CLOSE<span style="display: inline-block; width: 24px; height: 24px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         <div id="highScoresList"></div>
+        <button class="button closeButton" onclick="closeAllPanels()" style="width: 100%; margin-top: 20px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
     </div>
     
     <div id="achievementsPanel">
         <div class="panelTitle">ACHIEVEMENTS</div>
-        <button class="button closeButton" onclick="closeAllPanels()" style="margin-bottom: 20px;">CLOSE<span style="display: inline-block; width: 24px; height: 24px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         <div id="achievementsList"></div>
+        <button class="button closeButton" onclick="closeAllPanels()" style="width: 100%; margin-top: 20px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
     </div>
     
     <div id="aboutPanel">
@@ -1592,15 +1650,15 @@
                 </div>
             </div>
         </div>
-        <button class="button closeButton" onclick="closeAllPanels()">CLOSE<span style="display: inline-block; width: 24px; height: 24px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
+        <button class="button closeButton" onclick="closeAllPanels()" style="width: 100%; margin-top: 20px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
     </div>
     
     <div id="pauseScreen">
         <div id="pauseTitle">PAUSED</div>
-        <button class="button" onclick="resumeGame()">RESUME<span style="display: inline-block; width: 24px; height: 24px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
-        <button class="button" onclick="restartFromPause()">RESTART<span style="display: inline-block; width: 24px; height: 24px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 14px;">X</span></button>
-        <button class="button" onclick="showSettingsFromPause()">SETTINGS<span style="display: inline-block; width: 24px; height: 24px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 14px;">Y</span></button>
-        <button class="button" onclick="quitToMenu()">QUIT TO MENU<span style="display: inline-block; padding: 2px 6px; background: #555; border-radius: 4px; margin-left: 8px; font-weight: bold; color: white; font-size: 11px;">◀▶</span></button>
+        <button class="button" onclick="resumeGame()">RESUME<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
+        <button class="button" onclick="restartFromPause()">RESTART<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">X</span></button>
+        <button class="button" onclick="showSettingsFromPause()">SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">Y</span></button>
+        <button class="button" onclick="quitToMenu()">QUIT TO MENU<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 10px; font-weight: bold; color: white; font-size: 12px;">◀▶</span></button>
     </div>
     
     <div id="level10Notification">
@@ -1685,7 +1743,7 @@
     <div id="gameContainer">
         <canvas id="renderCanvas"></canvas>
         
-        <div id="versionDisplay">v0.19.48</div>
+        <div id="versionDisplay">v0.20.7</div>
         
         <div id="performanceDisplay">
             <div><span class="perf-label">FPS:</span> <span class="perf-value" id="fpsValue">60</span></div>
@@ -1843,8 +1901,7 @@
         </script>
         
         <!-- How to Play Modal -->
-        <div id="howToPlayPanel" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 900px; max-height: 85vh; overflow-y: auto; background: rgba(10, 14, 18, 0.98); border: 3px solid #2A9D8F; border-radius: 16px; padding: 30px; z-index: 200; box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);">
-            <button onclick="closeHowToPlay()" style="position: absolute; top: 15px; right: 15px; background: #EB5757; color: white; border: none; border-radius: 8px; padding: 10px 18px; cursor: pointer; font-size: 18px; font-weight: bold; font-family: 'Inter', sans-serif;">✕</button>
+        <div id="howToPlayPanel" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 900px; max-height: 90vh; overflow-y: auto; background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); border: 2px solid #2A9D8F; border-radius: 12px; padding: 25px; z-index: 200; box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); pointer-events: all;">
             
             <h2 style="color: #2A9D8F; font-size: 32px; margin-bottom: 25px; text-align: center; font-weight: 900;">📖 HOW TO PLAY</h2>
             
@@ -1921,6 +1978,7 @@
                 <h3 style="color: #2A9D8F; font-size: 16px; margin-bottom: 8px; font-weight: 700;">💡 PRO TIP</h3>
                 <p style="color: #D4E3F0; font-size: 14px; line-height: 1.6; margin: 0;">Drop speed increases each level! Use <strong>Q/E</strong> to rotate your view and <strong>T</strong> for top-down perspective to plan your moves better. Match colors strategically to charge character specials!</p>
             </div>
+            <button class="button closeButton" onclick="closeHowToPlay()" style="width: 100%; margin-top: 20px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         </div>
         
         <!-- About/Donate Button under Sandblasting Panel -->
@@ -2330,23 +2388,23 @@
 ```        <div id="titleScreen">
             <div id="title">ZLOCK</div>
             <div id="subtitle">ZHAINER</div>
-            <button class="button" onclick="startGame()">START GAME<span style="display: inline-block; width: 24px; height: 24px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 14px;">A</span></button>
-            <button class="button" onclick="showSettings()">SETTINGS<span style="display: inline-block; width: 24px; height: 24px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 12px;">▶</span></button>
-            <button class="button" onclick="showHighScores()">HIGH SCORES<span style="display: inline-block; width: 24px; height: 24px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 14px;">X</span></button>
-            <button class="button" onclick="showAchievements()">ACHIEVEMENTS<span style="display: inline-block; width: 24px; height: 24px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 14px;">Y</span></button>
-            <button class="aboutButton" onclick="showHowToPlay()" style="background: #2A9D8F; bottom: 150px;">📖 HOW TO PLAY<span style="display: inline-block; padding: 2px 6px; background: #555; border-radius: 4px; margin-left: 8px; font-weight: bold; color: white; font-size: 11px;">SELECT</span></button>
-            <button class="aboutButton" onclick="showAbout()">ABOUT / DONATE<span style="display: inline-block; width: 24px; height: 24px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
-            <button class="preFillButton" onclick="startGameWithPreFill()">START WITH PRE-FILLED GRID<span style="display: inline-block; padding: 2px 6px; background: #555; border-radius: 4px; margin-left: 8px; font-weight: bold; color: white; font-size: 11px;">▲</span></button>
-            <button class="skipButton" onclick="startGameAtLevel10()">SKIP TUTORIAL - START AT LEVEL 10<span style="display: inline-block; padding: 2px 6px; background: #555; border-radius: 4px; margin-left: 8px; font-weight: bold; color: white; font-size: 11px;">◀</span></button>
-            <button class="skipButton50" onclick="startGameAtLevel50()">ARE YOU GOOD? - START AT LEVEL 50<span style="display: inline-block; padding: 2px 6px; background: #555; border-radius: 4px; margin-left: 8px; font-weight: bold; color: white; font-size: 11px;">▶</span></button>
-            <button class="skipButton100" onclick="startGameAtLevel100()">EXPERT? - START AT LEVEL 100<span style="display: inline-block; padding: 2px 6px; background: #555; border-radius: 4px; margin-left: 8px; font-weight: bold; color: white; font-size: 11px;">▼</span></button>
-            <button class="skipButton1000" onclick="startGameAtLevel1000()">ARE YOU CRAZY? - START AT LEVEL 1000</button>
-            <button class="skipButton10000" onclick="startGameAtLevel10000()">SUPER HUMAN? - START AT LEVEL 10,000</button>
+            <button class="button" onclick="startGame()">START GAME<span style="display: inline-block; width: 26px; height: 26px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">A</span></button>
+            <button class="button" onclick="showSettings()">SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">▶</span></button>
+            <button class="button" onclick="showHighScores()">HIGH SCORES<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">X</span></button>
+            <button class="button" onclick="showAchievements()">ACHIEVEMENTS<span style="display: inline-block; width: 26px; height: 26px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">Y</span></button>
+            <button class="aboutButton" onclick="showHowToPlay()" style="background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); border-color: #2A9D8F; bottom: 125px;">📖 HOW TO PLAY & CONTROLS<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 10px; font-weight: bold; color: white; font-size: 12px;">SELECT</span></button>
+            <button class="aboutButton" onclick="showAbout()">ABOUT / DONATE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
+            <button class="preFillButton" onclick="startGameWithPreFill()">NEED MORE ACTION? PRE-FILLED GRID<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 8px; font-weight: bold; color: white; font-size: 12px;">▲</span></button>
+            <button class="skipButton" onclick="startGameAtLevel10()">BEEN HERE BEFORE? SKIP TUTORIAL <br>LEVEL 10<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 8px; font-weight: bold; color: white; font-size: 12px;">◀</span></button>
+            <button class="skipButton50" onclick="startGameAtLevel50()">ARE YOU GOOD? NORMAL MODE <br>LEVEL 50<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 8px; font-weight: bold; color: white; font-size: 12px;">▶</span></button>
+            <button class="skipButton100" onclick="startGameAtLevel100()">YOU'VE GOT THIS? EXPERT MODE<br>LEVEL 100<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 8px; font-weight: bold; color: white; font-size: 12px;">▼</span></button>
+            <button class="skipButton1000" onclick="startGameAtLevel1000()">ARE YOU LOCO? INSANE MODE<br>LEVEL 1000</button>
+            <button class="skipButton10000" onclick="startGameAtLevel10000()">WILL YOU BE MY SUPERHUMAN!<br>LEVEL 10,000</button>
             <div style="position: absolute; left: 60px; top: calc(50% + 470px); font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #89A0B4; width: 220px; text-align: center; line-height: 1.4;">
                 <strong>NOTE:</strong><br>Skipping past Level 10<br>disables most achievements
             </div>
             <div style="margin-top: 40px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #89A0B4;">
-                Version v0.19.48 • 2025-11-18
+                Version v0.20.7 • 2025-11-19
             </div>
         </div>
     </div>
@@ -2355,7 +2413,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.19.48';
+        const GAME_VERSION = 'v0.20.7';
         
         // Game State
         const GameState = {
@@ -2517,6 +2575,10 @@
         
         // Model loading
         let chainLinkModel = null;
+        let chainModelYellow = null;
+        let chainModelBlue = null;
+        let chainModelGreen = null;
+        let chainModelRed = null;
         let modelLoaded = false;
         let tableModel = null;
         let tableModelLoaded = false;
@@ -2551,6 +2613,7 @@
         let fillLight = null;
         let ambientLight = null;
         let rimLight = null;
+        let chainLight = null; // Light that follows the chain
         
         // Zancas model and animation
         let zancasModel = null;
@@ -2609,13 +2672,21 @@
         const cameraHeight = 9;
         const topDownHeight = 24; // Height for top-down view
         
-        // Link types
+        // Link types - simple name references
         const LinkType = {
-            ZEC_A: { color: 0xF2C94C, emissive: 0xFFD85A, name: 'ZEC-A' },
-            ZEC_B: { color: 0x2D9CDB, emissive: 0x52B9F5, name: 'ZEC-B' },
-            ZEC_C: { color: 0x27AE60, emissive: 0x4CD782, name: 'ZEC-C' },
-            ZEC_D: { color: 0xEB5757, emissive: 0xFF7A7A, name: 'ZEC-D' },
-            ZEC_MULTI: { color: 0xFFFFFF, emissive: 0xFFFFFF, name: 'ZEC-MULTI' } // Multi-type chain (level 10+)
+            ZEC_A: { name: 'ZEC-A' },     // Yellow
+            ZEC_B: { name: 'ZEC-B' },     // Blue
+            ZEC_C: { name: 'ZEC-C' },     // Green
+            ZEC_D: { name: 'ZEC-D' },     // Red
+            ZEC_MULTI: { name: 'ZEC-MULTI' } // Multi-type chain (level 10+)
+        };
+        
+        // Simple color mapping for UI preview only
+        const PREVIEW_COLORS = {
+            'ZEC-A': '#F2C94C',  // Yellow
+            'ZEC-B': '#2D9CDB',  // Blue
+            'ZEC-C': '#27AE60',  // Green
+            'ZEC-D': '#EB5757'   // Red
         };
         
         // Column tubes
@@ -2706,6 +2777,37 @@
         const _spawnTempCamDir = new THREE.Vector3();
         const _spawnTempSpawnPos = new THREE.Vector3();
         let particleEffectTextures = {};
+        
+        // Animation frame ID tracking for cleanup
+        let mainAnimationFrameId = null;
+        let activeAnimationFrames = [];
+        
+        // Timer tracking for cleanup
+        let activeTimeouts = [];
+        let activeIntervals = [];
+        
+        // Wrapper functions to auto-track timers
+        const trackedSetTimeout = (callback, delay, ...args) => {
+            const id = window.setTimeout(callback, delay, ...args);
+            activeTimeouts.push(id);
+            return id;
+        };
+        
+        const trackedSetInterval = (callback, delay, ...args) => {
+            const id = window.setInterval(callback, delay, ...args);
+            activeIntervals.push(id);
+            return id;
+        };
+        
+        const trackedClearTimeout = (id) => {
+            window.clearTimeout(id);
+            activeTimeouts = activeTimeouts.filter(tid => tid !== id);
+        };
+        
+        const trackedClearInterval = (id) => {
+            window.clearInterval(id);
+            activeIntervals = activeIntervals.filter(tid => tid !== id);
+        };
         
         // Zooko special effect state
         let zookoSpecialActive = false;
@@ -2917,10 +3019,10 @@
                 const emitDuration = (config.emitDuration || 2) * 1000;
                 
                 if (placement.loopInterval) {
-                    clearInterval(placement.loopInterval);
+                    trackedClearInterval(placement.loopInterval);
                 }
                 
-                placement.loopInterval = setInterval(() => {
+                placement.loopInterval = trackedSetInterval(() => {
                     if (placement.enabled && placement.loop) {
                         spawnPlacementParticle(placement);
                     }
@@ -2942,7 +3044,7 @@
         // Stop looping particle
         function stopLoopingParticle(placement) {
             if (placement.loopInterval) {
-                clearInterval(placement.loopInterval);
+                trackedClearInterval(placement.loopInterval);
                 placement.loopInterval = null;
             }
         }
@@ -3146,6 +3248,24 @@
             // Remove old model if exists
             if (placement.model) {
                 scene.remove(placement.model);
+                // Dispose geometry and materials
+                placement.model.traverse(child => {
+                    if (child.isMesh) {
+                        if (child.geometry) child.geometry.dispose();
+                        if (child.material) {
+                            if (Array.isArray(child.material)) {
+                                child.material.forEach(mat => mat.dispose());
+                            } else {
+                                child.material.dispose();
+                            }
+                        }
+                    }
+                });
+                // Dispose animation mixer if exists
+                if (placement.mixer) {
+                    placement.mixer.stopAllAction();
+                    placement.mixer.uncacheRoot(placement.model);
+                }
                 placement.model = null;
                 placement.mixer = null;
             }
@@ -3237,9 +3357,7 @@
                 placement.box.material.dispose();
             }
             placement.arrows.forEach(arrow => {
-                scene.remove(arrow);
-                arrow.geometry.dispose();
-                arrow.material.dispose();
+                disposeArrowHelper(arrow);
             });
             
             // Remove from array
@@ -3504,9 +3622,9 @@
             `;
             document.body.appendChild(notif);
             
-            setTimeout(() => {
+            trackedSetTimeout(() => {
                 notif.style.animation = 'slideOut 0.3s ease-in';
-                setTimeout(() => document.body.removeChild(notif), 300);
+                trackedSetTimeout(() => document.body.removeChild(notif), 300);
             }, 3000);
         }
         
@@ -4078,7 +4196,7 @@
                     const originalText = btn.textContent;
                     btn.textContent = '✓ Copied!';
                     btn.style.background = '#00ff00';
-                    setTimeout(() => {
+                    trackedSetTimeout(() => {
                         btn.textContent = originalText;
                         btn.style.background = '#00aa00';
                     }, 2000);
@@ -4326,7 +4444,7 @@
                     const originalText = btn.textContent;
                     btn.textContent = '✓ Copied!';
                     btn.style.background = '#00ff00';
-                    setTimeout(() => {
+                    trackedSetTimeout(() => {
                         btn.textContent = originalText;
                         btn.style.background = '#00aa00';
                     }, 2000);
@@ -4474,15 +4592,7 @@
             
             // Remove old links
             chain.links.forEach(link => {
-                scene.remove(link);
-                if (link.geometry) link.geometry.dispose();
-                if (link.material) {
-                    if (Array.isArray(link.material)) {
-                        link.material.forEach(mat => mat.dispose());
-                    } else {
-                        link.material.dispose();
-                    }
-                }
+                disposeLinkMesh(link);
             });
             
             // Remove old tube
@@ -4504,9 +4614,7 @@
                 column.box.material.dispose();
             }
             column.arrows.forEach(arrow => {
-                scene.remove(arrow);
-                if (arrow.geometry) arrow.geometry.dispose();
-                if (arrow.material) arrow.material.dispose();
+                disposeArrowHelper(arrow);
             });
             column.arrows = [];
             
@@ -4608,7 +4716,7 @@
                 
                 // Remove links
                 chain.links.forEach(link => {
-                    scene.remove(link);
+                    disposeLinkMesh(link);
                 });
                 
                 cornerChains.splice(chainIndex, 1);
@@ -4632,7 +4740,7 @@
                 column.box.material.dispose();
             }
             column.arrows.forEach(arrow => {
-                scene.remove(arrow);
+                disposeArrowHelper(arrow);
             });
             
             // Remove from array
@@ -4769,7 +4877,7 @@
                     const originalText = btn.textContent;
                     btn.textContent = '✓ Copied!';
                     btn.style.background = '#00ff00';
-                    setTimeout(() => {
+                    trackedSetTimeout(() => {
                         btn.textContent = originalText;
                         btn.style.background = '#00aa00';
                     }, 2000);
@@ -4869,6 +4977,36 @@
             rimLight.position.set(0, 5, -15);
             scene.add(rimLight);
             
+            // Chain light - bright white light that follows the falling chain
+            chainLight = new THREE.PointLight(0xFFFFFF, 2.0, 10);
+            chainLight.position.set(3, 10, 3);
+            scene.add(chainLight);
+            
+            // Corner lights - four point lights at table corners to illuminate chains
+            const cornerLightIntensity = 1.5;
+            const cornerLightDistance = 15;
+            const cornerLightHeight = 1;
+            
+            // Front-left corner
+            const cornerLight1 = new THREE.PointLight(0xFFFFFF, cornerLightIntensity, cornerLightDistance);
+            cornerLight1.position.set(-0.75, cornerLightHeight, -0.75);
+            scene.add(cornerLight1);
+            
+            // Front-right corner
+            const cornerLight2 = new THREE.PointLight(0xFFFFFF, cornerLightIntensity, cornerLightDistance);
+            cornerLight2.position.set(GRID_WIDTH + 0.75, cornerLightHeight, -0.75);
+            scene.add(cornerLight2);
+            
+            // Back-left corner
+            const cornerLight3 = new THREE.PointLight(0xFFFFFF, cornerLightIntensity, cornerLightDistance);
+            cornerLight3.position.set(-0.75, cornerLightHeight, GRID_DEPTH + 0.75);
+            scene.add(cornerLight3);
+            
+            // Back-right corner
+            const cornerLight4 = new THREE.PointLight(0xFFFFFF, cornerLightIntensity, cornerLightDistance);
+            cornerLight4.position.set(GRID_WIDTH + 0.75, cornerLightHeight, GRID_DEPTH + 0.75);
+            scene.add(cornerLight4);
+            
             // Handle window resize
             window.addEventListener('resize', onWindowResize);
             
@@ -4893,7 +5031,7 @@
             
             // ===== AI PLAYER =====
             // Update AI indicator after DOM is ready
-            setTimeout(() => {
+            trackedSetTimeout(() => {
                 if (document.getElementById('aiIndicator')) {
                     document.getElementById('aiIndicator').style.display = settings.aiEnabled ? 'block' : 'none';
                 }
@@ -5138,23 +5276,105 @@
         
         function loadChainLinkModel() {
             const loader = new THREE.GLTFLoader();
-            loader.load(
-                'models/Zcash_Chain_Link_A.glb',
-                function(gltf) {
-                    chainLinkModel = gltf.scene;
+            let loadedCount = 0;
+            const totalModels = 4;
+            
+            function checkAllLoaded() {
+                loadedCount++;
+                if (loadedCount === totalModels) {
                     modelLoaded = true;
-                    chainLinkModel.scale.set(1.25, 1.25, 1.25);
-                    chainLinkModel.traverse((child) => {
-                        if (child.isMesh) {
-                            child.castShadow = true;
-                            child.receiveShadow = true;
-                        }
-                    });
-                    
-                    // Create corner feed tubes after model is loaded
+                    // Create corner feed tubes after all models are loaded
                     createCornerFeedTubes();
                 }
-            );
+            }
+            
+            // Load yellow chain
+            loader.load('models/chain_yellow_a.glb', function(gltf) {
+                chainModelYellow = gltf.scene;
+                chainModelYellow.scale.set(1.25, 1.25, 1.25);
+                chainModelYellow.traverse((child) => {
+                    if (child.isMesh && child.material) {
+                        child.castShadow = true;
+                        child.receiveShadow = true;
+                        // Ensure material responds to light properly
+                        if (child.material.metalness !== undefined) {
+                            child.material.metalness = 0.05;
+                        }
+                        if (child.material.roughness !== undefined) {
+                            child.material.roughness = 0.4;
+                        }
+                        // Remove or reduce emissive to let diffuse color and lighting work
+                        child.material.emissiveIntensity = 0.5;
+                    }
+                });
+                checkAllLoaded();
+            });
+            
+            // Load blue chain
+            loader.load('models/chain_blue_a.glb', function(gltf) {
+                chainModelBlue = gltf.scene;
+                chainModelBlue.scale.set(1.25, 1.25, 1.25);
+                chainModelBlue.traverse((child) => {
+                    if (child.isMesh && child.material) {
+                        child.castShadow = true;
+                        child.receiveShadow = true;
+                        // Ensure material responds to light properly
+                        if (child.material.metalness !== undefined) {
+                            child.material.metalness = 0.05;
+                        }
+                        if (child.material.roughness !== undefined) {
+                            child.material.roughness = 0.4;
+                        }
+                        // Remove or reduce emissive to let diffuse color and lighting work
+                        child.material.emissiveIntensity = 0.5;
+                    }
+                });
+                checkAllLoaded();
+            });
+            
+            // Load green chain
+            loader.load('models/chain_green_a.glb', function(gltf) {
+                chainModelGreen = gltf.scene;
+                chainModelGreen.scale.set(1.25, 1.25, 1.25);
+                chainModelGreen.traverse((child) => {
+                    if (child.isMesh && child.material) {
+                        child.castShadow = true;
+                        child.receiveShadow = true;
+                        // Ensure material responds to light properly
+                        if (child.material.metalness !== undefined) {
+                            child.material.metalness = 0.05;
+                        }
+                        if (child.material.roughness !== undefined) {
+                            child.material.roughness = 0.4;
+                        }
+                        // Remove or reduce emissive to let diffuse color and lighting work
+                        child.material.emissiveIntensity = 0.5;
+                    }
+                });
+                checkAllLoaded();
+            });
+            
+            // Load red chain
+            loader.load('models/chain_red_a.glb', function(gltf) {
+                chainModelRed = gltf.scene;
+                chainModelRed.scale.set(1.25, 1.25, 1.25);
+                chainModelRed.traverse((child) => {
+                    if (child.isMesh && child.material) {
+                        child.castShadow = true;
+                        child.receiveShadow = true;
+                        // Ensure material responds to light properly
+                        if (child.material.metalness !== undefined) {
+                            child.material.metalness = 0.05;
+                        }
+                        if (child.material.roughness !== undefined) {
+                            child.material.roughness = 0.4;
+                        }
+                        // Same as other colors - no extra emissive
+                        child.material.emissiveIntensity = 0.5;
+                    }
+                });
+                checkAllLoaded();
+            });
         }
         
         function loadTableModel() {
@@ -5259,10 +5479,10 @@
                                     boneOffset: zookoHeadOffset
                                 });
                                 // Loop: respawn at emitDuration (1.1s = 1100ms)
-                                setTimeout(spawnZookoHeadShield, 1100);
+                                trackedSetTimeout(spawnZookoHeadShield, 1100);
                             }
                         }
-                        setTimeout(spawnZookoHeadShield, 100);
+                        trackedSetTimeout(spawnZookoHeadShield, 100);
                         
                         // Spawn hat particle at head during idle with looping
                         function spawnZookoHat() {
@@ -5280,10 +5500,10 @@
                                     boneOffset: zookoHatOffset
                                 });
                                 // Loop: respawn at emitDuration (1.1s = 1100ms)
-                                setTimeout(spawnZookoHat, 1100);
+                                trackedSetTimeout(spawnZookoHat, 1100);
                             }
                         }
-                        setTimeout(spawnZookoHat, 100);
+                        trackedSetTimeout(spawnZookoHat, 100);
                         
                         // Load the special animation
                         const specialLoader = new THREE.GLTFLoader();
@@ -5382,10 +5602,10 @@
                                     boneOffset: cyberAxeChestOffset
                                 });
                                 // Loop: respawn at emitDuration (1.1s = 1100ms)
-                                setTimeout(spawnCyberAxeChestShield, 1100);
+                                trackedSetTimeout(spawnCyberAxeChestShield, 1100);
                             }
                         }
-                        setTimeout(spawnCyberAxeChestShield, 100);
+                        trackedSetTimeout(spawnCyberAxeChestShield, 100);
                         
                         // Load the special animation
                         const specialLoader = new THREE.GLTFLoader();
@@ -5535,7 +5755,7 @@
             notif.textContent = 'Zancas Special!';
             document.body.appendChild(notif);
             
-            setTimeout(() => notif.remove(), 2000);
+            trackedSetTimeout(() => notif.remove(), 2000);
             
             // Stop idle and play special
             zancasIdleAction.stop();
@@ -5569,7 +5789,7 @@
             
             // Check if sandblasting should trigger
             if (sandblastingCharge >= 100) {
-                setTimeout(() => {
+                trackedSetTimeout(() => {
                     triggerSandblastingEvent();
                 }, 2000); // Trigger after special completes
             }
@@ -5658,7 +5878,7 @@
             const delayPerBlock = totalDuration / Math.max(blocksToTransform.length, 1);
             
             blocksToTransform.forEach((item, index) => {
-                setTimeout(() => {
+                trackedSetTimeout(() => {
                     const { x, y, z, block } = item;
                     if (grid[x][y][z] && grid[x][y][z] === block) {
                         
@@ -5674,21 +5894,13 @@
                         // Transform block to gold (ZEC_A)
                         grid[x][y][z].type = LinkType.ZEC_A;
                         
-                        // Update the mesh material
-                        if (block.mesh) {
-                            block.mesh.traverse((child) => {
-                                if (child.isMesh) {
-                                    child.material.emissive.setHex(LinkType.ZEC_A.emissive);
-                                    child.material.emissiveIntensity = 0.6;
-                                }
-                            });
-                        }
+                        // Note: Mesh color unchanged - already uses pre-colored model
                     }
                 }, index * delayPerBlock);
             });
             
             // Restore normal time after transformations complete
-            setTimeout(() => {
+            trackedSetTimeout(() => {
                 currentTimeScale = normalTimeScale;
                 zancasSpecialActive = false;
             }, totalDuration + 500);
@@ -5758,7 +5970,8 @@
                 });
                 
                 if (!allDead) {
-                    requestAnimationFrame(animateSmoke);
+                    const frameId = requestAnimationFrame(animateSmoke);
+                    activeAnimationFrames.push(frameId);
                 } else {
                     // Clean up
                     particles.forEach(particle => {
@@ -5905,7 +6118,7 @@
             notif.textContent = 'Nate Special!';
             document.body.appendChild(notif);
             
-            setTimeout(() => notif.remove(), 2000);
+            trackedSetTimeout(() => notif.remove(), 2000);
             
             // Stop idle and play special
             nateIdleAction.stop();
@@ -5947,7 +6160,7 @@
             
             // Check if sandblasting should trigger
             if (sandblastingCharge >= 100) {
-                setTimeout(() => {
+                trackedSetTimeout(() => {
                     triggerSandblastingEvent();
                 }, 2000); // Trigger after special completes
             }
@@ -5975,7 +6188,7 @@
                 const link = grid[x][y][z];
                 if (link) {
                     // Remove from scene
-                    scene.remove(link.mesh);
+                    disposeLinkMesh(link.mesh);
                     // Remove from grid
                     grid[x][y][z] = null;
                     // Award points (100 per broken link)
@@ -6026,9 +6239,9 @@
             let moveWave = 0;
             const totalWaves = Math.ceil((allBlocks.length * movesPerBlock) / blocksPerWave);
             
-            const tornadoInterval = setInterval(() => {
+            const tornadoInterval = trackedSetInterval(() => {
                 if (moveWave >= totalWaves) {
-                    clearInterval(tornadoInterval);
+                    trackedClearInterval(tornadoInterval);
                     
                     // Reset all block rotations to 0 or 90 degrees
                     for (let x = 0; x < GRID_WIDTH; x++) {
@@ -6047,11 +6260,11 @@
                     }
                     
                     // Apply gravity after tornado
-                    setTimeout(() => {
+                    trackedSetTimeout(() => {
                         applyGravity();
                         
                         // Restore normal time
-                        setTimeout(() => {
+                        trackedSetTimeout(() => {
                             currentTimeScale = normalTimeScale;
                             nateSpecialActive = false;
                         }, 500);
@@ -6146,7 +6359,8 @@
                                     block.mesh.rotation.y += 0.15;
                                     
                                     if (progress < 1) {
-                                        requestAnimationFrame(animateMove);
+                                        const frameId = requestAnimationFrame(animateMove);
+                                        activeAnimationFrames.push(frameId);
                                     }
                                 };
                                 
@@ -6203,7 +6417,7 @@
             notif.textContent = 'Zooko Special!';
             document.body.appendChild(notif);
             
-            setTimeout(() => notif.remove(), 2000);
+            trackedSetTimeout(() => notif.remove(), 2000);
             
             // Stop idle and play special
             zookoIdleAction.stop();
@@ -6230,18 +6444,18 @@
             sandblastingActive = true;
             
             // Clear any ongoing CyberAxe flicker timeouts to prevent interference
-            cyberAxeFlickerTimeouts.forEach(id => clearTimeout(id));
+            cyberAxeFlickerTimeouts.forEach(id => trackedClearTimeout(id));
             cyberAxeFlickerTimeouts = [];
             
             // Clear CyberAxe wall flash interval to prevent interference
             if (cyberAxeFlashInterval) {
-                clearInterval(cyberAxeFlashInterval);
+                trackedClearInterval(cyberAxeFlashInterval);
                 cyberAxeFlashInterval = null;
             }
             
             // Clear CyberAxe cleanup timeout to prevent lights turning back on
             if (cyberAxeCleanupTimeout) {
-                clearTimeout(cyberAxeCleanupTimeout);
+                trackedClearTimeout(cyberAxeCleanupTimeout);
                 cyberAxeCleanupTimeout = null;
             }
             
@@ -6280,7 +6494,7 @@
             
             // Drop single links from random columns
             for (let i = 0; i < numLinks; i++) {
-                setTimeout(() => {
+                trackedSetTimeout(() => {
                     // Random column position
                     const spawnX = Math.floor(Math.random() * GRID_WIDTH);
                     const spawnZ = Math.floor(Math.random() * GRID_DEPTH);
@@ -6322,7 +6536,7 @@
             }
             
             // Restore lights after all links have dropped and settled
-            setTimeout(() => {
+            trackedSetTimeout(() => {
                 // Restore lights to default values
                 keyLight.intensity = DEFAULT_KEY_LIGHT;
                 fillLight.intensity = DEFAULT_FILL_LIGHT;
@@ -6354,7 +6568,7 @@
             
             // Check if sandblasting should trigger
             if (sandblastingCharge >= 100) {
-                setTimeout(() => {
+                trackedSetTimeout(() => {
                     triggerSandblastingEvent();
                 }, 2000); // Trigger after special completes
             }
@@ -6414,7 +6628,7 @@
             const delayPerBlock = totalDuration / Math.max(blocksToDestroy.length, 1);
             
             blocksToDestroy.forEach((item, index) => {
-                setTimeout(() => {
+                trackedSetTimeout(() => {
                     const { x, y, z, block } = item;
                     if (grid[x][y][z] && grid[x][y][z] === block) {
                         // Create explosion effect
@@ -6443,11 +6657,11 @@
             });
             
             // After all explosions, apply gravity and restore time
-            setTimeout(() => {
+            trackedSetTimeout(() => {
                 applyGravity();
                 
                 // Restore normal time after gravity settles
-                setTimeout(() => {
+                trackedSetTimeout(() => {
                     currentTimeScale = normalTimeScale;
                     zookoSpecialActive = false;
                 }, 500);
@@ -6503,7 +6717,7 @@
             notif.textContent = 'CyberAxe Node Overload!';
             document.body.appendChild(notif);
             
-            setTimeout(() => notif.remove(), 2000);
+            trackedSetTimeout(() => notif.remove(), 2000);
             
             // Stop idle and play special
             cyberAxeIdleAction.stop();
@@ -6536,9 +6750,9 @@
             
             // If no chain exists, wait for one to spawn
             if (!fallingChain) {
-                const waitForChain = setInterval(() => {
+                const waitForChain = trackedSetInterval(() => {
                     if (fallingChain) {
-                        clearInterval(waitForChain);
+                        trackedClearInterval(waitForChain);
                         executeCyberAxeSpecial();
                     }
                 }, 50); // Check every 50ms
@@ -6555,7 +6769,7 @@
             
             // Check if sandblasting should trigger
             if (sandblastingCharge >= 100) {
-                setTimeout(() => {
+                trackedSetTimeout(() => {
                     triggerSandblastingEvent();
                 }, 7000); // Trigger after CyberAxe special completes (5s + 2s buffer)
             }
@@ -6620,9 +6834,10 @@
             const flickerPattern = [200, 400, 600, 1200, 1400, 2000, 2100]; // Random times to toggle
             cyberAxeFlickerTimeouts = []; // Clear any previous timeouts
             flickerPattern.forEach(time => {
-                const timeout1 = setTimeout(() => toggleLights(false), time);
-                const timeout2 = setTimeout(() => toggleLights(true), time + 100); // On after 100ms
+                const timeout1 = trackedSetTimeout(() => toggleLights(false), time);
+                const timeout2 = trackedSetTimeout(() => toggleLights(true), time + 100); // On after 100ms
                 cyberAxeFlickerTimeouts.push(timeout1, timeout2);
+                activeTimeouts.push(timeout1, timeout2);
             });
             
             const laserDuration = 5000; // 5 seconds of laser fire
@@ -6638,7 +6853,7 @@
             
             // Flash the room walls and lights smoothly
             let flashPhase = 0;
-            cyberAxeFlashInterval = setInterval(() => {
+            cyberAxeFlashInterval = trackedSetInterval(() => {
                 flashPhase += 0.1;
                 const intensity = Math.sin(flashPhase * Math.PI * 2) * 0.3 + 0.5; // Oscillate between 0.2 and 0.8 (darker)
                 
@@ -6652,18 +6867,18 @@
             }, 50); // Faster update for smooth animation
             
             // Fire lasers repeatedly
-            const laserTimer = setInterval(() => {
+            const laserTimer = trackedSetInterval(() => {
                 if (laserCount >= maxLasers) {
-                    clearInterval(laserTimer);
+                    trackedClearInterval(laserTimer);
                     
                     // Continue flashing lights for 3 more seconds
-                    cyberAxeCleanupTimeout = setTimeout(() => {
-                        clearInterval(cyberAxeFlashInterval);
+                    cyberAxeCleanupTimeout = trackedSetTimeout(() => {
+                        trackedClearInterval(cyberAxeFlashInterval);
                         cyberAxeFlashInterval = null;
                         cyberAxeCleanupTimeout = null;
                         
                         // Clear any remaining flicker timeouts
-                        cyberAxeFlickerTimeouts.forEach(id => clearTimeout(id));
+                        cyberAxeFlickerTimeouts.forEach(id => trackedClearTimeout(id));
                         cyberAxeFlickerTimeouts = [];
                         
                         // Restore wall brightness to default
@@ -6676,6 +6891,7 @@
                         // Restore lights to default
                         toggleLights(true);
                     }, 3000);
+                    activeTimeouts.push(cyberAxeCleanupTimeout);
                     
                     // Unfreeze chain and restore time immediately
                     cyberAxeSpecialActive = false;
@@ -6718,7 +6934,7 @@
             createShockwaveRings(x + 0.5, z + 0.5);
             
             // Remove tube after effect
-            setTimeout(() => {
+            trackedSetTimeout(() => {
                 scene.remove(tube);
                 tubeGeometry.dispose();
                 tubeMaterial.dispose();
@@ -6730,7 +6946,7 @@
                     const block = grid[x][y][z];
                     
                     // Create explosion effect
-                    setTimeout(() => {
+                    trackedSetTimeout(() => {
                         if (grid[x][y][z] && grid[x][y][z] === block) {
                             if (block.mesh) {
                                 scene.remove(block.mesh);
@@ -6801,7 +7017,8 @@
                         particle.position.y += particle.velocity.y;
                         particle.position.z += particle.velocity.z;
                     });
-                    requestAnimationFrame(animateParticles);
+                    const frameId = requestAnimationFrame(animateParticles);
+                    activeAnimationFrames.push(frameId);
                 } else {
                     particles.forEach(particle => {
                         scene.remove(particle);
@@ -6820,7 +7037,7 @@
             const ringDelay = 50; // ms between each ring spawn
             
             for (let i = 0; i < ringCount; i++) {
-                setTimeout(() => {
+                trackedSetTimeout(() => {
                     createSingleShockwave(x, z);
                 }, i * ringDelay);
             }
@@ -6848,7 +7065,8 @@
                 ring.scale.set(radius / 0.15, radius / 0.15, 1);
                 
                 if (yPos > -5) {
-                    requestAnimationFrame(animateRing);
+                    const frameId = requestAnimationFrame(animateRing);
+                    activeAnimationFrames.push(frameId);
                 } else {
                     scene.remove(ring);
                     ringGeometry.dispose();
@@ -7142,12 +7360,42 @@
             
             // Clear falling chain if it exists
             if (fallingChain) {
-                fallingChain.links.forEach(link => scene.remove(link));
+                fallingChain.links.forEach(link => disposeLinkMesh(link));
                 fallingChain = null;
             }
             
             // Clear broken links
             brokenLinks.clear();
+            
+            // MEMORY LEAK FIX: Cancel all active animation loops
+            activeAnimationFrames.forEach(id => cancelAnimationFrame(id));
+            activeAnimationFrames = [];
+            
+            // MEMORY LEAK FIX: Clear all active timeouts and intervals
+            activeTimeouts.forEach(id => trackedClearTimeout(id));
+            activeTimeouts = [];
+            activeIntervals.forEach(id => trackedClearInterval(id));
+            activeIntervals = [];
+            
+            // MEMORY LEAK FIX: Clear particle effects array and dispose particles
+            particleEffects.forEach(effect => {
+                if (effect.particles) {
+                    effect.particles.forEach(particle => {
+                        scene.remove(particle.mesh);
+                        if (particle.mesh.geometry) particle.mesh.geometry.dispose();
+                        if (particle.mesh.material) particle.mesh.material.dispose();
+                    });
+                }
+            });
+            particleEffects = [];
+            
+            // MEMORY LEAK FIX: Clear all placement intervals
+            particlePlacements.forEach(placement => {
+                if (placement.loopInterval) {
+                    trackedClearInterval(placement.loopInterval);
+                    placement.loopInterval = null;
+                }
+            });
             
             // Calculate starting score based on level (level - 1) * 1000
             const startingScore = (startingLevel - 1) * 1000;
@@ -7181,10 +7429,10 @@
                 controlsBtn.classList.add('hint');
                 tooltip.classList.add('show');
                 tooltip.style.display = 'block';
-                setTimeout(() => {
+                trackedSetTimeout(() => {
                     controlsBtn.classList.remove('hint');
                     tooltip.classList.remove('show');
-                    setTimeout(() => { tooltip.style.display = 'none'; }, 500);
+                    trackedSetTimeout(() => { tooltip.style.display = 'none'; }, 500);
                 }, 10000); // Stop blinking after 10 seconds
             }
             zancasCharge = 0;
@@ -7192,7 +7440,7 @@
             sandblastingCharge = 0; // Reset sandblasting charge
             sandblastingActive = false;
             if (window.sandblastingLinks) {
-                window.sandblastingLinks.forEach(link => scene.remove(link.mesh));
+                window.sandblastingLinks.forEach(link => disposeLinkMesh(link.mesh));
                 window.sandblastingLinks = [];
             }
             updateSpecialAbilityBars();
@@ -7356,7 +7604,7 @@
             bonusMsg.style.display = 'block';
             
             // Hide notification after 2 seconds
-            setTimeout(() => {
+            trackedSetTimeout(() => {
                 bonusMsg.style.display = 'none';
             }, 2000);
             
@@ -7376,47 +7624,60 @@
                 'easier': 'Easier',
                 'easy': 'Easy',
                 'mid': 'Medium',
-                'mid-hard': 'Medium-Hard',
-                'very-hard': 'Very Hard'
+                'mid-hard': 'Med-Hard',
+                'very-hard': 'V-Hard'
             };
             
             tiers.forEach(tier => {
+                const tierSection = document.createElement('div');
+                tierSection.style.cssText = 'margin-bottom: 15px;';
+                
+                const tierHeader = document.createElement('div');
+                tierHeader.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 2px solid #2A9D8F;';
+                
                 const tierTitle = document.createElement('h3');
                 tierTitle.textContent = tierNames[tier];
-                tierTitle.style.cssText = 'color: #F2C94C; margin: 30px 0 15px 0; font-size: 24px;';
-                list.appendChild(tierTitle);
+                tierTitle.style.cssText = 'color: #2A9D8F; margin: 0; font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;';
                 
                 const tierAchievements = achievements.filter(a => a.tier === tier);
                 const unlockedCount = tierAchievements.filter(a => a.unlocked).length;
                 
-                const progress = document.createElement('div');
-                progress.textContent = `${unlockedCount}/${tierAchievements.length} unlocked`;
-                progress.style.cssText = 'color: #BFD1E0; margin-bottom: 15px;';
-                list.appendChild(progress);
+                const progress = document.createElement('span');
+                progress.textContent = `${unlockedCount}/${tierAchievements.length}`;
+                progress.style.cssText = 'color: #BFD1E0; font-size: 13px; font-weight: 700;';
+                
+                tierHeader.appendChild(tierTitle);
+                tierHeader.appendChild(progress);
+                tierSection.appendChild(tierHeader);
+                
+                const grid = document.createElement('div');
+                grid.style.cssText = 'display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px;';
                 
                 tierAchievements.forEach(achievement => {
                     const item = document.createElement('div');
                     item.className = 'achievementItem' + (achievement.unlocked ? ' unlocked' : '');
                     
                     item.innerHTML = `
-                        <div class="achievementIcon ${achievement.unlocked ? 'unlocked' : 'locked'}">
+                        <div style="width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; background: ${achievement.unlocked ? '#2A9D8F' : '#141B22'}; color: #fff; border: 2px solid ${achievement.unlocked ? '#4ECDC4' : '#26313B'};">
                             ${achievement.unlocked ? '✓' : '🔒'}
                         </div>
-                        <div class="achievementInfo">
-                            <div class="achievementName">${achievement.name}</div>
-                            <div class="achievementDesc">${achievement.desc}</div>
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="font-size: 12px; font-weight: 700; margin-bottom: 2px; color: ${achievement.unlocked ? '#4ECDC4' : '#D4E3F0'}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${achievement.name}</div>
+                            <div style="font-size: 10px; color: #89A0B4; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">${achievement.desc}</div>
                         </div>
-                        <span class="achievementTier tier-${tier}">${tier}</span>
                     `;
                     
-                    list.appendChild(item);
+                    grid.appendChild(item);
                 });
+                
+                tierSection.appendChild(grid);
+                list.appendChild(tierSection);
             });
             
             const totalUnlocked = achievements.filter(a => a.unlocked).length;
             const summary = document.createElement('div');
-            summary.style.cssText = 'margin-top: 30px; text-align: center; font-size: 24px; font-weight: 700; color: #F2C94C;';
-            summary.textContent = `Total: ${totalUnlocked}/50 Achievements Unlocked`;
+            summary.style.cssText = 'margin-top: 15px; padding-top: 12px; border-top: 2px solid #2A9D8F; text-align: center; font-size: 16px; font-weight: 700; color: #4ECDC4;';
+            summary.textContent = `${totalUnlocked}/50 Unlocked`;
             list.appendChild(summary);
         }
         
@@ -7442,107 +7703,133 @@
             const list = document.getElementById('highScoresList');
             list.innerHTML = '';
             
-            // Top 20 High Scores
+            // Create 2-column layout container
+            const container = document.createElement('div');
+            container.style.cssText = 'display: grid; grid-template-columns: 1fr 1fr; gap: 25px;';
+            
+            // Left column: Top 10 High Scores
+            const leftColumn = document.createElement('div');
             const topTitle = document.createElement('h3');
-            topTitle.textContent = 'Top 20 High Scores';
-            topTitle.style.cssText = 'color: #F2C94C; margin: 20px 0 15px 0; font-size: 24px;';
-            list.appendChild(topTitle);
+            topTitle.textContent = 'Top 10 High Scores';
+            topTitle.style.cssText = 'color: #F2C94C; margin: 0 0 12px 0; font-size: 18px; text-align: center; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;';
+            leftColumn.appendChild(topTitle);
             
             const topScores = JSON.parse(localStorage.getItem(STORAGE_KEYS.HIGH_SCORES) || '[]');
             if (topScores.length === 0) {
                 const noData = document.createElement('div');
                 noData.textContent = 'No high scores yet!';
-                noData.style.cssText = 'color: #89A0B4; padding: 20px; text-align: center;';
-                list.appendChild(noData);
+                noData.style.cssText = 'color: #89A0B4; padding: 20px; text-align: center; font-size: 14px;';
+                leftColumn.appendChild(noData);
             } else {
                 let displayIndex = 1;
-                topScores.forEach((game) => {
+                topScores.slice(0, 10).forEach((game) => {
                     if (!game.time || !game.scorePerMinute) return;
                     const item = document.createElement('div');
-                    item.style.cssText = 'background: rgba(242, 201, 76, 0.1); padding: 15px; margin: 10px 0; border-radius: 5px; font-family: JetBrains Mono, monospace;';
+                    item.style.cssText = 'background: rgba(10, 14, 18, 0.5); padding: 8px 12px; margin: 5px 0; border-radius: 6px; font-family: JetBrains Mono, monospace; border: 1px solid #26313B; transition: all 0.2s;';
                     const minutes = Math.floor(game.time / 60);
                     const seconds = game.time % 60;
                     
-                    // Get start level icon
                     let startIcon = '';
                     const sl = game.startLevel || 1;
-                    if (sl === 1) startIcon = '🟢'; // Green - normal start
-                    else if (sl === 10) startIcon = '🔵'; // Blue - tutorial skip
-                    else if (sl === 50) startIcon = '🟠'; // Orange - good player
-                    else if (sl === 100) startIcon = '🔴'; // Red - expert
-                    else if (sl === 1000) startIcon = '🟣'; // Purple - crazy
-                    else if (sl === 10000) startIcon = '🟡'; // Yellow - superhuman
-                    else startIcon = '⚪'; // White - custom start
+                    if (sl === 1) startIcon = '🟢';
+                    else if (sl === 10) startIcon = '🔵';
+                    else if (sl === 50) startIcon = '🟠';
+                    else if (sl === 100) startIcon = '🔴';
+                    else if (sl === 1000) startIcon = '🟣';
+                    else if (sl === 10000) startIcon = '🟡';
+                    else startIcon = '⚪';
                     
-                    // Get AI badge
                     const aiBadge = game.usedAI ? ' 🤖' : '';
                     
                     item.innerHTML = `
-                        <div style="display: flex; justify-content: space-between; color: #F2C94C; font-size: 18px; margin-bottom: 5px;">
+                        <div style="display: flex; justify-content: space-between; color: #D4E3F0; font-size: 13px; margin-bottom: 3px;">
                             <span>#${displayIndex} ${startIcon}${aiBadge}</span>
-                            <span>${game.score.toLocaleString()} pts</span>
+                            <span style="color: #F2C94C; font-weight: 700;">${game.score.toLocaleString()}</span>
                         </div>
-                        <div style="display: flex; justify-content: space-between; color: #89A0B4; font-size: 14px;">
-                            <span>Level ${game.level}</span>
+                        <div style="display: flex; justify-content: space-between; color: #89A0B4; font-size: 11px;">
+                            <span>Lv ${game.level}</span>
                             <span>${minutes}:${seconds.toString().padStart(2, '0')}</span>
                             <span>${game.scorePerMinute.toLocaleString()}/min</span>
                         </div>
                     `;
-                    list.appendChild(item);
+                    item.addEventListener('mouseenter', () => {
+                        item.style.transform = 'translateX(3px)';
+                        item.style.borderColor = '#F2C94C';
+                        item.style.background = 'rgba(20, 27, 34, 0.8)';
+                    });
+                    item.addEventListener('mouseleave', () => {
+                        item.style.transform = 'translateX(0)';
+                        item.style.borderColor = '#26313B';
+                        item.style.background = 'rgba(10, 14, 18, 0.5)';
+                    });
+                    leftColumn.appendChild(item);
                     displayIndex++;
                 });
             }
             
-            // Last 5 Games
+            // Right column: Last 5 Games
+            const rightColumn = document.createElement('div');
             const recentTitle = document.createElement('h3');
             recentTitle.textContent = 'Last 5 Games';
-            recentTitle.style.cssText = 'color: #2D9CDB; margin: 40px 0 15px 0; font-size: 24px;';
-            list.appendChild(recentTitle);
+            recentTitle.style.cssText = 'color: #2D9CDB; margin: 0 0 12px 0; font-size: 18px; text-align: center; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;';
+            rightColumn.appendChild(recentTitle);
             
             const gameHistory = JSON.parse(localStorage.getItem(STORAGE_KEYS.GAME_HISTORY) || '[]');
             if (gameHistory.length === 0) {
                 const noData = document.createElement('div');
                 noData.textContent = 'No game history yet!';
-                noData.style.cssText = 'color: #89A0B4; padding: 20px; text-align: center;';
-                list.appendChild(noData);
+                noData.style.cssText = 'color: #89A0B4; padding: 20px; text-align: center; font-size: 14px;';
+                rightColumn.appendChild(noData);
             } else {
                 let displayIndex = 1;
                 gameHistory.forEach((game) => {
                     if (!game.time || !game.scorePerMinute) return;
                     const item = document.createElement('div');
-                    item.style.cssText = 'background: rgba(45, 156, 219, 0.1); padding: 15px; margin: 10px 0; border-radius: 5px; font-family: JetBrains Mono, monospace;';
+                    item.style.cssText = 'background: rgba(10, 14, 18, 0.5); padding: 10px 14px; margin: 6px 0; border-radius: 6px; font-family: JetBrains Mono, monospace; border: 1px solid #26313B; transition: all 0.2s;';
                     const minutes = Math.floor(game.time / 60);
                     const seconds = game.time % 60;
                     
-                    // Get start level icon
                     let startIcon = '';
                     const sl = game.startLevel || 1;
-                    if (sl === 1) startIcon = '🟢'; // Green - normal start
-                    else if (sl === 10) startIcon = '🔵'; // Blue - tutorial skip
-                    else if (sl === 50) startIcon = '🟠'; // Orange - good player
-                    else if (sl === 100) startIcon = '🔴'; // Red - expert
-                    else if (sl === 1000) startIcon = '🟣'; // Purple - crazy
-                    else if (sl === 10000) startIcon = '🟡'; // Yellow - superhuman
-                    else startIcon = '⚪'; // White - custom start
+                    if (sl === 1) startIcon = '🟢';
+                    else if (sl === 10) startIcon = '🔵';
+                    else if (sl === 50) startIcon = '🟠';
+                    else if (sl === 100) startIcon = '🔴';
+                    else if (sl === 1000) startIcon = '🟣';
+                    else if (sl === 10000) startIcon = '🟡';
+                    else startIcon = '⚪';
                     
-                    // Get AI badge
                     const aiBadge = game.usedAI ? ' 🤖' : '';
                     
                     item.innerHTML = `
-                        <div style="display: flex; justify-content: space-between; color: #2D9CDB; font-size: 18px; margin-bottom: 5px;">
+                        <div style="display: flex; justify-content: space-between; color: #2D9CDB; font-size: 14px; margin-bottom: 4px; font-weight: 700;">
                             <span>Game ${displayIndex} ${startIcon}${aiBadge}</span>
-                            <span>${game.score.toLocaleString()} pts</span>
+                            <span style="color: #F2C94C;">${game.score.toLocaleString()}</span>
                         </div>
-                        <div style="display: flex; justify-content: space-between; color: #89A0B4; font-size: 14px;">
+                        <div style="display: flex; justify-content: space-between; color: #89A0B4; font-size: 12px;">
                             <span>Level ${game.level}</span>
                             <span>${minutes}:${seconds.toString().padStart(2, '0')}</span>
                             <span>${game.scorePerMinute.toLocaleString()}/min</span>
                         </div>
                     `;
-                    list.appendChild(item);
+                    item.addEventListener('mouseenter', () => {
+                        item.style.transform = 'translateX(3px)';
+                        item.style.borderColor = '#2D9CDB';
+                        item.style.background = 'rgba(20, 27, 34, 0.8)';
+                    });
+                    item.addEventListener('mouseleave', () => {
+                        item.style.transform = 'translateX(0)';
+                        item.style.borderColor = '#26313B';
+                        item.style.background = 'rgba(10, 14, 18, 0.5)';
+                    });
+                    rightColumn.appendChild(item);
                     displayIndex++;
                 });
             }
+            
+            container.appendChild(leftColumn);
+            container.appendChild(rightColumn);
+            list.appendChild(container);
         }
         
         function closeAllPanels() {
@@ -7710,7 +7997,7 @@
             
             // Clean up falling chain if exists
             if (fallingChain) {
-                fallingChain.links.forEach(mesh => scene.remove(mesh));
+                fallingChain.links.forEach(mesh => disposeLinkMesh(mesh));
                 fallingChain = null;
             }
         }
@@ -8651,7 +8938,7 @@
             const link = grid[x][y][z];
             if (!link) return;
             
-            scene.remove(link.mesh);
+            disposeLinkMesh(link.mesh);
             grid[x][y][z] = null;
             brokenLinks.delete(`${x},${y},${z}`);
             
@@ -8684,16 +8971,76 @@
         }
         
         function createLinkMesh(linkType) {
-            const mesh = chainLinkModel.clone();
+            // Select the appropriate model based on link type name
+            let modelToClone;
+            switch(linkType.name) {
+                case 'ZEC-A':
+                    modelToClone = chainModelYellow;
+                    break;
+                case 'ZEC-B':
+                    modelToClone = chainModelBlue;
+                    break;
+                case 'ZEC-C':
+                    modelToClone = chainModelGreen;
+                    break;
+                case 'ZEC-D':
+                    modelToClone = chainModelRed;
+                    break;
+                default:
+                    modelToClone = chainModelYellow; // Fallback
+            }
+            
+            // Clone the model AND materials (deep clone materials to prevent shared references)
+            const mesh = modelToClone.clone();
             mesh.traverse((child) => {
-                if (child.isMesh) {
+                if (child.isMesh && child.material) {
+                    // Clone material to prevent sharing between instances
                     child.material = child.material.clone();
-                    child.material.emissive.setHex(linkType.emissive);
-                    child.material.emissiveIntensity = 0.6;
-                    child.material.shininess = 60;
                 }
             });
             return mesh;
+        }
+        
+        // Properly dispose of link mesh to prevent memory leaks
+        function disposeLinkMesh(mesh) {
+            if (!mesh) return;
+            
+            scene.remove(mesh);
+            
+            mesh.traverse((child) => {
+                if (child.isMesh) {
+                    // Dispose geometry (shared across clones, but Three.js ref-counts it)
+                    if (child.geometry) {
+                        child.geometry.dispose();
+                    }
+                    
+                    // Dispose material (unique per clone from createLinkMesh)
+                    if (child.material) {
+                        if (Array.isArray(child.material)) {
+                            child.material.forEach(mat => mat.dispose());
+                        } else {
+                            child.material.dispose();
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Properly dispose of ArrowHelper - must dispose cone and line children
+        function disposeArrowHelper(arrow) {
+            if (!arrow) return;
+            
+            scene.remove(arrow);
+            
+            // ArrowHelper has cone and line children with their own geometries/materials
+            if (arrow.cone) {
+                if (arrow.cone.geometry) arrow.cone.geometry.dispose();
+                if (arrow.cone.material) arrow.cone.material.dispose();
+            }
+            if (arrow.line) {
+                if (arrow.line.geometry) arrow.line.geometry.dispose();
+                if (arrow.line.material) arrow.line.material.dispose();
+            }
         }
         
         // Advanced particle effect system (JSON-based)
@@ -8796,8 +9143,8 @@
                     // Dispose geometry and material
                     if (particle.mesh.geometry) particle.mesh.geometry.dispose();
                     if (particle.mesh.material) {
-                        // Dispose cloned texture
-                        if (particle.mesh.material.map) {
+                        // Only dispose cloned textures, not shared ones
+                        if (particle.isTextureCloned && particle.mesh.material.map) {
                             particle.mesh.material.map.dispose();
                         }
                         particle.mesh.material.dispose();
@@ -8876,8 +9223,8 @@
                             // Dispose geometry and material
                             if (particle.mesh.geometry) particle.mesh.geometry.dispose();
                             if (particle.mesh.material) {
-                                // Dispose cloned texture
-                                if (particle.mesh.material.map) {
+                                // Only dispose cloned textures, not shared ones
+                                if (particle.isTextureCloned && particle.mesh.material.map) {
                                     particle.mesh.material.map.dispose();
                                 }
                                 particle.mesh.material.dispose();
@@ -8956,17 +9303,23 @@
                 return;
             }
             
-            // Clone and configure texture for UV coords
-            const textureClone = texture.clone();
-            textureClone.needsUpdate = true;
-            
-            // Set UV coordinates for sprite sheet (V is NOT inverted for offset/repeat)
+            // Only clone texture if UV manipulation is needed, otherwise share the base texture
+            let textureToUse;
+            let isTextureCloned = false;
             if (config.uvStartX !== undefined) {
-                textureClone.offset.set(config.uvStartX, config.uvStartY);
-                textureClone.repeat.set(
+                // Clone for UV manipulation
+                textureToUse = texture.clone();
+                textureToUse.needsUpdate = true;
+                textureToUse.offset.set(config.uvStartX, config.uvStartY);
+                textureToUse.repeat.set(
                     config.uvEndX - config.uvStartX,
                     config.uvEndY - config.uvStartY
                 );
+                isTextureCloned = true;
+            } else {
+                // Share base texture (no cloning needed)
+                textureToUse = texture;
+                isTextureCloned = false;
             }
             
             // Create material
@@ -8986,7 +9339,7 @@
             
             if (particleType === 'sprite' || faceCamera) {
                 material = new THREE.SpriteMaterial({
-                    map: textureClone,
+                    map: textureToUse,
                     color: colorStart,
                     transparent: true,
                     opacity: config.opacityStart,
@@ -9000,7 +9353,7 @@
             } else {
                 const geometry = new THREE.PlaneGeometry(1, 1);
                 material = new THREE.MeshBasicMaterial({
-                    map: textureClone,
+                    map: textureToUse,
                     color: colorStart,
                     transparent: true,
                     opacity: config.opacityStart,
@@ -9108,7 +9461,8 @@
                 startColor: colorStart.clone(),
                 endColor: colorEnd.clone(),
                 rotation: initialRotation,
-                rotationSpeed: rotSpeed || config.rotationSpeed || 0
+                rotationSpeed: rotSpeed || config.rotationSpeed || 0,
+                isTextureCloned: isTextureCloned
             });
         }
         
@@ -9135,25 +9489,7 @@
             fallingChain.links[0] = bottomMesh;
             fallingChain.links[fallingChain.length - 1] = topMesh;
             
-            // Update mesh materials to reflect new types
-            const topType = fallingChain.linkTypes[0];
-            const bottomType = fallingChain.linkTypes[fallingChain.length - 1];
-            
-            // Update top mesh (now has bottom type)
-            bottomMesh.traverse((child) => {
-                if (child.isMesh) {
-                    child.material.emissive.setHex(topType.emissive);
-                    child.material.emissiveIntensity = fallingChain.isGlowing ? 1.5 : 0.6;
-                }
-            });
-            
-            // Update bottom mesh (now has top type)
-            topMesh.traverse((child) => {
-                if (child.isMesh) {
-                    child.material.emissive.setHex(bottomType.emissive);
-                    child.material.emissiveIntensity = fallingChain.isGlowing ? 1.5 : 0.6;
-                }
-            });
+            // Note: Models are already pre-colored, no material changes needed
             
             // Update positions to match new order
             for (let i = 0; i < fallingChain.links.length; i++) {
@@ -9239,8 +9575,8 @@
                         link.style.background = '#FFFFFF';
                         link.style.boxShadow = '0 0 10px rgba(255, 255, 255, 0.8)';
                     } else {
-                        // Show actual color
-                        link.style.background = `#${linkType.color.toString(16).padStart(6, '0')}`;
+                        // Show actual color from preview mapping
+                        link.style.background = PREVIEW_COLORS[linkType.name] || '#FFFFFF';
                     }
                     
                     previewElement.appendChild(link);
@@ -9304,19 +9640,7 @@
                     fallingChain.z + 0.5
                 );
                 
-                // Apply glowing effect if this is a glowing chain
-                if (fallingChain.isGlowing) {
-                    mesh.traverse((child) => {
-                        if (child.isMesh && child.material) {
-                            // Mark as broken/glowing - white emissive
-                            child.material.emissive.setHex(0xFFFFFF);
-                            child.material.emissiveIntensity = 1.5; // Much brighter!
-                            // Store glowing state for pulsing animation
-                            child.userData.isGlowing = true;
-                            child.userData.baseEmissive = 1.5; // Store base intensity
-                        }
-                    });
-                }
+                // No material modifications - models are already colored
                 
                 // Alternate 90° rotation on Y-axis for interlocking chain links
                 if (i % 2 === 1) {
@@ -9342,7 +9666,7 @@
             const playTime = (Date.now() - stats.startTime) / 1000;
             if (playTime >= 300) unlockAchievement('play_5min');
             
-            setTimeout(() => {
+            trackedSetTimeout(() => {
                 if (settings.autoRestart) {
                     // Auto restart if setting is enabled
                     startGame();
@@ -9488,18 +9812,6 @@
             // Update visual positions
             for (let i = 0; i < fallingChain.links.length; i++) {
                 fallingChain.links[i].position.y = fallingChain.y - i + 0.5;
-                
-                // Apply pulsing glow effect to glowing chains
-                if (fallingChain.isGlowing) {
-                    const time = Date.now() * 0.003; // Slower pulse
-                    const pulse = Math.sin(time) * 0.5 + 1.5; // Oscillate between 1.0 and 2.0 (much brighter!)
-                    
-                    fallingChain.links[i].traverse((child) => {
-                        if (child.isMesh && child.material && child.userData.isGlowing) {
-                            child.material.emissiveIntensity = pulse;
-                        }
-                    });
-                }
             }
         }
         
@@ -9520,7 +9832,7 @@
         
         function decryptLink(mesh, linkType, x, y, z, delay) {
             // Create decryption particles effect
-            setTimeout(() => {
+            trackedSetTimeout(() => {
                 // Spawn decryption particles
                 const particleCount = 20;
                 const particles = [];
@@ -9528,9 +9840,7 @@
                 for (let i = 0; i < particleCount; i++) {
                     const geometry = new THREE.BoxGeometry(0.08, 0.08, 0.08);
                     const material = new THREE.MeshPhongMaterial({
-                        color: linkType.color,
-                        emissive: linkType.emissive,
-                        emissiveIntensity: 1.2,
+                        color: 0xFFFFFF, // Simple white particles
                         transparent: true,
                         opacity: 1.0
                     });
@@ -9587,67 +9897,22 @@
                             particle.userData.velocity.y -= 0.002;
                         } else {
                             scene.remove(particle);
+                            // Dispose geometry and material to prevent memory leak
+                            if (particle.geometry) particle.geometry.dispose();
+                            if (particle.material) particle.material.dispose();
                         }
                     });
                     
                     if (!allDead) {
-                        requestAnimationFrame(animateDecryptParticles);
+                        const frameId = requestAnimationFrame(animateDecryptParticles);
+                        activeAnimationFrames.push(frameId);
                     }
                 };
                 
                 animateDecryptParticles();
                 
-                // Gradually transition the mesh color
-                let decryptProgress = 0;
-                const decryptDuration = 0.5; // 0.5 seconds to decrypt
-                const startTime = Date.now();
-                
-                const animateDecryption = () => {
-                    const elapsed = (Date.now() - startTime) / 1000;
-                    decryptProgress = Math.min(elapsed / decryptDuration, 1.0);
-                    
-                    mesh.traverse((child) => {
-                        if (child.isMesh) {
-                            // Lerp from gray to actual color
-                            const grayEmissive = 0x333333;
-                            const targetEmissive = linkType.emissive;
-                            
-                            // Extract RGB components
-                            const grayR = (grayEmissive >> 16) & 0xFF;
-                            const grayG = (grayEmissive >> 8) & 0xFF;
-                            const grayB = grayEmissive & 0xFF;
-                            
-                            const targetR = (targetEmissive >> 16) & 0xFF;
-                            const targetG = (targetEmissive >> 8) & 0xFF;
-                            const targetB = targetEmissive & 0xFF;
-                            
-                            // Interpolate
-                            const r = Math.floor(grayR + (targetR - grayR) * decryptProgress);
-                            const g = Math.floor(grayG + (targetG - grayG) * decryptProgress);
-                            const b = Math.floor(grayB + (targetB - grayB) * decryptProgress);
-                            
-                            const newColor = (r << 16) | (g << 8) | b;
-                            child.material.emissive.setHex(newColor);
-                            
-                            // Pulse intensity during decryption
-                            child.material.emissiveIntensity = 0.6 + Math.sin(decryptProgress * Math.PI) * 0.4;
-                        }
-                    });
-                    
-                    if (decryptProgress < 1.0) {
-                        requestAnimationFrame(animateDecryption);
-                    } else {
-                        // Final state
-                        mesh.traverse((child) => {
-                            if (child.isMesh) {
-                                child.material.emissive.setHex(linkType.emissive);
-                                child.material.emissiveIntensity = 0.6;
-                            }
-                        });
-                    }
-                };
-                
-                animateDecryption();
+                // No color animation during decryption - models are already colored
+                // Just wait for particles to finish
             }, delay);
         }
         
@@ -9737,21 +10002,21 @@
                     } else {
                         // Position occupied, remove this link (shouldn't happen but safety check)
                         if (fallingChain.links[i]) {
-                            scene.remove(fallingChain.links[i]);
+                            disposeLinkMesh(fallingChain.links[i]);
                         }
                     }
                 } else if (gridY >= GRID_HEIGHT) {
                     // Link is above grid - this means game over condition
                     // Chain locked while still partially outside playfield
                     if (fallingChain.links[i]) {
-                        scene.remove(fallingChain.links[i]);
+                        disposeLinkMesh(fallingChain.links[i]);
                     }
                     gameOver();
                     return;
                 } else {
                     // Link is below grid (shouldn't happen with proper collision)
                     if (fallingChain.links[i]) {
-                        scene.remove(fallingChain.links[i]);
+                        disposeLinkMesh(fallingChain.links[i]);
                     }
                 }
             }
@@ -9776,7 +10041,7 @@
             
             // Schedule spawn of new chain (with delay to prevent immediate re-spawn)
             spawnScheduled = true;
-            setTimeout(() => {
+            trackedSetTimeout(() => {
                 spawnScheduled = false;
                 if (currentState === GameState.PLAYING) {
                     spawnNewChain();
@@ -9806,15 +10071,15 @@
             
             if (clustersToRemove.length > 0) {
                 // Wait 1 second before clearing, then wait for staggered removal to complete
-                setTimeout(() => {
+                trackedSetTimeout(() => {
                     const maxDelay = Math.max(...clustersToRemove.map(c => c.length)) * 50;
                     clustersToRemove.forEach(cluster => clearCluster(cluster));
                     updateCombo();
                     // Wait for all blocks to be removed before applying gravity
-                    setTimeout(() => {
+                    trackedSetTimeout(() => {
                         applyGravity();
                         // Check for floor clear bonus after gravity settles
-                        setTimeout(() => {
+                        trackedSetTimeout(() => {
                             checkFloorClear();
                         }, 300);
                     }, maxDelay + 100);
@@ -9857,7 +10122,7 @@
                 bonusMsg.style.display = 'block';
                 
                 // Hide after 3 seconds
-                setTimeout(() => {
+                trackedSetTimeout(() => {
                     bonusMsg.style.display = 'none';
                 }, 3000);
                 
@@ -9915,7 +10180,7 @@
                         // Destroy this broken link since it reached the floor
                         const link = grid[px][py][pz];
                         if (link) {
-                            scene.remove(link.mesh);
+                            disposeLinkMesh(link.mesh);
                             grid[px][py][pz] = null;
                             brokenLinks.delete(posKey);
                         }
@@ -9997,12 +10262,7 @@
                 return;
             }
             
-            link.mesh.traverse((child) => {
-                if (child.isMesh) {
-                    child.material.emissive.setHex(0xFFFFFF);
-                    child.material.emissiveIntensity = 0.8;
-                }
-            });
+            // Note: No visual change - model keeps original color
             
             // Show guide on first broken link (only if started at level 1)
             if (!glowingLinksGuideShown && startLevel === 1) {
@@ -10043,14 +10303,14 @@
                         link.mesh.position.set(link.x + 0.5, finalY + 0.5, link.z + 0.5);
                     } else {
                         // Remove if out of bounds
-                        scene.remove(link.mesh);
+                        disposeLinkMesh(link.mesh);
                     }
                     
                     // Remove from tracking array
                     window.sandblastingLinks.splice(i, 1);
                     
                     // Check for matches after placement
-                    setTimeout(() => {
+                    trackedSetTimeout(() => {
                         checkConsensus();
                     }, 100);
                 } else {
@@ -10097,7 +10357,7 @@
             
             // Remove meshes with staggered timing and play musical notes
             sortedCluster.forEach(([x, y, z], index) => {
-                setTimeout(() => {
+                trackedSetTimeout(() => {
                     if (grid[x][y][z]) {
                         stats.typesClearedSet.add(grid[x][y][z].type.name);
                         if (grid[x][y][z].mesh) {
@@ -10216,7 +10476,8 @@
                     });
                     
                     if (progress < 1) {
-                        requestAnimationFrame(animateFall);
+                        const frameId = requestAnimationFrame(animateFall);
+                        activeAnimationFrames.push(frameId);
                     } else {
                         // Ensure final positions are exact
                         movingBlocks.forEach(({mesh, endY}) => {
@@ -10224,14 +10485,14 @@
                         });
                         
                         // Check for glowing links that landed on floor and auto-destroy them
-                        setTimeout(() => {
+                        trackedSetTimeout(() => {
                             checkAndDestroyFloorGlowingLinks();
                         }, 50);
                         
                         // Check for cascades after animation completes
                         if (anyMoved) {
                             stats.cascadesTriggered++;
-                            setTimeout(() => {
+                            trackedSetTimeout(() => {
                                 checkConsensus();
                             }, 100);
                         }
@@ -10242,7 +10503,7 @@
             } else if (anyMoved) {
                 // No animation needed but still check cascades
                 stats.cascadesTriggered++;
-                setTimeout(() => {
+                trackedSetTimeout(() => {
                     checkConsensus();
                 }, 100);
             }
@@ -10259,7 +10520,7 @@
                         foundGlowing = true;
                         // Destroy this glowing link
                         const link = grid[x][0][z];
-                        scene.remove(link.mesh);
+                        disposeLinkMesh(link.mesh);
                         grid[x][0][z] = null;
                         brokenLinks.delete(posKey);
                         score += 100; // Award points
@@ -10270,14 +10531,14 @@
             // If we destroyed any glowing links, update HUD and apply gravity again
             if (foundGlowing) {
                 updateHUD();
-                setTimeout(() => {
+                trackedSetTimeout(() => {
                     applyGravity(); // This will cascade - more glowing links may fall
                 }, 150);
             }
         }
         
         function animate() {
-            requestAnimationFrame(animate);
+            mainAnimationFrameId = requestAnimationFrame(animate);
             
             // ===== GAMEPAD POLLING =====
             updateGamepad();
@@ -10385,6 +10646,16 @@
                 handleMovement(gameplayDeltaTime);
             }
             
+            // Update chain light position to follow falling chain
+            if (fallingChain && fallingChain.links && fallingChain.links.length > 0) {
+                const topLink = fallingChain.links[0];
+                chainLight.position.set(
+                    topLink.position.x,
+                    topLink.position.y + 2,
+                    topLink.position.z
+                );
+            }
+            
             // Update LED pulse effect on walls
             updateLEDPulse();
             
@@ -10459,11 +10730,7 @@
                             newType = linkTypes[Math.floor(Math.random() * linkTypes.length)];
                         }
                         
-                        link.traverse((child) => {
-                            if (child.isMesh) {
-                                child.material.emissive.setHex(newType.emissive);
-                            }
-                        });
+                        // Note: No material changes - models are pre-colored
                     }
                 });
             });
