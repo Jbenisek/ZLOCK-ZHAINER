@@ -2,6 +2,68 @@
 
 # Changelog
 
+## v0.19.50 - Expanded Grid Effects (2025-11-18)
+- **Summary:**
+  - Expanded grid effects from 10 to 20 total options
+  - Added 10 solid color effects interleaved with animated effects
+  - Slowed Pulse Wave to calm, meditative pace
+
+- **Grid Effects Expansion:**
+  - Pattern: Alternates between animated and solid color effects
+  - New solid colors:
+    - 🌊 Deep Ocean: Rich deep blue (#0077BE)
+    - 💖 Hot Pink: Vibrant magenta (#FF1493)
+    - 🍏 Lime Green: Bright electric green (#00FF41)
+    - 🍇 Deep Purple: Royal purple (#9D00FF)
+    - 🟡 Amber Gold: Warm golden amber (#FFBF00)
+    - 🔴 Crimson Red: Bold crimson (#DC143C)
+    - 🌿 Aqua Mint: Soft aquamarine (#7FFFD4)
+    - ⚡ Electric Blue: Bright cyan-blue (#00D4FF)
+    - 🍊 Sunset Orange: Warm coral orange (#FF6B35)
+    - 💜 Violet Dream: Soft lavender purple (#B565D8)
+  - Pulse Wave speed reduced from 2.0 to 0.3 for calm, smooth animation
+  - Total of 20 unique grid appearances to choose from
+
+## v0.19.49 - Grid Effects Optimization (2025-11-18)
+- **Summary:**
+  - Added 10 visual grid effects inspired by Lumines and techno aesthetics
+  - Optimized flashing effects to prevent eye strain
+  - Smooth wave-based animations for all effects
+
+- **Grid Visual Effects:**
+  - 🌌 None: Default grid appearance
+  - 🌊 Pulse Wave: Rhythmic cyan pulses
+  - 🔆 Neon Glow: Steady cyan glow
+  - 🌈 Rainbow Spectrum: Cycling rainbow colors
+  - 💻 Digital Matrix: Smooth green matrix waves (no flashing)
+  - ⚡ Plasma Field: Purple/pink plasma animation
+  - 🔸 Crystal Refraction: Blue crystal shimmer
+  - 🌆 Synthwave Grid: Pink/cyan retro alternating
+  - 📡 Cyber Scanlines: Smooth scanning effect (no flashing)
+  - 🌀 Hypnotic Spiral: Rotating color spiral
+  - ✨ Quantum Shimmer: Gentle color-shifting shimmer (no flashing)
+  - Button in control panel to cycle through effects
+  - All effects use smooth sine wave animations for eye comfort
+
+## v0.19.48 - How to Play Guide (2025-11-18)
+- **Summary:**
+  - Added comprehensive How to Play modal accessible from title screen
+  - Includes all game mechanics, controls, and progression systems
+  - Fixed matching requirement display (6 blocks, not 3+)
+
+- **New Features:**
+  - 📖 How to Play button on title screen (bottom-right, above About/Donate)
+  - Professional two-column layout with color-coded sections
+  - Complete documentation of:
+    - Core objective and grid size
+    - Keyboard and gamepad controls
+    - Sandblasting mechanic
+    - Chain type unlocks by level (Multi-Color, Encrypted, Glowing)
+    - Character special abilities
+    - Pro tips for advanced play
+  - Gamepad support: SELECT or B button to open/close
+  - Corrected matching requirement to 6 connected blocks
+
 ## v0.19.47 - Controls Button Hint (2025-11-18)
 - **Summary:**
   - Added visual hint for controls button when starting level 1

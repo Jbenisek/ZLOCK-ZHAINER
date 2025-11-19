@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.19.47</title>
+    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.19.50</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -1685,7 +1685,7 @@
     <div id="gameContainer">
         <canvas id="renderCanvas"></canvas>
         
-        <div id="versionDisplay">v0.19.45</div>
+        <div id="versionDisplay">v0.19.48</div>
         
         <div id="performanceDisplay">
             <div><span class="perf-label">FPS:</span> <span class="perf-value" id="fpsValue">60</span></div>
@@ -1842,6 +1842,87 @@
             });
         </script>
         
+        <!-- How to Play Modal -->
+        <div id="howToPlayPanel" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 900px; max-height: 85vh; overflow-y: auto; background: rgba(10, 14, 18, 0.98); border: 3px solid #2A9D8F; border-radius: 16px; padding: 30px; z-index: 200; box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);">
+            <button onclick="closeHowToPlay()" style="position: absolute; top: 15px; right: 15px; background: #EB5757; color: white; border: none; border-radius: 8px; padding: 10px 18px; cursor: pointer; font-size: 18px; font-weight: bold; font-family: 'Inter', sans-serif;">✕</button>
+            
+            <h2 style="color: #2A9D8F; font-size: 32px; margin-bottom: 25px; text-align: center; font-weight: 900;">📖 HOW TO PLAY</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <!-- Left Column -->
+                <div>
+                    <div style="background: rgba(42, 157, 143, 0.1); border: 2px solid #2A9D8F; border-radius: 10px; padding: 15px; margin-bottom: 15px;">
+                        <h3 style="color: #2A9D8F; font-size: 18px; margin-bottom: 10px; font-weight: 700;">🎯 OBJECTIVE</h3>
+                        <p style="color: #D4E3F0; font-size: 14px; line-height: 1.6;">Match <strong>6 connected blocks</strong> of the same color in a <strong>6×25×6 3D grid</strong>. Clear blocks to score points and survive as chains fall faster each level!</p>
+                    </div>
+                    
+                    <div style="background: rgba(42, 157, 143, 0.1); border: 2px solid #2A9D8F; border-radius: 10px; padding: 15px; margin-bottom: 15px;">
+                        <h3 style="color: #2A9D8F; font-size: 18px; margin-bottom: 10px; font-weight: 700;">⌨️ CONTROLS</h3>
+                        <div style="color: #D4E3F0; font-size: 13px; line-height: 1.8;">
+                            <div style="margin-bottom: 8px;"><span style="background: #1a2332; padding: 3px 8px; border-radius: 4px; font-family: monospace;">WASD</span> Move chain (X/Z)</div>
+                            <div style="margin-bottom: 8px;"><span style="background: #1a2332; padding: 3px 8px; border-radius: 4px; font-family: monospace;">←→</span> Rotate chain 90°</div>
+                            <div style="margin-bottom: 8px;"><span style="background: #1a2332; padding: 3px 8px; border-radius: 4px; font-family: monospace;">SHIFT</span> Flip chain</div>
+                            <div style="margin-bottom: 8px;"><span style="background: #1a2332; padding: 3px 8px; border-radius: 4px; font-family: monospace;">SPACE</span> Fast drop (2x for instant)</div>
+                            <div style="margin-bottom: 8px;"><span style="background: #1a2332; padding: 3px 8px; border-radius: 4px; font-family: monospace;">Q/E</span> Rotate camera</div>
+                            <div style="margin-bottom: 8px;"><span style="background: #1a2332; padding: 3px 8px; border-radius: 4px; font-family: monospace;">T</span> Top-down view</div>
+                            <div><span style="background: #1a2332; padding: 3px 8px; border-radius: 4px; font-family: monospace;">1-4</span> Character specials</div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(42, 157, 143, 0.1); border: 2px solid #2A9D8F; border-radius: 10px; padding: 15px;">
+                        <h3 style="color: #2A9D8F; font-size: 18px; margin-bottom: 10px; font-weight: 700;">🎮 GAMEPAD</h3>
+                        <div style="color: #D4E3F0; font-size: 13px; line-height: 1.8;">
+                            <div style="margin-bottom: 6px;"><span style="background: #27AE60; color: white; padding: 2px 6px; border-radius: 50%; font-weight: bold; width: 20px; display: inline-block; text-align: center;">A</span> Fast/Instant drop</div>
+                            <div style="margin-bottom: 6px;"><span style="background: #E74C3C; color: white; padding: 2px 6px; border-radius: 50%; font-weight: bold; width: 20px; display: inline-block; text-align: center;">B</span> Flip</div>
+                            <div style="margin-bottom: 6px;"><span style="background: #F39C12; color: white; padding: 2px 6px; border-radius: 50%; font-weight: bold; width: 20px; display: inline-block; text-align: center;">Y</span> Rotate</div>
+                            <div style="margin-bottom: 6px;"><span style="background: #555; color: white; padding: 2px 6px; border-radius: 3px; font-weight: bold; font-size: 10px;">D-PAD</span> Character specials</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Column -->
+                <div>
+                    <div style="background: rgba(255, 107, 53, 0.1); border: 2px solid #FF6B35; border-radius: 10px; padding: 15px; margin-bottom: 15px;">
+                        <h3 style="color: #FF6B35; font-size: 18px; margin-bottom: 10px; font-weight: 700;">🌪️ SANDBLASTING</h3>
+                        <p style="color: #D4E3F0; font-size: 13px; line-height: 1.6;">Charges <strong>+25%</strong> each time you use a character special. At <strong>100%</strong>, unleashes <strong>60-100 random links</strong> from the sky over 7 seconds!</p>
+                    </div>
+                    
+                    <div style="background: rgba(139, 92, 246, 0.1); border: 2px solid #8B5CF6; border-radius: 10px; padding: 15px; margin-bottom: 15px;">
+                        <h3 style="color: #8B5CF6; font-size: 18px; margin-bottom: 10px; font-weight: 700;">🔓 CHAIN TYPES UNLOCK</h3>
+                        <div style="color: #D4E3F0; font-size: 13px; line-height: 1.7;">
+                            <div style="margin-bottom: 10px;">
+                                <div style="font-weight: 700; color: #2A9D8F;">Level 10: Multi-Color Chains</div>
+                                <div style="font-size: 12px; opacity: 0.9;">Each link can be different colors (30% spawn)</div>
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <div style="font-weight: 700; color: #8B5CF6;">Level 20: Encrypted Chains</div>
+                                <div style="font-size: 12px; opacity: 0.9;">Colors hidden until landing (20% spawn)</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: 700; color: #FFD700;">Level 50: Glowing Chains</div>
+                                <div style="font-size: 12px; opacity: 0.9;">Pre-glowing, 2-5 links, bonus points (15% spawn)</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(242, 201, 76, 0.1); border: 2px solid #F2C94C; border-radius: 10px; padding: 15px;">
+                        <h3 style="color: #F2C94C; font-size: 18px; margin-bottom: 10px; font-weight: 700;">⚡ CHARACTER SPECIALS</h3>
+                        <div style="color: #D4E3F0; font-size: 12px; line-height: 1.6;">
+                            <div style="margin-bottom: 8px;"><span style="color: #EB5757; font-weight: 700;">🔴 Zooko (1)</span> - Destroys most common block type</div>
+                            <div style="margin-bottom: 8px;"><span style="color: #F2C94C; font-weight: 700;">🟡 Nate (2)</span> - Breaks glowing blocks + tornado shuffle</div>
+                            <div style="margin-bottom: 8px;"><span style="color: #27AE60; font-weight: 700;">🟢 Zancas (3)</span> - Transforms 2 common types to gold</div>
+                            <div><span style="color: #2D9CDB; font-weight: 700;">🔵 CyberAxe (4)</span> - Laser destroys entire column</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="background: rgba(42, 157, 143, 0.15); border: 2px solid #2A9D8F; border-radius: 10px; padding: 15px; margin-top: 20px; text-align: center;">
+                <h3 style="color: #2A9D8F; font-size: 16px; margin-bottom: 8px; font-weight: 700;">💡 PRO TIP</h3>
+                <p style="color: #D4E3F0; font-size: 14px; line-height: 1.6; margin: 0;">Drop speed increases each level! Use <strong>Q/E</strong> to rotate your view and <strong>T</strong> for top-down perspective to plan your moves better. Match colors strategically to charge character specials!</p>
+            </div>
+        </div>
+        
         <!-- About/Donate Button under Sandblasting Panel -->
         <div style="
             position: absolute;
@@ -1963,6 +2044,7 @@
                     <button id="animationsBtn" class="active" onclick="toggleButton3()" title="Toggle Animations">🎬</button>
                     <button id="colorPickerBtn" onclick="toggleColorPicker()" title="Grid Color Settings">🎨</button>
                     <button id="controlsBtn" onclick="toggleControls()" title="Toggle Controls Panel">⌨️</button>
+                    <button id="gridEffectBtn" onclick="cycleGridEffect()" title="Grid Effect: None">🌌</button>
                 </div>
             </div>
             
@@ -2252,6 +2334,7 @@
             <button class="button" onclick="showSettings()">SETTINGS<span style="display: inline-block; width: 24px; height: 24px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 12px;">▶</span></button>
             <button class="button" onclick="showHighScores()">HIGH SCORES<span style="display: inline-block; width: 24px; height: 24px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 14px;">X</span></button>
             <button class="button" onclick="showAchievements()">ACHIEVEMENTS<span style="display: inline-block; width: 24px; height: 24px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 14px;">Y</span></button>
+            <button class="aboutButton" onclick="showHowToPlay()" style="background: #2A9D8F; bottom: 150px;">📖 HOW TO PLAY<span style="display: inline-block; padding: 2px 6px; background: #555; border-radius: 4px; margin-left: 8px; font-weight: bold; color: white; font-size: 11px;">SELECT</span></button>
             <button class="aboutButton" onclick="showAbout()">ABOUT / DONATE<span style="display: inline-block; width: 24px; height: 24px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
             <button class="preFillButton" onclick="startGameWithPreFill()">START WITH PRE-FILLED GRID<span style="display: inline-block; padding: 2px 6px; background: #555; border-radius: 4px; margin-left: 8px; font-weight: bold; color: white; font-size: 11px;">▲</span></button>
             <button class="skipButton" onclick="startGameAtLevel10()">SKIP TUTORIAL - START AT LEVEL 10<span style="display: inline-block; padding: 2px 6px; background: #555; border-radius: 4px; margin-left: 8px; font-weight: bold; color: white; font-size: 11px;">◀</span></button>
@@ -2263,7 +2346,7 @@
                 <strong>NOTE:</strong><br>Skipping past Level 10<br>disables most achievements
             </div>
             <div style="margin-top: 40px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #89A0B4;">
-                Version v0.19.45 • 2025-11-18
+                Version v0.19.48 • 2025-11-18
             </div>
         </div>
     </div>
@@ -2272,7 +2355,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.19.45';
+        const GAME_VERSION = 'v0.19.48';
         
         // Game State
         const GameState = {
@@ -2578,6 +2661,32 @@
         // Rogue Government Sandblasting charge (0-100)
         let sandblastingCharge = 0;
         let sandblastingActive = false;
+        
+        // Grid visual effects
+        let currentGridEffect = 0;
+        const GRID_EFFECTS = [
+            { name: 'None', icon: '🌌' },
+            { name: 'Pulse Wave', icon: '🌊' },
+            { name: 'Deep Ocean', icon: '🌊', solid: true, color: 0x0077BE },
+            { name: 'Neon Glow', icon: '🔆' },
+            { name: 'Hot Pink', icon: '💖', solid: true, color: 0xFF1493 },
+            { name: 'Rainbow Spectrum', icon: '🌈' },
+            { name: 'Lime Green', icon: '🍏', solid: true, color: 0x00FF41 },
+            { name: 'Digital Matrix', icon: '💻' },
+            { name: 'Deep Purple', icon: '🍇', solid: true, color: 0x9D00FF },
+            { name: 'Plasma Field', icon: '⚡' },
+            { name: 'Amber Gold', icon: '🟡', solid: true, color: 0xFFBF00 },
+            { name: 'Crystal Refraction', icon: '🔸' },
+            { name: 'Crimson Red', icon: '🔴', solid: true, color: 0xDC143C },
+            { name: 'Synthwave Grid', icon: '🌆' },
+            { name: 'Aqua Mint', icon: '🌿', solid: true, color: 0x7FFFD4 },
+            { name: 'Cyber Scanlines', icon: '📡' },
+            { name: 'Electric Blue', icon: '⚡', solid: true, color: 0x00D4FF },
+            { name: 'Hypnotic Spiral', icon: '🌀' },
+            { name: 'Sunset Orange', icon: '🍊', solid: true, color: 0xFF6B35 },
+            { name: 'Quantum Shimmer', icon: '✨' },
+            { name: 'Violet Dream', icon: '💜', solid: true, color: 0xB565D8 }
+        ];
         
         // Performance tracking
         let frameCount = 0;
@@ -3636,6 +3745,109 @@
                 tooltip.classList.remove('show');
                 tooltip.style.display = 'none';
             }
+        }
+        
+        function cycleGridEffect() {
+            currentGridEffect = (currentGridEffect + 1) % GRID_EFFECTS.length;
+            const effect = GRID_EFFECTS[currentGridEffect];
+            const btn = document.getElementById('gridEffectBtn');
+            btn.textContent = effect.icon;
+            btn.title = `Grid Effect: ${effect.name}`;
+            applyGridEffect();
+        }
+        
+        function applyGridEffect() {
+            const effect = GRID_EFFECTS[currentGridEffect];
+            const time = Date.now() * 0.001; // Convert to seconds
+            
+            // Find all grid lines in the scene (they are THREE.Line objects with LineBasicMaterial)
+            const gridLines = [];
+            scene.traverse((object) => {
+                if (object instanceof THREE.Line && object.material instanceof THREE.LineBasicMaterial) {
+                    gridLines.push(object);
+                }
+            });
+            
+            if (gridLines.length === 0) return;
+            
+            gridLines.forEach((line, index) => {
+                if (!line.material) return;
+                
+                // Handle solid color effects
+                if (effect.solid) {
+                    line.material.color.setHex(effect.color);
+                    line.material.opacity = 0.6;
+                    return;
+                }
+                
+                switch(effect.name) {
+                    case 'None':
+                        line.material.color.setHex(0x233142);
+                        line.material.opacity = 0.3;
+                        break;
+                        
+                    case 'Pulse Wave':
+                        const pulse = Math.sin(time * 0.3 + index * 0.05) * 0.5 + 0.5;
+                        line.material.color.setRGB(0, pulse * 0.8, pulse);
+                        line.material.opacity = 0.3 + pulse * 0.4;
+                        break;
+                        
+                    case 'Neon Glow':
+                        line.material.color.setHex(0x00FFFF);
+                        line.material.opacity = 0.6 + Math.sin(time * 3) * 0.2;
+                        break;
+                        
+                    case 'Rainbow Spectrum':
+                        const hue = (time * 0.2 + index * 0.05) % 1;
+                        line.material.color.setHSL(hue, 1, 0.5);
+                        line.material.opacity = 0.5;
+                        break;
+                        
+                    case 'Digital Matrix':
+                        const matrix = Math.sin(time * 1.5 + index * 0.2) * 0.5 + 0.5;
+                        line.material.color.setHex(0x00FF00);
+                        line.material.opacity = 0.2 + matrix * 0.5;
+                        break;
+                        
+                    case 'Plasma Field':
+                        const plasma = Math.sin(time * 2 + index * 0.3) * Math.cos(time * 1.5 + index * 0.2);
+                        line.material.color.setRGB(plasma * 0.5 + 0.5, 0.2, 1 - (plasma * 0.5 + 0.5));
+                        line.material.opacity = 0.4 + Math.abs(plasma) * 0.3;
+                        break;
+                        
+                    case 'Crystal Refraction':
+                        const crystal = (Math.sin(time + index * 0.15) + 1) * 0.5;
+                        line.material.color.setRGB(crystal, crystal * 0.8 + 0.2, 1);
+                        line.material.opacity = 0.3 + crystal * 0.4;
+                        break;
+                        
+                    case 'Synthwave Grid':
+                        const synth = index % 2 === 0 ? 0xFF1493 : 0x00CED1;
+                        line.material.color.setHex(synth);
+                        line.material.opacity = 0.4 + Math.sin(time * 2) * 0.2;
+                        break;
+                        
+                    case 'Cyber Scanlines':
+                        const scan = Math.sin(time * 1.2 + index * 0.25) * 0.5 + 0.5;
+                        line.material.color.setHex(0x00FFAA);
+                        line.material.opacity = 0.3 + scan * 0.5;
+                        break;
+                        
+                    case 'Hypnotic Spiral':
+                        const spiral = Math.sin(time * 3 + index * 0.2) * 0.5 + 0.5;
+                        const spiralHue = (time * 0.3 + index * 0.1) % 1;
+                        line.material.color.setHSL(spiralHue, 0.8, 0.5);
+                        line.material.opacity = 0.3 + spiral * 0.5;
+                        break;
+                        
+                    case 'Quantum Shimmer':
+                        const shimmer = Math.sin(time * 2.5 + index * 0.15) * 0.5 + 0.5;
+                        const qHue = (time * 0.3 + index * 0.08) % 1;
+                        line.material.color.setHSL(qHue, 1, 0.4 + shimmer * 0.3);
+                        line.material.opacity = 0.4 + shimmer * 0.4;
+                        break;
+                }
+            });
         }
         
         function setFloorColorNone() {
@@ -7213,6 +7425,16 @@
             document.getElementById('aboutPanel').style.display = 'block';
         }
         
+        function showHowToPlay() {
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('howToPlayPanel').style.display = 'block';
+        }
+        
+        function closeHowToPlay() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('howToPlayPanel').style.display = 'none';
+        }
+        
         function showHighScores() {
             document.getElementById('overlay').style.display = 'block';
             document.getElementById('highScoresPanel').style.display = 'block';
@@ -7861,6 +8083,19 @@
             }
             // ===== END SETTINGS PANEL NAVIGATION =====
             
+            // ===== HOW TO PLAY PANEL NAVIGATION =====
+            const howToPlayPanel = document.getElementById('howToPlayPanel');
+            if (howToPlayPanel && howToPlayPanel.style.display === 'block') {
+                // B button or SELECT button - Close
+                if (buttonIndex === GamepadButtons.B || buttonIndex === GamepadButtons.SELECT) {
+                    closeHowToPlay();
+                    return;
+                }
+                // Block all other menu inputs when how to play panel is open
+                return;
+            }
+            // ===== END HOW TO PLAY PANEL NAVIGATION =====
+            
             // ===== ABOUT PANEL NAVIGATION =====
             const aboutPanel = document.getElementById('aboutPanel');
             if (aboutPanel && aboutPanel.style.display === 'block') {
@@ -7945,6 +8180,11 @@
                 // Start button - Settings
                 else if (buttonIndex === GamepadButtons.START) {
                     showSettings();
+                    return;
+                }
+                // SELECT button - How to Play
+                else if (buttonIndex === GamepadButtons.SELECT) {
+                    showHowToPlay();
                     return;
                 }
                 // X button - High Scores
@@ -10104,6 +10344,11 @@
             
             // Update column tubes FIRST - before any gameplay logic
             updateColumnTubes();
+            
+            // Update grid visual effects
+            if (currentGridEffect > 0) {
+                applyGridEffect();
+            }
             
             // Update particle effects
             updateParticleEffects(deltaTime);
