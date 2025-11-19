@@ -1,6 +1,6 @@
 # ZLOCK ZHAINER - Complete Game Documentation
 
-**Version:** 0.19.44  
+**Version:** 0.19.45  
 **Last Updated:** November 18, 2025
 
 **Created by:** CyberAxe of [OutlandishlyCrafted.com](https://OutlandishlyCrafted.com)  

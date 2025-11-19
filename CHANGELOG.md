@@ -2,6 +2,23 @@
 
 # Changelog
 
+## v0.19.45 - Special Abilities UI Improvements (2025-11-18)
+- **Summary:**
+  - Enhanced special abilities panel with improved typography and controller support
+  - Moved High Scores close button to top for consistency
+
+- **Special Abilities UI Enhancements:**
+  - Character names now bold (font-weight: 900) and larger (15px)
+  - Keyboard hints larger (12px) and bolder (font-weight: 700)
+  - Added D-pad controller button icons to all special abilities:
+    - Zooko: D-pad UP ▲ (key 1)
+    - Nate: D-pad DOWN ▼ (key 2)
+    - Zancas: D-pad LEFT ◀ (key 3)
+    - CyberAxe: D-pad RIGHT ▶ (key 4)
+
+- **UI Improvements:**
+  - High Scores panel close button moved to top of panel
+
 ## v0.19.44 - Hint Popup Controller Icons (2025-11-18)
 - **Summary:**
   - Added controller button icons to all hint popup buttons
