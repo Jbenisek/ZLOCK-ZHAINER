@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.19.45</title>
+    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.19.47</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -441,13 +441,74 @@
         }
         
         #instructions {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
+            position: fixed;
+            right: 280px;
+            bottom: 60px;
+            width: 320px;
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
+            border: 2px solid #2A9D8F;
+            border-radius: 12px;
+            padding: 10px 12px;
+            backdrop-filter: blur(10px);
+            text-align: left;
+            font-size: 11px;
+            color: #D4E3F0;
+            line-height: 1.8;
+            z-index: 15;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            display: none;
+        }
+        
+        #instructions.show {
+            display: block;
+        }
+        
+        #instructions > div {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        #instructions .controlTitle {
+            font-weight: 800;
+            font-size: 12px;
+            margin-bottom: 6px;
+            margin-top: 6px;
+            color: #2A9D8F;
             text-align: center;
-            font-size: 16px;
-            color: #89A0B4;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #2A9D8F;
+            padding-bottom: 6px;
+            width: 100%;
+        }
+        
+        #instructions .controllerGrid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px 16px;
+            width: 100%;
+            margin-top: 4px;
+        }
+        
+        #instructions .controllerGrid > div {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        #instructions .controllerGrid .fullWidth {
+            grid-column: 1 / -1;
+        }
+        
+        #instructions .controlSection {
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px solid #26313B;
+        }
+        
+        #instructions .controlSection > div {
+            margin-bottom: 2px;
         }
         
         #chainPreview {
@@ -501,6 +562,61 @@
             margin: 0 2px;
             font-family: 'JetBrains Mono', monospace;
             color: #E9F0F7;
+        }
+        
+        .controllerBtn {
+            display: inline-block;
+            padding: 2px 5px;
+            margin: 0 2px;
+            border-radius: 3px;
+            font-weight: bold;
+            color: white;
+            font-size: 10px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .controllerBtn.green {
+            background: #27AE60;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            padding: 0;
+            text-align: center;
+            line-height: 18px;
+        }
+        
+        .controllerBtn.red {
+            background: #E74C3C;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            padding: 0;
+            text-align: center;
+            line-height: 18px;
+        }
+        
+        .controllerBtn.blue {
+            background: #3498DB;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            padding: 0;
+            text-align: center;
+            line-height: 18px;
+        }
+        
+        .controllerBtn.yellow {
+            background: #F39C12;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            padding: 0;
+            text-align: center;
+            line-height: 18px;
+        }
+        
+        .controllerBtn.gray {
+            background: #555;
         }
         
         #specialAbilitiesPanel {
@@ -612,6 +728,31 @@
                 border-color: #FFF;
                 box-shadow: 0 0 30px rgba(255, 255, 255, 0.9), 0 0 60px rgba(255, 215, 0, 0.6);
             }
+        }
+        
+        @keyframes controlsHint {
+            0%, 100% {
+                box-shadow: 0 0 15px rgba(42, 157, 143, 0.8), 0 0 30px rgba(42, 157, 143, 0.4);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 25px rgba(42, 157, 143, 1), 0 0 50px rgba(42, 157, 143, 0.6);
+                transform: scale(1.1);
+            }
+        }
+        
+        #controlsBtn.hint {
+            animation: controlsHint 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes tooltipFade {
+            0%, 100% { opacity: 0; }
+            10%, 90% { opacity: 1; }
+        }
+        
+        #controlsHintTooltip.show {
+            display: block;
+            animation: tooltipFade 10s ease-in-out;
         }
         
         .specialInfo {
@@ -1783,14 +1924,34 @@
             </div>
             
             <div id="instructions">
-                <span class="key">WASD</span> Move | 
-                <span class="key">SPACE</span> Fast Drop | 
-                <span class="key">SHIFT</span> Flip Chain | 
-                <span class="key">Arrow Keys</span> Rotate Piece | 
-                <span class="key">Q</span> / <span class="key">E</span> Rotate View | 
-                <span class="key">T</span> Top Down View | 
-                <span class="key">1-4</span> Specials | 
-                <span class="key">ESC</span> Pause
+                <div class="controlTitle">⌨️ KEYBOARD</div>
+                <div><span class="key">WASD</span> Move</div>
+                <div><span class="key">SPACE</span> Fast Drop (2x Instant)</div>
+                <div><span class="key">SHIFT</span> Flip Chain</div>
+                <div><span class="key">↑</span><span class="key">↓</span><span class="key">←</span><span class="key">→</span> Rotate Piece</div>
+                <div><span class="key">Q</span> <span class="key">E</span> Rotate View</div>
+                <div><span class="key">T</span> Top-Down <span class="key">ESC</span> Pause</div>
+                <div><span class="key">1-4</span> Character Specials</div>
+                
+                <div class="controlTitle">🎮 CONTROLLER</div>
+                <div class="controllerGrid">
+                    <div class="fullWidth"><span class="controllerBtn green">A</span> Fast Drop (2x Instant)</div>
+                    <div><span class="controllerBtn red">B</span> Flip</div>
+                    <div><span class="controllerBtn yellow">Y</span> Rotate R</div>
+                    <div><span class="controllerBtn blue">X</span> Rotate L</div>
+                    <div><span class="controllerBtn gray">LB</span> Cam</div>
+                    <div><span class="controllerBtn gray">RB</span> Cam</div>
+                    <div><span class="controllerBtn gray">START</span> Pause</div>
+                    <div class="fullWidth"><span class="controllerBtn gray">SELECT</span> Top-Down</div>
+                    <div><span class="controllerBtn gray">▲</span> Zooko</div>
+                    <div><span class="controllerBtn gray">◀</span> Zancas</div>
+                    <div><span class="controllerBtn gray">▼</span> Nate</div>
+                    <div><span class="controllerBtn gray">▶</span> CyberAxe</div>
+                </div>
+            </div>
+            
+            <div id="controlsHintTooltip" style="display: none; position: absolute; bottom: 55px; right: 180px; background: rgba(42, 157, 143, 0.95); color: white; padding: 8px 12px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; pointer-events: none; z-index: 20; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); white-space: nowrap;">
+                ⌨️ Keyboard & Controls Guide
             </div>
             
             <div id="gameControls">
@@ -1801,6 +1962,7 @@
                     <button id="modelsBtn" class="active" onclick="toggleButton2()" title="Toggle 3D Models">🧍</button>
                     <button id="animationsBtn" class="active" onclick="toggleButton3()" title="Toggle Animations">🎬</button>
                     <button id="colorPickerBtn" onclick="toggleColorPicker()" title="Grid Color Settings">🎨</button>
+                    <button id="controlsBtn" onclick="toggleControls()" title="Toggle Controls Panel">⌨️</button>
                 </div>
             </div>
             
@@ -3457,6 +3619,22 @@
                 modal.style.display = 'block';
             } else {
                 modal.style.display = 'none';
+            }
+        }
+        
+        function toggleControls() {
+            const panel = document.getElementById('instructions');
+            const btn = document.getElementById('controlsBtn');
+            const tooltip = document.getElementById('controlsHintTooltip');
+            if (panel.classList.contains('show')) {
+                panel.classList.remove('show');
+                btn.classList.remove('active');
+            } else {
+                panel.classList.add('show');
+                btn.classList.add('active');
+                btn.classList.remove('hint'); // Stop hint animation when opened
+                tooltip.classList.remove('show');
+                tooltip.style.display = 'none';
             }
         }
         
@@ -6783,6 +6961,20 @@
             hyperModeEndTime = 0;
             zookoCharge = 0; // Reset special charges
             nateCharge = 0;
+            
+            // Show controls button hint for level 1 normal start
+            if (startingLevel === 1) {
+                const controlsBtn = document.getElementById('controlsBtn');
+                const tooltip = document.getElementById('controlsHintTooltip');
+                controlsBtn.classList.add('hint');
+                tooltip.classList.add('show');
+                tooltip.style.display = 'block';
+                setTimeout(() => {
+                    controlsBtn.classList.remove('hint');
+                    tooltip.classList.remove('show');
+                    setTimeout(() => { tooltip.style.display = 'none'; }, 500);
+                }, 10000); // Stop blinking after 10 seconds
+            }
             zancasCharge = 0;
             cyberaxeCharge = 0;
             sandblastingCharge = 0; // Reset sandblasting charge

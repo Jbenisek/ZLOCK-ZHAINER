@@ -2,6 +2,31 @@
 
 # Changelog
 
+## v0.19.47 - Controls Button Hint (2025-11-18)
+- **Summary:**
+  - Added visual hint for controls button when starting level 1
+  - Displays tooltip and blinking animation to guide new players
+
+- **New Player Experience:**
+  - Controls button (⌨️) blinks with cyan glow when starting level 1
+  - Tooltip appears above button: "⌨️ Keyboard & Controls Guide"
+  - Hint automatically disappears after 10 seconds
+  - Hint stops immediately when controls panel is opened
+  - Updated drop hint text to show double-tap for instant drop
+
+## v0.19.46 - Controls Menu Layout Fix (2025-11-18)
+- **Summary:**
+  - Fixed controls menu formatting and layout
+  - Cleaned up keyboard section styling
+  - Implemented proper two-column grid for controller section
+
+- **Controls Menu Improvements:**
+  - Removed inline styles from keyboard controls
+  - Separated arrow keys into individual key buttons
+  - Created professional two-column grid layout for controller section
+  - Added proper spacing and alignment
+  - Improved readability and organization
+
 ## v0.19.45 - Special Abilities UI Improvements (2025-11-18)
 - **Summary:**
   - Enhanced special abilities panel with improved typography and controller support
