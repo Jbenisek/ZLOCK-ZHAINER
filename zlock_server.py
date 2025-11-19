@@ -44,6 +44,14 @@ class GameHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         
         return mimetype or 'application/octet-stream'
     
+    def handle(self):
+        """Override to catch BrokenPipeError from client disconnects"""
+        try:
+            super().handle()
+        except (BrokenPipeError, ConnectionResetError):
+            # Client disconnected, silently ignore
+            pass
+    
     def log_message(self, format, *args):
         """Custom logging to show request details"""
         print(f"[{self.log_date_time_string()}] {format % args}")
@@ -54,14 +62,32 @@ def main():
     print(f"Server URL: http://0.0.0.0:{PORT}/zlock_consensus.html")
     print(f"Press Ctrl+C to stop\n")
     
-    with socketserver.TCPServer(("0.0.0.0", PORT), GameHTTPRequestHandler) as httpd:
-        try:
-            httpd.serve_forever()
-        except KeyboardInterrupt:
-            print("\n\nShutting down server...")
-            httpd.shutdown()
-            print("Server stopped.")
-            sys.exit(0)
+    # Enable address reuse to prevent "Address already in use" errors
+    socketserver.TCPServer.allow_reuse_address = True
+    
+    try:
+        httpd = socketserver.TCPServer(("0.0.0.0", PORT), GameHTTPRequestHandler)
+        print(f"Server successfully bound to port {PORT}")
+        print(f"Server is now running and accepting connections...\n")
+        httpd.serve_forever()
+    except OSError as e:
+        if e.errno == 98:  # Address already in use
+            print(f"\n❌ ERROR: Port {PORT} is already in use!")
+            print(f"Run: sudo lsof -ti:{PORT} | xargs sudo kill -9")
+            print(f"Or use a different port.\n")
+            sys.exit(1)
+        else:
+            print(f"\n❌ ERROR: Failed to start server: {e}\n")
+            sys.exit(1)
+    except KeyboardInterrupt:
+        print("\n\nShutting down server...")
+        httpd.shutdown()
+        httpd.server_close()
+        print("Server stopped cleanly.")
+        sys.exit(0)
+    except Exception as e:
+        print(f"\n❌ FATAL ERROR: {e}\n")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
