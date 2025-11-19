@@ -32,19 +32,52 @@ case "$1" in
         
     stop)
         if [ ! -f $PID_FILE ]; then
-            echo "No PID file found. Server may not be running."
-            exit 1
+            echo "No PID file found. Checking for running Python servers on port $PORT..."
+            # Find and kill any Python process using the port
+            PYTHON_PID=$(lsof -ti:$PORT 2>/dev/null)
+            if [ ! -z "$PYTHON_PID" ]; then
+                echo "Found Python server on port $PORT (PID: $PYTHON_PID)"
+                kill -9 $PYTHON_PID
+                echo "Server forcefully stopped."
+            else
+                echo "No server found running on port $PORT"
+            fi
+            exit 0
         fi
         
         PID=$(cat $PID_FILE)
         if ps -p $PID > /dev/null 2>&1; then
             echo "Stopping ZLOCK web server (PID: $PID)..."
+            # Try graceful shutdown first
             kill $PID
+            sleep 1
+            
+            # Check if still running, force kill if needed
+            if ps -p $PID > /dev/null 2>&1; then
+                echo "Process still running, forcing shutdown..."
+                kill -9 $PID
+                sleep 1
+            fi
+            
+            # Also check if port is still in use and clean it up
+            PORT_PID=$(lsof -ti:$PORT 2>/dev/null)
+            if [ ! -z "$PORT_PID" ]; then
+                echo "Cleaning up process still using port $PORT (PID: $PORT_PID)..."
+                kill -9 $PORT_PID
+            fi
+            
             rm $PID_FILE
             echo "Server stopped."
         else
             echo "Server not running (stale PID file removed)"
             rm $PID_FILE
+            
+            # Check if something else is using the port
+            PORT_PID=$(lsof -ti:$PORT 2>/dev/null)
+            if [ ! -z "$PORT_PID" ]; then
+                echo "Warning: Port $PORT is still in use by PID $PORT_PID"
+                echo "Run: sudo kill -9 $PORT_PID to force stop"
+            fi
         fi
         ;;
         

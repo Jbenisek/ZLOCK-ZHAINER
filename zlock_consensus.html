@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.19.42</title>
+    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.19.44</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -1408,20 +1408,20 @@
             <span class="settingLabel">AI Player (Testing)</span>
             <input type="checkbox" id="aiEnabled" onchange="updateSettings()">
         </div>
-        <button class="button" style="margin-top: 30px; background: #EB5757;" onclick="clearHighScores()">CLEAR HIGH SCORES</button>
-        <button class="button closeButton" onclick="closeAllPanels()">CLOSE</button>
+        <button class="button" style="margin-top: 30px; background: #EB5757;" onclick="clearHighScores()">CLEAR HIGH SCORES<span style="display: inline-block; width: 24px; height: 24px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 14px;">X</span></button>
+        <button class="button closeButton" onclick="closeAllPanels()">CLOSE<span style="display: inline-block; width: 24px; height: 24px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
     </div>
     
     <div id="highScoresPanel">
         <div class="panelTitle">HIGH SCORES</div>
+        <button class="button closeButton" onclick="closeAllPanels()" style="margin-bottom: 20px;">CLOSE<span style="display: inline-block; width: 24px; height: 24px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         <div id="highScoresList"></div>
-        <button class="button closeButton" onclick="closeAllPanels()">CLOSE</button>
     </div>
     
     <div id="achievementsPanel">
         <div class="panelTitle">ACHIEVEMENTS</div>
+        <button class="button closeButton" onclick="closeAllPanels()" style="margin-bottom: 20px;">CLOSE<span style="display: inline-block; width: 24px; height: 24px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         <div id="achievementsList"></div>
-        <button class="button closeButton" onclick="closeAllPanels()">CLOSE</button>
     </div>
     
     <div id="aboutPanel">
@@ -1451,15 +1451,15 @@
                 </div>
             </div>
         </div>
-        <button class="button closeButton" onclick="closeAllPanels()">CLOSE</button>
+        <button class="button closeButton" onclick="closeAllPanels()">CLOSE<span style="display: inline-block; width: 24px; height: 24px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
     </div>
     
     <div id="pauseScreen">
         <div id="pauseTitle">PAUSED</div>
-        <button class="button" onclick="resumeGame()">RESUME</button>
-        <button class="button" onclick="restartFromPause()">RESTART</button>
-        <button class="button" onclick="showSettingsFromPause()">SETTINGS</button>
-        <button class="button" onclick="quitToMenu()">QUIT TO MENU</button>
+        <button class="button" onclick="resumeGame()">RESUME<span style="display: inline-block; width: 24px; height: 24px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
+        <button class="button" onclick="restartFromPause()">RESTART<span style="display: inline-block; width: 24px; height: 24px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 14px;">X</span></button>
+        <button class="button" onclick="showSettingsFromPause()">SETTINGS<span style="display: inline-block; width: 24px; height: 24px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 14px;">Y</span></button>
+        <button class="button" onclick="quitToMenu()">QUIT TO MENU<span style="display: inline-block; padding: 2px 6px; background: #555; border-radius: 4px; margin-left: 8px; font-weight: bold; color: white; font-size: 11px;">◀▶</span></button>
     </div>
     
     <div id="level10Notification">
@@ -1483,7 +1483,10 @@
             </div>
         </div>
         <p style="font-size: 14px; color: #BFD1E0; margin-top: 10px;">Works on all chains - perfect for getting the right color on top or bottom!</p>
-        <button class="button" onclick="closeLevel10Notification()">GOT IT!</button>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button class="button" style="font-size: 14px; white-space: nowrap;" onclick="closeLevel10Notification()">GOT IT!<span style="display: inline-block; width: 20px; height: 20px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 20px; margin-left: 6px; font-weight: bold; color: white; font-size: 12px;">A</span></button>
+            <button class="button" style="background: #4A5568; border-color: #4A5568; font-size: 14px; white-space: nowrap;" onclick="skipAllHints()">SKIP ALL<span style="display: inline-block; width: 20px; height: 20px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 20px; margin-left: 6px; font-weight: bold; color: white; font-size: 12px;">Y</span></button>
+        </div>
     </div>
     
     <div id="glowingLinksGuide">
@@ -1497,7 +1500,10 @@
         </div>
         <p style="font-size: 16px; color: #FFD700; font-weight: bold;">CLICK or SHOOT them for 100 points each!</p>
         <p style="font-size: 14px; color: #666;">They'll auto-destroy when they hit the floor</p>
-        <button class="button" onclick="closeGlowingLinksGuide()">GOT IT!</button>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button class="button" style="font-size: 14px; white-space: nowrap;" onclick="closeGlowingLinksGuide()">GOT IT!<span style="display: inline-block; width: 20px; height: 20px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 20px; margin-left: 6px; font-weight: bold; color: white; font-size: 12px;">A</span></button>
+            <button class="button" style="background: #4A5568; border-color: #4A5568; font-size: 14px; white-space: nowrap;" onclick="skipAllHints()">SKIP ALL<span style="display: inline-block; width: 20px; height: 20px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 20px; margin-left: 6px; font-weight: bold; color: white; font-size: 12px;">Y</span></button>
+        </div>
     </div>
     
     <div id="level20Notification">
@@ -1511,7 +1517,10 @@
             <div class="previewLink encrypted">?</div>
         </div>
         <p style="font-size: 16px; color: #EB5757;">Plan carefully - you won't know what you have until it locks in!</p>
-        <button class="button" onclick="closeLevel20Notification()">GOT IT!</button>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button class="button" style="font-size: 14px; white-space: nowrap;" onclick="closeLevel20Notification()">GOT IT!<span style="display: inline-block; width: 20px; height: 20px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 20px; margin-left: 6px; font-weight: bold; color: white; font-size: 12px;">A</span></button>
+            <button class="button" style="background: #4A5568; border-color: #4A5568; font-size: 14px; white-space: nowrap;" onclick="skipAllHints()">SKIP ALL<span style="display: inline-block; width: 20px; height: 20px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 20px; margin-left: 6px; font-weight: bold; color: white; font-size: 12px;">Y</span></button>
+        </div>
     </div>
     
     <div id="level50Notification">
@@ -1526,13 +1535,16 @@
             <div class="previewLink glowing">★</div>
         </div>
         <p style="font-size: 16px; color: #FFD700;">These chains are already glowing - click to break them for bonus points!</p>
-        <button class="button" onclick="closeLevel50Notification()">GOT IT!</button>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button class="button" style="font-size: 14px; white-space: nowrap;" onclick="closeLevel50Notification()">GOT IT!<span style="display: inline-block; width: 20px; height: 20px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 20px; margin-left: 6px; font-weight: bold; color: white; font-size: 12px;">A</span></button>
+            <button class="button" style="background: #4A5568; border-color: #4A5568; font-size: 14px; white-space: nowrap;" onclick="skipAllHints()">SKIP ALL<span style="display: inline-block; width: 20px; height: 20px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 20px; margin-left: 6px; font-weight: bold; color: white; font-size: 12px;">Y</span></button>
+        </div>
     </div>
     
     <div id="gameContainer">
         <canvas id="renderCanvas"></canvas>
         
-        <div id="versionDisplay">v0.19.42</div>
+        <div id="versionDisplay">v0.19.44</div>
         
         <div id="performanceDisplay">
             <div><span class="perf-label">FPS:</span> <span class="perf-value" id="fpsValue">60</span></div>
@@ -1777,6 +1789,7 @@
                 <span class="key">Arrow Keys</span> Rotate Piece | 
                 <span class="key">Q</span> / <span class="key">E</span> Rotate View | 
                 <span class="key">T</span> Top Down View | 
+                <span class="key">1-4</span> Specials | 
                 <span class="key">ESC</span> Pause
             </div>
             
@@ -2073,22 +2086,22 @@
 ```        <div id="titleScreen">
             <div id="title">ZLOCK</div>
             <div id="subtitle">ZHAINER</div>
-            <button class="button" onclick="startGame()">START GAME</button>
-            <button class="button" onclick="showSettings()">SETTINGS</button>
-            <button class="button" onclick="showHighScores()">HIGH SCORES</button>
-            <button class="button" onclick="showAchievements()">ACHIEVEMENTS</button>
-            <button class="aboutButton" onclick="showAbout()">ABOUT / DONATE</button>
-            <button class="preFillButton" onclick="startGameWithPreFill()">START WITH PRE-FILLED GRID</button>
-            <button class="skipButton" onclick="startGameAtLevel10()">SKIP TUTORIAL - START AT LEVEL 10</button>
-            <button class="skipButton50" onclick="startGameAtLevel50()">ARE YOU GOOD? - START AT LEVEL 50</button>
-            <button class="skipButton100" onclick="startGameAtLevel100()">EXPERT? - START AT LEVEL 100</button>
+            <button class="button" onclick="startGame()">START GAME<span style="display: inline-block; width: 24px; height: 24px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 14px;">A</span></button>
+            <button class="button" onclick="showSettings()">SETTINGS<span style="display: inline-block; width: 24px; height: 24px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 12px;">▶</span></button>
+            <button class="button" onclick="showHighScores()">HIGH SCORES<span style="display: inline-block; width: 24px; height: 24px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 14px;">X</span></button>
+            <button class="button" onclick="showAchievements()">ACHIEVEMENTS<span style="display: inline-block; width: 24px; height: 24px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 14px;">Y</span></button>
+            <button class="aboutButton" onclick="showAbout()">ABOUT / DONATE<span style="display: inline-block; width: 24px; height: 24px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 24px; margin-left: 8px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
+            <button class="preFillButton" onclick="startGameWithPreFill()">START WITH PRE-FILLED GRID<span style="display: inline-block; padding: 2px 6px; background: #555; border-radius: 4px; margin-left: 8px; font-weight: bold; color: white; font-size: 11px;">▲</span></button>
+            <button class="skipButton" onclick="startGameAtLevel10()">SKIP TUTORIAL - START AT LEVEL 10<span style="display: inline-block; padding: 2px 6px; background: #555; border-radius: 4px; margin-left: 8px; font-weight: bold; color: white; font-size: 11px;">◀</span></button>
+            <button class="skipButton50" onclick="startGameAtLevel50()">ARE YOU GOOD? - START AT LEVEL 50<span style="display: inline-block; padding: 2px 6px; background: #555; border-radius: 4px; margin-left: 8px; font-weight: bold; color: white; font-size: 11px;">▶</span></button>
+            <button class="skipButton100" onclick="startGameAtLevel100()">EXPERT? - START AT LEVEL 100<span style="display: inline-block; padding: 2px 6px; background: #555; border-radius: 4px; margin-left: 8px; font-weight: bold; color: white; font-size: 11px;">▼</span></button>
             <button class="skipButton1000" onclick="startGameAtLevel1000()">ARE YOU CRAZY? - START AT LEVEL 1000</button>
             <button class="skipButton10000" onclick="startGameAtLevel10000()">SUPER HUMAN? - START AT LEVEL 10,000</button>
             <div style="position: absolute; left: 60px; top: calc(50% + 470px); font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #89A0B4; width: 220px; text-align: center; line-height: 1.4;">
                 <strong>NOTE:</strong><br>Skipping past Level 10<br>disables most achievements
             </div>
             <div style="margin-top: 40px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #89A0B4;">
-                Version v0.19.42 • 2025-11-18
+                Version v0.19.44 • 2025-11-18
             </div>
         </div>
     </div>
@@ -2097,7 +2110,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.19.42';
+        const GAME_VERSION = 'v0.19.44';
         
         // Game State
         const GameState = {
@@ -2108,6 +2121,51 @@
         };
         
         let currentState = GameState.MENU;
+        
+        // ===== GAMEPAD SUPPORT =====
+        let gamepadConnected = false;
+        let gamepadIndex = null;
+        let gamepadButtonStates = {};
+        let gamepadAxisDeadzone = 0.25;
+        let lastGamepadUpdate = 0;
+        const gamepadUpdateInterval = 16; // ~60Hz polling
+        
+        // Analog stick state tracking for edge detection
+        let lastAnalogState = {
+            up: false,
+            down: false,
+            left: false,
+            right: false
+        };
+        
+        // Button mapping (standard gamepad layout)
+        const GamepadButtons = {
+            A: 0,           // Bottom face button (A on Xbox, X on PlayStation)
+            B: 1,           // Right face button (B on Xbox, Circle on PlayStation)
+            X: 2,           // Left face button (X on Xbox, Square on PlayStation)
+            Y: 3,           // Top face button (Y on Xbox, Triangle on PlayStation)
+            LB: 4,          // Left bumper
+            RB: 5,          // Right bumper
+            LT: 6,          // Left trigger
+            RT: 7,          // Right trigger
+            SELECT: 8,      // Select/Back/Share
+            START: 9,       // Start/Menu/Options
+            L3: 10,         // Left stick button
+            R3: 11,         // Right stick button
+            DPAD_UP: 12,
+            DPAD_DOWN: 13,
+            DPAD_LEFT: 14,
+            DPAD_RIGHT: 15
+        };
+        
+        // Axis mapping
+        const GamepadAxes = {
+            LEFT_X: 0,
+            LEFT_Y: 1,
+            RIGHT_X: 2,
+            RIGHT_Y: 3
+        };
+        // ===== END GAMEPAD SUPPORT =====
         let score = 0;
         let level = 1;
         let startLevel = 1; // Track what level the game started at
@@ -4429,6 +4487,12 @@
             window.addEventListener('keyup', onKeyUp);
             window.addEventListener('click', onMouseClick);
             window.addEventListener('mousemove', onMouseMove);
+            
+            // ===== GAMEPAD SUPPORT =====
+            // Handle gamepad connections
+            window.addEventListener('gamepadconnected', onGamepadConnected);
+            window.addEventListener('gamepaddisconnected', onGamepadDisconnected);
+            // ===== END GAMEPAD SUPPORT =====
             
             // Load saved data
             loadSettings();
@@ -6876,12 +6940,24 @@
         }
         
         function clearHighScores() {
-            if (confirm('Are you sure you want to clear all high scores and game history? This cannot be undone.')) {
-                localStorage.removeItem(STORAGE_KEYS.HIGH_SCORES);
-                localStorage.removeItem(STORAGE_KEYS.GAME_HISTORY);
-                highScores = [];
-                alert('High scores and game history cleared!');
-            }
+            localStorage.removeItem(STORAGE_KEYS.HIGH_SCORES);
+            localStorage.removeItem(STORAGE_KEYS.GAME_HISTORY);
+            highScores = [];
+            console.log('High scores and game history cleared!');
+            
+            // Show brief notification
+            const bonusMsg = document.getElementById('bonusMessage');
+            const bonusText = document.getElementById('bonusText');
+            bonusText.textContent = '✓ HIGH SCORES CLEARED!';
+            bonusMsg.style.display = 'block';
+            
+            // Hide notification after 2 seconds
+            setTimeout(() => {
+                bonusMsg.style.display = 'none';
+            }, 2000);
+            
+            // Close settings panel
+            closeAllPanels();
         }
         
         function showAchievements() {
@@ -7158,6 +7234,27 @@
             if (currentState === GameState.PAUSED) {
                 currentState = GameState.PLAYING;
             }
+        }
+        
+        function skipAllHints() {
+            // Mark all notifications as shown so they never appear again
+            level10NotificationShown = true;
+            level20NotificationShown = true;
+            level50NotificationShown = true;
+            glowingLinksGuideShown = true;
+            
+            // Close all visible notifications
+            document.getElementById('level10Notification').style.display = 'none';
+            document.getElementById('level20Notification').style.display = 'none';
+            document.getElementById('level50Notification').style.display = 'none';
+            document.getElementById('glowingLinksGuide').style.display = 'none';
+            
+            // Resume game if it was paused
+            if (currentState === GameState.PAUSED) {
+                currentState = GameState.PLAYING;
+            }
+            
+            console.log('All hints skipped');
         }
         
         function pauseGame() {
@@ -7458,6 +7555,385 @@
                 instantDrop = false;
             }
         }
+        
+        // ===== GAMEPAD FUNCTIONS =====
+        function onGamepadConnected(e) {
+            gamepadConnected = true;
+            gamepadIndex = e.gamepad.index;
+            console.log(`🎮 Gamepad connected: ${e.gamepad.id}`);
+            
+            // Show notification to user
+            if (typeof showNotification === 'function') {
+                showNotification(`🎮 Controller Connected: ${e.gamepad.id.substring(0, 30)}`, 3000);
+            }
+        }
+        
+        function onGamepadDisconnected(e) {
+            if (e.gamepad.index === gamepadIndex) {
+                gamepadConnected = false;
+                gamepadIndex = null;
+                gamepadButtonStates = {};
+                console.log('🎮 Gamepad disconnected');
+                
+                if (typeof showNotification === 'function') {
+                    showNotification('🎮 Controller Disconnected', 2000);
+                }
+            }
+        }
+        
+        function updateGamepad() {
+            if (!gamepadConnected || gamepadIndex === null) return;
+            
+            const now = Date.now();
+            if (now - lastGamepadUpdate < gamepadUpdateInterval) return;
+            lastGamepadUpdate = now;
+            
+            const gamepads = navigator.getGamepads();
+            const gamepad = gamepads[gamepadIndex];
+            
+            if (!gamepad) return;
+            
+            // Process buttons
+            gamepad.buttons.forEach((button, index) => {
+                const wasPressed = gamepadButtonStates[index] || false;
+                const isPressed = button.pressed;
+                
+                // Button just pressed (rising edge)
+                if (isPressed && !wasPressed) {
+                    handleGamepadButtonPress(index);
+                }
+                
+                // Button just released (falling edge)
+                if (!isPressed && wasPressed) {
+                    handleGamepadButtonRelease(index);
+                }
+                
+                gamepadButtonStates[index] = isPressed;
+            });
+            
+            // Process left analog stick for WASD movement (ONLY if gamepad is being used)
+            if (currentState === GameState.PLAYING) {
+                const leftX = gamepad.axes[GamepadAxes.LEFT_X];
+                const leftY = gamepad.axes[GamepadAxes.LEFT_Y];
+                
+                // Determine current analog stick state
+                const currentAnalogState = {
+                    up: leftY < -gamepadAxisDeadzone,
+                    down: leftY > gamepadAxisDeadzone,
+                    left: leftX < -gamepadAxisDeadzone,
+                    right: leftX > gamepadAxisDeadzone
+                };
+                
+                // Only trigger movement on RISING EDGE (when stick crosses deadzone threshold)
+                // Reset WASD keys first
+                keys['w'] = false;
+                keys['a'] = false;
+                keys['s'] = false;
+                keys['d'] = false;
+                
+                // Trigger movement only when direction just became active (edge detection)
+                if (currentAnalogState.up && !lastAnalogState.up) {
+                    keys['w'] = true;
+                }
+                if (currentAnalogState.down && !lastAnalogState.down) {
+                    keys['s'] = true;
+                }
+                if (currentAnalogState.left && !lastAnalogState.left) {
+                    keys['a'] = true;
+                }
+                if (currentAnalogState.right && !lastAnalogState.right) {
+                    keys['d'] = true;
+                }
+                
+                // Update last analog state
+                lastAnalogState = currentAnalogState;
+            }
+        }
+        
+        function handleGamepadButtonPress(buttonIndex) {
+            // ===== SETTINGS PANEL NAVIGATION (Check first - highest priority) =====
+            const settingsPanel = document.getElementById('settingsPanel');
+            if (settingsPanel && settingsPanel.style.display === 'block') {
+                // X button - Clear High Scores
+                if (buttonIndex === GamepadButtons.X) {
+                    clearHighScores();
+                    return;
+                }
+                // B button - Close
+                else if (buttonIndex === GamepadButtons.B) {
+                    closeAllPanels();
+                    return;
+                }
+                // Block all other menu inputs when settings is open
+                return;
+            }
+            // ===== END SETTINGS PANEL NAVIGATION =====
+            
+            // ===== ABOUT PANEL NAVIGATION =====
+            const aboutPanel = document.getElementById('aboutPanel');
+            if (aboutPanel && aboutPanel.style.display === 'block') {
+                // B button - Close
+                if (buttonIndex === GamepadButtons.B) {
+                    closeAllPanels();
+                    return;
+                }
+                // Block all other menu inputs when about panel is open
+                return;
+            }
+            // ===== END ABOUT PANEL NAVIGATION =====
+            
+            // ===== HIGH SCORES PANEL NAVIGATION =====
+            const highScoresPanel = document.getElementById('highScoresPanel');
+            if (highScoresPanel && highScoresPanel.style.display === 'block') {
+                // B button - Close
+                if (buttonIndex === GamepadButtons.B) {
+                    closeAllPanels();
+                    return;
+                }
+                // Block all other menu inputs when high scores panel is open
+                return;
+            }
+            // ===== END HIGH SCORES PANEL NAVIGATION =====
+            
+            // ===== ACHIEVEMENTS PANEL NAVIGATION =====
+            const achievementsPanel = document.getElementById('achievementsPanel');
+            if (achievementsPanel && achievementsPanel.style.display === 'block') {
+                // B button - Close
+                if (buttonIndex === GamepadButtons.B) {
+                    closeAllPanels();
+                    return;
+                }
+                // Block all other menu inputs when achievements panel is open
+                return;
+            }
+            // ===== END ACHIEVEMENTS PANEL NAVIGATION =====
+            
+            // ===== HINT POPUP NAVIGATION =====
+            const level10Notification = document.getElementById('level10Notification');
+            const glowingLinksGuide = document.getElementById('glowingLinksGuide');
+            const level20Notification = document.getElementById('level20Notification');
+            const level50Notification = document.getElementById('level50Notification');
+            
+            const anyHintVisible = (level10Notification && level10Notification.style.display === 'block') ||
+                                   (glowingLinksGuide && glowingLinksGuide.style.display === 'block') ||
+                                   (level20Notification && level20Notification.style.display === 'block') ||
+                                   (level50Notification && level50Notification.style.display === 'block');
+            
+            if (anyHintVisible) {
+                // A button - Got It (close current hint)
+                if (buttonIndex === GamepadButtons.A) {
+                    if (level10Notification && level10Notification.style.display === 'block') {
+                        closeLevel10Notification();
+                    } else if (glowingLinksGuide && glowingLinksGuide.style.display === 'block') {
+                        closeGlowingLinksGuide();
+                    } else if (level20Notification && level20Notification.style.display === 'block') {
+                        closeLevel20Notification();
+                    } else if (level50Notification && level50Notification.style.display === 'block') {
+                        closeLevel50Notification();
+                    }
+                    return;
+                }
+                // Y button - Skip All Hints
+                else if (buttonIndex === GamepadButtons.Y) {
+                    skipAllHints();
+                    return;
+                }
+                // Block all other inputs when hint popup is open
+                return;
+            }
+            // ===== END HINT POPUP NAVIGATION =====
+            
+            // ===== MENU NAVIGATION =====
+            if (currentState === GameState.MENU) {
+                // A button - Start Game
+                if (buttonIndex === GamepadButtons.A) {
+                    startGame();
+                    return;
+                }
+                // Start button - Settings
+                else if (buttonIndex === GamepadButtons.START) {
+                    showSettings();
+                    return;
+                }
+                // X button - High Scores
+                else if (buttonIndex === GamepadButtons.X) {
+                    showHighScores();
+                    return;
+                }
+                // Y button - Achievements
+                else if (buttonIndex === GamepadButtons.Y) {
+                    showAchievements();
+                    return;
+                }
+                // B button - About/Donate
+                else if (buttonIndex === GamepadButtons.B) {
+                    showAbout();
+                    return;
+                }
+                // D-Pad UP - Start with Pre-filled Grid
+                else if (buttonIndex === GamepadButtons.DPAD_UP) {
+                    startGameWithPreFill();
+                    return;
+                }
+                // D-Pad LEFT - Skip to Level 10
+                else if (buttonIndex === GamepadButtons.DPAD_LEFT) {
+                    startGameAtLevel10();
+                    return;
+                }
+                // D-Pad RIGHT - Skip to Level 50
+                else if (buttonIndex === GamepadButtons.DPAD_RIGHT) {
+                    startGameAtLevel50();
+                    return;
+                }
+                // D-Pad DOWN - Skip to Level 100
+                else if (buttonIndex === GamepadButtons.DPAD_DOWN) {
+                    startGameAtLevel100();
+                    return;
+                }
+            }
+            // ===== END MENU NAVIGATION =====
+            
+            // ===== PAUSE MENU NAVIGATION =====
+            if (currentState === GameState.PAUSED) {
+                // A button - Resume
+                if (buttonIndex === GamepadButtons.A) {
+                    resumeGame();
+                    return;
+                }
+                // B button - Resume (also works)
+                else if (buttonIndex === GamepadButtons.B) {
+                    resumeGame();
+                    return;
+                }
+                // X button - Restart
+                else if (buttonIndex === GamepadButtons.X) {
+                    restartFromPause();
+                    return;
+                }
+                // Y button - Settings
+                else if (buttonIndex === GamepadButtons.Y) {
+                    showSettingsFromPause();
+                    return;
+                }
+                // Select button - Quit to Menu
+                else if (buttonIndex === GamepadButtons.SELECT) {
+                    quitToMenu();
+                    return;
+                }
+            }
+            // ===== END PAUSE MENU NAVIGATION =====
+            
+            // A button - Close hints/notifications OR Fast drop
+            if (buttonIndex === GamepadButtons.A) {
+                // Check if any notification/hint is visible and close it
+                const level10 = document.getElementById('level10Notification');
+                const level20 = document.getElementById('level20Notification');
+                const level50 = document.getElementById('level50Notification');
+                const glowingLinks = document.getElementById('glowingLinksGuide');
+                
+                if (level10 && level10.style.display === 'block') {
+                    closeLevel10Notification();
+                    return;
+                }
+                if (level20 && level20.style.display === 'block') {
+                    closeLevel20Notification();
+                    return;
+                }
+                if (level50 && level50.style.display === 'block') {
+                    closeLevel50Notification();
+                    return;
+                }
+                if (glowingLinks && glowingLinks.style.display === 'block') {
+                    closeGlowingLinksGuide();
+                    return;
+                }
+                
+                // If no hints visible and playing, do fast drop
+                if (currentState === GameState.PLAYING) {
+                    const currentTime = Date.now();
+                    const timeSinceLastSpace = currentTime - lastSpaceTime;
+                    
+                    if (timeSinceLastSpace < doubleTapThreshold && timeSinceLastSpace > 0) {
+                        instantDrop = true;
+                        fastDrop = false;
+                    } else {
+                        fastDrop = true;
+                        instantDrop = false;
+                    }
+                    
+                    lastSpaceTime = currentTime;
+                    stats.fastDropsUsed++;
+                    if (stats.fastDropsUsed >= 10) unlockAchievement('fast_drop');
+                }
+            }
+            
+            // B button - Rotate piece (cycles through rotations) - same as ARROW KEYS
+            else if (buttonIndex === GamepadButtons.B && currentState === GameState.PLAYING) {
+                rotatePiece('ArrowRight');
+            }
+            
+            // Y button - Flip chain - same as SHIFT
+            else if (buttonIndex === GamepadButtons.Y && currentState === GameState.PLAYING) {
+                flipChain();
+            }
+            
+            // LB - Rotate camera left - same as Q
+            else if (buttonIndex === GamepadButtons.LB && currentState === GameState.PLAYING) {
+                rotateCamera(-1);
+            }
+            
+            // RB - Rotate camera right - same as E
+            else if (buttonIndex === GamepadButtons.RB && currentState === GameState.PLAYING) {
+                rotateCamera(1);
+            }
+            
+            // D-Pad UP - Zooko Special (key 1)
+            else if (buttonIndex === GamepadButtons.DPAD_UP && currentState === GameState.PLAYING) {
+                playZookoSpecialAnimation();
+            }
+            
+            // D-Pad DOWN - Nate Special (key 2)
+            else if (buttonIndex === GamepadButtons.DPAD_DOWN && currentState === GameState.PLAYING) {
+                playNateSpecialAnimation();
+            }
+            
+            // D-Pad LEFT - Zancas Special (key 3)
+            else if (buttonIndex === GamepadButtons.DPAD_LEFT && currentState === GameState.PLAYING) {
+                playZancasSpecialAnimation();
+            }
+            
+            // D-Pad RIGHT - CyberAxe Special (key 4)
+            else if (buttonIndex === GamepadButtons.DPAD_RIGHT && currentState === GameState.PLAYING) {
+                playCyberAxeSpecialAnimation();
+            }
+            
+            // Start button - Pause
+            else if (buttonIndex === GamepadButtons.START) {
+                if (currentState === GameState.PLAYING) {
+                    pauseGame();
+                } else if (currentState === GameState.PAUSED) {
+                    resumeGame();
+                }
+            }
+            
+            // Select button - Toggle top-down view - same as T
+            else if (buttonIndex === GamepadButtons.SELECT && currentState === GameState.PLAYING) {
+                switchToTopDown();
+            }
+            
+            // X button - unused (reserved for future feature)
+            // L3 button - unused
+            // R3 button - unused
+        }
+        
+        function handleGamepadButtonRelease(buttonIndex) {
+            // A button release - stop fast drop
+            if (buttonIndex === GamepadButtons.A) {
+                fastDrop = false;
+                instantDrop = false;
+            }
+        }
+        // ===== END GAMEPAD FUNCTIONS =====
         
         function rotateCamera(direction) {
             currentChair = (currentChair + direction + 4) % 4;
@@ -9370,6 +9846,10 @@
         
         function animate() {
             requestAnimationFrame(animate);
+            
+            // ===== GAMEPAD POLLING =====
+            updateGamepad();
+            // ===== END GAMEPAD POLLING =====
             
             // Update performance counter
             frameCount++;

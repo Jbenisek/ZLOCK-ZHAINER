@@ -2,6 +2,58 @@
 
 # Changelog
 
+## v0.19.44 - Hint Popup Controller Icons (2025-11-18)
+- **Summary:**
+  - Added controller button icons to all hint popup buttons
+  - Added gamepad support for hint popups (A to close, Y to skip all)
+
+- **Gamepad UI Enhancements:**
+  - Green A button icon on all "GOT IT!" buttons
+  - Yellow Y button icon on all "SKIP ALL" buttons
+  - A button now closes current hint popup
+  - Y button skips all remaining hints
+
+## v0.19.43 - Gamepad Support & Server Improvements (2025-11-18)
+- **Summary:**
+  - Added full Xbox/Steam/generic controller support
+  - Fixed server stop command to properly kill Python processes
+  - Added "Skip All" button to hint popups
+  - Fixed gamepad analog stick interfering with keyboard input
+  - Added controller A button to close hint popups
+
+- **Gamepad/Controller Support:**
+  - Full support for Xbox, PlayStation, Steam Controller, and generic gamepads
+  - Standard Gamepad API mapping with 60Hz polling
+  - Left analog stick: Move chain (WASD equivalent)
+  - A button: Drop/Fast drop (double-tap for instant drop)
+  - B button: Rotate piece
+  - Y button: Flip chain
+  - LB/RB: Rotate camera left/right
+  - D-Pad: Character special abilities (Up=Zooko, Down=Nate, Left=Zancas, Right=CyberAxe)
+  - Start: Pause/Resume
+  - Select: Toggle top-down view
+  - Automatic detection with on-screen notifications
+  - Analog stick deadzone prevents interference with keyboard
+
+- **UI Improvements:**
+  - Added "Skip All" button to all hint popups (Level 10, 20, 50, Glowing Links Guide)
+  - Skip All marks all hints as seen and closes current popup
+  - A button on gamepad now closes visible hints before performing gameplay actions
+  - Added "1-4" keyboard hint for special abilities to HUD instructions
+  - Reduced hint button font size to 14px for better single-line fit
+
+- **Server Script Fix:**
+  - `zlock_server.sh stop` command now properly terminates Python server
+  - Added graceful shutdown (SIGTERM) followed by force kill (SIGKILL) if needed
+  - Uses `lsof` to detect and clean up processes still using port 4243
+  - Handles cases where PID file is missing but server is still running
+  - Provides helpful status messages during shutdown process
+
+- **Bug Fixes:**
+  - Fixed gamepad analog stick resetting WASD keys every frame
+  - Keyboard input now works reliably alongside gamepad support
+  - Analog stick only overrides keyboard when actively moved beyond deadzone
+
 ## v0.19.42 - Linux GLB Binary Serving Fix (2025-11-18)
 - **Summary:**
   - Fixed critical GLB model loading issue on Linux Mint servers
