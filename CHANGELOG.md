@@ -2,6 +2,96 @@
 
 # Changelog
 
+## v0.20.10 - Player-Position Lighting (2025-11-19)
+- **Summary:**
+  - Added dynamic player-position spotlight that follows camera viewpoint
+  - Disabled static corner lights (4 PointLights removed)
+  - Chains now illuminated from player's perspective in side views (chairs 0-3)
+  
+- **Lighting Changes:**
+  - Added `playerLight` - SpotLight positioned at camera location
+  - Intensity: 15, Distance: 37.5, Angle: π/3, Penumbra: 1.0, Decay: 1.8
+  - Updates position when camera rotates (Q/E keys, LB/RB gamepad)
+  - Disabled in top-down view (T key, Select button)
+  - Integrated with `toggleLights()` function
+  
+- **Performance:**
+  - Removed 4 static PointLights (corner lights)
+  - Net change: -3 lights (4 removed, 1 added)
+  
+- **Technical Details:**
+  - `playerLight` variable declared globally, no cleanup needed (persists in scene)
+  - Position updated in `updateCameraPosition()` for all 4 chair positions
+  - Target always points at grid center for consistent illumination
+  - Soft penumbra (1.0) for gradual falloff
+
+## v0.20.9 - Lighting & Material Overhaul (2025-11-19)
+- **Summary:**
+  - Complete lighting system overhaul to match Blender viewport visuals
+  - Implemented physically correct rendering pipeline (sRGB, ACESFilmic, PBR)
+  - Replaced expensive point lights with generated Studio Environment Map (IBL)
+  - Fixed material properties to respect original GLB exports (removed code overrides)
+  
+- **Visual Improvements:**
+  - ✅ Realistic metallic reflections on chains via Environment Map
+  - ✅ Correct color accuracy with sRGB encoding
+  - ✅ Cinematic tone mapping (ACESFilmic)
+  - ✅ Removed "washed out" look and excessive bloom/brightness
+  
+- **Performance:**
+  - Removed 5 dynamic PointLights (Chain Light + 4 Corner Lights)
+  - Optimized rendering loop by using static environment lighting
+  
+- **Fixes:**
+  - Fixed crash in `toggleLights()` when accessing removed ambient light
+  - Updated light toggle logic to correctly handle Environment Map state
+
+- **Lighting System Restored (v5 - "Pub/Pool Table" Style):**
+  - Added strong overhead `SpotLight` ("Pool Table Lamp") focused on the grid.
+  - Added dim warm `AmbientLight` for atmosphere.
+  - Added cool `PointLight` (Fill) and warm `SpotLight` (Rim) for depth.
+  - Materials remain `MeshPhongMaterial` to properly react to the new lighting.
+- **Lighting System Removed (v4 - Total Blackout):**
+  - Removed ALL lights.
+  - Removed ALL emissive materials from walls and floor.
+  - Changed all `MeshBasicMaterial` (self-illuminated) to `MeshPhongMaterial` (requires light).
+  - Set background clear color to pure black (`0x000000`).
+  - The scene is now guaranteed to be 100% black on startup.
+- **Lighting Overhaul (v3 - "Pool Table" Fix):**
+  - **SpotLight Intensity:** Increased `DEFAULT_KEY_LIGHT` to `1200.0` to account for physical light decay over distance.
+  - **Reflections:** Added a "Softbox" geometry to the Environment Map generation. This ensures metal chains have a bright overhead light source to reflect, preventing them from looking black/flat.
+  - **Contrast:** Maintained dark surroundings while ensuring the play area is brightly lit.
+
+## v0.20.8 - In-Game Control Panel UI Refinement (2025-11-19)
+- **Summary:**
+  - Refined all in-game control panels to match AAA theme styling
+  - Compacted 3 placement menus for efficient space usage
+  - Fixed oversized buttons and removed unnecessary min-width constraints
+  
+- **Control Panel Updates:**
+  - ✅ Game Controls Panel: Updated gradient background, teal borders, backdrop blur
+  - ✅ Color Picker Modal: Theme-matched styling with proper button gradients
+  - ✅ Particle Placement Menu: Compacted, teal borders (#2A9D8F)
+  - ✅ Model Placement Menu: Compacted, purple borders (#8B5CF6)
+  - ✅ Chain Column Menu: Compacted, orange borders (#FF9F1C)
+  
+- **Compaction Improvements:**
+  - Reduced padding: 20px → 10px
+  - Reduced margins: 15px → 6px
+  - Reduced font sizes: 12px → 9px
+  - Reduced input widths: 70px → 50px
+  - Removed fixed min-width constraints (240-320px → auto)
+  - Removed .button class from menu buttons (280px min-width → content-sized)
+  - Grid layout for action buttons (2-column/3-column)
+  - Shortened button labels: "Duplicate" → "Dup", "Delete" → "Del"
+  
+- **Visual Consistency:**
+  - All panels use gradient background: `linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9))`
+  - Consistent border styling: 2px solid with context colors
+  - Backdrop blur and proper shadows matching main UI
+  - Delete buttons: Red gradient with #EB5757 border
+  - Copy buttons: Green gradient with #27AE60 border
+
 ## v0.20.7 - UI Overhaul: Professional AAA Styling (2025-11-19)
 - **Summary:**
   - Complete UI redesign matching in-game special abilities panel style
@@ -846,28 +936,7 @@
   - Prevents memory accumulation during repeated CyberAxe special usage
 
 - **CyberAxe Special Updates:**
-  - Changed notification text from "CyberAxe Execution!" to "CyberAxe Node Overload!"
-  - Updated tooltip from "System Overload" to "Node Overload"
-
-## v0.19.14 - Model Placement System
-- **Model Placement Tool:**
-  - Press M (when hitboxes enabled) to create model placement boxes
-  - Interactive 3D placement with magenta wireframe boxes and arrows
-  - Click box to open model placement menu with:
-    - Model dropdown (19 models: all .glb files from models/ and people/)
-    - Position X/Y/Z inputs (type exact coordinates)
-    - Rotation X/Y/Z inputs (degrees)
-    - Scale input (0.1-1000 range)
-    - Loop Animation checkbox
-    - Test/Duplicate/Delete/Close buttons
-    - Copy Data button (copies JSON to clipboard)
-  - Click arrows to move models 2.0 units in any direction
-  - Box positioned at model center (Y+3 offset from feet)
-  - All models hardcoded in loadModelPlacements() (no localStorage)
-  - Animation mixers update every frame for looping animations
-
-- **Background Characters Added:**
-  - 7 animated background characters positioned around game area
+  - Changed notification text from "CyberAxe Execution!" to "
   - female_1_idle, female_3_idle, female_4_idle
   - alien_female_1_sitting_idle, alien_male_1_idle, alien_male_1_sitting_idle
   - male_2_sitting_idle
@@ -1343,7 +1412,7 @@
   - Slide-in animation from left
   - "GOT IT!" button to dismiss
   - Only shows once per game session
-- Version tracking: All 4 version locations updated to v0.17.3
+  - Skipped when using "Skip Tutorial" button (player already knows)
 
 ## v0.17.2 - Glowing Chain Floor Collision Fix
 - **BUG FIX:** Glowing chains now stop at correct floor position
@@ -2018,9 +2087,9 @@ The original code reset links to a fixed position (-4) when they scrolled past t
 ## [v0.4.1] - 2025-11-13
 
 ### Changed
-- **Zancas Animation**: Special animation now plays exactly once without looping
-  - Simplified animation logic to play once then return to idle
-  - Removed loop counter system for cleaner code
+- **Zancas Special**: Animation loops 2 times before returning to idle
+- **Nate Special**: Animation loops 4 times before returning to idle
+- Characters now store original position and smoothly return after special animation completes
 
 ## [v0.4.0] - 2025-11-13
 
@@ -2042,7 +2111,7 @@ The original code reset links to a fixed position (-4) when they scrolled past t
   - Transformed blocks can create new matches after effect completes
 
 ### Changed
-- **Zancas Animation**: Special animation now loops 1 time (reduced from 2)
+- **Zancas Animation**: Special animation now loops 2 times (reduced from 2)
 - **Time System**: Added global time scale system for slow-motion effects
   - All physics and game updates respect `currentTimeScale`
   - Characters can trigger time slowdown during special abilities
@@ -2089,11 +2158,6 @@ The original code reset links to a fixed position (-4) when they scrolled past t
 - **Zancas Special**: Animation loops 2 times before returning to idle
 - **Nate Special**: Animation loops 4 times before returning to idle
 - Characters now store original position and smoothly return after special animation completes
-
-### Technical
-- Added `zancasSpecialPosition`, `zancasSpecialRotation`, `zancasSpecialLoopCount` variables
-- Added `nateSpecialPosition`, `nateSpecialRotation`, `nateSpecialLoopCount` variables
-- Special animations can be customized independently from idle state
 
 ## [v0.3.5] - 2025-11-12
 
@@ -2343,7 +2407,7 @@ The original code reset links to a fixed position (-4) when they scrolled past t
 ### Removed
 - All console logging statements removed from production code
 
-## [v0.1.3] - 2025-11-11
+## v0.1.3 - 2025-11-11
 
 ### Changed
 - Removed grace period - chains now lock instantly upon collision with floor or blocks
@@ -2352,7 +2416,7 @@ The original code reset links to a fixed position (-4) when they scrolled past t
 ### Removed
 - 200ms lock grace timer removed from collision system
 
-## [v0.1.2] - 2025-11-11
+## v0.1.2 - 2025-11-11
 
 ### Added
 - 3D compass/direction indicator in bottom-left corner
@@ -2367,7 +2431,7 @@ The original code reset links to a fixed position (-4) when they scrolled past t
 - Grid boundaries now correctly span from 0 to GRID_WIDTH/DEPTH instead of offset positions
 - Cube frame and grid lines now perfectly aligned at X: 0-6, Y: 0-25, Z: 0-6
 
-## [v0.1.1] - 2025-11-11
+## v0.1.1 - 2025-11-11
 
 ### Fixed
 - Fixed null pointer crash when accessing chain after lockChain()
@@ -2375,7 +2439,7 @@ The original code reset links to a fixed position (-4) when they scrolled past t
 - Added spawnScheduled flag to prevent immediate re-spawning after lock
 - Chains now properly spawn → fall → lock → wait → spawn with correct timing
 
-## [v0.1.0] - 2025-11-11
+## v0.1.0 - 2025-11-11
 
 ### Added
 - Initial game implementation

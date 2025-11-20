@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.7</title>
+    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.8</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -653,12 +653,13 @@
             top: 50%;
             transform: translateY(-50%);
             width: 240px;
-            background: rgba(20, 27, 34, 0.9);
-            border: 2px solid #26313B;
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
+            border: 2px solid #2A9D8F;
             border-radius: 12px;
             padding: 15px;
             backdrop-filter: blur(10px);
             pointer-events: all;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
         
         .specialAbility {
@@ -667,11 +668,12 @@
             gap: 10px;
             margin-bottom: 12px;
             padding: 8px;
-            background: rgba(10, 14, 18, 0.5);
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.5), rgba(20, 27, 34, 0.3));
             border-radius: 8px;
             border: 2px solid;
             transition: all 0.2s;
             position: relative;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
         
         .specialAbility:hover {
@@ -855,12 +857,12 @@
             bottom: 20px;
             right: 280px;
             pointer-events: all;
-            background: rgba(20, 27, 34, 0.9);
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
             border: 2px solid #2A9D8F;
             border-radius: 8px;
             padding: 4px;
             backdrop-filter: blur(10px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
         
         #gameControlsButtons {
@@ -871,7 +873,7 @@
         }
         
         #gameControlsButtons button {
-            background: linear-gradient(145deg, #1a2229, #0f1419);
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
             color: #F2C94C;
             border: 2px solid #26313B;
             border-radius: 6px;
@@ -884,27 +886,28 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
             position: relative;
         }
         
         #gameControlsButtons button:hover {
-            background: linear-gradient(145deg, #2A9D8F, #238176);
-            border-color: #2A9D8F;
+            background: linear-gradient(135deg, rgba(20, 27, 34, 0.95), rgba(42, 157, 143, 0.2));
+            border-color: #4ECDC4;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(42, 157, 143, 0.4);
+            box-shadow: 0 6px 20px rgba(42, 157, 143, 0.4);
         }
         
         #gameControlsButtons button:active {
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.98), rgba(15, 19, 24, 0.95));
             transform: translateY(0);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
         }
         
         /* Active state for toggle buttons */
         #gameControlsButtons button.active {
-            background: linear-gradient(145deg, #2A9D8F, #1a7d71);
+            background: linear-gradient(135deg, rgba(42, 157, 143, 0.4), rgba(42, 157, 143, 0.3));
             border-color: #F2C94C;
-            box-shadow: 0 0 15px rgba(242, 201, 76, 0.3);
+            box-shadow: 0 0 15px rgba(242, 201, 76, 0.4);
         }
         
         /* Disabled/unused buttons */
@@ -917,10 +920,10 @@
         
         #gameControlsButtons button:disabled:hover,
         #gameControlsButtons button.unused:hover {
-            background: linear-gradient(145deg, #1a2229, #0f1419);
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
             border-color: #26313B;
             transform: none;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
         
         @keyframes slideIn {
@@ -1658,7 +1661,7 @@
         <button class="button" onclick="resumeGame()">RESUME<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         <button class="button" onclick="restartFromPause()">RESTART<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">X</span></button>
         <button class="button" onclick="showSettingsFromPause()">SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">Y</span></button>
-        <button class="button" onclick="quitToMenu()">QUIT TO MENU<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 10px; font-weight: bold; color: white; font-size: 12px;">◀▶</span></button>
+        <button class="button" onclick="quitToMenu()">QUIT TO MENU<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 10px; font-weight: bold; color: white; font-size: 12px;">◀</span></button>
     </div>
     
     <div id="level10Notification">
@@ -1828,11 +1831,12 @@
             bottom: 120px;
             right: 20px;
             width: 200px;
-            background: rgba(10, 14, 18, 0.8);
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
             border: 2px solid #FF6B35;
             border-radius: 10px;
             padding: 15px;
             backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         ">
             <div style="text-align: center; margin-bottom: 10px;">
                 <div style="font-size: 14px; font-weight: 600; color: #FF6B35; margin-bottom: 5px;">ROGUE GOVERNMENT</div>
@@ -2113,48 +2117,54 @@
                 bottom: 45px;
                 left: 50%;
                 transform: translateX(-50%);
-                background: rgba(13, 18, 24, 0.95);
-                border: 2px solid #00ffff;
+                background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
+                border: 2px solid #2A9D8F;
                 border-radius: 8px;
                 padding: 12px;
                 z-index: 10000;
                 min-width: 280px;
                 pointer-events: auto;
+                backdrop-filter: blur(10px);
+                box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8);
             ">
-                <h3 style="margin: 0 0 10px 0; color: #00ffff; font-family: 'JetBrains Mono', monospace; font-size: 12px; text-align: center;">Grid Color Settings</h3>
+                <h3 style="margin: 0 0 10px 0; color: #2A9D8F; font-family: 'JetBrains Mono', monospace; font-size: 12px; text-align: center; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">Grid Color Settings</h3>
                 
                 <div style="margin-bottom: 10px;">
-                    <label style="color: #89A0B4; font-family: 'JetBrains Mono', monospace; font-size: 11px; display: block; margin-bottom: 6px;">Floor Hint Color:</label>
+                    <label style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 11px; display: block; margin-bottom: 6px;">Floor Hint Color:</label>
                     <div style="display: flex; gap: 8px; align-items: center;">
-                        <input type="color" id="floorColorPicker" value="#00FFFF" style="width: 50px; height: 32px; border: 1px solid #00ffff; border-radius: 5px; cursor: pointer; background: #1a2332;">
+                        <input type="color" id="floorColorPicker" value="#00FFFF" style="width: 50px; height: 32px; border: 2px solid #2A9D8F; border-radius: 5px; cursor: pointer; background: rgba(10, 14, 18, 0.8);">
                         <button onclick="setFloorColorNone()" style="
                             flex: 1;
                             padding: 6px;
-                            background: #1a2332;
-                            color: #00ffff;
-                            border: 1px solid #00ffff;
+                            background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
+                            color: #E9F0F7;
+                            border: 2px solid #2A9D8F;
                             border-radius: 5px;
                             font-family: 'JetBrains Mono', monospace;
                             cursor: pointer;
                             font-size: 10px;
+                            font-weight: 700;
+                            transition: all 0.2s;
                         ">None</button>
                     </div>
                 </div>
                 
                 <div style="margin-bottom: 10px;">
-                    <label style="color: #89A0B4; font-family: 'JetBrains Mono', monospace; font-size: 11px; display: block; margin-bottom: 6px;">Laser Line Color:</label>
+                    <label style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 11px; display: block; margin-bottom: 6px;">Laser Line Color:</label>
                     <div style="display: flex; gap: 8px; align-items: center;">
-                        <input type="color" id="laserColorPicker" value="#00FFFF" style="width: 50px; height: 32px; border: 1px solid #00ffff; border-radius: 5px; cursor: pointer; background: #1a2332;">
+                        <input type="color" id="laserColorPicker" value="#00FFFF" style="width: 50px; height: 32px; border: 2px solid #2A9D8F; border-radius: 5px; cursor: pointer; background: rgba(10, 14, 18, 0.8);">
                         <button onclick="setLaserColorNone()" style="
                             flex: 1;
                             padding: 6px;
-                            background: #1a2332;
-                            color: #00ffff;
-                            border: 1px solid #00ffff;
+                            background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
+                            color: #E9F0F7;
+                            border: 2px solid #2A9D8F;
                             border-radius: 5px;
                             font-family: 'JetBrains Mono', monospace;
                             cursor: pointer;
                             font-size: 10px;
+                            font-weight: 700;
+                            transition: all 0.2s;
                         ">None</button>
                     </div>
                 </div>
@@ -2163,191 +2173,188 @@
                     <button onclick="applyColorSettings()" style="
                         flex: 1;
                         padding: 7px;
-                        background: #27AE60;
-                        color: white;
-                        border: none;
+                        background: linear-gradient(135deg, rgba(39, 174, 96, 0.3), rgba(39, 174, 96, 0.2));
+                        color: #E9F0F7;
+                        border: 2px solid #27AE60;
                         border-radius: 5px;
                         font-family: 'JetBrains Mono', monospace;
                         cursor: pointer;
                         font-weight: bold;
+                        transition: all 0.2s;
+                        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
                     ">Accept</button>
                     <button onclick="cancelColorSettings()" style="
                         flex: 1;
                         padding: 7px;
-                        background: #EB5757;
-                        color: white;
-                        border: none;
+                        background: linear-gradient(135deg, rgba(235, 87, 87, 0.3), rgba(231, 76, 60, 0.2));
+                        color: #E9F0F7;
+                        border: 2px solid #EB5757;
                         border-radius: 5px;
                         font-family: 'JetBrains Mono', monospace;
                         cursor: pointer;
                         font-weight: bold;
+                        transition: all 0.2s;
+                        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
                     ">Cancel</button>
                 </div>
             </div>
             
             <!-- Particle Placement Menu -->
-            <div id="placementMenu" style="display: none; position: fixed; background: rgba(13, 18, 24, 0.95); border: 2px solid #00ffff; border-radius: 10px; padding: 20px; z-index: 10000; min-width: 300px; pointer-events: auto;">
-                <h3 style="margin: 0 0 15px 0; color: #00ffff; font-family: 'JetBrains Mono', monospace;">Particle Placement</h3>
+            <div id="placementMenu" style="display: none; position: fixed; background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); border: 2px solid #2A9D8F; border-radius: 8px; padding: 10px; z-index: 10000; pointer-events: auto; backdrop-filter: blur(10px); box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8);">
+                <h3 style="margin: 0 0 8px 0; color: #2A9D8F; font-family: 'JetBrains Mono', monospace; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; font-size: 11px;">Particle Placement</h3>
                 
-                <div style="margin-bottom: 15px; pointer-events: auto;">
-                    <label style="color: #89A0B4; font-family: 'JetBrains Mono', monospace; font-size: 12px; display: block; margin-bottom: 5px;">Particle Effect:</label>
-                    <select id="placementEffectSelect" onchange="onPlacementEffectChange()" style="width: 100%; padding: 8px; background: #1a2332; color: #00ffff; border: 1px solid #00ffff; border-radius: 5px; font-family: 'JetBrains Mono', monospace; cursor: pointer; pointer-events: auto;">
+                <div style="margin-bottom: 6px; pointer-events: auto;">
+                    <label style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 9px; display: block; margin-bottom: 2px;">Effect:</label>
+                    <select id="placementEffectSelect" onchange="onPlacementEffectChange()" style="width: 100%; padding: 3px; background: rgba(10, 14, 18, 0.8); color: #E9F0F7; border: 2px solid #2A9D8F; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 9px; cursor: pointer; pointer-events: auto;">
                     </select>
                 </div>
                 
-                <div style="margin-bottom: 15px; pointer-events: auto;">
-                    <input type="checkbox" id="placementEnabledCheck" onclick="onPlacementEnabledChange()" style="margin-right: 8px; cursor: pointer; width: 18px; height: 18px; pointer-events: auto;">
-                    <label for="placementEnabledCheck" style="color: #89A0B4; font-family: 'JetBrains Mono', monospace; font-size: 12px; cursor: pointer;">Enabled</label>
+                <div style="margin-bottom: 6px; display: flex; gap: 8px; pointer-events: auto;">
+                    <div><input type="checkbox" id="placementEnabledCheck" onclick="onPlacementEnabledChange()" style="margin-right: 3px; cursor: pointer; width: 14px; height: 14px; pointer-events: auto;"><label for="placementEnabledCheck" style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 9px; cursor: pointer;">Enabled</label></div>
+                    <div><input type="checkbox" id="placementLoopCheck" onclick="onPlacementLoopChange()" style="margin-right: 3px; cursor: pointer; width: 14px; height: 14px; pointer-events: auto;"><label for="placementLoopCheck" style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 9px; cursor: pointer;">Loop</label></div>
                 </div>
                 
-                <div style="margin-bottom: 15px; pointer-events: auto;">
-                    <input type="checkbox" id="placementLoopCheck" onclick="onPlacementLoopChange()" style="margin-right: 8px; cursor: pointer; width: 18px; height: 18px; pointer-events: auto;">
-                    <label for="placementLoopCheck" style="color: #89A0B4; font-family: 'JetBrains Mono', monospace; font-size: 12px; cursor: pointer;">Loop</label>
-                </div>
-                
-                <div style="margin-bottom: 15px;">
-                    <label style="color: #89A0B4; font-family: 'JetBrains Mono', monospace; font-size: 12px; display: block; margin-bottom: 5px;">Position:</label>
-                    <div style="display: flex; gap: 8px; align-items: center;">
-                        <div style="display: flex; align-items: center; gap: 4px;">
-                            <label style="color: #00ffff; font-family: 'JetBrains Mono', monospace; font-size: 11px;">X:</label>
-                            <input type="number" id="placementPosX" step="0.5" onchange="onPlacementPositionChange()" style="width: 70px; padding: 4px; background: #1a2332; color: #00ffff; border: 1px solid #00ffff; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 11px; pointer-events: auto;">
+                <div style="margin-bottom: 6px;">
+                    <label style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 9px; display: block; margin-bottom: 2px;">Position:</label>
+                    <div style="display: flex; gap: 3px; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 2px;">
+                            <label style="color: #2A9D8F; font-family: 'JetBrains Mono', monospace; font-size: 9px;">X:</label>
+                            <input type="number" id="placementPosX" step="0.5" onchange="onPlacementPositionChange()" style="width: 50px; padding: 2px; background: rgba(10, 14, 18, 0.8); color: #E9F0F7; border: 2px solid #2A9D8F; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 9px; pointer-events: auto;">
                         </div>
-                        <div style="display: flex; align-items: center; gap: 4px;">
-                            <label style="color: #00ffff; font-family: 'JetBrains Mono', monospace; font-size: 11px;">Y:</label>
-                            <input type="number" id="placementPosY" step="0.5" onchange="onPlacementPositionChange()" style="width: 70px; padding: 4px; background: #1a2332; color: #00ffff; border: 1px solid #00ffff; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 11px; pointer-events: auto;">
+                        <div style="display: flex; align-items: center; gap: 2px;">
+                            <label style="color: #2A9D8F; font-family: 'JetBrains Mono', monospace; font-size: 9px;">Y:</label>
+                            <input type="number" id="placementPosY" step="0.5" onchange="onPlacementPositionChange()" style="width: 50px; padding: 2px; background: rgba(10, 14, 18, 0.8); color: #E9F0F7; border: 2px solid #2A9D8F; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 9px; pointer-events: auto;">
                         </div>
-                        <div style="display: flex; align-items: center; gap: 4px;">
-                            <label style="color: #00ffff; font-family: 'JetBrains Mono', monospace; font-size: 11px;">Z:</label>
-                            <input type="number" id="placementPosZ" step="0.5" onchange="onPlacementPositionChange()" style="width: 70px; padding: 4px; background: #1a2332; color: #00ffff; border: 1px solid #00ffff; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 11px; pointer-events: auto;">
+                        <div style="display: flex; align-items: center; gap: 2px;">
+                            <label style="color: #2A9D8F; font-family: 'JetBrains Mono', monospace; font-size: 9px;">Z:</label>
+                            <input type="number" id="placementPosZ" step="0.5" onchange="onPlacementPositionChange()" style="width: 50px; padding: 2px; background: rgba(10, 14, 18, 0.8); color: #E9F0F7; border: 2px solid #2A9D8F; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 9px; pointer-events: auto;">
                         </div>
                     </div>
                 </div>
                 
-                <div style="display: flex; gap: 10px; flex-wrap: wrap; pointer-events: auto;">
-                    <button class="button" onclick="testPlacementParticle()" style="flex: 1; min-width: 120px; pointer-events: auto;">Test</button>
-                    <button class="button" onclick="duplicateCurrentPlacement()" style="flex: 1; min-width: 120px; pointer-events: auto;">Duplicate</button>
-                    <button class="button" onclick="deleteCurrentPlacement()" style="flex: 1; min-width: 120px; background: #ff4444; pointer-events: auto;">Delete</button>
-                    <button class="button" onclick="closePlacementMenu()" style="flex: 1; min-width: 120px; pointer-events: auto;">Close</button>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3px; margin-bottom: 4px; pointer-events: auto;">
+                    <button onclick="testPlacementParticle()" style="padding: 3px 6px; font-size: 9px; background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); color: #E9F0F7; border: 2px solid #2A9D8F; border-radius: 6px; cursor: pointer; pointer-events: auto;">Test</button>
+                    <button onclick="duplicateCurrentPlacement()" style="padding: 3px 6px; font-size: 9px; background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); color: #E9F0F7; border: 2px solid #2A9D8F; border-radius: 6px; cursor: pointer; pointer-events: auto;">Dup</button>
+                    <button onclick="deleteCurrentPlacement()" style="padding: 3px 6px; font-size: 9px; background: linear-gradient(135deg, rgba(235, 87, 87, 0.3), rgba(231, 76, 60, 0.2)); color: #E9F0F7; border: 2px solid #EB5757; border-radius: 6px; cursor: pointer; pointer-events: auto;">Del</button>
+                    <button onclick="closePlacementMenu()" style="padding: 3px 6px; font-size: 9px; background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); color: #E9F0F7; border: 2px solid #2A9D8F; border-radius: 6px; cursor: pointer; pointer-events: auto;">Close</button>
                 </div>
                 
-                <div style="margin-top: 10px; pointer-events: auto;">
-                    <button class="button" onclick="copyParticlePlacementData()" style="width: 100%; background: #00aa00; pointer-events: auto;">📋 Copy Data</button>
+                <div style="pointer-events: auto;">
+                    <button onclick="copyParticlePlacementData()" style="width: 100%; padding: 3px 6px; font-size: 9px; background: linear-gradient(135deg, rgba(39, 174, 96, 0.3), rgba(39, 174, 96, 0.2)); color: #E9F0F7; border: 2px solid #27AE60; border-radius: 6px; cursor: pointer; pointer-events: auto;">📋 Copy</button>
                 </div>
             </div>
         </div>
         
         <!-- Model Placement Menu -->
-        <div id="modelPlacementMenu" style="display: none; position: fixed; background: rgba(13, 18, 24, 0.95); border: 2px solid #ff00ff; border-radius: 10px; padding: 20px; z-index: 10000; min-width: 320px; pointer-events: auto;">
-            <h3 style="margin: 0 0 15px 0; color: #ff00ff; font-family: 'JetBrains Mono', monospace;">Model Placement</h3>
+        <div id="modelPlacementMenu" style="display: none; position: fixed; background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); border: 2px solid #8B5CF6; border-radius: 8px; padding: 10px; z-index: 10000; pointer-events: auto; backdrop-filter: blur(10px); box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8);">
+            <h3 style="margin: 0 0 8px 0; color: #8B5CF6; font-family: 'JetBrains Mono', monospace; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; font-size: 11px;">Model Placement</h3>
             
-            <div style="margin-bottom: 15px; pointer-events: auto;">
-                <label style="color: #89A0B4; font-family: 'JetBrains Mono', monospace; font-size: 12px; display: block; margin-bottom: 5px;">Model:</label>
-                <select id="modelPlacementSelect" onchange="onModelPlacementModelChange()" style="width: 100%; padding: 8px; background: #1a2332; color: #ff00ff; border: 1px solid #ff00ff; border-radius: 5px; font-family: 'JetBrains Mono', monospace; cursor: pointer; pointer-events: auto;">
+            <div style="margin-bottom: 6px; pointer-events: auto;">
+                <label style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 9px; display: block; margin-bottom: 2px;">Model:</label>
+                <select id="modelPlacementSelect" onchange="onModelPlacementModelChange()" style="width: 100%; padding: 3px; background: rgba(10, 14, 18, 0.8); color: #E9F0F7; border: 2px solid #8B5CF6; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 9px; cursor: pointer; pointer-events: auto;">
                 </select>
             </div>
             
-            <div style="margin-bottom: 15px;">
-                <label style="color: #89A0B4; font-family: 'JetBrains Mono', monospace; font-size: 12px; display: block; margin-bottom: 5px;">Position:</label>
-                <div style="display: flex; gap: 8px; align-items: center;">
-                    <div style="display: flex; align-items: center; gap: 4px;">
-                        <label style="color: #ff00ff; font-family: 'JetBrains Mono', monospace; font-size: 11px;">X:</label>
-                        <input type="number" id="modelPosX" step="0.5" onchange="onModelPositionChange()" style="width: 70px; padding: 4px; background: #1a2332; color: #ff00ff; border: 1px solid #ff00ff; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 11px; pointer-events: auto;">
+            <div style="margin-bottom: 6px;">
+                <label style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 9px; display: block; margin-bottom: 2px;">Position:</label>
+                <div style="display: flex; gap: 3px; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 2px;">
+                        <label style="color: #8B5CF6; font-family: 'JetBrains Mono', monospace; font-size: 9px;">X:</label>
+                        <input type="number" id="modelPosX" step="0.5" onchange="onModelPositionChange()" style="width: 50px; padding: 2px; background: rgba(10, 14, 18, 0.8); color: #E9F0F7; border: 2px solid #8B5CF6; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 9px; pointer-events: auto;">
                     </div>
-                    <div style="display: flex; align-items: center; gap: 4px;">
-                        <label style="color: #ff00ff; font-family: 'JetBrains Mono', monospace; font-size: 11px;">Y:</label>
-                        <input type="number" id="modelPosY" step="0.5" onchange="onModelPositionChange()" style="width: 70px; padding: 4px; background: #1a2332; color: #ff00ff; border: 1px solid #ff00ff; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 11px; pointer-events: auto;">
+                    <div style="display: flex; align-items: center; gap: 2px;">
+                        <label style="color: #8B5CF6; font-family: 'JetBrains Mono', monospace; font-size: 9px;">Y:</label>
+                        <input type="number" id="modelPosY" step="0.5" onchange="onModelPositionChange()" style="width: 50px; padding: 2px; background: rgba(10, 14, 18, 0.8); color: #E9F0F7; border: 2px solid #8B5CF6; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 9px; pointer-events: auto;">
                     </div>
-                    <div style="display: flex; align-items: center; gap: 4px;">
-                        <label style="color: #ff00ff; font-family: 'JetBrains Mono', monospace; font-size: 11px;">Z:</label>
-                        <input type="number" id="modelPosZ" step="0.5" onchange="onModelPositionChange()" style="width: 70px; padding: 4px; background: #1a2332; color: #ff00ff; border: 1px solid #ff00ff; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 11px; pointer-events: auto;">
-                    </div>
-                </div>
-            </div>
-            
-            <div style="margin-bottom: 15px;">
-                <label style="color: #89A0B4; font-family: 'JetBrains Mono', monospace; font-size: 12px; display: block; margin-bottom: 5px;">Rotation (degrees):</label>
-                <div style="display: flex; gap: 8px; align-items: center;">
-                    <div style="display: flex; align-items: center; gap: 4px;">
-                        <label style="color: #ff00ff; font-family: 'JetBrains Mono', monospace; font-size: 11px;">X:</label>
-                        <input type="number" id="modelRotX" step="15" onchange="onModelRotationChange()" style="width: 70px; padding: 4px; background: #1a2332; color: #ff00ff; border: 1px solid #ff00ff; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 11px; pointer-events: auto;">
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 4px;">
-                        <label style="color: #ff00ff; font-family: 'JetBrains Mono', monospace; font-size: 11px;">Y:</label>
-                        <input type="number" id="modelRotY" step="15" onchange="onModelRotationChange()" style="width: 70px; padding: 4px; background: #1a2332; color: #ff00ff; border: 1px solid #ff00ff; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 11px; pointer-events: auto;">
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 4px;">
-                        <label style="color: #ff00ff; font-family: 'JetBrains Mono', monospace; font-size: 11px;">Z:</label>
-                        <input type="number" id="modelRotZ" step="15" onchange="onModelRotationChange()" style="width: 70px; padding: 4px; background: #1a2332; color: #ff00ff; border: 1px solid #ff00ff; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 11px; pointer-events: auto;">
+                    <div style="display: flex; align-items: center; gap: 2px;">
+                        <label style="color: #8B5CF6; font-family: 'JetBrains Mono', monospace; font-size: 9px;">Z:</label>
+                        <input type="number" id="modelPosZ" step="0.5" onchange="onModelPositionChange()" style="width: 50px; padding: 2px; background: rgba(10, 14, 18, 0.8); color: #E9F0F7; border: 2px solid #8B5CF6; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 9px; pointer-events: auto;">
                     </div>
                 </div>
             </div>
             
-            <div style="margin-bottom: 15px;">
-                <label style="color: #89A0B4; font-family: 'JetBrains Mono', monospace; font-size: 12px; display: block; margin-bottom: 5px;">Scale:</label>
-                <input type="number" id="modelScale" step="0.5" min="0.1" max="1000" onchange="onModelScaleChange()" style="width: 100%; padding: 8px; background: #1a2332; color: #ff00ff; border: 1px solid #ff00ff; border-radius: 5px; font-family: 'JetBrains Mono', monospace; font-size: 11px; pointer-events: auto;">
+            <div style="margin-bottom: 6px;">
+                <label style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 9px; display: block; margin-bottom: 2px;">Rotation:</label>
+                <div style="display: flex; gap: 3px; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 2px;">
+                        <label style="color: #8B5CF6; font-family: 'JetBrains Mono', monospace; font-size: 9px;">X:</label>
+                        <input type="number" id="modelRotX" step="15" onchange="onModelRotationChange()" style="width: 50px; padding: 2px; background: rgba(10, 14, 18, 0.8); color: #E9F0F7; border: 2px solid #8B5CF6; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 9px; pointer-events: auto;">
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 2px;">
+                        <label style="color: #8B5CF6; font-family: 'JetBrains Mono', monospace; font-size: 9px;">Y:</label>
+                        <input type="number" id="modelRotY" step="15" onchange="onModelRotationChange()" style="width: 50px; padding: 2px; background: rgba(10, 14, 18, 0.8); color: #E9F0F7; border: 2px solid #8B5CF6; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 9px; pointer-events: auto;">
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 2px;">
+                        <label style="color: #8B5CF6; font-family: 'JetBrains Mono', monospace; font-size: 9px;">Z:</label>
+                        <input type="number" id="modelRotZ" step="15" onchange="onModelRotationChange()" style="width: 50px; padding: 2px; background: rgba(10, 14, 18, 0.8); color: #E9F0F7; border: 2px solid #8B5CF6; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 9px; pointer-events: auto;">
+                    </div>
+                </div>
             </div>
             
-            <div style="margin-bottom: 15px; pointer-events: auto;">
-                <input type="checkbox" id="modelAnimLoopCheck" onclick="onModelAnimLoopChange()" style="margin-right: 8px; cursor: pointer; width: 18px; height: 18px; pointer-events: auto;">
-                <label for="modelAnimLoopCheck" style="color: #89A0B4; font-family: 'JetBrains Mono', monospace; font-size: 12px; cursor: pointer;">Loop Animation</label>
+            <div style="margin-bottom: 6px; display: flex; gap: 8px;">
+                <div style="flex: 1;"><label style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 9px; display: block; margin-bottom: 2px;">Scale:</label>
+                <input type="number" id="modelScale" step="0.5" min="0.1" max="1000" onchange="onModelScaleChange()" style="width: 100%; padding: 2px; background: rgba(10, 14, 18, 0.8); color: #E9F0F7; border: 2px solid #8B5CF6; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 9px; pointer-events: auto;"></div>
+                <div style="display: flex; align-items: flex-end; pointer-events: auto;">
+                <input type="checkbox" id="modelAnimLoopCheck" onclick="onModelAnimLoopChange()" style="margin-right: 3px; cursor: pointer; width: 14px; height: 14px; pointer-events: auto;">
+                <label for="modelAnimLoopCheck" style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 9px; cursor: pointer; white-space: nowrap;">Loop</label>
+            </div></div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3px; margin-bottom: 4px; pointer-events: auto;">
+                <button onclick="testModelPlacement()" style="padding: 3px 6px; font-size: 9px; background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); color: #E9F0F7; border: 2px solid #8B5CF6; border-radius: 6px; cursor: pointer; pointer-events: auto;">Test</button>
+                <button onclick="duplicateCurrentModel()" style="padding: 3px 6px; font-size: 9px; background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); color: #E9F0F7; border: 2px solid #8B5CF6; border-radius: 6px; cursor: pointer; pointer-events: auto;">Dup</button>
+                <button onclick="deleteCurrentModel()" style="padding: 3px 6px; font-size: 9px; background: linear-gradient(135deg, rgba(235, 87, 87, 0.3), rgba(231, 76, 60, 0.2)); color: #E9F0F7; border: 2px solid #EB5757; border-radius: 6px; cursor: pointer; pointer-events: auto;">Del</button>
+                <button onclick="closeModelPlacementMenu()" style="padding: 3px 6px; font-size: 9px; background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); color: #E9F0F7; border: 2px solid #8B5CF6; border-radius: 6px; cursor: pointer; pointer-events: auto;">Close</button>
             </div>
             
-            <div style="display: flex; gap: 10px; flex-wrap: wrap; pointer-events: auto;">
-                <button class="button" onclick="testModelPlacement()" style="flex: 1; min-width: 120px; pointer-events: auto;">Test</button>
-                <button class="button" onclick="duplicateCurrentModel()" style="flex: 1; min-width: 120px; pointer-events: auto;">Duplicate</button>
-                <button class="button" onclick="deleteCurrentModel()" style="flex: 1; min-width: 120px; background: #ff4444; pointer-events: auto;">Delete</button>
-                <button class="button" onclick="closeModelPlacementMenu()" style="flex: 1; min-width: 120px; pointer-events: auto;">Close</button>
-            </div>
-            
-            <div style="margin-top: 15px; pointer-events: auto;">
-                <button class="button" onclick="copyModelPlacementData()" style="width: 100%; background: #00aa00; pointer-events: auto;">📋 Copy Data</button>
+            <div style="pointer-events: auto;">
+                <button onclick="copyModelPlacementData()" style="width: 100%; padding: 3px 6px; font-size: 9px; background: linear-gradient(135deg, rgba(39, 174, 96, 0.3), rgba(39, 174, 96, 0.2)); color: #E9F0F7; border: 2px solid #27AE60; border-radius: 6px; cursor: pointer; pointer-events: auto;">📋 Copy</button>
             </div>
         </div>
         
         <!-- Chain Column Menu -->
-        <div id="chainColumnMenu" style="display: none; position: fixed; background: rgba(13, 18, 24, 0.95); border: 2px solid #ffaa00; border-radius: 8px; padding: 12px; z-index: 10000; min-width: 260px; pointer-events: auto;">
-            <h3 style="margin: 0 0 10px 0; color: #ffaa00; font-family: 'JetBrains Mono', monospace; font-size: 13px;">Chain Column</h3>
+        <div id="chainColumnMenu" style="display: none; position: fixed; background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); border: 2px solid #FF9F1C; border-radius: 8px; padding: 12px; z-index: 10000; pointer-events: auto; backdrop-filter: blur(10px); box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8);">
+            <h3 style="margin: 0 0 10px 0; color: #FF9F1C; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">Chain Column</h3>
             
             <div style="margin-bottom: 8px;">
-                <label style="color: #89A0B4; font-family: 'JetBrains Mono', monospace; font-size: 10px; display: block; margin-bottom: 3px;">Position:</label>
+                <label style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 10px; display: block; margin-bottom: 3px;">Position:</label>
                 <div style="display: flex; gap: 4px; align-items: center;">
                     <div style="display: flex; align-items: center; gap: 2px;">
-                        <label style="color: #ffaa00; font-family: 'JetBrains Mono', monospace; font-size: 9px;">X:</label>
-                        <input type="number" id="chainColPosX" step="0.5" onchange="onChainColumnPositionChange()" style="width: 50px; padding: 2px; background: #1a2332; color: #ffaa00; border: 1px solid #ffaa00; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 9px; pointer-events: auto;">
+                        <label style="color: #FF9F1C; font-family: 'JetBrains Mono', monospace; font-size: 9px;">X:</label>
+                        <input type="number" id="chainColPosX" step="0.5" onchange="onChainColumnPositionChange()" style="width: 50px; padding: 2px; background: rgba(10, 14, 18, 0.8); color: #E9F0F7; border: 2px solid #FF9F1C; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 9px; pointer-events: auto;">
                     </div>
                     <div style="display: flex; align-items: center; gap: 2px;">
-                        <label style="color: #ffaa00; font-family: 'JetBrains Mono', monospace; font-size: 9px;">Y:</label>
-                        <input type="number" id="chainColPosY" step="0.5" onchange="onChainColumnPositionChange()" style="width: 50px; padding: 2px; background: #1a2332; color: #ffaa00; border: 1px solid #ffaa00; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 9px; pointer-events: auto;">
+                        <label style="color: #FF9F1C; font-family: 'JetBrains Mono', monospace; font-size: 9px;">Y:</label>
+                        <input type="number" id="chainColPosY" step="0.5" onchange="onChainColumnPositionChange()" style="width: 50px; padding: 2px; background: rgba(10, 14, 18, 0.8); color: #E9F0F7; border: 2px solid #FF9F1C; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 9px; pointer-events: auto;">
                     </div>
                     <div style="display: flex; align-items: center; gap: 2px;">
-                        <label style="color: #ffaa00; font-family: 'JetBrains Mono', monospace; font-size: 9px;">Z:</label>
-                        <input type="number" id="chainColPosZ" step="0.5" onchange="onChainColumnPositionChange()" style="width: 50px; padding: 2px; background: #1a2332; color: #ffaa00; border: 1px solid #ffaa00; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 9px; pointer-events: auto;">
+                        <label style="color: #FF9F1C; font-family: 'JetBrains Mono', monospace; font-size: 9px;">Z:</label>
+                        <input type="number" id="chainColPosZ" step="0.5" onchange="onChainColumnPositionChange()" style="width: 50px; padding: 2px; background: rgba(10, 14, 18, 0.8); color: #E9F0F7; border: 2px solid #FF9F1C; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 9px; pointer-events: auto;">
                     </div>
                 </div>
             </div>
             
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px;">
                 <div>
-                    <label style="color: #89A0B4; font-family: 'JetBrains Mono', monospace; font-size: 9px; display: block; margin-bottom: 2px;">Rotation:</label>
-                    <input type="number" id="chainColRotation" step="0.1" onchange="onChainColumnRotationChange()" style="width: 100%; padding: 3px; background: #1a2332; color: #ffaa00; border: 1px solid #ffaa00; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 9px; pointer-events: auto;">
+                    <label style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 9px; display: block; margin-bottom: 2px;">Rotation:</label>
+                    <input type="number" id="chainColRotation" step="0.1" onchange="onChainColumnRotationChange()" style="width: 100%; padding: 3px; background: rgba(10, 14, 18, 0.8); color: #E9F0F7; border: 2px solid #FF9F1C; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 9px; pointer-events: auto;">
                 </div>
                 <div>
-                    <label style="color: #89A0B4; font-family: 'JetBrains Mono', monospace; font-size: 9px; display: block; margin-bottom: 2px;">Length:</label>
-                    <input type="number" id="chainColLength" step="1" onchange="onChainColumnLengthChange()" style="width: 100%; padding: 3px; background: #1a2332; color: #ffaa00; border: 1px solid #ffaa00; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 9px; pointer-events: auto;">
+                    <label style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 9px; display: block; margin-bottom: 2px;">Length:</label>
+                    <input type="number" id="chainColLength" step="1" onchange="onChainColumnLengthChange()" style="width: 100%; padding: 3px; background: rgba(10, 14, 18, 0.8); color: #E9F0F7; border: 2px solid #FF9F1C; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 9px; pointer-events: auto;">
                 </div>
             </div>
             
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; pointer-events: auto;">
                 <div>
-                    <label style="color: #89A0B4; font-family: 'JetBrains Mono', monospace; font-size: 9px; display: block; margin-bottom: 2px;">Color:</label>
-                    <select id="chainColColorMode" onchange="onChainColumnColorModeChange()" style="width: 100%; padding: 3px; background: #1a2332; color: #ffaa00; border: 1px solid #ffaa00; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 9px; cursor: pointer; pointer-events: auto;">
+                    <label style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 9px; display: block; margin-bottom: 2px;">Color:</label>
+                    <select id="chainColColorMode" onchange="onChainColumnColorModeChange()" style="width: 100%; padding: 3px; background: rgba(10, 14, 18, 0.8); color: #E9F0F7; border: 2px solid #FF9F1C; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 9px; cursor: pointer; pointer-events: auto;">
                         <option value="random">Random</option>
                         <option value="single">Single</option>
                     </select>
                 </div>
                 <div>
-                    <label style="color: #89A0B4; font-family: 'JetBrains Mono', monospace; font-size: 9px; display: block; margin-bottom: 2px;">Direction:</label>
-                    <select id="chainColDirection" onchange="onChainColumnDirectionChange()" style="width: 100%; padding: 3px; background: #1a2332; color: #ffaa00; border: 1px solid #ffaa00; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 9px; cursor: pointer; pointer-events: auto;">
+                    <label style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 9px; display: block; margin-bottom: 2px;">Direction:</label>
+                    <select id="chainColDirection" onchange="onChainColumnDirectionChange()" style="width: 100%; padding: 3px; background: rgba(10, 14, 18, 0.8); color: #E9F0F7; border: 2px solid #FF9F1C; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 9px; cursor: pointer; pointer-events: auto;">
                         <option value="up">Up</option>
                         <option value="down">Down</option>
                     </select>
@@ -2355,8 +2362,8 @@
             </div>
             
             <div id="chainColSingleColorDiv" style="margin-bottom: 8px; display: none; pointer-events: auto;">
-                <label style="color: #89A0B4; font-family: 'JetBrains Mono', monospace; font-size: 9px; display: block; margin-bottom: 2px;">Single Color:</label>
-                <select id="chainColSingleColor" onchange="onChainColumnSingleColorChange()" style="width: 100%; padding: 3px; background: #1a2332; color: #ffaa00; border: 1px solid #ffaa00; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 9px; cursor: pointer; pointer-events: auto;">
+                <label style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 9px; display: block; margin-bottom: 2px;">Single Color:</label>
+                <select id="chainColSingleColor" onchange="onChainColumnSingleColorChange()" style="width: 100%; padding: 3px; background: rgba(10, 14, 18, 0.8); color: #E9F0F7; border: 2px solid #FF9F1C; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 9px; cursor: pointer; pointer-events: auto;">
                     <option value="ZEC_A">Yellow</option>
                     <option value="ZEC_B">Blue</option>
                     <option value="ZEC_C">Green</option>
@@ -2366,17 +2373,17 @@
             
             <div style="margin-bottom: 8px; pointer-events: auto;">
                 <input type="checkbox" id="chainColEnabled" onclick="onChainColumnEnabledChange()" style="margin-right: 5px; cursor: pointer; width: 14px; height: 14px; pointer-events: auto;">
-                <label for="chainColEnabled" style="color: #89A0B4; font-family: 'JetBrains Mono', monospace; font-size: 10px; cursor: pointer;">Enabled</label>
+                <label for="chainColEnabled" style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 10px; cursor: pointer;">Enabled</label>
             </div>
             
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; pointer-events: auto; margin-bottom: 6px;">
-                <button class="button" onclick="duplicateCurrentChainColumn()" style="padding: 4px; font-size: 9px; pointer-events: auto;">Duplicate</button>
-                <button class="button" onclick="deleteCurrentChainColumn()" style="padding: 4px; font-size: 9px; background: #ff4444; pointer-events: auto;">Delete</button>
-                <button class="button" onclick="closeChainColumnMenu()" style="padding: 4px; font-size: 9px; pointer-events: auto;">Close</button>
+                <button onclick="duplicateCurrentChainColumn()" style="padding: 3px 4px; font-size: 9px; background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); color: #E9F0F7; border: 2px solid #FF9F1C; border-radius: 6px; cursor: pointer; pointer-events: auto;">Dup</button>
+                <button onclick="deleteCurrentChainColumn()" style="padding: 3px 4px; font-size: 9px; background: linear-gradient(135deg, rgba(235, 87, 87, 0.3), rgba(231, 76, 60, 0.2)); color: #E9F0F7; border: 2px solid #EB5757; border-radius: 6px; cursor: pointer; pointer-events: auto;">Del</button>
+                <button onclick="closeChainColumnMenu()" style="padding: 3px 4px; font-size: 9px; background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); color: #E9F0F7; border: 2px solid #FF9F1C; border-radius: 6px; cursor: pointer; pointer-events: auto;">Close</button>
             </div>
             
             <div style="pointer-events: auto;">
-                <button class="button" onclick="copyChainColumnData()" style="width: 100%; padding: 4px; font-size: 9px; background: #00aa00; pointer-events: auto;">📋 Copy</button>
+                <button onclick="copyChainColumnData()" style="width: 100%; padding: 3px 4px; font-size: 9px; background: linear-gradient(135deg, rgba(39, 174, 96, 0.3), rgba(39, 174, 96, 0.2)); color: #E9F0F7; border: 2px solid #27AE60; border-radius: 6px; cursor: pointer; pointer-events: auto;">📋 Copy</button>
             </div>
         </div>
         
@@ -2613,6 +2620,7 @@
         let fillLight = null;
         let ambientLight = null;
         let rimLight = null;
+        let playerLight = null;
         let chainLight = null; // Light that follows the chain
         
         // Zancas model and animation
@@ -3726,6 +3734,7 @@
                 fillLight.intensity = 0;
                 ambientLight.intensity = 0.05;
                 rimLight.intensity = 0;
+                if (playerLight) playerLight.intensity = 0;
                 lightsBtn.textContent = '🌑';
                 lightsBtn.classList.remove('active');
             } else {
@@ -3733,6 +3742,7 @@
                 fillLight.intensity = 0.6;
                 ambientLight.intensity = 0.3;
                 rimLight.intensity = 0.4;
+                if (playerLight && !isTopDownView) playerLight.intensity = 8.0;
                 lightsBtn.textContent = '💡';
                 lightsBtn.classList.add('active');
             }
@@ -4977,35 +4987,46 @@
             rimLight.position.set(0, 5, -15);
             scene.add(rimLight);
             
+            // Player position light - soft spotlight from camera position
+            playerLight = new THREE.SpotLight(0xFFFFFF, 15, 37.5, Math.PI / 3, 1.5, 1.8);
+            playerLight.position.set(0, 0, 0); // Will be updated by updateCameraPosition()
+            playerLight.target.position.set(GRID_WIDTH / 2, cameraHeight, GRID_DEPTH / 2);
+            playerLight.castShadow = false;
+            scene.add(playerLight);
+            scene.add(playerLight.target);
+            
+            // Update camera position again to position playerLight correctly
+            updateCameraPosition();
+            
             // Chain light - bright white light that follows the falling chain
             chainLight = new THREE.PointLight(0xFFFFFF, 2.0, 10);
             chainLight.position.set(3, 10, 3);
             scene.add(chainLight);
             
-            // Corner lights - four point lights at table corners to illuminate chains
-            const cornerLightIntensity = 1.5;
-            const cornerLightDistance = 15;
-            const cornerLightHeight = 1;
+            // Corner lights - DISABLED (replaced by playerLight)
+            // const cornerLightIntensity = 1.5;
+            // const cornerLightDistance = 15;
+            // const cornerLightHeight = 1;
             
             // Front-left corner
-            const cornerLight1 = new THREE.PointLight(0xFFFFFF, cornerLightIntensity, cornerLightDistance);
-            cornerLight1.position.set(-0.75, cornerLightHeight, -0.75);
-            scene.add(cornerLight1);
+            // const cornerLight1 = new THREE.PointLight(0xFFFFFF, cornerLightIntensity, cornerLightDistance);
+            // cornerLight1.position.set(-0.75, cornerLightHeight, -0.75);
+            // scene.add(cornerLight1);
             
             // Front-right corner
-            const cornerLight2 = new THREE.PointLight(0xFFFFFF, cornerLightIntensity, cornerLightDistance);
-            cornerLight2.position.set(GRID_WIDTH + 0.75, cornerLightHeight, -0.75);
-            scene.add(cornerLight2);
+            // const cornerLight2 = new THREE.PointLight(0xFFFFFF, cornerLightIntensity, cornerLightDistance);
+            // cornerLight2.position.set(GRID_WIDTH + 0.75, cornerLightHeight, -0.75);
+            // scene.add(cornerLight2);
             
             // Back-left corner
-            const cornerLight3 = new THREE.PointLight(0xFFFFFF, cornerLightIntensity, cornerLightDistance);
-            cornerLight3.position.set(-0.75, cornerLightHeight, GRID_DEPTH + 0.75);
-            scene.add(cornerLight3);
+            // const cornerLight3 = new THREE.PointLight(0xFFFFFF, cornerLightIntensity, cornerLightDistance);
+            // cornerLight3.position.set(-0.75, cornerLightHeight, GRID_DEPTH + 0.75);
+            // scene.add(cornerLight3);
             
             // Back-right corner
-            const cornerLight4 = new THREE.PointLight(0xFFFFFF, cornerLightIntensity, cornerLightDistance);
-            cornerLight4.position.set(GRID_WIDTH + 0.75, cornerLightHeight, GRID_DEPTH + 0.75);
-            scene.add(cornerLight4);
+            // const cornerLight4 = new THREE.PointLight(0xFFFFFF, cornerLightIntensity, cornerLightDistance);
+            // cornerLight4.position.set(GRID_WIDTH + 0.75, cornerLightHeight, GRID_DEPTH + 0.75);
+            // scene.add(cornerLight4);
             
             // Handle window resize
             window.addEventListener('resize', onWindowResize);
@@ -5168,11 +5189,14 @@
                     true // Open ended
                 );
                 
-                const tubeMaterial = new THREE.MeshBasicMaterial({
-                    color: 0x1B2836,
+                const tubeMaterial = new THREE.MeshPhongMaterial({
+                    color: 0xFFFFFF,
                     transparent: true,
-                    opacity: 0.3,
-                    side: THREE.DoubleSide
+                    opacity: 0.2,
+                    side: THREE.DoubleSide,
+                    emissive: 0xFFFFFF,
+                    emissiveIntensity: 10,
+                    shininess: 100
                 });
                 
                 const tube = new THREE.Mesh(tubeGeometry, tubeMaterial);
@@ -7276,24 +7300,32 @@
                 // Top-down view - directly above the center of the grid
                 camera.position.set(centerX, topDownHeight, centerZ);
                 camera.lookAt(centerX, 0, centerZ);
+                // Disable player light in top-down view
+                if (playerLight) playerLight.intensity = 0;
             } else {
                 // Standard side views
                 switch(currentChair) {
                     case 0: // North (looking -Z)
                         camera.position.set(centerX, cameraHeight, GRID_DEPTH + cameraDistance);
+                        if (playerLight) playerLight.position.set(centerX, cameraHeight, GRID_DEPTH + cameraDistance);
                         break;
                     case 1: // East (looking -X)
                         camera.position.set(GRID_WIDTH + cameraDistance, cameraHeight, centerZ);
+                        if (playerLight) playerLight.position.set(GRID_WIDTH + cameraDistance, cameraHeight, centerZ);
                         break;
                     case 2: // South (looking +Z)
                         camera.position.set(centerX, cameraHeight, -cameraDistance);
+                        if (playerLight) playerLight.position.set(centerX, cameraHeight, -cameraDistance);
                         break;
                     case 3: // West (looking +X)
                         camera.position.set(-cameraDistance, cameraHeight, centerZ);
+                        if (playerLight) playerLight.position.set(-cameraDistance, cameraHeight, centerZ);
                         break;
                 }
                 
                 camera.lookAt(centerX, cameraHeight, centerZ);
+                // Enable player light in side views (if lights are enabled)
+                if (playerLight && lightsEnabled) playerLight.intensity = 8.0;
             }
             
             updateCompass();
