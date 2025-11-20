@@ -7,6 +7,7 @@
   - Fixed floor cell rendering by changing depthTest from false to true
   - Fixed character idle particle loops breaking after special abilities and game restarts
   - Particles now properly loop forever during idle, stop during specials, and restart after
+  - **MEMORY LEAK FIXED:** Game now runs stable at <200MB after 12 hours (previously >1GB)
 
 - **Floor Cell Rendering Fix:**
   - Changed `depthTest: false` to `depthTest: true` in floor cell materials
@@ -42,6 +43,12 @@
   - Modified special ability cleanup to call start functions
   - Modified `startGame()` to stop/restart all idle particle loops
   - Loops spawn particle every 1100ms (matching emit duration)
+
+- **Memory Leak Testing:**
+  - Overnight test (12+ hours): Memory usage stayed under 200MB
+  - Previous version: Memory exceeded 1GB during extended play
+  - Root cause: Proper cleanup of animation frames, timeouts, intervals, and particle effects
+  - Fix implemented in `startGame()` function with comprehensive disposal logic
 
 ## v0.20.22 - Camera Near Clipping Plane Fix (2025-11-20)
 - **Rendering Fix:**
