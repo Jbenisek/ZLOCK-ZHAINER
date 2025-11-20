@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.8</title>
+    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.12</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -2107,6 +2107,7 @@
                     <button id="colorPickerBtn" onclick="toggleColorPicker()" title="Grid Color Settings">🎨</button>
                     <button id="controlsBtn" onclick="toggleControls()" title="Toggle Controls Panel">⌨️</button>
                     <button id="gridEffectBtn" onclick="cycleGridEffect()" title="Grid Effect: None">🌌</button>
+                    <button id="qualityBtn" class="active" onclick="toggleQuality()" title="Quality: High Performance">🎭</button>
                 </div>
             </div>
             
@@ -2420,7 +2421,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.20.7';
+        const GAME_VERSION = 'v0.20.12';
         
         // Game State
         const GameState = {
@@ -2717,6 +2718,10 @@
         let lastUpdateTime = Date.now();
         const gravity = 9.81;
         let fastDrop = false;
+        
+        // Shared materials for HQ and LQ modes (8 total: 4 colors × 2 modes)
+        let materialsHQ = { yellow: null, blue: null, green: null, red: null };
+        let materialsLQ = { yellow: null, blue: null, green: null, red: null };
         let instantDrop = false;
         let lastSpaceTime = 0;
         const doubleTapThreshold = 300; // milliseconds for double-tap detection
@@ -3725,6 +3730,7 @@
         let wallEmissiveEnabled = true;
         let modelsEnabled = true;
         let animationsEnabled = true;
+        let highQualityMode = true; // true = High Performance, false = Cartoon
         
         function toggleLights() {
             lightsEnabled = !lightsEnabled;
@@ -3757,6 +3763,123 @@
             } else {
                 particlesBtn.textContent = '❌';
                 particlesBtn.classList.remove('active');
+            }
+        }
+        
+        function toggleQuality() {
+            highQualityMode = !highQualityMode;
+            const qualityBtn = document.getElementById('qualityBtn');
+            if (highQualityMode) {
+                qualityBtn.textContent = '🎭';
+                qualityBtn.title = 'Quality: High Performance';
+                qualityBtn.classList.add('active');
+                applyHighQualityMode();
+            } else {
+                qualityBtn.textContent = '🎨';
+                qualityBtn.title = 'Quality: Cartoon';
+                qualityBtn.classList.remove('active');
+                applyCartoonMode();
+            }
+        }
+        
+        function applyHighQualityMode() {
+            // Update all chain instances in grid
+            for (let x = 0; x < GRID_WIDTH; x++) {
+                for (let y = 0; y < GRID_HEIGHT; y++) {
+                    for (let z = 0; z < GRID_DEPTH; z++) {
+                        if (grid[x][y][z] && grid[x][y][z].mesh) {
+                            const materialKey = getMaterialKeyForType(grid[x][y][z].type);
+                            grid[x][y][z].mesh.traverse(child => {
+                                if (child.isMesh && child.material) {
+                                    child.material = materialsHQ[materialKey];
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+            
+            // Update falling chain if exists
+            if (fallingChain) {
+                fallingChain.links.forEach(link => {
+                    if (link.mesh) {
+                        const materialKey = getMaterialKeyForType(link.type);
+                        link.mesh.traverse(child => {
+                            if (child.isMesh && child.material) {
+                                child.material = materialsHQ[materialKey];
+                            }
+                        });
+                    }
+                });
+            }
+            
+            // Update corner chain columns (use random HQ materials)
+            cornerChains.forEach(chainColumn => {
+                chainColumn.links.forEach((link) => {
+                    const materialKeys = ['yellow', 'blue', 'green', 'red'];
+                    const randomKey = materialKeys[Math.floor(Math.random() * materialKeys.length)];
+                    link.traverse(child => {
+                        if (child.isMesh && child.material) {
+                            child.material = materialsHQ[randomKey];
+                        }
+                    });
+                });
+            });
+        }
+        
+        function applyCartoonMode() {
+            // Update all chain instances in grid
+            for (let x = 0; x < GRID_WIDTH; x++) {
+                for (let y = 0; y < GRID_HEIGHT; y++) {
+                    for (let z = 0; z < GRID_DEPTH; z++) {
+                        if (grid[x][y][z] && grid[x][y][z].mesh) {
+                            const materialKey = getMaterialKeyForType(grid[x][y][z].type);
+                            grid[x][y][z].mesh.traverse(child => {
+                                if (child.isMesh && child.material) {
+                                    child.material = materialsLQ[materialKey];
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+            
+            // Update falling chain if exists
+            if (fallingChain) {
+                fallingChain.links.forEach(link => {
+                    if (link.mesh) {
+                        const materialKey = getMaterialKeyForType(link.type);
+                        link.mesh.traverse(child => {
+                            if (child.isMesh && child.material) {
+                                child.material = materialsLQ[materialKey];
+                            }
+                        });
+                    }
+                });
+            }
+            
+            // Update corner chain columns (use random LQ materials)
+            cornerChains.forEach(chainColumn => {
+                chainColumn.links.forEach((link) => {
+                    const materialKeys = ['yellow', 'blue', 'green', 'red'];
+                    const randomKey = materialKeys[Math.floor(Math.random() * materialKeys.length)];
+                    link.traverse(child => {
+                        if (child.isMesh && child.material) {
+                            child.material = materialsLQ[randomKey];
+                        }
+                    });
+                });
+            });
+        }
+        
+        function getMaterialKeyForType(linkType) {
+            if (!linkType) return 'yellow';
+            switch(linkType.name) {
+                case 'ZEC-A': return 'yellow';
+                case 'ZEC-B': return 'blue';
+                case 'ZEC-C': return 'green';
+                case 'ZEC-D': return 'red';
+                default: return 'yellow';
             }
         }
         
@@ -5320,15 +5443,25 @@
                     if (child.isMesh && child.material) {
                         child.castShadow = true;
                         child.receiveShadow = true;
-                        // Ensure material responds to light properly
-                        if (child.material.metalness !== undefined) {
-                            child.material.metalness = 0.05;
-                        }
-                        if (child.material.roughness !== undefined) {
-                            child.material.roughness = 0.4;
-                        }
-                        // Remove or reduce emissive to let diffuse color and lighting work
-                        child.material.emissiveIntensity = 0.5;
+                        
+                        // Create HQ material (clone from original)
+                        const hqMat = child.material.clone();
+                        if (hqMat.metalness !== undefined) hqMat.metalness = 0.7;
+                        if (hqMat.roughness !== undefined) hqMat.roughness = 0.1;
+                        hqMat.emissiveIntensity = 0.1;
+                        materialsHQ.yellow = hqMat;
+                        
+                        // Create LQ material (MeshBasicMaterial with texture)
+                        const lqMat = new THREE.MeshBasicMaterial({
+                            color: 0xF2C94C,
+                            map: child.material.map, // Preserve texture/logo
+                            transparent: child.material.transparent,
+                            opacity: child.material.opacity
+                        });
+                        materialsLQ.yellow = lqMat;
+                        
+                        // Set current material to HQ
+                        child.material = hqMat;
                     }
                 });
                 checkAllLoaded();
@@ -5342,15 +5475,25 @@
                     if (child.isMesh && child.material) {
                         child.castShadow = true;
                         child.receiveShadow = true;
-                        // Ensure material responds to light properly
-                        if (child.material.metalness !== undefined) {
-                            child.material.metalness = 0.05;
-                        }
-                        if (child.material.roughness !== undefined) {
-                            child.material.roughness = 0.4;
-                        }
-                        // Remove or reduce emissive to let diffuse color and lighting work
-                        child.material.emissiveIntensity = 0.5;
+                        
+                        // Create HQ material (clone from original)
+                        const hqMat = child.material.clone();
+                        if (hqMat.metalness !== undefined) hqMat.metalness = 0.7;
+                        if (hqMat.roughness !== undefined) hqMat.roughness = 0.1;
+                        hqMat.emissiveIntensity = 0.1;
+                        materialsHQ.blue = hqMat;
+                        
+                        // Create LQ material (MeshBasicMaterial with texture)
+                        const lqMat = new THREE.MeshBasicMaterial({
+                            color: 0x2D9CDB,
+                            map: child.material.map, // Preserve texture/logo
+                            transparent: child.material.transparent,
+                            opacity: child.material.opacity
+                        });
+                        materialsLQ.blue = lqMat;
+                        
+                        // Set current material to HQ
+                        child.material = hqMat;
                     }
                 });
                 checkAllLoaded();
@@ -5364,15 +5507,25 @@
                     if (child.isMesh && child.material) {
                         child.castShadow = true;
                         child.receiveShadow = true;
-                        // Ensure material responds to light properly
-                        if (child.material.metalness !== undefined) {
-                            child.material.metalness = 0.05;
-                        }
-                        if (child.material.roughness !== undefined) {
-                            child.material.roughness = 0.4;
-                        }
-                        // Remove or reduce emissive to let diffuse color and lighting work
-                        child.material.emissiveIntensity = 0.5;
+                        
+                        // Create HQ material (clone from original)
+                        const hqMat = child.material.clone();
+                        if (hqMat.metalness !== undefined) hqMat.metalness = 0.7;
+                        if (hqMat.roughness !== undefined) hqMat.roughness = 0.1;
+                        hqMat.emissiveIntensity = 0.1;
+                        materialsHQ.green = hqMat;
+                        
+                        // Create LQ material (MeshBasicMaterial with texture)
+                        const lqMat = new THREE.MeshBasicMaterial({
+                            color: 0x27AE60,
+                            map: child.material.map, // Preserve texture/logo
+                            transparent: child.material.transparent,
+                            opacity: child.material.opacity
+                        });
+                        materialsLQ.green = lqMat;
+                        
+                        // Set current material to HQ
+                        child.material = hqMat;
                     }
                 });
                 checkAllLoaded();
@@ -5386,15 +5539,25 @@
                     if (child.isMesh && child.material) {
                         child.castShadow = true;
                         child.receiveShadow = true;
-                        // Ensure material responds to light properly
-                        if (child.material.metalness !== undefined) {
-                            child.material.metalness = 0.05;
-                        }
-                        if (child.material.roughness !== undefined) {
-                            child.material.roughness = 0.4;
-                        }
-                        // Same as other colors - no extra emissive
-                        child.material.emissiveIntensity = 0.5;
+                        
+                        // Create HQ material (clone from original)
+                        const hqMat = child.material.clone();
+                        if (hqMat.metalness !== undefined) hqMat.metalness = 0.7;
+                        if (hqMat.roughness !== undefined) hqMat.roughness = 0.1;
+                        hqMat.emissiveIntensity = 0.1;
+                        materialsHQ.red = hqMat;
+                        
+                        // Create LQ material (MeshBasicMaterial with texture)
+                        const lqMat = new THREE.MeshBasicMaterial({
+                            color: 0xEB5757,
+                            map: child.material.map, // Preserve texture/logo
+                            transparent: child.material.transparent,
+                            opacity: child.material.opacity
+                        });
+                        materialsLQ.red = lqMat;
+                        
+                        // Set current material to HQ
+                        child.material = hqMat;
                     }
                 });
                 checkAllLoaded();
@@ -9005,31 +9168,41 @@
         function createLinkMesh(linkType) {
             // Select the appropriate model based on link type name
             let modelToClone;
+            let materialKey;
             switch(linkType.name) {
                 case 'ZEC-A':
                     modelToClone = chainModelYellow;
+                    materialKey = 'yellow';
                     break;
                 case 'ZEC-B':
                     modelToClone = chainModelBlue;
+                    materialKey = 'blue';
                     break;
                 case 'ZEC-C':
                     modelToClone = chainModelGreen;
+                    materialKey = 'green';
                     break;
                 case 'ZEC-D':
                     modelToClone = chainModelRed;
+                    materialKey = 'red';
                     break;
                 default:
-                    modelToClone = chainModelYellow; // Fallback
+                    modelToClone = chainModelYellow;
+                    materialKey = 'yellow';
             }
             
-            // Clone the model AND materials (deep clone materials to prevent shared references)
+            // Clone the model geometry only
             const mesh = modelToClone.clone();
+            
+            // Assign shared material (no cloning)
+            const sharedMaterial = highQualityMode ? materialsHQ[materialKey] : materialsLQ[materialKey];
             mesh.traverse((child) => {
                 if (child.isMesh && child.material) {
-                    // Clone material to prevent sharing between instances
-                    child.material = child.material.clone();
+                    // Replace with shared material
+                    child.material = sharedMaterial;
                 }
             });
+            
             return mesh;
         }
         

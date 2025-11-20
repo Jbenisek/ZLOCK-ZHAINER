@@ -2,6 +2,79 @@
 
 # Changelog
 
+## v0.20.12 - Material System Optimization & LQ Logo Visibility (2025-11-19)
+- **Summary:**
+  - Implemented shared material system for massive performance improvement
+  - LQ/Cartoon mode now uses MeshBasicMaterial with preserved texture maps
+  - Eliminated per-link material cloning (hundreds of materials → 8 shared materials)
+  - Quality toggle now instant (material reference swap instead of property modification)
+  - **CRITICAL FIX:** Logos now visible in cartoon mode by preserving texture maps
+  
+- **Material System Architecture:**
+  - **HQ Mode (4 materials):** 
+    - Cloned from GLB models (preserves PBR properties)
+    - metalness = 0.7 (highly metallic)
+    - roughness = 0.1 (very shiny/smooth)
+    - emissiveIntensity = 0.1 (minimal self-glow)
+    - Reacts to scene lighting (playerLight, keyLight, etc.)
+  
+  - **LQ Mode (4 materials):** 
+    - **NEW:** MeshBasicMaterial (flat shading, no lighting required)
+    - Colors: yellow=#F2C94C, blue=#2D9CDB, green=#27AE60, red=#EB5757
+    - **PRESERVED:** `map` (texture/logo), `transparent`, `opacity` from GLB
+    - Color tints the texture instead of replacing it (logos remain visible)
+  
+- **Spawning System Changes:**
+  - `createLinkMesh()` now assigns shared materials instead of cloning
+  - All spawned links reference 1 of 8 shared materials (no per-instance materials)
+  - Corner chain columns use random material assignment in both modes
+  - Grid links, falling chains, and decorator columns all use shared materials
+  
+- **Performance Impact:**
+  - **Memory:** Reduced from ~1000+ material instances to 8 shared materials
+  - **Quality Toggle:** Instant material swap vs traversing all links to modify properties
+  - **Spawning:** Eliminated `material.clone()` overhead on every link creation
+  - **Frame Rate:** Improved render performance with fewer material state changes
+  
+- **Technical Implementation:**
+  - Added `materialsHQ` and `materialsLQ` global objects (line ~2722)
+  - Modified model loaders to create shared materials on GLB load (lines ~5440-5600)
+  - Refactored `createLinkMesh()` to assign shared materials (line ~9190)
+  - Simplified `applyHighQualityMode()` and `applyCartoonMode()` to swap references (lines ~3785-3880)
+  - Added `getMaterialKeyForType()` helper for material lookup (line ~3870)
+  
+- **Spawn Locations Using Shared Materials:**
+  1. Line 4833 - Corner chain columns (decorator chains)
+  2. Line 4981 - Duplicate corner chain column
+  3. Line 5390 - Load corner chains from template
+  4. Line 6692 - Nate's special ability (tornado shuffle links)
+  5. Line 7692 - Pre-fill grid with random links
+  6. Line 9840 - Main gameplay falling chain spawn
+  
+- **Why Previous Attempts Failed:**
+  - Previous AIs cloned materials per-link (memory explosion)
+  - Used emissive-only approach in LQ mode (lost texture visibility)
+  - Modified base model materials (affected all clones unexpectedly)
+  - Didn't preserve texture maps when creating LQ materials
+
+## v0.20.11 - Chain Material Refinement (2025-11-19)
+- **Summary:**
+  - Enhanced chain materials for more metallic, shiny appearance
+  - Reduced emissive glow to rely more on dynamic lighting
+  - Chains now react better to playerLight and scene lighting
+  
+- **Material Changes:**
+  - Metalness: 0.05 → 0.7 (highly metallic)
+  - Roughness: 0.4 → 0.1 (very shiny/smooth)
+  - EmissiveIntensity: 0.5 → 0.1 (reduced self-illumination)
+  - Applied to all 4 chain colors (yellow, blue, green, red)
+  
+- **Visual Impact:**
+  - Chains now have realistic metallic reflections
+  - Better highlight response from playerLight spotlight
+  - More pronounced shine and specular highlights
+  - Improved depth perception from lighting interaction
+
 ## v0.20.10 - Player-Position Lighting (2025-11-19)
 - **Summary:**
   - Added dynamic player-position spotlight that follows camera viewpoint
