@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.22</title>
+    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.23</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -1746,7 +1746,7 @@
     <div id="gameContainer">
         <canvas id="renderCanvas"></canvas>
         
-        <div id="versionDisplay">v0.20.21</div>
+        <div id="versionDisplay">v0.20.23</div>
         
         <div id="performanceDisplay">
             <div><span class="perf-label">FPS:</span> <span class="perf-value" id="fpsValue">60</span></div>
@@ -2412,7 +2412,7 @@
                 <strong>NOTE:</strong><br>Skipping past Level 10<br>disables most achievements
             </div>
             <div style="margin-top: 40px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #89A0B4;">
-                Version v0.20.21 • 2025-11-20
+                Version v0.20.23 • 2025-11-20
             </div>
         </div>
     </div>
@@ -2421,7 +2421,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.20.21';
+        const GAME_VERSION = 'v0.20.23';
         
         // Game State
         const GameState = {
@@ -2602,6 +2602,8 @@
         let zookoHeadBone = null;
         let zookoHeadOffset = { x: 0, y: 0, z: -3.25 }; // Offset from head bone to particle spawn point
         let zookoHatOffset = { x: 0, y: -4, z: -5 }; // Offset from head bone to hat particle spawn point
+        let zookoShieldLoopId = null; // Track shield particle loop
+        let zookoHatLoopId = null; // Track hat particle loop
         
         // CyberAxe model and animation
         let cyberAxeModel = null;
@@ -2646,6 +2648,7 @@
         let cyberAxeLeftHandOffset = { x: 0, y: 0, z: 0 }; // Offset from left hand bone to particle spawn point
         let cyberAxeChestBone = null;
         let cyberAxeChestOffset = { x: -0.25, y: 0.25, z: 4 }; // Offset from chest bone to particle spawn point
+        let cyberAxeShieldLoopId = null; // Track chest shield particle loop
         
         // Nate model and animation
         let nateModel = null;
@@ -6311,6 +6314,95 @@
             );
         }
         
+        // Zooko idle particle loop control functions
+        function startZookoShieldLoop() {
+            if (zookoShieldLoopId) return; // Already running
+            function loopShield() {
+                if (zookoHeadBone && !zookoSpecialActive) {
+                    zookoHeadBone.getWorldPosition(_boneTempHeadPos);
+                    spawnParticleEffect('effect/zooko_shield.json', 
+                        _boneTempHeadPos.x + zookoHeadOffset.x, 
+                        _boneTempHeadPos.y + zookoHeadOffset.y, 
+                        _boneTempHeadPos.z + zookoHeadOffset.z, {
+                        spawnMode: 'world',
+                        rotation: { x: 0, y: 0, z: 0 },
+                        startDelay: 0,
+                        parentBone: zookoHeadBone,
+                        parentModel: zookoModel,
+                        boneOffset: zookoHeadOffset
+                    });
+                    zookoShieldLoopId = window.setTimeout(loopShield, 1100);
+                }
+            }
+            zookoShieldLoopId = window.setTimeout(loopShield, 100);
+        }
+        
+        function stopZookoShieldLoop() {
+            if (zookoShieldLoopId) {
+                window.clearTimeout(zookoShieldLoopId);
+                zookoShieldLoopId = null;
+            }
+        }
+        
+        function startZookoHatLoop() {
+            if (zookoHatLoopId) return; // Already running
+            function loopHat() {
+                if (zookoHeadBone && !zookoSpecialActive) {
+                    zookoHeadBone.getWorldPosition(_boneTempHeadPos);
+                    spawnParticleEffect('effect/zooko_hat.json', 
+                        _boneTempHeadPos.x + zookoHatOffset.x, 
+                        _boneTempHeadPos.y + zookoHatOffset.y, 
+                        _boneTempHeadPos.z + zookoHatOffset.z, {
+                        spawnMode: 'world',
+                        rotation: { x: 0, y: 0, z: 0 },
+                        startDelay: 0,
+                        parentBone: zookoHeadBone,
+                        parentModel: zookoModel,
+                        boneOffset: zookoHatOffset
+                    });
+                    zookoHatLoopId = window.setTimeout(loopHat, 1100);
+                }
+            }
+            zookoHatLoopId = window.setTimeout(loopHat, 100);
+        }
+        
+        function stopZookoHatLoop() {
+            if (zookoHatLoopId) {
+                window.clearTimeout(zookoHatLoopId);
+                zookoHatLoopId = null;
+            }
+        }
+        
+        // CyberAxe idle particle loop control functions
+        function startCyberAxeShieldLoop() {
+            if (cyberAxeShieldLoopId) return; // Already running
+            function loopShield() {
+                if (cyberAxeChestBone && !cyberAxeSpecialActive) {
+                    cyberAxeChestBone.getWorldPosition(_boneTempHeadPos);
+                    spawnParticleEffect('effect/cyberaxe_shield.json', 
+                        _boneTempHeadPos.x + cyberAxeChestOffset.x, 
+                        _boneTempHeadPos.y + cyberAxeChestOffset.y, 
+                        _boneTempHeadPos.z + cyberAxeChestOffset.z, {
+                        spawnMode: 'world',
+                        rotation: { x: 0, y: 0, z: 0 },
+                        startDelay: 0,
+                        parentBone: cyberAxeChestBone,
+                        parentModel: cyberAxeModel,
+                        boneOffset: cyberAxeChestOffset
+                    });
+                    cyberAxeShieldLoopId = window.setTimeout(loopShield, 1100);
+                }
+            }
+            cyberAxeShieldLoopId = window.setTimeout(loopShield, 100);
+        }
+        
+        function stopCyberAxeShieldLoop() {
+            if (cyberAxeShieldLoopId) {
+                window.clearTimeout(cyberAxeShieldLoopId);
+                cyberAxeShieldLoopId = null;
+            }
+        }
+        
         function loadZookoModel() {
             const loader = new THREE.GLTFLoader();
             loader.load(
@@ -6369,47 +6461,9 @@
                         zookoIdleAction = zookoMixer.clipAction(gltf.animations[0]);
                         zookoIdleAction.play();
                         
-                        // Spawn shield particle at head during idle with looping
-                        function spawnZookoHeadShield() {
-                            if (zookoHeadBone) {
-                                zookoHeadBone.getWorldPosition(_boneTempHeadPos);
-                                spawnParticleEffect('effect/zooko_shield.json', 
-                                    _boneTempHeadPos.x + zookoHeadOffset.x, 
-                                    _boneTempHeadPos.y + zookoHeadOffset.y, 
-                                    _boneTempHeadPos.z + zookoHeadOffset.z, {
-                                    spawnMode: 'world',
-                                    rotation: { x: 0, y: 0, z: 0 },
-                                    startDelay: 0,
-                                    parentBone: zookoHeadBone,
-                                    parentModel: zookoModel,
-                                    boneOffset: zookoHeadOffset
-                                });
-                                // Loop: respawn at emitDuration (1.1s = 1100ms)
-                                trackedSetTimeout(spawnZookoHeadShield, 1100);
-                            }
-                        }
-                        trackedSetTimeout(spawnZookoHeadShield, 100);
-                        
-                        // Spawn hat particle at head during idle with looping
-                        function spawnZookoHat() {
-                            if (zookoHeadBone) {
-                                zookoHeadBone.getWorldPosition(_boneTempHeadPos);
-                                spawnParticleEffect('effect/zooko_hat.json', 
-                                    _boneTempHeadPos.x + zookoHatOffset.x, 
-                                    _boneTempHeadPos.y + zookoHatOffset.y, 
-                                    _boneTempHeadPos.z + zookoHatOffset.z, {
-                                    spawnMode: 'world',
-                                    rotation: { x: 0, y: 0, z: 0 },
-                                    startDelay: 0,
-                                    parentBone: zookoHeadBone,
-                                    parentModel: zookoModel,
-                                    boneOffset: zookoHatOffset
-                                });
-                                // Loop: respawn at emitDuration (1.1s = 1100ms)
-                                trackedSetTimeout(spawnZookoHat, 1100);
-                            }
-                        }
-                        trackedSetTimeout(spawnZookoHat, 100);
+                        // Start idle particle loops
+                        startZookoShieldLoop();
+                        startZookoHatLoop();
                         
                         // Load the special animation
                         const specialLoader = new THREE.GLTFLoader();
@@ -6492,26 +6546,8 @@
                         cyberAxeIdleAction = cyberAxeMixer.clipAction(gltf.animations[0]);
                         cyberAxeIdleAction.play();
                         
-                        // Spawn shield particle at chest during idle with looping
-                        function spawnCyberAxeChestShield() {
-                            if (cyberAxeChestBone) {
-                                cyberAxeChestBone.getWorldPosition(_boneTempHeadPos);
-                                spawnParticleEffect('effect/cyberaxe_shield.json', 
-                                    _boneTempHeadPos.x + cyberAxeChestOffset.x, 
-                                    _boneTempHeadPos.y + cyberAxeChestOffset.y, 
-                                    _boneTempHeadPos.z + cyberAxeChestOffset.z, {
-                                    spawnMode: 'world',
-                                    rotation: { x: 0, y: 0, z: 0 },
-                                    startDelay: 0,
-                                    parentBone: cyberAxeChestBone,
-                                    parentModel: cyberAxeModel,
-                                    boneOffset: cyberAxeChestOffset
-                                });
-                                // Loop: respawn at emitDuration (1.1s = 1100ms)
-                                trackedSetTimeout(spawnCyberAxeChestShield, 1100);
-                            }
-                        }
-                        trackedSetTimeout(spawnCyberAxeChestShield, 100);
+                        // Start idle particle loop
+                        startCyberAxeShieldLoop();
                         
                         // Load the special animation
                         const specialLoader = new THREE.GLTFLoader();
@@ -7497,6 +7533,10 @@
         function triggerZookoSpecialEffect() {
             if (zookoSpecialActive) return; // Prevent multiple activations
             
+            // Stop idle particle loops
+            stopZookoShieldLoop();
+            stopZookoHatLoop();
+            
             zookoSpecialActive = true;
             
             // Increment sandblasting charge by 25%
@@ -7603,46 +7643,8 @@
                     zookoSpecialActive = false;
                     
                     // Restart Zooko idle particle loops
-                    if (zookoHeadBone) {
-                        trackedSetTimeout(() => {
-                            function restartZookoShield() {
-                                if (zookoHeadBone && !zookoSpecialActive) {
-                                    zookoHeadBone.getWorldPosition(_boneTempHeadPos);
-                                    spawnParticleEffect('effect/zooko_shield.json', 
-                                        _boneTempHeadPos.x + zookoHeadOffset.x, 
-                                        _boneTempHeadPos.y + zookoHeadOffset.y, 
-                                        _boneTempHeadPos.z + zookoHeadOffset.z, {
-                                        spawnMode: 'world',
-                                        rotation: { x: 0, y: 0, z: 0 },
-                                        startDelay: 0,
-                                        parentBone: zookoHeadBone,
-                                        parentModel: zookoModel,
-                                        boneOffset: zookoHeadOffset
-                                    });
-                                    trackedSetTimeout(restartZookoShield, 1100);
-                                }
-                            }
-                            function restartZookoHat() {
-                                if (zookoHeadBone && !zookoSpecialActive) {
-                                    zookoHeadBone.getWorldPosition(_boneTempHeadPos);
-                                    spawnParticleEffect('effect/zooko_hat.json', 
-                                        _boneTempHeadPos.x + zookoHatOffset.x, 
-                                        _boneTempHeadPos.y + zookoHatOffset.y, 
-                                        _boneTempHeadPos.z + zookoHatOffset.z, {
-                                        spawnMode: 'world',
-                                        rotation: { x: 0, y: 0, z: 0 },
-                                        startDelay: 0,
-                                        parentBone: zookoHeadBone,
-                                        parentModel: zookoModel,
-                                        boneOffset: zookoHatOffset
-                                    });
-                                    trackedSetTimeout(restartZookoHat, 1100);
-                                }
-                            }
-                            restartZookoShield();
-                            restartZookoHat();
-                        }, 100);
-                    }
+                    startZookoShieldLoop();
+                    startZookoHatLoop();
                 }, 500);
             }, totalDuration + 100);
         }
@@ -7724,6 +7726,9 @@
         
         function triggerCyberAxeSpecialEffect() {
             if (cyberAxeSpecialActive) return;
+            
+            // Stop idle particle loop
+            stopCyberAxeShieldLoop();
             
             cyberAxeSpecialActive = true;
             
@@ -7878,28 +7883,7 @@
                     chainVelocity = 0; // Reset velocity after freeze
                     
                     // Restart CyberAxe chest shield particle loop
-                    if (cyberAxeChestBone) {
-                        trackedSetTimeout(() => {
-                            function restartCyberAxeShield() {
-                                if (cyberAxeChestBone && !cyberAxeSpecialActive) {
-                                    cyberAxeChestBone.getWorldPosition(_boneTempHeadPos);
-                                    spawnParticleEffect('effect/cyberaxe_shield.json', 
-                                        _boneTempHeadPos.x + cyberAxeChestOffset.x, 
-                                        _boneTempHeadPos.y + cyberAxeChestOffset.y, 
-                                        _boneTempHeadPos.z + cyberAxeChestOffset.z, {
-                                        spawnMode: 'world',
-                                        rotation: { x: 0, y: 0, z: 0 },
-                                        startDelay: 0,
-                                        parentBone: cyberAxeChestBone,
-                                        parentModel: cyberAxeModel,
-                                        boneOffset: cyberAxeChestOffset
-                                    });
-                                    trackedSetTimeout(restartCyberAxeShield, 1100);
-                                }
-                            }
-                            restartCyberAxeShield();
-                        }, 100);
-                    }
+                    startCyberAxeShieldLoop();
                     
                     // Apply gravity
                     applyGravity();
@@ -8202,7 +8186,7 @@
                         opacity: 0.0,
                         side: THREE.DoubleSide,
                         depthWrite: true,
-                        depthTest: false
+                        depthTest: true
                     });
                     
                     // Create mesh
@@ -8477,6 +8461,16 @@
             activeTimeouts = [];
             activeIntervals.forEach(id => trackedClearInterval(id));
             activeIntervals = [];
+            
+            // Restart character idle particle loops (these use window.setTimeout, not tracked)
+            stopZookoShieldLoop();
+            stopZookoHatLoop();
+            stopCyberAxeShieldLoop();
+            zookoSpecialActive = false;
+            cyberAxeSpecialActive = false;
+            startZookoShieldLoop();
+            startZookoHatLoop();
+            startCyberAxeShieldLoop();
             
             // MEMORY LEAK FIX: Clear particle effects array and dispose particles
             particleEffects.forEach(effect => {

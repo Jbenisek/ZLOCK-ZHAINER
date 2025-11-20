@@ -2,6 +2,47 @@
 
 # Changelog
 
+## v0.20.23 - Floor Cell Rendering & Idle Particle Loop Fix (2025-11-20)
+- **Summary:**
+  - Fixed floor cell rendering by changing depthTest from false to true
+  - Fixed character idle particle loops breaking after special abilities and game restarts
+  - Particles now properly loop forever during idle, stop during specials, and restart after
+
+- **Floor Cell Rendering Fix:**
+  - Changed `depthTest: false` to `depthTest: true` in floor cell materials
+  - Floor cells now render correctly with proper depth testing
+  - Fixes rendering issues that took multiple days to diagnose
+  - Floor cells positioned at y=0.5 with BoxGeometry(0.9, 0.01, 0.9)
+  - Materials: MeshBasicMaterial with `depthWrite: true, depthTest: true`
+
+- **Idle Particle Loop System:**
+  - **Problem:** Particle loops used `trackedSetTimeout` which got cleared on game restart
+  - **Solution:** Created persistent loop functions using `window.setTimeout` (untracked)
+  - Added loop control variables: `zookoShieldLoopId`, `zookoHatLoopId`, `cyberAxeShieldLoopId`
+  - Created start/stop functions for each particle loop
+  - Loops check `zookoSpecialActive` and `cyberAxeSpecialActive` flags before spawning
+
+- **Affected Particles:**
+  - Zooko shield particle (`effect/zooko_shield.json`) - loops at head bone
+  - Zooko hat particle (`effect/zooko_hat.json`) - loops at head bone
+  - CyberAxe chest shield particle (`effect/cyberaxe_shield.json`) - loops at chest bone
+
+- **Loop Lifecycle:**
+  1. **Model Load:** `startZookoShieldLoop()`, `startZookoHatLoop()`, `startCyberAxeShieldLoop()` called
+  2. **Special Trigger:** `stopZookoShieldLoop()`, `stopZookoHatLoop()`, `stopCyberAxeShieldLoop()` called
+  3. **Special End:** Start functions called again to resume loops
+  4. **Game Restart:** Stop all loops, reset flags, restart all loops
+
+- **Technical Changes:**
+  - Added `startZookoShieldLoop()`, `stopZookoShieldLoop()` functions
+  - Added `startZookoHatLoop()`, `stopZookoHatLoop()` functions
+  - Added `startCyberAxeShieldLoop()`, `stopCyberAxeShieldLoop()` functions
+  - Modified `triggerZookoSpecialEffect()` to call stop functions
+  - Modified `triggerCyberAxeSpecialEffect()` to call stop functions
+  - Modified special ability cleanup to call start functions
+  - Modified `startGame()` to stop/restart all idle particle loops
+  - Loops spawn particle every 1100ms (matching emit duration)
+
 ## v0.20.22 - Camera Near Clipping Plane Fix (2025-11-20)
 - **Rendering Fix:**
   - Changed camera near clipping plane from 0.1 to 0.01
