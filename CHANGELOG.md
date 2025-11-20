@@ -2,6 +2,32 @@
 
 # Changelog
 
+## v0.20.31 - Grid Frame Depth Settings Fix (2025-11-20)
+- **Summary:**
+  - Fixed particle effect rendering issues on floor grid
+  - Updated main grid cube frame depth and render settings
+  - Resolved visual artifacts with transparent particles interacting with grid
+
+- **Grid Frame Rendering:**
+  - Set `depthWrite: false` on grid frame material
+  - Set `renderOrder: 0` on grid frame mesh
+  - Set `depthTest: true` on grid frame material
+  - Prevents depth buffer conflicts with transparent particle effects
+
+- **Technical Details:**
+  - Modified `createCubeFrame()` function
+  - Grid frame material now properly handles transparency
+  - Floor particle effects (drop indicators, animations) now render correctly
+  - Fixed z-fighting and sorting issues with overlapping transparent objects
+
+- **Impact:**
+  - Particle effects on floor grid cells display properly
+  - No more visual glitches with drop animations
+  - Improved rendering order for transparent effects
+  - Maintains grid frame visibility while fixing particle issues
+
+---
+
 ## v0.20.30 - HQ/LQ Model Swapping & Corner Chain Fixes (2025-11-20)
 - **Summary:**
   - Implemented dual-quality model system with live swapping between HQ and LQ modes
