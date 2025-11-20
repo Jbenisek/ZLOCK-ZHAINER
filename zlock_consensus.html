@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.13</title>
+    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.22</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -1746,7 +1746,7 @@
     <div id="gameContainer">
         <canvas id="renderCanvas"></canvas>
         
-        <div id="versionDisplay">v0.20.19</div>
+        <div id="versionDisplay">v0.20.21</div>
         
         <div id="performanceDisplay">
             <div><span class="perf-label">FPS:</span> <span class="perf-value" id="fpsValue">60</span></div>
@@ -2412,7 +2412,7 @@
                 <strong>NOTE:</strong><br>Skipping past Level 10<br>disables most achievements
             </div>
             <div style="margin-top: 40px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #89A0B4;">
-                Version v0.20.19 • 2025-11-19
+                Version v0.20.21 • 2025-11-20
             </div>
         </div>
     </div>
@@ -2421,7 +2421,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.20.19';
+        const GAME_VERSION = 'v0.20.21';
         
         // Game State
         const GameState = {
@@ -2793,6 +2793,14 @@
         const _spawnTempCamDir = new THREE.Vector3();
         const _spawnTempSpawnPos = new THREE.Vector3();
         let particleEffectTextures = {};
+        
+        // Floor cell animation system
+        let floorCells = []; // Array of 6x6 floor cell meshes
+        let floorCellGeometry = null; // Shared geometry for all floor cells
+        let floorCellMaterials = []; // Pool of reusable materials
+        let floorAtlasF = null; // Atlas F texture reference
+        let floorAtlasG = null; // Atlas G texture reference
+        let floorAnimationTime = 0; // Separate timer for floor animations
         
         // Animation frame ID tracking for cleanup
         let mainAnimationFrameId = null;
@@ -4499,6 +4507,289 @@
             });
         }
         
+        function updateFloorCells() {
+            if (floorCells.length === 0) return;
+            
+            const effect = GRID_EFFECTS[currentGridEffect];
+            floorAnimationTime += 0.016; // Approximate 60fps timing
+            const time = floorAnimationTime;
+            
+            // Grid dimensions
+            const centerX = GRID_WIDTH / 2;
+            const centerZ = GRID_DEPTH / 2;
+            const maxDist = Math.sqrt(centerX * centerX + centerZ * centerZ);
+            
+            floorCells.forEach((cell, index) => {
+                const mat = cell.material;
+                const gridX = cell.userData.gridX;
+                const gridZ = cell.userData.gridZ;
+                const posIndex = cell.userData.cellIndex;
+                
+                // Calculate useful values for patterns
+                const distFromCenter = Math.sqrt(Math.pow(gridX - centerX, 2) + Math.pow(gridZ - centerZ, 2));
+                const normalizedDist = distFromCenter / maxDist;
+                const angleFromCenter = Math.atan2(gridZ - centerZ, gridX - centerX);
+                
+                // Determine if we should use sprite texture (only if atlases loaded)
+                const whichAtlas = Math.random() > 0.5 ? floorAtlasF : floorAtlasG;
+                
+                // Handle solid color effects with simpler animations
+                if (effect.solid) {
+                    mat.map = null;
+                    const solidHue = (time * 0.1 + normalizedDist * 0.3) % 1;
+                    mat.color.setHSL(solidHue, 0.8, 0.5);
+                    mat.opacity = 0.3 + Math.sin(time * 2 + posIndex * 0.3) * 0.2;
+                    return;
+                }
+                
+                // Pattern-based animations synchronized with grid theme
+                switch(effect.name) {
+                    case 'None':
+                        // SHOW THEM ANYWAY with default animation
+                        mat.map = null;
+                        const noneHue = (time * 0.1 + posIndex * 0.05) % 1;
+                        mat.color.setHSL(noneHue, 0.5, 0.5);
+                        mat.opacity = 0.3 + Math.sin(time * 2 + posIndex * 0.2) * 0.15;
+                        break;
+                        
+                    case 'Pulse Wave':
+                        // Center-out pulse rings
+                        mat.map = null;
+                        const pulseRing = Math.sin(time * 2 - distFromCenter * 0.8) * 0.5 + 0.5;
+                        const pulseHue = (time * 0.1 + normalizedDist * 0.3) % 1;
+                        mat.color.setHSL(pulseHue, 1, 0.5);
+                        mat.opacity = pulseRing * 0.5;
+                        break;
+                        
+                    case 'Deep Ocean':
+                        // Outside-in wave collapse
+                        mat.map = null;
+                        const collapseWave = Math.sin(time * 2 + (1 - normalizedDist) * Math.PI * 3) * 0.5 + 0.5;
+                        mat.color.setHSL(0.55 + collapseWave * 0.1, 0.9, 0.4);
+                        mat.opacity = collapseWave * 0.6;
+                        break;
+                        
+                    case 'Neon Glow':
+                        // Horizontal scanning stripes
+                        mat.map = null;
+                        const stripePhase = Math.sin(time * 3 + gridZ * 1.2) * 0.5 + 0.5;
+                        mat.color.setHSL(0.5 + stripePhase * 0.1, 1, 0.5);
+                        mat.opacity = stripePhase * 0.6;
+                        break;
+                        
+                    case 'Hot Pink':
+                        // Vertical scanning stripes
+                        mat.map = null;
+                        const vStripe = Math.sin(time * 3 + gridX * 1.2) * 0.5 + 0.5;
+                        mat.color.setHSL(0.9, 1, 0.5);
+                        mat.opacity = vStripe * 0.6;
+                        break;
+                        
+                    case 'Rainbow Spectrum':
+                        // Diagonal rainbow sweep
+                        mat.map = null;
+                        const diagPhase = (time * 0.3 + (gridX + gridZ) * 0.2) % 1;
+                        mat.color.setHSL(diagPhase, 1, 0.5);
+                        mat.opacity = 0.4 + Math.sin(diagPhase * Math.PI * 2) * 0.3;
+                        break;
+                        
+                    case 'Lime Green':
+                        // Checkerboard flash pattern
+                        mat.map = null;
+                        const checker = (gridX + gridZ) % 2;
+                        const flash = Math.sin(time * 4 + checker * Math.PI) * 0.5 + 0.5;
+                        mat.color.setHSL(0.3, 1, 0.5);
+                        mat.opacity = flash * 0.7;
+                        break;
+                        
+                    case 'Digital Matrix':
+                        // Random sprite drops with texture
+                        if (Math.random() < 0.02 && whichAtlas) {
+                            mat.map = whichAtlas;
+                            // Random sprite UV from 4x4 atlas
+                            const spriteX = Math.floor(Math.random() * 4) / 4;
+                            const spriteY = Math.floor(Math.random() * 4) / 4;
+                            mat.map.offset.set(spriteX, spriteY);
+                            mat.map.repeat.set(0.25, 0.25);
+                            mat.color.setHex(0x00FF00);
+                            mat.opacity = Math.random() * 0.5 + 0.2;
+                        } else {
+                            mat.map = null;
+                            mat.color.setHSL(0.33, 1, 0.3);
+                            mat.opacity = Math.random() * 0.3;
+                        }
+                        break;
+                        
+                    case 'Deep Purple':
+                        // Rotating quad sections
+                        mat.map = null;
+                        const quadrant = Math.floor((angleFromCenter + Math.PI) / (Math.PI / 2)) % 4;
+                        const quadPhase = Math.sin(time * 2 + quadrant * Math.PI / 2) * 0.5 + 0.5;
+                        mat.color.setHSL(0.75, 1, 0.4);
+                        mat.opacity = quadPhase * 0.6;
+                        break;
+                        
+                    case 'Plasma Field':
+                        // Lumines-style plasma swirl
+                        mat.map = null;
+                        const plasmaX = Math.sin(time * 1.5 + gridX * 0.5);
+                        const plasmaZ = Math.cos(time * 1.2 + gridZ * 0.45);
+                        const plasmaHue = ((plasmaX + plasmaZ) * 0.5 + 0.5 + time * 0.1) % 1;
+                        mat.color.setHSL(plasmaHue, 1, 0.5);
+                        mat.opacity = Math.abs(plasmaX * plasmaZ) * 0.6;
+                        break;
+                        
+                    case 'Amber Gold':
+                        // Expanding/contracting rings
+                        mat.map = null;
+                        const ringPhase = Math.sin(time * 1.5) * maxDist * 0.4;
+                        const ringMatch = 1 - Math.abs(distFromCenter - ringPhase) / (maxDist * 0.3);
+                        const ringIntensity = Math.max(0, ringMatch);
+                        mat.color.setHSL(0.12, 1, 0.5);
+                        mat.opacity = ringIntensity * 0.8;
+                        break;
+                        
+                    case 'Crystal Refraction':
+                        // Prismatic radial burst with sprites
+                        const burstPulse = Math.sin(time * 2 - distFromCenter * 0.8) * 0.5 + 0.5;
+                        if (burstPulse > 0.7 && whichAtlas) {
+                            mat.map = whichAtlas;
+                            const spriteX = Math.floor(Math.random() * 4) / 4;
+                            const spriteY = Math.floor(Math.random() * 4) / 4;
+                            mat.map.offset.set(spriteX, spriteY);
+                            mat.map.repeat.set(0.25, 0.25);
+                            const burstHue = (angleFromCenter / (Math.PI * 2) + time * 0.2) % 1;
+                            mat.color.setHSL(burstHue, 1, 0.7);
+                            mat.opacity = burstPulse * 0.5;
+                        } else {
+                            mat.map = null;
+                            const burstHue = (angleFromCenter / (Math.PI * 2) + time * 0.2) % 1;
+                            mat.color.setHSL(burstHue, 1, 0.5);
+                            mat.opacity = burstPulse * 0.4;
+                        }
+                        break;
+                        
+                    case 'Crimson Red':
+                        // Pulsing cross pattern
+                        mat.map = null;
+                        const crossDist = Math.min(Math.abs(gridX - centerX), Math.abs(gridZ - centerZ));
+                        const crossPulse = Math.sin(time * 3 - crossDist * 0.8) * 0.5 + 0.5;
+                        mat.color.setHex(0xFF0000);
+                        mat.opacity = crossPulse * 0.7;
+                        break;
+                        
+                    case 'Synthwave Grid':
+                        // Alternating wave pattern
+                        mat.map = null;
+                        const synthWave = (gridX % 2) + (gridZ % 2);
+                        const synthTime = Math.sin(time * 2.5 + synthWave * Math.PI / 2) * 0.5 + 0.5;
+                        const synthHue = synthWave === 1 ? 0.9 : 0.5;
+                        mat.color.setHSL(synthHue, 1, 0.5);
+                        mat.opacity = synthTime * 0.6;
+                        break;
+                        
+                    case 'Aqua Mint':
+                        // Diagonal wave sweep
+                        mat.map = null;
+                        const diagWave = Math.sin(time * 2 + (gridX - gridZ) * 0.6) * 0.5 + 0.5;
+                        mat.color.setHSL(0.5, 0.7, 0.5);
+                        mat.opacity = diagWave * 0.6;
+                        break;
+                        
+                    case 'Cyber Scanlines':
+                        // Grid scanlines with sprites
+                        const scanX = Math.abs(Math.sin(time * 1.5 + gridX * 0.6));
+                        const scanZ = Math.abs(Math.sin(time * 1.2 + gridZ * 0.6));
+                        const scanCombined = (scanX + scanZ) * 0.5;
+                        if (scanCombined > 0.8 && whichAtlas) {
+                            mat.map = whichAtlas;
+                            const spriteX = Math.floor(Math.random() * 4) / 4;
+                            const spriteY = Math.floor(Math.random() * 4) / 4;
+                            mat.map.offset.set(spriteX, spriteY);
+                            mat.map.repeat.set(0.25, 0.25);
+                            mat.color.setHex(0x00FFAA);
+                            mat.opacity = scanCombined * 0.4;
+                        } else {
+                            mat.map = null;
+                            mat.color.setHSL(0.45, 1, 0.5);
+                            mat.opacity = scanCombined * 0.4;
+                        }
+                        break;
+                        
+                    case 'Electric Blue':
+                        // Lightning arcs with random sprites
+                        const arcIntensity = Math.sin(time * 5 + posIndex * 0.3) * 0.5 + 0.5;
+                        const lightningBolt = Math.random() < 0.03;
+                        if (lightningBolt && whichAtlas) {
+                            mat.map = whichAtlas;
+                            const spriteX = Math.floor(Math.random() * 4) / 4;
+                            const spriteY = Math.floor(Math.random() * 4) / 4;
+                            mat.map.offset.set(spriteX, spriteY);
+                            mat.map.repeat.set(0.25, 0.25);
+                            mat.color.setHex(0x00AAFF);
+                            mat.opacity = 0.7;
+                        } else {
+                            mat.map = null;
+                            mat.color.setHSL(0.55, 1, 0.5);
+                            mat.opacity = arcIntensity * 0.4;
+                        }
+                        break;
+                        
+                    case 'Hypnotic Spiral':
+                        // Rotating spiral from center
+                        mat.map = null;
+                        const spiralPhase = (angleFromCenter + time * 2) % (Math.PI * 2);
+                        const spiralRing = Math.sin(spiralPhase * 3 - distFromCenter * 1.8) * 0.5 + 0.5;
+                        const spiralHue = (time * 0.25 + normalizedDist * 0.5) % 1;
+                        mat.color.setHSL(spiralHue, 1, 0.5);
+                        mat.opacity = spiralRing * 0.6;
+                        break;
+                        
+                    case 'Sunset Orange':
+                        // Horizontal gradient waves
+                        mat.map = null;
+                        const sunsetWave = Math.sin(time * 1.5 + gridZ * 0.5) * 0.5 + 0.5;
+                        mat.color.setHSL(0.08, 1, 0.5);
+                        mat.opacity = sunsetWave * 0.6;
+                        break;
+                        
+                    case 'Quantum Shimmer':
+                        // Random quantum state changes with sprites
+                        const quantumPhase = (time * 0.5 + posIndex * 0.2) % 1;
+                        const quantumJump = Math.sin(time * 8 + posIndex) > 0.8;
+                        if (quantumJump && whichAtlas) {
+                            mat.map = whichAtlas;
+                            const spriteX = Math.floor(Math.random() * 4) / 4;
+                            const spriteY = Math.floor(Math.random() * 4) / 4;
+                            mat.map.offset.set(spriteX, spriteY);
+                            mat.map.repeat.set(0.25, 0.25);
+                            const quantumHue = (quantumPhase + Math.random() * 0.3) % 1;
+                            mat.color.setHSL(quantumHue, 1, 0.6);
+                            mat.opacity = 0.5;
+                        } else {
+                            mat.map = null;
+                            mat.color.setHSL(quantumPhase, 1, 0.4);
+                            mat.opacity = quantumPhase * 0.4;
+                        }
+                        break;
+                        
+                    case 'Violet Dream':
+                        // Soft radial pulse
+                        mat.map = null;
+                        const dreamPulse = Math.sin(time * 1.4 - distFromCenter * 0.5) * 0.5 + 0.5;
+                        mat.color.setHSL(0.8, 0.7, 0.5);
+                        mat.opacity = dreamPulse * 0.5;
+                        break;
+                        
+                    default:
+                        mat.opacity = 0;
+                        break;
+                }
+                
+                mat.needsUpdate = true;
+            });
+        }
+        
         function setFloorColorNone() {
             if (tempFloorEnabled) {
                 // Disable
@@ -5467,7 +5758,7 @@
             // No fog - we're indoors
             
             // Setup camera
-            camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.01, 1000);
             updateCameraPosition();
             
             // Load chain link model
@@ -5495,6 +5786,8 @@
             createColumnTubes();
             createFloorIndicators();
             createRoom();
+            createFloorCells(); // Create 6x6 floor cell animation system
+            
             
             // Setup lighting
             // Main key light - warm, softer intensity
@@ -5588,6 +5881,19 @@
             initializeAchievements();
             loadParticlePlacements();
             loadModelPlacements();
+            
+            // Preload floor animation atlases
+            const atlasLoader = new THREE.TextureLoader();
+            atlasLoader.load('effect/atlas_f.png', (texture) => {
+                texture.magFilter = THREE.LinearFilter;
+                texture.minFilter = THREE.LinearMipMapLinearFilter;
+                floorAtlasF = texture;
+            });
+            atlasLoader.load('effect/atlas_g.png', (texture) => {
+                texture.magFilter = THREE.LinearFilter;
+                texture.minFilter = THREE.LinearMipMapLinearFilter;
+                floorAtlasG = texture;
+            });
             
             // ===== AI PLAYER =====
             // Update AI indicator after DOM is ready
@@ -7879,6 +8185,51 @@
             scene.add(ceiling);
         }
         
+        function createFloorCells() {
+            // FORCE recreate BOX geometry every time
+            floorCellGeometry = new THREE.BoxGeometry(0.9, 0.01, 0.9);
+            
+            // Position at floor level
+            const floorY = 0.5; // Half height above floor
+            
+            // Create 6x6 grid of floor cell planes
+            for (let x = 0; x < GRID_WIDTH; x++) {
+                for (let z = 0; z < GRID_DEPTH; z++) {
+                    // Create material for this cell (will be reused/updated during animations)
+                    const material = new THREE.MeshBasicMaterial({
+                        color: 0xFF00FF,
+                        transparent: true,
+                        opacity: 0.0,
+                        side: THREE.DoubleSide,
+                        depthWrite: true,
+                        depthTest: false
+                    });
+                    
+                    // Create mesh
+                    const mesh = new THREE.Mesh(floorCellGeometry, material);
+                    
+                    // Position at grid cell center
+                    mesh.position.set(x + 0.5, floorY, z + 0.5);
+                    
+                    // Render order: floor cells first
+                    mesh.renderOrder = -100;
+                    
+                    // Disable frustum culling
+                    mesh.frustumCulled = false;
+                    
+                    // Store grid coordinates
+                    mesh.userData.gridX = x;
+                    mesh.userData.gridZ = z;
+                    mesh.userData.cellIndex = x + z * GRID_WIDTH;
+                    
+                    // Add to scene and tracking array
+                    scene.add(mesh);
+                    floorCells.push(mesh);
+                    floorCellMaterials.push(material);
+                }
+            }
+        }
+        
         function createGridLines() {
             const tableHeight = -1.2; // Position table top at -1.2 (below grid floor at y=0)
             const tableTopThickness = 0.2;
@@ -8151,6 +8502,16 @@
             particlePlacements.forEach(placement => {
                 if (placement.enabled && placement.loop) {
                     startLoopingParticle(placement);
+                }
+            });
+            
+            // Reset floor cell animations
+            floorAnimationTime = 0;
+            floorCells.forEach(cell => {
+                if (cell.material) {
+                    cell.material.opacity = 0;
+                    cell.material.map = null;
+                    cell.material.needsUpdate = true;
                 }
             });
             
@@ -9795,6 +10156,9 @@
                 }
             });
             
+            // Render order: links render on top of floor cells
+            mesh.renderOrder = 100;
+            
             return mesh;
         }
         
@@ -9876,7 +10240,8 @@
                     startDelay: options.startDelay || 0,
                     parentBone: options.parentBone,
                     parentModel: options.parentModel,
-                    boneOffset: options.boneOffset
+                    boneOffset: options.boneOffset,
+                    colorOverride: options.colorOverride
                 });
                 playParticleEffect(effect);
             });
@@ -9898,6 +10263,7 @@
                 textureReady: false,
                 parentBone: options.parentBone || null,
                 parentModel: options.parentModel || null,
+                colorOverride: options.colorOverride || null,
                 boneOffset: options.boneOffset || null
             };
             
@@ -10124,9 +10490,9 @@
             const blendMode = config.blendMode || 'normal';
             const blending = blendMode === 'additive' ? THREE.AdditiveBlending : THREE.NormalBlending;
             
-            // Parse colors
-            const colorStart = new THREE.Color(config.colorStart);
-            const colorEnd = new THREE.Color(config.colorEnd);
+            // Parse colors - use color override if provided, otherwise use config colors
+            const colorStart = new THREE.Color(effect.colorOverride?.colorStart || config.colorStart);
+            const colorEnd = new THREE.Color(effect.colorOverride?.colorEnd || config.colorEnd);
             
             // Create mesh based on type
             let mesh;
@@ -11187,26 +11553,48 @@
                 const oldCombo = combo;
                 combo = Math.min(5.0, combo + 0.5);
                 
-                // Trigger hyper mode on combo increase
-                if (combo > oldCombo && combo >= 2.0) {
-                    // Trigger combo bonus (was music hyper mode)
-                    // Bonus removed with audio system
-                }
-                
-                // Spawn random particle effect when combo reaches 3.0x or higher
-                if (combo >= 3.0 && oldCombo < 3.0) {
-                    // Random position above the grid
-                    const randomX = Math.random() * GRID_WIDTH;
-                    const randomY = 12 + Math.random() * 8; // Between 12 and 20 units high
-                    const randomZ = Math.random() * GRID_DEPTH;
+                // Spawn combo particle effect based on combo multiplier
+                if (combo > oldCombo && combo >= 1.0) {
+                    // Determine number of particles based on combo (1x = 1 particle, 2x = 2, etc.)
+                    const numParticles = Math.floor(combo * 2); // 1.0x=2, 1.5x=3, 2.0x=4, etc.
                     
-                    spawnParticleEffect(
-                        'effect/cyberaxe_shield.json',
-                        randomX,
-                        randomY,
-                        randomZ,
-                        { spawnMode: 'world', rotation: { x: 0, y: 0, z: 0 } }
-                    );
+                    // Available combo effects (combo_a through combo_v = 22 effects)
+                    const comboEffects = [
+                        'combo_a', 'combo_b', 'combo_c', 'combo_d', 'combo_e', 'combo_f',
+                        'combo_g', 'combo_h', 'combo_i', 'combo_j', 'combo_k', 'combo_l',
+                        'combo_m', 'combo_n', 'combo_o', 'combo_p', 'combo_q', 'combo_r',
+                        'combo_s', 'combo_t', 'combo_u', 'combo_v'
+                    ];
+                    
+                    // Spawn particles
+                    for (let i = 0; i < numParticles; i++) {
+                        // Random position above the grid
+                        const randomX = Math.random() * GRID_WIDTH;
+                        const randomY = 12 + Math.random() * 8; // Between 12 and 20 units high
+                        const randomZ = Math.random() * GRID_DEPTH;
+                        
+                        // Randomly select one of the combo effects
+                        const randomEffect = comboEffects[Math.floor(Math.random() * comboEffects.length)];
+                        
+                        // Generate random start and end colors
+                        const randomColorStart = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+                        const randomColorEnd = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+                        
+                        spawnParticleEffect(
+                            `effect/${randomEffect}.json`,
+                            randomX,
+                            randomY,
+                            randomZ,
+                            { 
+                                spawnMode: 'world', 
+                                rotation: { x: 0, y: 0, z: 0 },
+                                colorOverride: {
+                                    colorStart: randomColorStart,
+                                    colorEnd: randomColorEnd
+                                }
+                            }
+                        );
+                    }
                 }
             } else {
                 combo = 1.5;
@@ -11422,6 +11810,9 @@
             
             // Update grid visual effects
             applyGridEffect();
+            
+            // Update floor cell animations
+            updateFloorCells();
             
             // Update particle effects
             updateParticleEffects(deltaTime);

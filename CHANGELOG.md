@@ -2,6 +2,84 @@
 
 # Changelog
 
+## v0.20.22 - Camera Near Clipping Plane Fix (2025-11-20)
+- **Rendering Fix:**
+  - Changed camera near clipping plane from 0.1 to 0.01
+  - Allows objects closer to camera to render properly
+  - Removed debug console logs from floor cell system
+
+## v0.20.21 - Floor Cell Animation System (2025-11-20)
+- **Summary:**
+  - Added 6×6 floor cell animation system synchronized with grid themes
+  - Each grid cell on the table surface has independent animated plane
+  - Animations use theme colors and particle sprite atlases (atlas_f, atlas_g)
+  - Multiple animation patterns: checkerboard, waves, spirals, pulses, sprites
+  
+- **Floor Cell System:**
+  - **Grid:** 6×6 individual planes positioned at table surface (y=-1.2 + 0.11)
+  - **Shared Resources:** Single PlaneGeometry reused by all 36 cells
+  - **Material Pool:** 36 MeshBasicMaterial instances with additive blending
+  - **Textures:** Preloaded atlas_f.png and atlas_g.png for sprite display
+  - **Performance:** Materials reused, not recreated during animations
+  
+- **Animation Patterns Per Theme:**
+  - **Pulse Wave:** Center-out pulsing rings with hue shift
+  - **Deep Ocean:** Outside-in wave collapse effect
+  - **Neon Glow / Hot Pink:** Horizontal/vertical scanning stripes
+  - **Rainbow Spectrum:** Diagonal rainbow sweep across grid
+  - **Lime Green:** Checkerboard flash pattern
+  - **Digital Matrix:** Random sprite drops with Matrix green tint
+  - **Deep Purple:** Rotating quadrant sections
+  - **Plasma Field:** Lumines-style plasma swirl
+  - **Amber Gold:** Expanding/contracting rings
+  - **Crystal Refraction:** Prismatic radial burst with sprites
+  - **Crimson Red:** Pulsing cross pattern
+  - **Synthwave Grid:** Alternating pink/cyan wave pattern
+  - **Aqua Mint:** Diagonal wave sweep
+  - **Cyber Scanlines:** Grid scanlines with random sprites
+  - **Electric Blue:** Lightning arcs with random sprite flashes
+  - **Hypnotic Spiral:** Rotating spiral from center
+  - **Sunset Orange:** Horizontal gradient waves
+  - **Quantum Shimmer:** Random quantum state jumps with sprites
+  - **Violet Dream:** Soft radial pulse
+  
+- **Sprite Integration:**
+  - Random 4×4 atlas sprite selection when conditions met
+  - UV mapping: `offset.set(spriteX, spriteY)`, `repeat.set(0.25, 0.25)`
+  - Sprites appear on: Digital Matrix drops, Crystal bursts, Cyber scanlines, Electric lightning, Quantum jumps
+  - Color tinting applied to sprites based on theme
+  
+- **Technical Changes:**
+  - Added global variables: `floorCells`, `floorCellGeometry`, `floorCellMaterials`, `floorAtlasF`, `floorAtlasG`, `floorAnimationTime`
+  - Created `createFloorCells()`: Initializes 6×6 grid of planes with shared geometry
+  - Created `updateFloorCells()`: Updates materials per frame based on current grid theme
+  - Integrated into `init()`: Calls `createFloorCells()` after `createRoom()`
+  - Integrated into `animate()`: Calls `updateFloorCells()` after `applyGridEffect()`
+  - Cleanup in `startGame()`: Resets `floorAnimationTime`, clears materials (opacity=0, map=null)
+  - Atlases preloaded in `init()` with LinearFilter and mipmapping
+
+## v0.20.20 - Randomized Combo Particle Colors (2025-11-19)
+- **Summary:**
+  - Combo particle effects now use randomized colors for each spawn
+  - Color override system implemented for dynamic particle customization
+  - Combo particles maintain visual variety while keeping other effects consistent
+  
+- **Color Randomization:**
+  - **Trigger:** Each combo particle spawn generates random start and end colors
+  - **Implementation:** Hex colors randomly generated using `Math.random() * 16777215`
+  - **Scope:** Only affects combo particles; all other particle effects use configured colors
+  - Colors randomized per particle spawn, creating unique visual effects each time
+  
+- **Technical Changes:**
+  - Added `colorOverride` option parameter to `spawnParticleEffect()`
+  - Modified `createParticleEffect()` to store `colorOverride` in effect object
+  - Updated `createEffectParticle()` to check `effect.colorOverride?.colorStart/colorEnd`
+  - Color override takes precedence over config colors when present
+  - Modified `updateCombo()` to generate and pass random colors:
+    - `randomColorStart`: Random hex color for particle start
+    - `randomColorEnd`: Random hex color for particle fade-out
+  - Uses optional chaining (`?.`) for safe color override checks
+
 ## v0.20.19 - Combo Particle Effects & Idle Loop Fixes (2025-11-19)
 - **Summary:**
   - Added particle effect celebration when achieving 3.0x+ combo
