@@ -2,6 +2,163 @@
 
 # Changelog
 
+## v0.20.19 - Combo Particle Effects & Idle Loop Fixes (2025-11-19)
+- **Summary:**
+  - Added particle effect celebration when achieving 3.0x+ combo
+  - Fixed idle particle loops not restarting after special abilities
+  - Character idle effects now properly resume after specials complete
+  
+- **Combo Celebration System:**
+  - **Trigger:** Particle effect spawns when combo reaches 3.0x or higher
+  - **Effect:** `cyberaxe_shield.json` appears at random position above grid
+  - **Position:** Random X/Z within grid bounds, Y between 12-20 units high
+  - **Logic:** Only triggers when transitioning from below 3.0x to 3.0x+
+  - Added in `updateCombo()` function with `oldCombo < 3.0` check
+  
+- **Idle Particle Loop Restoration:**
+  - **Zooko:** Shield and hat particles now restart after special ability ends
+  - **CyberAxe:** Chest shield particle now restarts after special ability ends
+  - Loops check `zookoSpecialActive` and `cyberAxeSpecialActive` flags
+  - Particles restart 100ms after special completes
+  - Fixed issue where `trackedSetTimeout` loops were cleared and never restarted
+  
+- **Technical Changes:**
+  - Modified Zooko special cleanup to include `restartZookoShield()` and `restartZookoHat()` functions
+  - Modified CyberAxe special cleanup to include `restartCyberAxeShield()` function
+  - Restart functions create new looping timeouts with 1100ms intervals
+  - Added combo particle spawn in `updateCombo()` when `combo >= 3.0 && oldCombo < 3.0`
+
+## v0.20.18 - Sandblasting Scaling System (2025-11-19)
+- **Summary:**
+  - Sandblasting link count now scales with player level
+  - Replaced random 60-100 links with tiered level-based system
+  - Updated How to Play panel with new sandblasting information
+  
+- **Sandblasting Link Count by Level:**
+  - **Level < 50:** 50 links
+  - **Level 50-99:** 75 links
+  - **Level 100-249:** 100 links
+  - **Level 250-499:** 125 links
+  - **Level 500-999:** 150 links
+  - **Level 1000+:** 200 links
+  
+- **Technical Changes:**
+  - Modified `triggerSandblastingEvent()` to use level-based logic instead of random
+  - Removed `Math.floor(Math.random() * 41) + 60` calculation
+  - Added if/else chain checking current level to determine `numLinks`
+  - Updated How to Play panel text to show all tier breakpoints
+  
+- **Balance Impact:**
+  - Low-level players get fewer links (50 vs previous minimum 60)
+  - High-level players get significantly more links (up to 200 vs previous maximum 100)
+  - Provides better difficulty scaling as players progress
+  - Sandblasting becomes more impactful reward at higher levels
+
+## v0.20.17 - Sandblasting Collision Prevention & Cleanup (2025-11-19)
+- **Summary:**
+  - Fixed sandblasting links overlapping and getting stuck on screen
+  - Implemented collision prevention during sandblasting spawn
+  - Added cleanup system to remove floating links after effect ends
+  
+- **Sandblasting Collision Fixes:**
+  - **Spawn Prevention:** Check if falling link already exists in column before spawning
+    - Prevents multiple links falling through the same X,Z column simultaneously
+    - Skips spawn if `sandblastingLinks` array contains link at same X,Z with Y > 1
+  
+  - **Grid Placement Check:** Verify grid position is empty before placing landed link
+    - Check `grid[x][finalY][z] === null` before placing link in grid
+    - Dispose of link immediately if position already occupied
+    - Prevents overlapping links in same grid cell
+  
+  - **Effect Cleanup:** Remove any remaining floating links when sandblasting ends
+    - After 11 seconds (7s drop + 4s settle), cleanup pass removes stuck links
+    - Iterate through `sandblastingLinks` array and dispose all remaining meshes
+    - Clear array to prevent memory leaks
+  
+- **Technical Changes:**
+  - Modified `triggerSandblastingEvent()` spawn loop to check existing links
+  - Added `grid[link.x][finalY][link.z] === null` condition in `updateSandblastingLinks()`
+  - Added cleanup block in sandblasting restoration timeout
+  - Links that can't be placed are properly disposed instead of remaining in scene
+
+## v0.20.16 - Particle Placement Loop Fix (2025-11-19)
+- **Summary:**
+  - Fixed particle placement loops not restarting after game restart
+  - Particle effects now correctly loop continuously in background
+  
+- **Bug Fix:**
+  - **Problem:** Particle placement loops were cleared on game start but never restarted
+  - **Impact:** Background particle effects (electric walls) stopped playing after first game session
+  - **Solution:** Added restart logic after clearing intervals in `startGame()`
+  - Particle placements now properly loop from game start through all sessions
+  
+- **Technical Changes:**
+  - Modified `startGame()` cleanup section to restart particle loops
+  - After clearing all `placement.loopInterval` timers, iterate through placements again
+  - Call `startLoopingParticle(placement)` for all enabled looping placements
+  - Ensures particle effects remain active across game restarts
+
+## v0.20.15 - Dynamic FOV System & Camera Refinements (2025-11-19)
+- **Summary:**
+  - Implemented dynamic Field of View (FOV) that changes with camera zoom
+  - Smooth two-segment interpolation for both FOV and camera height
+  - Added middle mouse button to reset camera to default position
+  - Refined camera positioning values for optimal gameplay view
+
+- **Dynamic FOV System:**
+  - **Zoomed In (distance 8):** FOV 75° (wider view when close)
+  - **Default (distance 20):** FOV 45° (balanced perspective)
+  - **Zoomed Out (distance 28):** FOV 35° (narrower view when far)
+  - Two-segment interpolation prevents jarring transitions at default position
+  - FOV smoothly transitions from min→default and default→max independently
+
+- **Camera Height Refinement:**
+  - **Zoomed In:** Height 6.5 units
+  - **Default:** Height 8.5 units
+  - **Zoomed Out:** Height 9.0 units
+  - Two-segment interpolation matches FOV system for consistent transitions
+  - Heights optimized for best gameplay visibility at each zoom level
+
+- **Camera Reset Controls:**
+  - **R key:** Reset to default zoom/FOV/height
+  - **R3 button (Right Stick Click):** Gamepad reset
+  - **Middle Mouse Button:** Mouse reset (new)
+  - All three controls restore camera to default state instantly
+
+- **Technical Changes:**
+  - Added `minFOV`, `maxFOV`, `defaultFOV` constants for dynamic FOV
+  - Modified FOV calculation to use two-segment interpolation:
+    - `if (cameraDistance < baseCameraDistance)`: interpolate min→default
+    - `else`: interpolate default→max
+  - Applied same two-segment logic to camera height calculation
+  - Added middle mouse button (button === 1) event listener for camera reset
+  - `camera.updateProjectionMatrix()` called after FOV changes
+
+## v0.20.14 - Camera Zoom System Improvements (2025-11-19)
+- **Summary:**
+  - Implemented 3-position camera height system for better view control
+  - Added camera reset functionality for keyboard and gamepad
+  - Optimized default camera view with elevated position
+
+- **Camera Height System:**
+  - **Zoomed In (distance 8):** Camera height 5.5 units
+  - **Default (distance 20):** Camera height 10 units (elevated for better overview)
+  - **Zoomed Out (distance 28):** Camera height 12 units
+  - Default position now starts higher for improved gameplay visibility
+  - Smooth interpolation between zoom levels maintains consistent viewing experience
+
+- **Camera Reset Controls:**
+  - **R key:** Reset camera zoom to default distance and height
+  - **R3 button (Right Stick Click):** Gamepad equivalent for camera reset
+  - Both controls restore camera to default position (distance 20, height 10)
+  - Works during gameplay in all four chair positions
+
+- **Technical Changes:**
+  - Added `defaultHeight` constant (10 units) for middle zoom position
+  - Modified zoom interpolation to use discrete default height when at baseCameraDistance
+  - Default camera distance increased from 16 to 20 for better starting view
+  - Camera height formula: `if (cameraDistance === baseCameraDistance)` use defaultHeight, else interpolate
+
 ## v0.20.13 - Corner Tube Lumines-Style Visual Effects (2025-11-19)
 - **Summary:**
   - Corner tubes (4 tubes around chain columns) now animate with all 21 grid effect themes

@@ -1746,7 +1746,7 @@
     <div id="gameContainer">
         <canvas id="renderCanvas"></canvas>
         
-        <div id="versionDisplay">v0.20.7</div>
+        <div id="versionDisplay">v0.20.19</div>
         
         <div id="performanceDisplay">
             <div><span class="perf-label">FPS:</span> <span class="perf-value" id="fpsValue">60</span></div>
@@ -1945,7 +1945,7 @@
                 <div>
                     <div style="background: rgba(255, 107, 53, 0.1); border: 2px solid #FF6B35; border-radius: 10px; padding: 15px; margin-bottom: 15px;">
                         <h3 style="color: #FF6B35; font-size: 18px; margin-bottom: 10px; font-weight: 700;">🌪️ SANDBLASTING</h3>
-                        <p style="color: #D4E3F0; font-size: 13px; line-height: 1.6;">Charges <strong>+25%</strong> each time you use a character special. At <strong>100%</strong>, unleashes <strong>60-100 random links</strong> from the sky over 7 seconds!</p>
+                        <p style="color: #D4E3F0; font-size: 13px; line-height: 1.6;">Charges <strong>+25%</strong> each time you use a character special. At <strong>100%</strong>, unleashes random links from the sky over 7 seconds!<br><strong>Link Count by Level:</strong> &lt;50: 50 links | 50-99: 75 | 100-249: 100 | 250-499: 125 | 500-999: 150 | 1000+: 200</p>
                     </div>
                     
                     <div style="background: rgba(139, 92, 246, 0.1); border: 2px solid #8B5CF6; border-radius: 10px; padding: 15px; margin-bottom: 15px;">
@@ -2412,7 +2412,7 @@
                 <strong>NOTE:</strong><br>Skipping past Level 10<br>disables most achievements
             </div>
             <div style="margin-top: 40px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #89A0B4;">
-                Version v0.20.7 • 2025-11-19
+                Version v0.20.19 • 2025-11-19
             </div>
         </div>
     </div>
@@ -2421,7 +2421,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.20.13';
+        const GAME_VERSION = 'v0.20.19';
         
         // Game State
         const GameState = {
@@ -2677,7 +2677,10 @@
         // Camera positions (4 chairs + top-down view)
         let currentChair = 0; // 0=North, 1=East, 2=South, 3=West
         let isTopDownView = false; // Toggle for 5th camera view
-        const cameraDistance = 16;
+        let cameraDistance = 20;
+        const baseCameraDistance = 20;
+        const minCameraDistance = 8;
+        const maxCameraDistance = 28;
         const cameraHeight = 9;
         const topDownHeight = 24; // Height for top-down view
         
@@ -5430,6 +5433,24 @@
         
         // ===== END CHAIN COLUMN MENU FUNCTIONS =====
         
+        // Mouse wheel zoom
+        window.addEventListener('wheel', (event) => {
+            event.preventDefault();
+            const zoomSpeed = 0.5;
+            cameraDistance += event.deltaY > 0 ? zoomSpeed : -zoomSpeed;
+            cameraDistance = Math.max(minCameraDistance, Math.min(maxCameraDistance, cameraDistance));
+            updateCameraPosition();
+        }, { passive: false });
+        
+        // Middle mouse button to reset camera zoom
+        window.addEventListener('mousedown', (event) => {
+            if (event.button === 1) { // Middle mouse button
+                event.preventDefault();
+                cameraDistance = baseCameraDistance;
+                updateCameraPosition();
+            }
+        });
+        
         function init() {
             // Setup renderer
             const canvas = document.getElementById('renderCanvas');
@@ -7066,8 +7087,22 @@
                 }
             });
             
-            // Determine number of links to drop (60-100)
-            const numLinks = Math.floor(Math.random() * 41) + 60; // 60 to 100
+            // Determine number of links to drop based on level
+            let numLinks;
+            if (level < 50) {
+                numLinks = 50;
+            } else if (level >= 50 && level < 100) {
+                numLinks = 75;
+            } else if (level >= 100 && level < 250) {
+                numLinks = 100;
+            } else if (level >= 250 && level < 500) {
+                numLinks = 125;
+            } else if (level >= 500 && level < 1000) {
+                numLinks = 150;
+            } else { // level >= 1000
+                numLinks = 200;
+            }
+            
             const totalDuration = 7000; // 7 seconds
             const delayPerLink = totalDuration / numLinks;
             
@@ -7077,6 +7112,14 @@
                     // Random column position
                     const spawnX = Math.floor(Math.random() * GRID_WIDTH);
                     const spawnZ = Math.floor(Math.random() * GRID_DEPTH);
+                    
+                    // Check if there's already a falling sandblasting link at this X,Z position
+                    const existingLink = window.sandblastingLinks?.find(link => 
+                        link.x === spawnX && link.z === spawnZ && link.y > 1
+                    );
+                    
+                    // Skip spawning if there's already a falling link in this column
+                    if (existingLink) return;
                     
                     // Random link type
                     const linkTypes = [LinkType.ZEC_A, LinkType.ZEC_B, LinkType.ZEC_C, LinkType.ZEC_D];
@@ -7133,6 +7176,15 @@
                 sandblastingBarContainer.style.animation = '';
                 
                 sandblastingActive = false;
+                
+                // Cleanup any remaining sandblasting links that didn't settle
+                if (window.sandblastingLinks && window.sandblastingLinks.length > 0) {
+                    window.sandblastingLinks.forEach(link => {
+                        // Remove from scene if still floating
+                        disposeLinkMesh(link.mesh);
+                    });
+                    window.sandblastingLinks = [];
+                }
             }, totalDuration + 4000); // Keep lights off for entire drop duration + 4 seconds for settling
         }
         
@@ -7243,6 +7295,48 @@
                 trackedSetTimeout(() => {
                     currentTimeScale = normalTimeScale;
                     zookoSpecialActive = false;
+                    
+                    // Restart Zooko idle particle loops
+                    if (zookoHeadBone) {
+                        trackedSetTimeout(() => {
+                            function restartZookoShield() {
+                                if (zookoHeadBone && !zookoSpecialActive) {
+                                    zookoHeadBone.getWorldPosition(_boneTempHeadPos);
+                                    spawnParticleEffect('effect/zooko_shield.json', 
+                                        _boneTempHeadPos.x + zookoHeadOffset.x, 
+                                        _boneTempHeadPos.y + zookoHeadOffset.y, 
+                                        _boneTempHeadPos.z + zookoHeadOffset.z, {
+                                        spawnMode: 'world',
+                                        rotation: { x: 0, y: 0, z: 0 },
+                                        startDelay: 0,
+                                        parentBone: zookoHeadBone,
+                                        parentModel: zookoModel,
+                                        boneOffset: zookoHeadOffset
+                                    });
+                                    trackedSetTimeout(restartZookoShield, 1100);
+                                }
+                            }
+                            function restartZookoHat() {
+                                if (zookoHeadBone && !zookoSpecialActive) {
+                                    zookoHeadBone.getWorldPosition(_boneTempHeadPos);
+                                    spawnParticleEffect('effect/zooko_hat.json', 
+                                        _boneTempHeadPos.x + zookoHatOffset.x, 
+                                        _boneTempHeadPos.y + zookoHatOffset.y, 
+                                        _boneTempHeadPos.z + zookoHatOffset.z, {
+                                        spawnMode: 'world',
+                                        rotation: { x: 0, y: 0, z: 0 },
+                                        startDelay: 0,
+                                        parentBone: zookoHeadBone,
+                                        parentModel: zookoModel,
+                                        boneOffset: zookoHatOffset
+                                    });
+                                    trackedSetTimeout(restartZookoHat, 1100);
+                                }
+                            }
+                            restartZookoShield();
+                            restartZookoHat();
+                        }, 100);
+                    }
                 }, 500);
             }, totalDuration + 100);
         }
@@ -7476,6 +7570,30 @@
                     cyberAxeSpecialActive = false;
                     currentTimeScale = normalTimeScale;
                     chainVelocity = 0; // Reset velocity after freeze
+                    
+                    // Restart CyberAxe chest shield particle loop
+                    if (cyberAxeChestBone) {
+                        trackedSetTimeout(() => {
+                            function restartCyberAxeShield() {
+                                if (cyberAxeChestBone && !cyberAxeSpecialActive) {
+                                    cyberAxeChestBone.getWorldPosition(_boneTempHeadPos);
+                                    spawnParticleEffect('effect/cyberaxe_shield.json', 
+                                        _boneTempHeadPos.x + cyberAxeChestOffset.x, 
+                                        _boneTempHeadPos.y + cyberAxeChestOffset.y, 
+                                        _boneTempHeadPos.z + cyberAxeChestOffset.z, {
+                                        spawnMode: 'world',
+                                        rotation: { x: 0, y: 0, z: 0 },
+                                        startDelay: 0,
+                                        parentBone: cyberAxeChestBone,
+                                        parentModel: cyberAxeModel,
+                                        boneOffset: cyberAxeChestOffset
+                                    });
+                                    trackedSetTimeout(restartCyberAxeShield, 1100);
+                                }
+                            }
+                            restartCyberAxeShield();
+                        }, 100);
+                    }
                     
                     // Apply gravity
                     applyGravity();
@@ -7851,6 +7969,51 @@
             const centerX = GRID_WIDTH / 2;
             const centerZ = GRID_DEPTH / 2;
             
+            // Calculate dynamic camera height based on zoom (lower when zoomed in)
+            const zoomFactor = (cameraDistance - minCameraDistance) / (maxCameraDistance - minCameraDistance);
+            const minHeight = 6.5; // Camera height when fully zoomed in
+            const maxHeight = 9.0; // Camera height when fully zoomed out
+            const defaultHeight = 8.5; // Camera height at default zoom (baseCameraDistance)
+            
+            // Use default height when at base distance, otherwise interpolate in two segments
+            let dynamicHeight;
+            if (cameraDistance === baseCameraDistance) {
+                dynamicHeight = defaultHeight;
+            } else if (cameraDistance < baseCameraDistance) {
+                // Interpolate between min and default
+                const factor = (cameraDistance - minCameraDistance) / (baseCameraDistance - minCameraDistance);
+                dynamicHeight = minHeight + (defaultHeight - minHeight) * factor;
+            } else {
+                // Interpolate between default and max
+                const factor = (cameraDistance - baseCameraDistance) / (maxCameraDistance - baseCameraDistance);
+                dynamicHeight = defaultHeight + (maxHeight - defaultHeight) * factor;
+            }
+            
+            // Set FOV based on zoom level
+            const minFOV = 75; // FOV when fully zoomed in
+            const maxFOV = 35; // FOV when fully zoomed out
+            const defaultFOV = 45; // FOV at default zoom
+            
+            if (cameraDistance === minCameraDistance) {
+                // Fully zoomed in
+                camera.fov = minFOV;
+            } else if (cameraDistance === baseCameraDistance) {
+                // Default zoom
+                camera.fov = defaultFOV;
+            } else if (cameraDistance === maxCameraDistance) {
+                // Fully zoomed out
+                camera.fov = maxFOV;
+            } else if (cameraDistance < baseCameraDistance) {
+                // Interpolate between min and default
+                const factor = (cameraDistance - minCameraDistance) / (baseCameraDistance - minCameraDistance);
+                camera.fov = minFOV + (defaultFOV - minFOV) * factor;
+            } else {
+                // Interpolate between default and max
+                const factor = (cameraDistance - baseCameraDistance) / (maxCameraDistance - baseCameraDistance);
+                camera.fov = defaultFOV + (maxFOV - defaultFOV) * factor;
+            }
+            camera.updateProjectionMatrix();
+            
             if (isTopDownView) {
                 // Top-down view - directly above the center of the grid
                 camera.position.set(centerX, topDownHeight, centerZ);
@@ -7861,24 +8024,24 @@
                 // Standard side views
                 switch(currentChair) {
                     case 0: // North (looking -Z)
-                        camera.position.set(centerX, cameraHeight, GRID_DEPTH + cameraDistance);
-                        if (playerLight) playerLight.position.set(centerX, cameraHeight, GRID_DEPTH + cameraDistance);
+                        camera.position.set(centerX, dynamicHeight, GRID_DEPTH + cameraDistance);
+                        if (playerLight) playerLight.position.set(centerX, dynamicHeight, GRID_DEPTH + cameraDistance);
                         break;
                     case 1: // East (looking -X)
-                        camera.position.set(GRID_WIDTH + cameraDistance, cameraHeight, centerZ);
-                        if (playerLight) playerLight.position.set(GRID_WIDTH + cameraDistance, cameraHeight, centerZ);
+                        camera.position.set(GRID_WIDTH + cameraDistance, dynamicHeight, centerZ);
+                        if (playerLight) playerLight.position.set(GRID_WIDTH + cameraDistance, dynamicHeight, centerZ);
                         break;
                     case 2: // South (looking +Z)
-                        camera.position.set(centerX, cameraHeight, -cameraDistance);
-                        if (playerLight) playerLight.position.set(centerX, cameraHeight, -cameraDistance);
+                        camera.position.set(centerX, dynamicHeight, -cameraDistance);
+                        if (playerLight) playerLight.position.set(centerX, dynamicHeight, -cameraDistance);
                         break;
                     case 3: // West (looking +X)
-                        camera.position.set(-cameraDistance, cameraHeight, centerZ);
-                        if (playerLight) playerLight.position.set(-cameraDistance, cameraHeight, centerZ);
+                        camera.position.set(-cameraDistance, dynamicHeight, centerZ);
+                        if (playerLight) playerLight.position.set(-cameraDistance, dynamicHeight, centerZ);
                         break;
                 }
                 
-                camera.lookAt(centerX, cameraHeight, centerZ);
+                camera.lookAt(centerX, dynamicHeight, centerZ);
                 // Enable player light in side views (if lights are enabled)
                 if (playerLight && lightsEnabled) playerLight.intensity = 8.0;
             }
@@ -7981,6 +8144,13 @@
                 if (placement.loopInterval) {
                     trackedClearInterval(placement.loopInterval);
                     placement.loopInterval = null;
+                }
+            });
+            
+            // Restart looping particle placements
+            particlePlacements.forEach(placement => {
+                if (placement.enabled && placement.loop) {
+                    startLoopingParticle(placement);
                 }
             });
             
@@ -8767,6 +8937,20 @@
                 e.preventDefault();
             }
             
+            // Reset camera zoom to default with R key
+            if (e.key.toLowerCase() === 'r') {
+                cameraDistance = baseCameraDistance;
+                updateCameraPosition();
+                e.preventDefault();
+            }
+            
+            // Reset camera zoom to default with R key
+            if (e.key.toLowerCase() === 'r') {
+                cameraDistance = baseCameraDistance;
+                updateCameraPosition();
+                e.preventDefault();
+            }
+            
             // Piece rotation with arrow keys
             if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'ArrowUp' || e.key === 'ArrowDown') {
                 rotatePiece(e.key);
@@ -8903,6 +9087,16 @@
             if (currentState === GameState.PLAYING) {
                 const leftX = gamepad.axes[GamepadAxes.LEFT_X];
                 const leftY = gamepad.axes[GamepadAxes.LEFT_Y];
+                
+                // Right analog stick for camera zoom
+                const rightY = gamepad.axes[GamepadAxes.RIGHT_Y];
+                const zoomDeadzone = 0.3;
+                if (Math.abs(rightY) > zoomDeadzone) {
+                    const zoomSpeed = 0.15;
+                    cameraDistance += rightY * zoomSpeed;
+                    cameraDistance = Math.max(minCameraDistance, Math.min(maxCameraDistance, cameraDistance));
+                    updateCameraPosition();
+                }
                 
                 // Determine current analog stick state
                 const currentAnalogState = {
@@ -9225,6 +9419,12 @@
             // Select button - Toggle top-down view - same as T
             else if (buttonIndex === GamepadButtons.SELECT && currentState === GameState.PLAYING) {
                 switchToTopDown();
+            }
+            
+            // R3 button - Reset camera zoom to default
+            else if (buttonIndex === GamepadButtons.R3 && currentState === GameState.PLAYING) {
+                cameraDistance = baseCameraDistance;
+                updateCameraPosition();
             }
             
             // X button - unused (reserved for future feature)
@@ -10888,8 +11088,9 @@
                     // Lock in place
                     const finalY = bottomY <= 0 ? 0 : bottomY;
                     
-                    // Place in grid
-                    if (finalY >= 0 && finalY < GRID_HEIGHT) {
+                    // Check if grid position is already occupied
+                    if (finalY >= 0 && finalY < GRID_HEIGHT && grid[link.x][finalY][link.z] === null) {
+                        // Place in grid only if position is empty
                         grid[link.x][finalY][link.z] = {
                             type: link.type,
                             mesh: link.mesh,
@@ -10899,7 +11100,7 @@
                         // Update mesh position to grid position
                         link.mesh.position.set(link.x + 0.5, finalY + 0.5, link.z + 0.5);
                     } else {
-                        // Remove if out of bounds
+                        // Position occupied or out of bounds - remove link
                         disposeLinkMesh(link.mesh);
                     }
                     
@@ -10990,6 +11191,22 @@
                 if (combo > oldCombo && combo >= 2.0) {
                     // Trigger combo bonus (was music hyper mode)
                     // Bonus removed with audio system
+                }
+                
+                // Spawn random particle effect when combo reaches 3.0x or higher
+                if (combo >= 3.0 && oldCombo < 3.0) {
+                    // Random position above the grid
+                    const randomX = Math.random() * GRID_WIDTH;
+                    const randomY = 12 + Math.random() * 8; // Between 12 and 20 units high
+                    const randomZ = Math.random() * GRID_DEPTH;
+                    
+                    spawnParticleEffect(
+                        'effect/cyberaxe_shield.json',
+                        randomX,
+                        randomY,
+                        randomZ,
+                        { spawnMode: 'world', rotation: { x: 0, y: 0, z: 0 } }
+                    );
                 }
             } else {
                 combo = 1.5;
