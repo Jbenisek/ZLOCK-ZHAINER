@@ -2,6 +2,39 @@
 
 # Changelog
 
+## v0.20.13 - Corner Tube Lumines-Style Visual Effects (2025-11-19)
+- **Summary:**
+  - Corner tubes (4 tubes around chain columns) now animate with all 21 grid effect themes
+  - Dynamic HSL color shifting instead of static hex colors
+  - Spatial animation patterns: sequential rotation, alternating pairs, synchronized pulses, cascading activation
+  - Fixed MeshPhongMaterial with white emissive blocking color changes → MeshBasicMaterial
+  - Fixed applyGridEffect() only running when currentGridEffect > 0 → now runs every frame
+
+- **Corner Tube Effects:**
+  - **Sequential Rotation:** Pulse Wave (clockwise pulse around 4 corners with 90° timing offset)
+  - **Synchronized:** Deep Ocean, Amber Gold, Crimson Red, Sunset Orange (all 4 pulse together)
+  - **Alternating Pairs:** Neon Glow (tubes flash in pairs based on index % 2)
+  - **Opposite Corners:** Hot Pink (tubes 0-1 pulse together, 2-3 opposite phase)
+  - **Cascading:** Digital Matrix (activation wave with timing offset per tube)
+  - **Rainbow Rotation:** Rainbow Spectrum, Crystal Refraction, Hypnotic Spiral (hue rotation based on index)
+  - **Random Flashes:** Lime Green, Electric Blue (random intensity bursts per tube)
+  - **Quantum Jumps:** Quantum Shimmer (state changes with hue shifts)
+  - **Plasma Flow:** Plasma Field (organic swirl patterns)
+  
+- **Technical Changes:**
+  - `applyCornerTubeEffects()` expanded from 12 to 21 theme implementations
+  - Base opacity: 0.3, variation range: 0.15 (subtle but visible)
+  - All effects use `setHSL()` for dynamic color instead of `setHex()` for static colors
+  - Fixed `createCornerFeedTubes()` using MeshPhongMaterial with emissive override
+  - Removed conditional check preventing effects from running on 'None' theme
+  
+- **Bug Fixes:**
+  - Corner tubes were white with alpha because MeshPhongMaterial had `emissive: 0xFFFFFF, emissiveIntensity: 10`
+  - Color changes via `tube.material.color.setHSL()` were being overridden by emissive glow
+  - Changed line 5710: MeshPhongMaterial → MeshBasicMaterial (matches other tube creation at line 5161)
+  - applyGridEffect() was only called when `currentGridEffect > 0`, skipping index 0 ('None')
+  - Removed conditional wrapper in animation loop (line 11217) so effects run every frame
+
 ## v0.20.12 - Material System Optimization & LQ Logo Visibility (2025-11-19)
 - **Summary:**
   - Implemented shared material system for massive performance improvement

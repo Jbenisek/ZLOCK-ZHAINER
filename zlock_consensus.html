@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.12</title>
+    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.13</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -2421,7 +2421,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.20.12';
+        const GAME_VERSION = 'v0.20.13';
         
         // Game State
         const GameState = {
@@ -4099,6 +4099,401 @@
                         break;
                 }
             });
+            
+            // Apply coordinated tube animations
+            applyTubeEffects(effect, time);
+        }
+        
+        function applyTubeEffects(effect, time) {
+            if (columnTubes.length === 0) return;
+            
+            columnTubes.forEach((tube, tubeIndex) => {
+                if (!tube.material) return;
+                
+                const gridX = tube.userData.gridX || 0;
+                const gridZ = tube.userData.gridZ || 0;
+                const posIndex = gridX + gridZ * GRID_WIDTH;
+                
+                // Center position for radial effects
+                const centerX = GRID_WIDTH / 2;
+                const centerZ = GRID_DEPTH / 2;
+                const distFromCenter = Math.sqrt(Math.pow(gridX - centerX, 2) + Math.pow(gridZ - centerZ, 2));
+                const maxDist = Math.sqrt(centerX * centerX + centerZ * centerZ);
+                const normalizedDist = distFromCenter / maxDist;
+                
+                // Angle from center for spiral/radial effects
+                const angleFromCenter = Math.atan2(gridZ - centerZ, gridX - centerX);
+                
+                // Handle solid color effects
+                if (effect.solid) {
+                    const solidHue = (time * 0.2 + normalizedDist * 0.5) % 1;
+                    tube.material.color.setHSL(solidHue, 1, 0.5);
+                    tube.material.opacity = 0.25 + Math.sin(time * 2 + posIndex * 0.3) * 0.15;
+                    return;
+                }
+                
+                switch(effect.name) {
+                    case 'None':
+                        tube.material.color.setHex(0x00FFFF);
+                        tube.material.opacity = 0.3;
+                        break;
+                        
+                    case 'Pulse Wave':
+                        // Center out pulse rings
+                        const pulseRing = Math.sin(time * 2 - distFromCenter * 0.5) * 0.5 + 0.5;
+                        const pulseHue = (time * 0.1 + normalizedDist * 0.3) % 1;
+                        tube.material.color.setHSL(pulseHue, 1, 0.5);
+                        tube.material.opacity = 0.2 + pulseRing * 0.6;
+                        break;
+                        
+                    case 'Deep Ocean':
+                        // Outside in wave collapse
+                        const collapseWave = Math.sin(time * 2.5 + (1 - normalizedDist) * Math.PI * 4) * 0.5 + 0.5;
+                        const oceanHue = 0.55 + collapseWave * 0.1; // Blue to cyan
+                        tube.material.color.setHSL(oceanHue, 0.9, 0.4 + collapseWave * 0.3);
+                        tube.material.opacity = 0.25 + collapseWave * 0.5;
+                        break;
+                        
+                    case 'Neon Glow':
+                        // Horizontal stripes scrolling
+                        const stripePhase = Math.sin(time * 3 + gridZ * 0.8) * 0.5 + 0.5;
+                        const neonHue = 0.5 + stripePhase * 0.15; // Cyan to blue
+                        tube.material.color.setHSL(neonHue, 1, 0.5 + stripePhase * 0.2);
+                        tube.material.opacity = 0.3 + stripePhase * 0.5;
+                        break;
+                        
+                    case 'Hot Pink':
+                        // Vertical stripes scrolling
+                        const vStripe = Math.sin(time * 3.5 + gridX * 0.8) * 0.5 + 0.5;
+                        const pinkHue = 0.9 + vStripe * 0.08; // Pink to magenta
+                        tube.material.color.setHSL(pinkHue, 1, 0.5 + vStripe * 0.2);
+                        tube.material.opacity = 0.25 + vStripe * 0.5;
+                        break;
+                        
+                    case 'Rainbow Spectrum':
+                        // Diagonal rainbow sweep
+                        const diagPhase = (time * 0.3 + (gridX + gridZ) * 0.15) % 1;
+                        tube.material.color.setHSL(diagPhase, 1, 0.5);
+                        tube.material.opacity = 0.3 + Math.sin(diagPhase * Math.PI * 2) * 0.3;
+                        break;
+                        
+                    case 'Lime Green':
+                        // Checkerboard flash
+                        const checker = (gridX + gridZ) % 2;
+                        const flash = Math.sin(time * 4 + checker * Math.PI) * 0.5 + 0.5;
+                        const greenHue = 0.3 + flash * 0.1; // Lime to yellow-green
+                        tube.material.color.setHSL(greenHue, 1, 0.5 + flash * 0.2);
+                        tube.material.opacity = 0.2 + flash * 0.6;
+                        break;
+                        
+                    case 'Digital Matrix':
+                        // Random column drops like Matrix code
+                        const dropPhase = (time * 2 + gridX * 0.5) % (Math.PI * 2);
+                        const dropIntensity = Math.max(0, Math.sin(dropPhase));
+                        const matrixFlicker = Math.random() < 0.1 ? 1.5 : 1;
+                        tube.material.color.setHSL(0.33, 1, 0.3 + dropIntensity * 0.4); // Green
+                        tube.material.opacity = (0.15 + dropIntensity * 0.6) * matrixFlicker;
+                        break;
+                        
+                    case 'Deep Purple':
+                        // Rotating quad sections
+                        const quadrant = (Math.floor((angleFromCenter + Math.PI) / (Math.PI / 2)) % 4);
+                        const quadPhase = Math.sin(time * 2 + quadrant * Math.PI / 2) * 0.5 + 0.5;
+                        tube.material.color.setHSL(0.75 + quadPhase * 0.1, 1, 0.4 + quadPhase * 0.3);
+                        tube.material.opacity = 0.25 + quadPhase * 0.5;
+                        break;
+                        
+                    case 'Plasma Field':
+                        // Lumines-style plasma swirl
+                        const plasmaX = Math.sin(time * 1.5 + gridX * 0.4);
+                        const plasmaZ = Math.cos(time * 1.2 + gridZ * 0.35);
+                        const plasmaHue = ((plasmaX + plasmaZ) * 0.5 + 0.5 + time * 0.1) % 1;
+                        const plasmaBright = Math.abs(plasmaX * plasmaZ);
+                        tube.material.color.setHSL(plasmaHue, 1, 0.4 + plasmaBright * 0.3);
+                        tube.material.opacity = 0.25 + plasmaBright * 0.5;
+                        break;
+                        
+                    case 'Amber Gold':
+                        // Expanding/contracting rings
+                        const ringPhase = Math.sin(time * 1.8) * maxDist * 0.5;
+                        const ringMatch = 1 - Math.abs(distFromCenter - ringPhase) / (maxDist * 0.2);
+                        const ringIntensity = Math.max(0, ringMatch);
+                        tube.material.color.setHSL(0.12 + ringIntensity * 0.05, 1, 0.4 + ringIntensity * 0.4);
+                        tube.material.opacity = 0.2 + ringIntensity * 0.6;
+                        break;
+                        
+                    case 'Crystal Refraction':
+                        // Prismatic radial burst
+                        const burstHue = (angleFromCenter / (Math.PI * 2) + time * 0.2) % 1;
+                        const burstPulse = Math.sin(time * 2.5 - distFromCenter * 0.6) * 0.5 + 0.5;
+                        tube.material.color.setHSL(burstHue, 1, 0.5 + burstPulse * 0.2);
+                        tube.material.opacity = 0.2 + burstPulse * 0.6;
+                        break;
+                        
+                    case 'Crimson Red':
+                        // Pulsing cross pattern
+                        const crossDist = Math.min(Math.abs(gridX - centerX), Math.abs(gridZ - centerZ));
+                        const crossPulse = Math.sin(time * 3 - crossDist * 0.5) * 0.5 + 0.5;
+                        tube.material.color.setHSL(0, 1, 0.4 + crossPulse * 0.3);
+                        tube.material.opacity = 0.25 + crossPulse * 0.5;
+                        break;
+                        
+                    case 'Synthwave Grid':
+                        // Alternating wave pattern
+                        const synthWave = (gridX % 2) + (gridZ % 2);
+                        const synthTime = Math.sin(time * 2.5 + synthWave * Math.PI / 2) * 0.5 + 0.5;
+                        const synthHue = synthWave === 1 ? 0.9 : 0.5; // Pink or cyan
+                        tube.material.color.setHSL(synthHue, 1, 0.5 + synthTime * 0.2);
+                        tube.material.opacity = 0.25 + synthTime * 0.5;
+                        break;
+                        
+                    case 'Aqua Mint':
+                        // Diagonal wave sweep
+                        const diagWave = Math.sin(time * 2 + (gridX - gridZ) * 0.5) * 0.5 + 0.5;
+                        tube.material.color.setHSL(0.5, 0.7, 0.5 + diagWave * 0.3);
+                        tube.material.opacity = 0.2 + diagWave * 0.5;
+                        break;
+                        
+                    case 'Cyber Scanlines':
+                        // Grid scanlines X and Z
+                        const scanX = Math.abs(Math.sin(time * 1.5 + gridX * 0.5));
+                        const scanZ = Math.abs(Math.sin(time * 1.2 + gridZ * 0.5));
+                        const scanCombined = (scanX + scanZ) * 0.5;
+                        tube.material.color.setHSL(0.45, 1, 0.4 + scanCombined * 0.4);
+                        tube.material.opacity = 0.15 + scanCombined * 0.6;
+                        break;
+                        
+                    case 'Electric Blue':
+                        // Lightning arcs between tubes
+                        const arcPhase = Math.sin(time * 5 + posIndex * 0.3);
+                        const lightningBolt = Math.random() < 0.05 ? 2 : 1;
+                        const arcIntensity = (arcPhase * 0.5 + 0.5) * lightningBolt;
+                        tube.material.color.setHSL(0.55, 1, 0.4 + arcIntensity * 0.4);
+                        tube.material.opacity = Math.min(0.2 + arcIntensity * 0.6, 0.9);
+                        break;
+                        
+                    case 'Hypnotic Spiral':
+                        // Rotating spiral from center
+                        const spiralPhase = (angleFromCenter + time * 2) % (Math.PI * 2);
+                        const spiralRing = Math.sin(spiralPhase * 3 - distFromCenter * 1.5) * 0.5 + 0.5;
+                        const spiralHue = (time * 0.25 + normalizedDist * 0.5 + spiralPhase / (Math.PI * 2)) % 1;
+                        tube.material.color.setHSL(spiralHue, 1, 0.4 + spiralRing * 0.3);
+                        tube.material.opacity = 0.2 + spiralRing * 0.6;
+                        break;
+                        
+                    case 'Sunset Orange':
+                        // Horizontal gradient waves
+                        const sunsetWave = Math.sin(time * 1.5 + gridZ * 0.4) * 0.5 + 0.5;
+                        const sunsetHue = 0.08 + sunsetWave * 0.05; // Orange to red-orange
+                        tube.material.color.setHSL(sunsetHue, 1, 0.5 + sunsetWave * 0.2);
+                        tube.material.opacity = 0.25 + sunsetWave * 0.5;
+                        break;
+                        
+                    case 'Quantum Shimmer':
+                        // Random quantum state changes
+                        const quantumPhase = (time * 0.5 + posIndex * 0.2) % 1;
+                        const quantumJump = Math.sin(time * 8 + posIndex) > 0.8 ? 1.3 : 1;
+                        const quantumHue = (quantumPhase + Math.sin(time * 4) * 0.2) % 1;
+                        tube.material.color.setHSL(quantumHue, 1, 0.4 + quantumPhase * 0.3);
+                        tube.material.opacity = (0.25 + quantumPhase * 0.5) * quantumJump;
+                        break;
+                        
+                    case 'Violet Dream':
+                        // Soft radial pulse
+                        const dreamPulse = Math.sin(time * 1.4 - distFromCenter * 0.4) * 0.5 + 0.5;
+                        tube.material.color.setHSL(0.8, 0.7, 0.4 + dreamPulse * 0.3);
+                        tube.material.opacity = 0.2 + dreamPulse * 0.5;
+                        break;
+                }
+            });
+            
+            // Apply effects to corner tubes (tubes around chain columns)
+            applyCornerTubeEffects(effect, time);
+        }
+        
+        function applyCornerTubeEffects(effect, time) {
+            if (cornerTubes.length === 0) return;
+            
+            cornerTubes.forEach((tube, index) => {
+                if (!tube.material) return;
+                
+                // Keep opacity mostly static (subtle changes only)
+                const baseOpacity = 0.3;
+                const opacityRange = 0.15;
+                
+                // Handle solid color effects
+                if (effect.solid) {
+                    const solidHue = (time * 0.25 + index * 0.25) % 1;
+                    tube.material.color.setHSL(solidHue, 1, 0.5);
+                    tube.material.opacity = baseOpacity + Math.sin(time * 1.5 + index * 0.5) * opacityRange;
+                    return;
+                }
+                
+                switch(effect.name) {
+                    case 'None':
+                        tube.material.color.setHex(0x00FFFF);
+                        tube.material.opacity = baseOpacity;
+                        break;
+                        
+                    case 'Pulse Wave':
+                        // Sequential pulse around the 4 corners
+                        const pulseTiming = Math.sin(time * 2 - index * Math.PI / 2) * 0.5 + 0.5;
+                        const pulseHue = (time * 0.15 + index * 0.25) % 1;
+                        tube.material.color.setHSL(pulseHue, 1, 0.4 + pulseTiming * 0.3);
+                        tube.material.opacity = baseOpacity + pulseTiming * opacityRange;
+                        break;
+                        
+                    case 'Deep Ocean':
+                        // All pulse together, different hues
+                        const oceanWave = Math.sin(time * 2.5) * 0.5 + 0.5;
+                        tube.material.color.setHSL(0.55 + oceanWave * 0.1 + index * 0.05, 0.9, 0.4 + oceanWave * 0.3);
+                        tube.material.opacity = baseOpacity + oceanWave * opacityRange;
+                        break;
+                        
+                    case 'Neon Glow':
+                        // Alternating pairs flash
+                        const neonFlash = Math.sin(time * 3 + (index % 2) * Math.PI) * 0.5 + 0.5;
+                        tube.material.color.setHSL(0.5, 1, 0.5 + neonFlash * 0.2);
+                        tube.material.opacity = baseOpacity + neonFlash * opacityRange;
+                        break;
+                        
+                    case 'Hot Pink':
+                        // Opposite corners pulse together
+                        const pinkPulse = Math.sin(time * 3 + (index < 2 ? 0 : Math.PI)) * 0.5 + 0.5;
+                        tube.material.color.setHSL(0.9, 1, 0.5 + pinkPulse * 0.2);
+                        tube.material.opacity = baseOpacity + pinkPulse * opacityRange;
+                        break;
+                        
+                    case 'Rainbow Spectrum':
+                        // Rainbow rotation around corners
+                        const rainbowHue = (time * 0.2 + index * 0.25) % 1;
+                        tube.material.color.setHSL(rainbowHue, 1, 0.5);
+                        tube.material.opacity = baseOpacity + Math.sin(time * 2 + index) * opacityRange;
+                        break;
+                        
+                    case 'Lime Green':
+                        // Random flashes per tube
+                        const greenFlash = Math.random() < 0.08 ? 1.5 : Math.sin(time * 4 + index) * 0.5 + 0.5;
+                        tube.material.color.setHSL(0.3, 1, 0.4 + greenFlash * 0.3);
+                        tube.material.opacity = Math.min(baseOpacity + greenFlash * opacityRange * 1.5, 0.6);
+                        break;
+                        
+                    case 'Digital Matrix':
+                        // Cascading activation
+                        const matrixCascade = Math.sin(time * 2.5 - index * 0.5) * 0.5 + 0.5;
+                        const matrixFlicker = Math.sin(time * 8 + index * 2) > 0.6 ? 1.2 : 1;
+                        tube.material.color.setHSL(0.33, 1, 0.3 + matrixCascade * 0.4);
+                        tube.material.opacity = (baseOpacity + matrixCascade * opacityRange) * matrixFlicker;
+                        break;
+                        
+                    case 'Deep Purple':
+                        // Slow rotation around corners
+                        const purpleRotate = Math.sin(time * 1.5 + index * Math.PI / 2) * 0.5 + 0.5;
+                        tube.material.color.setHSL(0.75 + purpleRotate * 0.1, 1, 0.4 + purpleRotate * 0.3);
+                        tube.material.opacity = baseOpacity + purpleRotate * opacityRange;
+                        break;
+                        
+                    case 'Plasma Field':
+                        // Organic plasma flow
+                        const plasmaPhase = Math.sin(time * 2 + index) * Math.cos(time * 1.5 + index * 0.5);
+                        const plasmaHue = ((plasmaPhase + 1) * 0.5 + time * 0.15) % 1;
+                        tube.material.color.setHSL(plasmaHue, 1, 0.4 + Math.abs(plasmaPhase) * 0.3);
+                        tube.material.opacity = baseOpacity + Math.abs(plasmaPhase) * opacityRange;
+                        break;
+                        
+                    case 'Amber Gold':
+                        // Synchronized pulse with hue shift
+                        const amberPulse = Math.sin(time * 1.8) * 0.5 + 0.5;
+                        tube.material.color.setHSL(0.12 + amberPulse * 0.05, 1, 0.5 + amberPulse * 0.2);
+                        tube.material.opacity = baseOpacity + amberPulse * opacityRange;
+                        break;
+                        
+                    case 'Crystal Refraction':
+                        // Prismatic shimmer per corner
+                        const crystalShimmer = Math.sin(time * 2 + index * 0.8) * 0.5 + 0.5;
+                        const crystalHue = (time * 0.3 + index * 0.25) % 1;
+                        tube.material.color.setHSL(crystalHue, 1, 0.5 + crystalShimmer * 0.2);
+                        tube.material.opacity = baseOpacity + crystalShimmer * opacityRange;
+                        break;
+                        
+                    case 'Crimson Red':
+                        // Danger alarm flash
+                        const dangerFlash = Math.sin(time * 3) * 0.5 + 0.5;
+                        tube.material.color.setHSL(0, 1, 0.4 + dangerFlash * 0.3);
+                        tube.material.opacity = baseOpacity + dangerFlash * opacityRange;
+                        break;
+                        
+                    case 'Synthwave Grid':
+                        // Alternating pink/cyan based on index
+                        const synthHue = index % 2 === 0 ? 0.9 : 0.5;
+                        const synthPulse = Math.sin(time * 2.5) * 0.5 + 0.5;
+                        tube.material.color.setHSL(synthHue, 1, 0.5 + synthPulse * 0.2);
+                        tube.material.opacity = baseOpacity + synthPulse * opacityRange;
+                        break;
+                        
+                    case 'Aqua Mint':
+                        // Gentle wave
+                        const mintWave = Math.sin(time * 1.8 + index * 0.5) * 0.5 + 0.5;
+                        tube.material.color.setHSL(0.5, 0.7, 0.5 + mintWave * 0.2);
+                        tube.material.opacity = baseOpacity + mintWave * opacityRange;
+                        break;
+                        
+                    case 'Cyber Scanlines':
+                        // Sequential scan effect
+                        const scanPhase = (time * 1.5) % (Math.PI * 2);
+                        const scanActive = Math.sin(scanPhase - index * Math.PI / 2) * 0.5 + 0.5;
+                        tube.material.color.setHSL(0.45, 1, 0.4 + scanActive * 0.4);
+                        tube.material.opacity = baseOpacity + scanActive * opacityRange * 1.5;
+                        break;
+                        
+                    case 'Electric Blue':
+                        // Lightning strikes
+                        const boltChance = Math.random() < 0.05;
+                        const electricPulse = boltChance ? 2 : Math.sin(time * 5 + index * 0.8) * 0.5 + 0.5;
+                        tube.material.color.setHSL(0.55, 1, 0.4 + electricPulse * 0.4);
+                        tube.material.opacity = Math.min(baseOpacity + electricPulse * opacityRange * 1.5, 0.7);
+                        break;
+                        
+                    case 'Hypnotic Spiral':
+                        // Spiral rotation effect
+                        const spiralPhase = (time * 2 + index * Math.PI / 2) % (Math.PI * 2);
+                        const spiralWave = Math.sin(spiralPhase) * 0.5 + 0.5;
+                        const spiralHue = (time * 0.25 + index * 0.25) % 1;
+                        tube.material.color.setHSL(spiralHue, 1, 0.4 + spiralWave * 0.3);
+                        tube.material.opacity = baseOpacity + spiralWave * opacityRange;
+                        break;
+                        
+                    case 'Sunset Orange':
+                        // Synchronized sunset glow
+                        const sunsetGlow = Math.sin(time * 1.5) * 0.5 + 0.5;
+                        tube.material.color.setHSL(0.08 + sunsetGlow * 0.05, 1, 0.5 + sunsetGlow * 0.2);
+                        tube.material.opacity = baseOpacity + sunsetGlow * opacityRange;
+                        break;
+                        
+                    case 'Quantum Shimmer':
+                        // Quantum state jumps
+                        const quantumJump = Math.sin(time * 7 + index * 1.5) > 0.7 ? 1.5 : 1;
+                        const quantumHue = (time * 0.4 + index * 0.2) % 1;
+                        const quantumBright = Math.sin(time * 2.5 + index) * 0.5 + 0.5;
+                        tube.material.color.setHSL(quantumHue, 1, 0.4 + quantumBright * 0.3);
+                        tube.material.opacity = (baseOpacity + quantumBright * opacityRange) * quantumJump;
+                        break;
+                        
+                    case 'Violet Dream':
+                        // Dreamy pulse
+                        const dreamPulse = Math.sin(time * 1.4 + index * 0.4) * 0.5 + 0.5;
+                        tube.material.color.setHSL(0.8, 0.7, 0.4 + dreamPulse * 0.3);
+                        tube.material.opacity = baseOpacity + dreamPulse * opacityRange;
+                        break;
+                        
+                    default:
+                        // Gentle rainbow cycle
+                        const defaultHue = (time * 0.2 + index * 0.25) % 1;
+                        tube.material.color.setHSL(defaultHue, 1, 0.5);
+                        tube.material.opacity = baseOpacity + Math.sin(time * 1.5 + index * 0.5) * opacityRange;
+                        break;
+                }
+            });
         }
         
         function setFloorColorNone() {
@@ -5312,14 +5707,11 @@
                     true // Open ended
                 );
                 
-                const tubeMaterial = new THREE.MeshPhongMaterial({
-                    color: 0xFFFFFF,
+                const tubeMaterial = new THREE.MeshBasicMaterial({
+                    color: 0x1B2836,
                     transparent: true,
-                    opacity: 0.2,
-                    side: THREE.DoubleSide,
-                    emissive: 0xFFFFFF,
-                    emissiveIntensity: 10,
-                    shininess: 100
+                    opacity: 0.3,
+                    side: THREE.DoubleSide
                 });
                 
                 const tube = new THREE.Mesh(tubeGeometry, tubeMaterial);
@@ -10812,9 +11204,7 @@
             updateColumnTubes();
             
             // Update grid visual effects
-            if (currentGridEffect > 0) {
-                applyGridEffect();
-            }
+            applyGridEffect();
             
             // Update particle effects
             updateParticleEffects(deltaTime);
