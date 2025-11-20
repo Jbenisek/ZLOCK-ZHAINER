@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.24</title>
+    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.30</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -1746,7 +1746,7 @@
     <div id="gameContainer">
         <canvas id="renderCanvas"></canvas>
         
-        <div id="versionDisplay">v0.20.24</div>
+        <div id="versionDisplay">v0.20.30</div>
         
         <div id="performanceDisplay">
             <div><span class="perf-label">FPS:</span> <span class="perf-value" id="fpsValue">60</span></div>
@@ -2412,16 +2412,18 @@
                 <strong>NOTE:</strong><br>Skipping past Level 10<br>disables most achievements
             </div>
             <div style="margin-top: 40px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #89A0B4;">
-                Version v0.20.24 • 2025-11-20
+                Version v0.20.30 • 2025-11-20
             </div>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.20.24';
+        const GAME_VERSION = 'v0.20.30';
         
         // Game State
         const GameState = {
@@ -2534,13 +2536,12 @@
                 ],
                 warningText: "Plan carefully - you won't know what you have until it locks in!",
                 customLogic: (chain, chainLength, baseTypes) => {
-                    // Encrypted chain logic
+                    // Encrypted chain logic - store actual types, will be darkened during spawn
                     chain.isEncrypted = true;
                     for (let i = 0; i < chainLength; i++) {
                         const actualLinkType = baseTypes[Math.floor(Math.random() * baseTypes.length)];
-                        const encryptedLinkType = { color: 0x555555, emissive: 0x333333, name: 'ENCRYPTED' };
                         chain.actualLinkTypes.push(actualLinkType);
-                        chain.linkTypes.push(encryptedLinkType);
+                        chain.linkTypes.push(actualLinkType); // Use actual type, will darken visually
                     }
                     return true; // Chain was created
                 }
@@ -2587,6 +2588,14 @@
         let chainModelBlue = null;
         let chainModelGreen = null;
         let chainModelRed = null;
+        let chainModelYellowHQ = null;
+        let chainModelBlueHQ = null;
+        let chainModelGreenHQ = null;
+        let chainModelRedHQ = null;
+        let chainModelYellowLQ = null;
+        let chainModelBlueLQ = null;
+        let chainModelGreenLQ = null;
+        let chainModelRedLQ = null;
         let modelLoaded = false;
         let tableModel = null;
         let tableModelLoaded = false;
@@ -3797,93 +3806,216 @@
         }
         
         function applyHighQualityMode() {
-            // Update all chain instances in grid
+            // Update active model references
+            chainModelYellow = chainModelYellowHQ;
+            chainModelBlue = chainModelBlueHQ;
+            chainModelGreen = chainModelGreenHQ;
+            chainModelRed = chainModelRedHQ;
+            
+            // Swap all chain instances in grid to HQ geometry
             for (let x = 0; x < GRID_WIDTH; x++) {
                 for (let y = 0; y < GRID_HEIGHT; y++) {
                     for (let z = 0; z < GRID_DEPTH; z++) {
                         if (grid[x][y][z] && grid[x][y][z].mesh) {
-                            const materialKey = getMaterialKeyForType(grid[x][y][z].type);
-                            grid[x][y][z].mesh.traverse(child => {
-                                if (child.isMesh && child.material) {
-                                    child.material = materialsHQ[materialKey];
-                                }
-                            });
+                            const oldMesh = grid[x][y][z].mesh;
+                            const type = grid[x][y][z].type;
+                            let modelToClone;
+                            switch(type.name) {
+                                case 'ZEC-A': modelToClone = chainModelYellowHQ; break;
+                                case 'ZEC-B': modelToClone = chainModelBlueHQ; break;
+                                case 'ZEC-C': modelToClone = chainModelGreenHQ; break;
+                                case 'ZEC-D': modelToClone = chainModelRedHQ; break;
+                                default: modelToClone = chainModelYellowHQ;
+                            }
+                            const newMesh = modelToClone.clone();
+                            
+                            newMesh.position.copy(oldMesh.position);
+                            newMesh.rotation.copy(oldMesh.rotation);
+                            scene.remove(oldMesh);
+                            scene.add(newMesh);
+                            grid[x][y][z].mesh = newMesh;
                         }
                     }
                 }
             }
             
-            // Update falling chain if exists
-            if (fallingChain) {
-                fallingChain.links.forEach(link => {
-                    if (link.mesh) {
-                        const materialKey = getMaterialKeyForType(link.type);
-                        link.mesh.traverse(child => {
+            // Swap falling chain if exists
+            if (fallingChain && fallingChain.links) {
+                fallingChain.links.forEach((oldMesh, index) => {
+                    const linkType = fallingChain.linkTypes[index] || fallingChain.type;
+                    let modelToClone;
+                    switch(linkType.name) {
+                        case 'ZEC-A': modelToClone = chainModelYellowHQ; break;
+                        case 'ZEC-B': modelToClone = chainModelBlueHQ; break;
+                        case 'ZEC-C': modelToClone = chainModelGreenHQ; break;
+                        case 'ZEC-D': modelToClone = chainModelRedHQ; break;
+                        default: modelToClone = chainModelYellowHQ;
+                    }
+                    const newMesh = modelToClone.clone();
+                    
+                    newMesh.position.copy(oldMesh.position);
+                    newMesh.rotation.copy(oldMesh.rotation);
+                    
+                    // Preserve special states (glowing/encrypted)
+                    if (fallingChain.isGlowing) {
+                        newMesh.traverse((child) => {
                             if (child.isMesh && child.material) {
-                                child.material = materialsHQ[materialKey];
+                                child.material = child.material.clone();
+                                child.material.emissive.setHex(0xFFFFFF);
+                                child.material.emissiveIntensity = 2.5;
                             }
+                        });
+                    }
+                    if (fallingChain.isEncrypted) {
+                        newMesh.traverse((child) => {
+                            if (child.isMesh && child.material) {
+                                child.material = new THREE.MeshBasicMaterial({
+                                    color: 0x1a1a1a,
+                                    transparent: false
+                                });
+                            }
+                        });
+                    }
+                    
+                    scene.remove(oldMesh);
+                    scene.add(newMesh);
+                    fallingChain.links[index] = newMesh;
+                });
+            }
+            
+            // Swap decorative corner chains
+            if (cornerChains) {
+                cornerChains.forEach(cornerChain => {
+                    if (cornerChain.links && cornerChain.linkTypes) {
+                        cornerChain.links.forEach((oldMesh, index) => {
+                            const linkType = cornerChain.linkTypes[index];
+                            
+                            let modelToClone;
+                            switch(linkType.name) {
+                                case 'ZEC-A': modelToClone = chainModelYellowHQ; break;
+                                case 'ZEC-B': modelToClone = chainModelBlueHQ; break;
+                                case 'ZEC-C': modelToClone = chainModelGreenHQ; break;
+                                case 'ZEC-D': modelToClone = chainModelRedHQ; break;
+                                default: modelToClone = chainModelYellowHQ;
+                            }
+                            const newMesh = modelToClone.clone();
+                            
+                            newMesh.position.copy(oldMesh.position);
+                            newMesh.rotation.copy(oldMesh.rotation);
+                            scene.remove(oldMesh);
+                            scene.add(newMesh);
+                            cornerChain.links[index] = newMesh;
                         });
                     }
                 });
             }
-            
-            // Update corner chain columns (use random HQ materials)
-            cornerChains.forEach(chainColumn => {
-                chainColumn.links.forEach((link) => {
-                    const materialKeys = ['yellow', 'blue', 'green', 'red'];
-                    const randomKey = materialKeys[Math.floor(Math.random() * materialKeys.length)];
-                    link.traverse(child => {
-                        if (child.isMesh && child.material) {
-                            child.material = materialsHQ[randomKey];
-                        }
-                    });
-                });
-            });
         }
         
         function applyCartoonMode() {
-            // Update all chain instances in grid
+            // Update active model references
+            chainModelYellow = chainModelYellowLQ;
+            chainModelBlue = chainModelBlueLQ;
+            chainModelGreen = chainModelGreenLQ;
+            chainModelRed = chainModelRedLQ;
+            
+            // Swap all chain instances in grid to LQ geometry
             for (let x = 0; x < GRID_WIDTH; x++) {
                 for (let y = 0; y < GRID_HEIGHT; y++) {
                     for (let z = 0; z < GRID_DEPTH; z++) {
                         if (grid[x][y][z] && grid[x][y][z].mesh) {
-                            const materialKey = getMaterialKeyForType(grid[x][y][z].type);
-                            grid[x][y][z].mesh.traverse(child => {
-                                if (child.isMesh && child.material) {
-                                    child.material = materialsLQ[materialKey];
-                                }
-                            });
+                            const oldMesh = grid[x][y][z].mesh;
+                            const type = grid[x][y][z].type;
+                            let modelToClone;
+                            switch(type.name) {
+                                case 'ZEC-A': modelToClone = chainModelYellowLQ; break;
+                                case 'ZEC-B': modelToClone = chainModelBlueLQ; break;
+                                case 'ZEC-C': modelToClone = chainModelGreenLQ; break;
+                                case 'ZEC-D': modelToClone = chainModelRedLQ; break;
+                                default: modelToClone = chainModelYellowLQ;
+                            }
+                            const newMesh = modelToClone.clone();
+                            
+                            newMesh.position.copy(oldMesh.position);
+                            newMesh.rotation.copy(oldMesh.rotation);
+                            scene.remove(oldMesh);
+                            scene.add(newMesh);
+                            grid[x][y][z].mesh = newMesh;
                         }
                     }
                 }
             }
             
-            // Update falling chain if exists
-            if (fallingChain) {
-                fallingChain.links.forEach(link => {
-                    if (link.mesh) {
-                        const materialKey = getMaterialKeyForType(link.type);
-                        link.mesh.traverse(child => {
+            // Swap falling chain if exists
+            if (fallingChain && fallingChain.links) {
+                fallingChain.links.forEach((oldMesh, index) => {
+                    const linkType = fallingChain.linkTypes[index] || fallingChain.type;
+                    let modelToClone;
+                    switch(linkType.name) {
+                        case 'ZEC-A': modelToClone = chainModelYellowLQ; break;
+                        case 'ZEC-B': modelToClone = chainModelBlueLQ; break;
+                        case 'ZEC-C': modelToClone = chainModelGreenLQ; break;
+                        case 'ZEC-D': modelToClone = chainModelRedLQ; break;
+                        default: modelToClone = chainModelYellowLQ;
+                    }
+                    const newMesh = modelToClone.clone();
+                    
+                    newMesh.position.copy(oldMesh.position);
+                    newMesh.rotation.copy(oldMesh.rotation);
+                    
+                    // Preserve special states (glowing/encrypted)
+                    if (fallingChain.isGlowing) {
+                        newMesh.traverse((child) => {
                             if (child.isMesh && child.material) {
-                                child.material = materialsLQ[materialKey];
+                                child.material = new THREE.MeshBasicMaterial({
+                                    color: 0xFFFFFF,
+                                    transparent: false
+                                });
                             }
+                        });
+                    }
+                    if (fallingChain.isEncrypted) {
+                        newMesh.traverse((child) => {
+                            if (child.isMesh && child.material) {
+                                child.material = new THREE.MeshBasicMaterial({
+                                    color: 0x1a1a1a,
+                                    transparent: false
+                                });
+                            }
+                        });
+                    }
+                    
+                    scene.remove(oldMesh);
+                    scene.add(newMesh);
+                    fallingChain.links[index] = newMesh;
+                });
+            }
+            
+            // Swap decorative corner chains
+            if (cornerChains) {
+                cornerChains.forEach(cornerChain => {
+                    if (cornerChain.links && cornerChain.linkTypes) {
+                        cornerChain.links.forEach((oldMesh, index) => {
+                            const linkType = cornerChain.linkTypes[index];
+                            
+                            let modelToClone;
+                            switch(linkType.name) {
+                                case 'ZEC-A': modelToClone = chainModelYellowLQ; break;
+                                case 'ZEC-B': modelToClone = chainModelBlueLQ; break;
+                                case 'ZEC-C': modelToClone = chainModelGreenLQ; break;
+                                case 'ZEC-D': modelToClone = chainModelRedLQ; break;
+                                default: modelToClone = chainModelYellowLQ;
+                            }
+                            const newMesh = modelToClone.clone();
+                            
+                            newMesh.position.copy(oldMesh.position);
+                            newMesh.rotation.copy(oldMesh.rotation);
+                            scene.remove(oldMesh);
+                            scene.add(newMesh);
+                            cornerChain.links[index] = newMesh;
                         });
                     }
                 });
             }
-            
-            // Update corner chain columns (use random LQ materials)
-            cornerChains.forEach(chainColumn => {
-                chainColumn.links.forEach((link) => {
-                    const materialKeys = ['yellow', 'blue', 'green', 'red'];
-                    const randomKey = materialKeys[Math.floor(Math.random() * materialKeys.length)];
-                    link.traverse(child => {
-                        if (child.isMesh && child.material) {
-                            child.material = materialsLQ[randomKey];
-                        }
-                    });
-                });
-            });
         }
         
         function getMaterialKeyForType(linkType) {
@@ -6053,6 +6185,7 @@
                 
                 // Create chain links inside tube (going from bottom to top)
                 const chainLinks = [];
+                const linkTypes = []; // Store link types for quality swapping
                 const linkSpacing = 1; // Same as falling chains
                 
                 // Calculate number of links based on chainLength modifier
@@ -6067,9 +6200,11 @@
                         linkType = column.singleColor;
                     } else {
                         // Random color
-                        const linkTypes = [LinkType.ZEC_A, LinkType.ZEC_B, LinkType.ZEC_C, LinkType.ZEC_D];
-                        linkType = linkTypes[Math.floor(Math.random() * linkTypes.length)];
+                        const availableLinkTypes = [LinkType.ZEC_A, LinkType.ZEC_B, LinkType.ZEC_C, LinkType.ZEC_D];
+                        linkType = availableLinkTypes[Math.floor(Math.random() * availableLinkTypes.length)];
                     }
+                    
+                    linkTypes.push(linkType); // Store the link type
                     
                     const link = createLinkMesh(linkType);
                     
@@ -6093,6 +6228,7 @@
                 
                 cornerChains.push({
                     links: chainLinks,
+                    linkTypes: linkTypes, // Store link types
                     column: column,
                     colorMode: column.colorMode,
                     singleColor: column.singleColor,
@@ -6144,144 +6280,125 @@
         }
         
         function loadChainLinkModel() {
-            const loader = new THREE.GLTFLoader();
+            const objLoader = new THREE.OBJLoader();
+            const mtlLoader = new THREE.MTLLoader();
+            const textureLoader = new THREE.TextureLoader();
+            
             let loadedCount = 0;
-            const totalModels = 4;
+            const totalAssets = 6; // 2 OBJs (HQ + LQ) + 4 textures
+            
+            const textures = {};
+            let baseModelHQ = null;
+            let baseModelLQ = null;
             
             function checkAllLoaded() {
                 loadedCount++;
-                if (loadedCount === totalModels) {
+                if (loadedCount === totalAssets) {
+                    // All assets loaded - create model variants with different textures
+                    createModelVariants();
                     modelLoaded = true;
-                    // Create corner feed tubes after all models are loaded
                     createCornerFeedTubes();
                 }
             }
             
-            // Load yellow chain
-            loader.load('models/chain_yellow_a.glb', function(gltf) {
-                chainModelYellow = gltf.scene;
-                chainModelYellow.scale.set(1.25, 1.25, 1.25);
-                chainModelYellow.traverse((child) => {
-                    if (child.isMesh && child.material) {
-                        child.castShadow = true;
-                        child.receiveShadow = true;
-                        
-                        // Create HQ material (clone from original)
-                        const hqMat = child.material.clone();
-                        if (hqMat.metalness !== undefined) hqMat.metalness = 0.7;
-                        if (hqMat.roughness !== undefined) hqMat.roughness = 0.1;
-                        hqMat.emissiveIntensity = 0.1;
-                        materialsHQ.yellow = hqMat;
-                        
-                        // Create LQ material (MeshBasicMaterial with texture)
-                        const lqMat = new THREE.MeshBasicMaterial({
-                            color: 0xF2C94C,
-                            map: child.material.map, // Preserve texture/logo
-                            transparent: child.material.transparent,
-                            opacity: child.material.opacity
-                        });
-                        materialsLQ.yellow = lqMat;
-                        
-                        // Set current material to HQ
-                        child.material = hqMat;
+            function createModelVariants() {
+                // Create 4 model variants (yellow, blue, green, red) from HQ and LQ base models
+                ['yellow', 'blue', 'green', 'red'].forEach(color => {
+                    const modelHQ = baseModelHQ.clone();
+                    const modelLQ = baseModelLQ.clone();
+                    modelHQ.scale.set(1.25, 1.25, 1.25);
+                    modelLQ.scale.set(1.25, 1.25, 1.25);
+                    
+                    // Setup HQ model with Phong material
+                    modelHQ.traverse((child) => {
+                        if (child.isMesh) {
+                            child.castShadow = true;
+                            child.receiveShadow = true;
+                            
+                            const hqMat = new THREE.MeshPhongMaterial({
+                                map: textures[color],
+                                shininess: 30,
+                                specular: 0x333333
+                            });
+                            
+                            materialsHQ[color] = hqMat;
+                            child.material = hqMat;
+                        }
+                    });
+                    
+                    // Setup LQ model with Basic material using flat color
+                    modelLQ.traverse((child) => {
+                        if (child.isMesh) {
+                            child.castShadow = false;
+                            child.receiveShadow = false;
+                            
+                            // Use flat color instead of texture for LQ mode
+                            let flatColor;
+                            if (color === 'yellow') flatColor = 0xFFD700;
+                            else if (color === 'blue') flatColor = 0x4169E1;
+                            else if (color === 'green') flatColor = 0x32CD32;
+                            else if (color === 'red') flatColor = 0xFF4500;
+                            
+                            const lqMat = new THREE.MeshBasicMaterial({
+                                color: flatColor
+                            });
+                            
+                            materialsLQ[color] = lqMat;
+                            child.material = lqMat;
+                        }
+                    });
+                    
+                    // Store both HQ and LQ variants
+                    if (color === 'yellow') {
+                        chainModelYellowHQ = modelHQ;
+                        chainModelYellowLQ = modelLQ;
+                        chainModelYellow = highQualityMode ? modelHQ : modelLQ;
+                    } else if (color === 'blue') {
+                        chainModelBlueHQ = modelHQ;
+                        chainModelBlueLQ = modelLQ;
+                        chainModelBlue = highQualityMode ? modelHQ : modelLQ;
+                    } else if (color === 'green') {
+                        chainModelGreenHQ = modelHQ;
+                        chainModelGreenLQ = modelLQ;
+                        chainModelGreen = highQualityMode ? modelHQ : modelLQ;
+                    } else if (color === 'red') {
+                        chainModelRedHQ = modelHQ;
+                        chainModelRedLQ = modelLQ;
+                        chainModelRed = highQualityMode ? modelHQ : modelLQ;
                     }
                 });
+            }
+            
+            // Load HQ OBJ (chain.obj)
+            objLoader.load('models/chain.obj', function(obj) {
+                baseModelHQ = obj;
                 checkAllLoaded();
             });
             
-            // Load blue chain
-            loader.load('models/chain_blue_a.glb', function(gltf) {
-                chainModelBlue = gltf.scene;
-                chainModelBlue.scale.set(1.25, 1.25, 1.25);
-                chainModelBlue.traverse((child) => {
-                    if (child.isMesh && child.material) {
-                        child.castShadow = true;
-                        child.receiveShadow = true;
-                        
-                        // Create HQ material (clone from original)
-                        const hqMat = child.material.clone();
-                        if (hqMat.metalness !== undefined) hqMat.metalness = 0.7;
-                        if (hqMat.roughness !== undefined) hqMat.roughness = 0.1;
-                        hqMat.emissiveIntensity = 0.1;
-                        materialsHQ.blue = hqMat;
-                        
-                        // Create LQ material (MeshBasicMaterial with texture)
-                        const lqMat = new THREE.MeshBasicMaterial({
-                            color: 0x2D9CDB,
-                            map: child.material.map, // Preserve texture/logo
-                            transparent: child.material.transparent,
-                            opacity: child.material.opacity
-                        });
-                        materialsLQ.blue = lqMat;
-                        
-                        // Set current material to HQ
-                        child.material = hqMat;
-                    }
-                });
+            // Load LQ OBJ (chain_lq.obj)
+            objLoader.load('models/chain_lq.obj', function(obj) {
+                baseModelLQ = obj;
                 checkAllLoaded();
             });
             
-            // Load green chain
-            loader.load('models/chain_green_a.glb', function(gltf) {
-                chainModelGreen = gltf.scene;
-                chainModelGreen.scale.set(1.25, 1.25, 1.25);
-                chainModelGreen.traverse((child) => {
-                    if (child.isMesh && child.material) {
-                        child.castShadow = true;
-                        child.receiveShadow = true;
-                        
-                        // Create HQ material (clone from original)
-                        const hqMat = child.material.clone();
-                        if (hqMat.metalness !== undefined) hqMat.metalness = 0.7;
-                        if (hqMat.roughness !== undefined) hqMat.roughness = 0.1;
-                        hqMat.emissiveIntensity = 0.1;
-                        materialsHQ.green = hqMat;
-                        
-                        // Create LQ material (MeshBasicMaterial with texture)
-                        const lqMat = new THREE.MeshBasicMaterial({
-                            color: 0x27AE60,
-                            map: child.material.map, // Preserve texture/logo
-                            transparent: child.material.transparent,
-                            opacity: child.material.opacity
-                        });
-                        materialsLQ.green = lqMat;
-                        
-                        // Set current material to HQ
-                        child.material = hqMat;
-                    }
-                });
+            // Load 4 texture files
+            textureLoader.load('models/chain_yellow.png', function(texture) {
+                textures.yellow = texture;
                 checkAllLoaded();
             });
             
-            // Load red chain
-            loader.load('models/chain_red_a.glb', function(gltf) {
-                chainModelRed = gltf.scene;
-                chainModelRed.scale.set(1.25, 1.25, 1.25);
-                chainModelRed.traverse((child) => {
-                    if (child.isMesh && child.material) {
-                        child.castShadow = true;
-                        child.receiveShadow = true;
-                        
-                        // Create HQ material (clone from original)
-                        const hqMat = child.material.clone();
-                        if (hqMat.metalness !== undefined) hqMat.metalness = 0.7;
-                        if (hqMat.roughness !== undefined) hqMat.roughness = 0.1;
-                        hqMat.emissiveIntensity = 0.1;
-                        materialsHQ.red = hqMat;
-                        
-                        // Create LQ material (MeshBasicMaterial with texture)
-                        const lqMat = new THREE.MeshBasicMaterial({
-                            color: 0xEB5757,
-                            map: child.material.map, // Preserve texture/logo
-                            transparent: child.material.transparent,
-                            opacity: child.material.opacity
-                        });
-                        materialsLQ.red = lqMat;
-                        
-                        // Set current material to HQ
-                        child.material = hqMat;
-                    }
-                });
+            textureLoader.load('models/chain_blue.png', function(texture) {
+                textures.blue = texture;
+                checkAllLoaded();
+            });
+            
+            textureLoader.load('models/chain_green.png', function(texture) {
+                textures.green = texture;
+                checkAllLoaded();
+            });
+            
+            textureLoader.load('models/chain_red.png', function(texture) {
+                textures.red = texture;
                 checkAllLoaded();
             });
         }
@@ -8349,6 +8466,27 @@
             }
             camera.updateProjectionMatrix();
             
+            // Calculate dynamic player light intensity based on zoom
+            // Zoomed out (max distance) = 8.0 intensity (looks good)
+            // Default (base distance) = lower intensity
+            // Zoomed in (min distance) = lowest intensity to prevent blowout
+            let playerLightIntensity = 8.0; // Default for max zoom out
+            if (cameraDistance === maxCameraDistance) {
+                playerLightIntensity = 8.0; // Full intensity when zoomed out
+            } else if (cameraDistance === baseCameraDistance) {
+                playerLightIntensity = 4.0; // Half intensity at default zoom
+            } else if (cameraDistance === minCameraDistance) {
+                playerLightIntensity = 1.0; // Very low intensity when zoomed in
+            } else if (cameraDistance < baseCameraDistance) {
+                // Interpolate between min and default
+                const factor = (cameraDistance - minCameraDistance) / (baseCameraDistance - minCameraDistance);
+                playerLightIntensity = 1.0 + (4.0 - 1.0) * factor;
+            } else {
+                // Interpolate between default and max
+                const factor = (cameraDistance - baseCameraDistance) / (maxCameraDistance - baseCameraDistance);
+                playerLightIntensity = 4.0 + (8.0 - 4.0) * factor;
+            }
+            
             if (isTopDownView) {
                 // Top-down view - directly above the center of the grid
                 camera.position.set(centerX, topDownHeight, centerZ);
@@ -8377,8 +8515,8 @@
                 }
                 
                 camera.lookAt(centerX, dynamicHeight, centerZ);
-                // Enable player light in side views (if lights are enabled)
-                if (playerLight && lightsEnabled) playerLight.intensity = 8.0;
+                // Apply dynamic player light intensity based on zoom level
+                if (playerLight && lightsEnabled) playerLight.intensity = playerLightIntensity;
             }
             
             updateCompass();
@@ -10797,7 +10935,38 @@
                     fallingChain.z + 0.5
                 );
                 
-                // No material modifications - models are already colored
+                // Apply glowing effect for glowing chains
+                if (fallingChain.isGlowing) {
+                    mesh.traverse((child) => {
+                        if (child.isMesh && child.material) {
+                            if (highQualityMode) {
+                                // HD mode: Clone MeshPhongMaterial and add white emissive glow
+                                child.material = child.material.clone();
+                                child.material.emissive.setHex(0xFFFFFF); // White emissive
+                                child.material.emissiveIntensity = 2.5; // Strong glow
+                            } else {
+                                // LQ mode: Replace with bright white MeshBasicMaterial
+                                child.material = new THREE.MeshBasicMaterial({
+                                    color: 0xFFFFFF, // Bright white
+                                    transparent: false
+                                });
+                            }
+                        }
+                    });
+                }
+                
+                // Darken encrypted chains while falling
+                if (fallingChain.isEncrypted) {
+                    mesh.traverse((child) => {
+                        if (child.isMesh && child.material) {
+                            // Replace with MeshBasicMaterial so it's not affected by lighting
+                            child.material = new THREE.MeshBasicMaterial({
+                                color: 0x1a1a1a, // Very dark gray
+                                transparent: false
+                            });
+                        }
+                    });
+                }
                 
                 // Alternate 90° rotation on Y-axis for interlocking chain links
                 if (i % 2 === 1) {
@@ -11068,9 +11237,27 @@
                 
                 animateDecryptParticles();
                 
-                // No color animation during decryption - models are already colored
-                // Just wait for particles to finish
+                // Restore actual link color after decryption - get material from correct model
+                const materialKey = getModelKeyForLinkType(linkType);
+                const correctMaterial = highQualityMode ? materialsHQ[materialKey] : materialsLQ[materialKey];
+                
+                mesh.traverse((child) => {
+                    if (child.isMesh && child.material) {
+                        // Replace with correct colored material
+                        child.material = correctMaterial;
+                    }
+                });
             }, delay);
+        }
+        
+        function getModelKeyForLinkType(linkType) {
+            switch(linkType.name) {
+                case 'ZEC-A': return 'yellow';
+                case 'ZEC-B': return 'blue';
+                case 'ZEC-C': return 'green';
+                case 'ZEC-D': return 'red';
+                default: return 'yellow';
+            }
         }
         
         function lockChain() {
@@ -11128,8 +11315,8 @@
                                 const x = fallingChain.x + 0.5;
                                 const y = gridY + 0.5;
                                 const z = fallingChain.z + 0.5;
-                                // Stagger the decryption - each link decrypts 200ms after the previous
-                                const delay = i * 200;
+                                // Stagger the decryption - bottom to top (reverse order)
+                                const delay = (fallingChain.length - 1 - i) * 200;
                                 decryptLink(mesh, linkType, x, y, z, delay);
                             } else {
                                 // Use individual link type for multi-chains or normal type
@@ -11419,7 +11606,23 @@
                 return;
             }
             
-            // Note: No visual change - model keeps original color
+            // Apply glowing material effect
+            link.mesh.traverse((child) => {
+                if (child.isMesh && child.material) {
+                    if (highQualityMode) {
+                        // HD mode: Clone MeshPhongMaterial and add white emissive glow
+                        child.material = child.material.clone();
+                        child.material.emissive.setHex(0xFFFFFF);
+                        child.material.emissiveIntensity = 2.5;
+                    } else {
+                        // LQ mode: Replace with bright white MeshBasicMaterial
+                        child.material = new THREE.MeshBasicMaterial({
+                            color: 0xFFFFFF, // Bright white
+                            transparent: false
+                        });
+                    }
+                }
+            });
             
             // Show guide on first broken link (only if started at level 1)
             if (!glowingLinksGuideShown && startLevel === 1) {
@@ -11518,6 +11721,25 @@
                 trackedSetTimeout(() => {
                     if (grid[x][y][z]) {
                         stats.typesClearedSet.add(grid[x][y][z].type.name);
+                        
+                        // Spawn break particle effect based on block type
+                        const blockType = grid[x][y][z].type.name;
+                        let colorPrefix = '';
+                        if (blockType === 'ZEC-A') colorPrefix = 'yellow';
+                        else if (blockType === 'ZEC-B') colorPrefix = 'blue';
+                        else if (blockType === 'ZEC-C') colorPrefix = 'green';
+                        else if (blockType === 'ZEC-D') colorPrefix = 'red';
+                        
+                        if (colorPrefix) {
+                            const variants = ['a', 'b', 'c', 'd', 'e', 'f'];
+                            const randomVariant = variants[Math.floor(Math.random() * variants.length)];
+                            const particlePath = `effect/${colorPrefix}_break_${randomVariant}.json`;
+                            spawnParticleEffect(particlePath, x + 0.5, y + 0.5, z + 0.5, {
+                                spawnMode: 'world',
+                                rotation: { x: 0, y: 0, z: 0 }
+                            });
+                        }
+                        
                         if (grid[x][y][z].mesh) {
                             scene.remove(grid[x][y][z].mesh);
                             // Dispose cloned materials
@@ -11549,8 +11771,8 @@
                 
                 // Spawn combo particle effect based on combo multiplier
                 if (combo > oldCombo && combo >= 1.0) {
-                    // Determine number of particles based on combo (1x = 1 particle, 2x = 2, etc.)
-                    const numParticles = Math.floor(combo * 2); // 1.0x=2, 1.5x=3, 2.0x=4, etc.
+                    // Determine number of particles based on combo (max 3 particles)
+                    const numParticles = Math.min(3, Math.floor(combo * 2)); // 1.0x=2, 1.5x=3, 2.0x=3 (capped)
                     
                     // Available combo effects (combo_a through combo_v = 22 effects)
                     const comboEffects = [

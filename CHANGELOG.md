@@ -2,6 +2,194 @@
 
 # Changelog
 
+## v0.20.30 - HQ/LQ Model Swapping & Corner Chain Fixes (2025-11-20)
+- **Summary:**
+  - Implemented dual-quality model system with live swapping between HQ and LQ modes
+  - Added lower poly chain_lq.obj model for Cartoon/LQ mode performance
+  - Fixed corner chain decorative columns to properly store and swap colors
+  - LQ mode now uses flat emissive colors, HQ mode uses textured materials
+
+- **Dual Quality System:**
+  - HQ Mode: chain.obj (higher poly) with PNG textures
+  - LQ Mode: chain_lq.obj (lower poly) with flat colors
+  - Separate model storage: chainModelYellowHQ/LQ, chainModelBlueHQ/LQ, etc.
+  - Live swapping: No restart required when toggling quality modes
+
+- **Quality Swapping Implementation:**
+  - `applyHighQualityMode()`: Swaps all meshes to HQ models with textures
+  - `applyCartoonMode()`: Swaps all meshes to LQ models with flat colors
+  - Swaps grid chains, falling chains, and decorative corner chains
+  - Preserves position, rotation, and special states (glowing/encrypted)
+
+- **LQ Visual Style:**
+  - MeshBasicMaterial with flat colors (no textures)
+  - Yellow: 0xFFD700 (gold)
+  - Blue: 0x4169E1 (royal blue)
+  - Green: 0x32CD32 (lime green)
+  - Red: 0xFF4500 (orange-red)
+  - No shadows for better performance
+
+- **HQ Visual Style:**
+  - MeshPhongMaterial with PNG textures
+  - Shininess: 30, Specular: 0x333333
+  - Cast and receive shadows
+  - Maintains original visual quality
+
+- **Corner Chain Fixes:**
+  - Added linkTypes array storage to cornerChains
+  - Fixed random color preservation during quality swapping
+  - Corner chains now properly maintain their colors when toggling modes
+  - Removed unreliable color detection from material properties
+
+- **Technical Details:**
+  - Modified createCornerFeedTubes() to store linkTypes array
+  - Updated createLinkMesh() to use current quality mode
+  - Fixed MeshBasicMaterial error (removed invalid emissive properties)
+  - All quality swaps happen in real-time without game restart
+
+- **Performance:**
+  - LQ mode: ~30-40% reduction in geometry complexity
+  - LQ mode: No shadow calculations for additional performance gain
+  - Smooth transitions between quality modes
+
+## v0.20.29 - Dynamic Camera Light Intensity (2025-11-20)
+- **Summary:**
+  - Fixed HQ mode lighting blowout when zoomed in
+  - Implemented dynamic player light intensity based on camera zoom level
+  - Maintains optimal lighting at all zoom distances
+
+- **Dynamic Light Scaling:**
+  - Player light intensity now scales inversely with zoom level
+  - Prevents overexposure when camera is close to chains
+  - Preserves visual quality across entire zoom range
+
+- **Intensity Levels:**
+  - **Zoomed out (max distance = 28)**: 8.0 intensity (baseline - looks great)
+  - **Default zoom (base distance = 20)**: 4.0 intensity (50% reduced)
+  - **Zoomed in (min distance = 8)**: 2.0 intensity (75% reduced)
+  - Smooth interpolation between all zoom levels
+
+- **Technical Implementation:**
+  - Modified `updateCameraPosition()` function
+  - Added `playerLightIntensity` calculation based on `cameraDistance`
+  - Uses same interpolation pattern as FOV and camera height
+  - Two-segment interpolation: min↔base and base↔max
+  - Light intensity updates in real-time as user zooms
+
+- **User Experience:**
+  - No more blown-out chains in HQ mode when zoomed in
+  - Consistent lighting quality at default game start zoom
+  - Zoomed out view maintains current excellent appearance
+  - Seamless transitions during zoom interactions
+
+## v0.20.28 - Chain Model Performance Optimization (2025-11-20)
+- **Summary:**
+  - Major performance optimization: migrated from 4 separate GLB models to 1 OBJ model + 4 textures
+  - ~75% reduction in geometry memory usage
+  - Maintained visual quality and compatibility with existing codebase
+
+- **Model Loading System Overhaul:**
+  - OLD: 4 separate GLB files (chain_yellow_a.glb, chain_blue_a.glb, chain_green_a.glb, chain_red_a.glb)
+  - NEW: 1 OBJ file (chain.obj) + 4 PNG textures (chain_yellow.png, chain_blue.png, chain_green.png, chain_red.png)
+  - Changed loader from GLTFLoader to OBJLoader
+  - Skipped MTL file loading (apply textures directly in code)
+
+- **Performance Benefits:**
+  - Single shared geometry across all color variants
+  - Memory savings: 1 geometry instance vs 4 separate instances
+  - Faster initial load time
+  - Reduced GPU memory footprint
+  - Texture swapping instead of model duplication
+
+- **Technical Implementation:**
+  - Added OBJLoader and MTLLoader scripts (kept GLTFLoader for character models)
+  - Completely rewrote `loadChainLinkModel()` function
+  - Load 1 OBJ + 4 textures in parallel (5 total assets)
+  - `createModelVariants()` helper creates 4 color variants from single base geometry
+  - Each variant gets HQ (MeshPhongMaterial) and LQ (MeshBasicMaterial) materials
+  - Fixed material properties: removed invalid `metalness`/`roughness` from MeshPhongMaterial
+  - Added proper Phong material properties: `shininess: 30`, `specular: 0x333333`
+  - Maintains same API: chainModelYellow, chainModelBlue, chainModelGreen, chainModelRed
+
+- **Compatibility:**
+  - No changes to game logic or rendering code
+  - All glowing/encrypted chain effects still work correctly
+  - Material caching system unchanged
+  - Quality mode switching unaffected
+
+## v0.20.27 - LQ Mode Glowing Fix & Encrypted Chain Animation (2025-11-20)
+- **Summary:**
+  - Fixed glowing effects in Cartoon Mode (LQ) to properly display bright white
+  - Improved encrypted chain decryption animation to reveal from bottom-up
+
+- **Cartoon Mode (LQ) Glowing Fix:**
+  - Fixed `spawnNewChain()` glowing effect for LQ mode
+  - Fixed `markLinkAsBroken()` glowing effect for LQ mode
+  - Issue: Previous implementation tried to set emissive properties on MeshBasicMaterial (which doesn't have them)
+  - Solution: Create new bright white MeshBasicMaterial (color 0xFFFFFF) for glowing links in LQ mode
+  - HD mode continues using emissive white glow (0xFFFFFF + intensity 2.5)
+  - Prevents shared material contamination in both rendering modes
+
+- **Encrypted Chain Decryption Animation:**
+  - Changed decryption reveal from top-down to bottom-up
+  - Better visual coherence as chains hit the ground
+  - Modified delay calculation: `(fallingChain.length - 1 - i) * 200`
+  - Bottom link decrypts first (0ms), propagates upward at 200ms intervals
+  - Creates natural "ground-up" reveal effect
+
+- **Technical Implementation:**
+  - Both glowing functions now check `highQualityMode` flag
+  - HD mode: Clone MeshPhongMaterial and set emissive properties
+  - LQ mode: Replace with new MeshBasicMaterial with white color
+  - Encrypted chain decryption order reversed in landing sequence
+
+## v0.20.26 - Glowing Material Fix (2025-11-20)
+- **Summary:**
+  - Fixed glowing visual effects for broken/glowing links after material system refactor
+  - Restored white emissive glow for both alignment-based and pre-spawned glowing chains
+
+- **Glowing Features Fixed:**
+  - **Broken/Glowing Links (Early Game):** Links that fail rotation alignment check now glow white
+  - **Glowing Chains (Level 50+):** Pre-glowing chains spawn with white emissive effect
+  - Both features use identical glowing material implementation for consistency
+
+- **Technical Implementation:**
+  - Fixed `markLinkAsBroken()` function to apply glowing material when links misalign
+  - Fixed `spawnNewChain()` function to apply glowing material for isGlowing chains
+  - Material cloning per mesh to prevent shared material contamination
+  - HQ Mode: `emissive.setHex(0xFFFFFF)` + `emissiveIntensity = 2.5`
+  - LQ Mode: `color.setHex(0xFFFFFF)` for MeshBasicMaterial fallback
+  - Glowing triggered when `checkRotationAlignment()` fails for vertical neighbors
+
+- **Affected Systems:**
+  - `checkConsensus()` - marks misaligned vertical links as broken
+  - `markLinkAsBroken()` - now applies white emissive glow effect
+  - `spawnNewChain()` - applies glow for level 50+ glowing chains
+  - `checkAndDestroyFloorGlowingLinks()` - auto-destroys glowing links on floor for 100 points
+  - brokenLinks Set tracking system maintained
+
+## v0.20.25 - Block Break Particle Effects (2025-11-20)
+- **Summary:**
+  - Added randomized particle effects when blocks are destroyed
+  - Each block type now spawns color-matched break particles with visual variety
+
+- **Block Break Particle System:**
+  - Created 24 new particle effect files: 4 colors × 6 variants each
+  - Yellow break particles (yellow_break_a.json through yellow_break_f.json) for ZEC-A blocks
+  - Blue break particles (blue_break_a.json through blue_break_f.json) for ZEC-B blocks
+  - Green break particles (green_break_a.json through green_break_f.json) for ZEC-C blocks
+  - Red break particles (red_break_a.json through red_break_f.json) for ZEC-D blocks
+  - System randomly selects one of 6 variants per color when block breaks
+  - Particles spawn at exact world position of destroyed block (x+0.5, y+0.5, z+0.5)
+  - Integrated into `clearCluster()` function before mesh removal
+
+- **Technical Implementation:**
+  - Modified clearCluster() to detect block type before destruction
+  - Maps LinkType (ZEC-A, ZEC-B, ZEC-C, ZEC-D) to color prefix (yellow, blue, green, red)
+  - Random variant selection from array: ['a', 'b', 'c', 'd', 'e', 'f']
+  - Uses existing `spawnParticleEffect()` system with `spawnMode: 'world'`
+  - Particles triggered during staggered block removal (50ms intervals)
+
 ## v0.20.23 - Floor Cell Rendering & Idle Particle Loop Fix (2025-11-20)
 - **Summary:**
   - Fixed floor cell rendering by changing depthTest from false to true
