@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.34</title>
+    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.40</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -1605,6 +1605,10 @@
             <span class="settingLabel">Auto Restart Game</span>
             <input type="checkbox" id="autoRestart" checked onchange="updateSettings()">
         </div>
+        <div class="settingRow">
+            <span class="settingLabel">Sound Effects</span>
+            <input type="checkbox" id="sfxEnabled" checked onchange="updateSettings()">
+        </div>
         <div class="settingRow" style="border-top: 2px solid #26313B; padding-top: 20px; margin-top: 20px;">
             <span class="settingLabel">AI Player (Testing)</span>
             <input type="checkbox" id="aiEnabled" onchange="updateSettings()">
@@ -2103,6 +2107,7 @@
                     <button id="wallEmissiveBtn" class="active" onclick="toggleButton1()" title="Toggle Wall Emissive">💠</button>
                     <button id="modelsBtn" class="active" onclick="toggleButton2()" title="Toggle 3D Models">🧍</button>
                     <button id="animationsBtn" class="active" onclick="toggleButton3()" title="Toggle Animations">🎬</button>
+                    <button id="soundBtn" class="active" onclick="toggleSoundEffects()" title="Toggle Sound Effects">🔊</button>
                     <button id="colorPickerBtn" onclick="toggleColorPicker()" title="Grid Color Settings">🎨</button>
                     <button id="controlsBtn" onclick="toggleControls()" title="Toggle Controls Panel">⌨️</button>
                     <button id="gridEffectBtn" onclick="cycleGridEffect()" title="Grid Effect: None">🌌</button>
@@ -2411,9 +2416,12 @@
                 <strong>NOTE:</strong><br>Skipping past Level 10<br>disables most achievements
             </div>
             <div style="margin-top: 40px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #89A0B4;">
-                Version v0.20.34 • 2025-11-20
+                Version v0.20.39 • 2025-11-20
             </div>
         </div>
+    </div>
+    <div style="position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); color: rgba(255, 255, 255, 0.3); font-size: 12px; font-family: 'JetBrains Mono', monospace; pointer-events: none; z-index: 100;">
+        Version v0.20.40 • 2025-11-21
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -2422,7 +2430,128 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.20.34';
+        const GAME_VERSION = 'v0.20.40';
+        
+        // ===== AUDIO SYSTEM =====
+        const audioCache = {}; // Cache for all audio files
+        let masterVolume = 0.7; // Global volume control
+        let sfxEnabled = true; // Master SFX toggle
+        
+        // Audio file paths mapped to IDs
+        const AUDIO_FILES = {
+            // UI & Menu
+            'UI_Button_Hover': 'sound_effects/UI_Menu/UI_Button_Hover.wav',
+            'UI_Button_Click': 'sound_effects/UI_Menu/UI_Button_Click.wav',
+            'UI_Menu_Open': 'sound_effects/UI_Menu/UI_Menu_Open.wav',
+            'UI_Menu_Close': 'sound_effects/UI_Menu/UI_Menu_Close.wav',
+            'UI_Error_Invalid_Move': 'sound_effects/UI_Menu/UI_Error_Invalid_Move.wav',
+            
+            // Game State
+            'Game_Start_Begin': 'sound_effects/Game_State/Game_Start_Begin.wav',
+            'Game_Over_Lose': 'sound_effects/Game_State/Game_Over_Lose.wav',
+            'Game_Pause': 'sound_effects/Game_State/Game_Pause.wav',
+            'Game_Resume': 'sound_effects/Game_State/Game_Resume.wav',
+            
+            // Progression
+            'Level_Up_Unlock': 'sound_effects/Progression/Level_Up_Unlock.wav',
+            'Achievement_Unlock': 'sound_effects/Progression/Achievement_Unlock.wav',
+            'Block_Type_Unlock': 'sound_effects/Progression/Block_Type_Unlock.wav',
+            
+            // Special Abilities
+            'Special_Zooko_Activate': 'sound_effects/Special_Abilities/Special_Zooko_Activate.wav',
+            'Special_Nate_Activate': 'sound_effects/Special_Abilities/Special_Nate_Activate.wav',
+            'Special_Zancas_Activate': 'sound_effects/Special_Abilities/Special_Zancas_Activate.wav',
+            'Special_CyberAxe_Activate': 'sound_effects/Special_Abilities/Special_CyberAxe_Activate.wav',
+            'Sandblasting_Event_Start': 'sound_effects/Special_Abilities/Sandblasting_Event_Start.wav',
+            'Sandblasting_Link_Drop': 'sound_effects/Special_Abilities/Sandblasting_Link_Drop.wav',
+            
+            // Chain Interaction
+            'Chain_Drop_Start': 'sound_effects/Chain_Interaction/Chain_Drop_Start.wav',
+            'Chain_Drop_Fast': 'sound_effects/Chain_Interaction/Chain_Drop_Fast.wav',
+            'Chain_Hit_Floor': 'sound_effects/Chain_Interaction/Chain_Hit_Floor.wav',
+            'Chain_Hit_Block': 'sound_effects/Chain_Interaction/Chain_Hit_Block.wav',
+            'Chain_Rotate_90': 'sound_effects/Chain_Interaction/Chain_Rotate_90.wav',
+            'Chain_Flip': 'sound_effects/Chain_Interaction/Chain_Flip.wav',
+            'Chain_Lock_In_Place': 'sound_effects/Chain_Interaction/Chain_Lock_In_Place.wav',
+            
+            // Block Destruction
+            'Match_Found_6_Links': 'sound_effects/Block_Destruction/Match_Found_6_Links.wav',
+            'Chain_Destroy_01': 'sound_effects/Block_Destruction/Chain_Destroy_01.wav',
+            'Chain_Destroy_02': 'sound_effects/Block_Destruction/Chain_Destroy_02.wav',
+            'Chain_Destroy_03': 'sound_effects/Block_Destruction/Chain_Destroy_03.wav',
+            'Chain_Destroy_04': 'sound_effects/Block_Destruction/Chain_Destroy_04.wav',
+            'Chain_Destroy_05': 'sound_effects/Block_Destruction/Chain_Destroy_05.wav',
+            'Broken_Link_Mark': 'sound_effects/Block_Destruction/Broken_Link_Mark.wav',
+            'Broken_Link_Click_Destroy': 'sound_effects/Block_Destruction/Broken_Link_Click_Destroy.wav',
+            
+            // Combo System
+            'Combo_Multiplier_x2': 'sound_effects/Combo_System/Combo_Multiplier_x2.wav',
+            'Combo_Multiplier_x3': 'sound_effects/Combo_System/Combo_Multiplier_x3.wav',
+            'Combo_Multiplier_x4': 'sound_effects/Combo_System/Combo_Multiplier_x4.wav',
+            'Combo_Multiplier_x5': 'sound_effects/Combo_System/Combo_Multiplier_x5.wav',
+            'Combo_Multiplier_x6_Plus': 'sound_effects/Combo_System/Combo_Multiplier_x6_Plus.wav',
+            'Combo_Break': 'sound_effects/Combo_System/Combo_Break.wav',
+            
+            // Special Events
+            'Floor_Clear_Bonus': 'sound_effects/Special_Events/Floor_Clear_Bonus.wav',
+            'Encrypted_Block_Destroy': 'sound_effects/Special_Events/Encrypted_Block_Destroy.wav',
+            'Hypermode_Activate': 'sound_effects/Special_Events/Hypermode_Activate.wav',
+            'Hypermode_Deactivate': 'sound_effects/Special_Events/Hypermode_Deactivate.wav',
+            
+            // Ambient
+            'Ambient_Grid_Hum': 'sound_effects/Ambient_Atmosphere/Ambient_Grid_Hum.wav',
+            'Ambient_Tension_High_Stack': 'sound_effects/Ambient_Atmosphere/Ambient_Tension_High_Stack.wav'
+        };
+        
+        // Preload and cache audio files
+        function preloadAudio() {
+            Object.keys(AUDIO_FILES).forEach(id => {
+                const audio = new Audio(AUDIO_FILES[id]);
+                audio.volume = masterVolume;
+                audio.preload = 'auto';
+                audioCache[id] = audio;
+            });
+        }
+        
+        // Play sound effect with volume control and recycling
+        function playSound(soundId, volumeMultiplier = 1.0) {
+            if (!sfxEnabled || !audioCache[soundId]) return;
+            
+            const cached = audioCache[soundId];
+            
+            // If already playing, clone it for overlap (important for rapid-fire sounds)
+            if (!cached.paused && !cached.ended) {
+                const clone = cached.cloneNode();
+                clone.volume = masterVolume * volumeMultiplier;
+                clone.play().catch(e => console.warn('Audio play failed:', e));
+                return;
+            }
+            
+            // Reuse cached audio
+            cached.currentTime = 0;
+            cached.volume = masterVolume * volumeMultiplier;
+            cached.play().catch(e => console.warn('Audio play failed:', e));
+        }
+        
+        // Play looping ambient sound
+        function playAmbient(soundId, volumeMultiplier = 1.0) {
+            if (!sfxEnabled || !audioCache[soundId]) return;
+            
+            const audio = audioCache[soundId];
+            audio.loop = true;
+            audio.volume = masterVolume * volumeMultiplier;
+            audio.play().catch(e => console.warn('Audio play failed:', e));
+        }
+        
+        // Stop ambient sound
+        function stopAmbient(soundId) {
+            if (!audioCache[soundId]) return;
+            const audio = audioCache[soundId];
+            audio.pause();
+            audio.currentTime = 0;
+        }
+        
+        // ===== END AUDIO SYSTEM =====
         
         // Game State
         const GameState = {
@@ -2876,6 +3005,7 @@
             showHitboxes: false,
             autoRestart: true, // Auto restart game on game over
             aiEnabled: false, // AI player for testing
+            sfxEnabled: true, // Sound effects on/off
             currentGridEffect: 0, // Grid effect index
             floorHintColor: 0x00FFFF, // Floor hint color (hex)
             laserLineColor: 0x00FFFF, // Laser line color (hex)
@@ -3508,6 +3638,21 @@
             if (settings.laserLineColor !== undefined) laserLineColor = settings.laserLineColor;
             if (settings.floorHintEnabled !== undefined) floorHintEnabled = settings.floorHintEnabled;
             if (settings.laserLineEnabled !== undefined) laserLineEnabled = settings.laserLineEnabled;
+            
+            // Sync sound effects setting with global variable
+            if (settings.sfxEnabled !== undefined) sfxEnabled = settings.sfxEnabled;
+            
+            // Update sound button UI state
+            const soundBtn = document.getElementById('soundBtn');
+            if (soundBtn) {
+                if (sfxEnabled) {
+                    soundBtn.classList.add('active');
+                    soundBtn.textContent = '🔊';
+                } else {
+                    soundBtn.classList.remove('active');
+                    soundBtn.textContent = '🔇';
+                }
+            }
             
             // ===== AI PLAYER =====
             // Initialize AI state from settings
@@ -4183,6 +4328,28 @@
                 tooltip.classList.remove('show');
                 tooltip.style.display = 'none';
             }
+        }
+        
+        function toggleSoundEffects() {
+            const btn = document.getElementById('soundBtn');
+            
+            // Toggle the global sound effects variable
+            sfxEnabled = !sfxEnabled;
+            settings.sfxEnabled = sfxEnabled;
+            
+            // Update button state
+            if (sfxEnabled) {
+                btn.classList.add('active');
+                btn.textContent = '🔊';
+                btn.title = 'Toggle Sound Effects';
+            } else {
+                btn.classList.remove('active');
+                btn.textContent = '🔇';
+                btn.title = 'Toggle Sound Effects';
+            }
+            
+            // Save settings
+            saveSettings();
         }
         
         function cycleGridEffect() {
@@ -5924,6 +6091,9 @@
         });
         
         function init() {
+            // Preload all audio files
+            preloadAudio();
+            
             // Setup renderer
             const canvas = document.getElementById('renderCanvas');
             renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
@@ -6087,6 +6257,12 @@
             
             // Initialize compass
             updateCompass();
+            
+            // Start wall variant swapping system
+            startWallVariantSwapping();
+            
+            // Start floor texture swapping system
+            startFloorSwapping();
             
             // Start render loop
             animate();
@@ -6891,6 +7067,9 @@
             
             zancasSpecialActive = true;
             
+            // Play Zancas special sound
+            playSound('Special_Zancas_Activate');
+            
             // Increment sandblasting charge by 25%
             sandblastingCharge = Math.min(100, sandblastingCharge + 25);
             updateSandblastingBar();
@@ -7262,6 +7441,9 @@
             
             nateSpecialActive = true;
             
+            // Play Nate special sound
+            playSound('Special_Nate_Activate');
+            
             // Increment sandblasting charge by 25%
             sandblastingCharge = Math.min(100, sandblastingCharge + 25);
             updateSandblastingBar();
@@ -7551,6 +7733,9 @@
             
             sandblastingActive = true;
             
+            // Play sandblasting event start sound
+            playSound('Sandblasting_Event_Start');
+            
             // Clear any ongoing CyberAxe flicker timeouts to prevent interference
             cyberAxeFlickerTimeouts.forEach(id => trackedClearTimeout(id));
             cyberAxeFlickerTimeouts = [];
@@ -7704,6 +7889,9 @@
             stopZookoHatLoop();
             
             zookoSpecialActive = true;
+            
+            // Play Zooko special sound
+            playSound('Special_Zooko_Activate');
             
             // Increment sandblasting charge by 25%
             sandblastingCharge = Math.min(100, sandblastingCharge + 25);
@@ -7913,6 +8101,9 @@
         }
         
         function executeCyberAxeSpecial() {
+            // Play CyberAxe special sound
+            playSound('Special_CyberAxe_Activate');
+            
             // Increment sandblasting charge by 25%
             sandblastingCharge = Math.min(100, sandblastingCharge + 25);
             updateSandblastingBar();
@@ -8230,6 +8421,178 @@
             animateRing();
         }
         
+        // Wall video configuration
+        const wallVideos = {
+            north: {
+                default: 'videos/wall_north.mp4',
+                variants: ['videos/wall_north_a.mp4', 'videos/wall_north_b.mp4']
+            },
+            south: {
+                default: 'videos/wall_south.mp4',
+                variants: ['videos/wall_south_a.mp4']
+            },
+            east: {
+                default: 'videos/wall_east.mp4',
+                variants: ['videos/wall_east_open_a.mp4', 'videos/wall_east_open_b.mp4', 'videos/wall_east_open_c.mp4', 'videos/wall_east_open_d.mp4', 'videos/wall_east_open_e.mp4']
+            },
+            west: {
+                default: 'videos/wall_west.mp4',
+                variants: ['videos/wall_west_a.mp4', 'videos/wall_west_b.mp4', 'videos/wall_west_c.mp4', 'videos/wall_west_d.mp4']
+            }
+        };
+
+        // Store wall video elements and data
+        const wallVideoData = {
+            north: { video: null, texture: null, mesh: null, currentVariant: false },
+            south: { video: null, texture: null, mesh: null, currentVariant: false },
+            east: { video: null, texture: null, mesh: null, currentVariant: false },
+            west: { video: null, texture: null, mesh: null, currentVariant: false }
+        };
+
+        // Floor texture variants
+        const floorTextures = [
+            'walls/floor (1).png',
+            'walls/floor (2).png',
+            'walls/floor (3).png',
+            'walls/floor (4).png',
+            'walls/floor (5).png',
+            'walls/floor (6).png',
+            'walls/floor (7).png',
+            'walls/floor (8).png',
+            'walls/floor (9).png',
+            'walls/floor (10).png',
+            'walls/floor (1).jpg',
+            'walls/floor (2).jpg',
+            'walls/floor (3).jpg',
+            'walls/floor (4).jpg',
+            'walls/floor (5).jpg',
+            'walls/floor (6).jpg',
+            'walls/floor (7).jpg'
+        ];
+
+        // Store floor mesh reference
+        let floorMesh = null;
+
+        function createVideoTexture(videoPath, shouldLoop = true) {
+            const video = document.createElement('video');
+            video.src = videoPath;
+            video.loop = shouldLoop;
+            video.muted = true;
+            video.autoplay = true;
+            video.playsInline = true;
+            video.play();
+            
+            const texture = new THREE.VideoTexture(video);
+            texture.minFilter = THREE.LinearFilter;
+            texture.magFilter = THREE.LinearFilter;
+            
+            return { video, texture };
+        }
+
+        function swapWallVideo(wallName) {
+            const data = wallVideoData[wallName];
+            const config = wallVideos[wallName];
+            
+            if (!data.mesh || config.variants.length === 0) return;
+            
+            // Choose random variant
+            const variantPath = config.variants[Math.floor(Math.random() * config.variants.length)];
+            
+            // Create new video texture (DON'T loop - play once then return to default)
+            const { video, texture } = createVideoTexture(variantPath, false);
+            
+            // Update material
+            data.mesh.material.map = texture;
+            data.mesh.material.emissiveMap = texture;
+            data.mesh.material.needsUpdate = true;
+            
+            // Clean up old video
+            if (data.video) {
+                data.video.pause();
+                data.video.src = '';
+            }
+            
+            // Store new video
+            data.video = video;
+            data.texture = texture;
+            data.currentVariant = true;
+            
+            // Schedule return to default after video plays once
+            video.addEventListener('ended', () => {
+                // Return to default (loop this one)
+                const { video: defaultVideo, texture: defaultTexture } = createVideoTexture(config.default, true);
+                
+                data.mesh.material.map = defaultTexture;
+                data.mesh.material.emissiveMap = defaultTexture;
+                data.mesh.material.needsUpdate = true;
+                
+                if (data.video) {
+                    data.video.pause();
+                    data.video.src = '';
+                }
+                
+                data.video = defaultVideo;
+                data.texture = defaultTexture;
+                data.currentVariant = false;
+            }, { once: true });
+        }
+
+        function startWallVariantSwapping() {
+            // Randomly swap wall variants every 30 seconds (testing)
+            const scheduleNextSwap = () => {
+                const delay = 30000; // 30 seconds for testing
+                
+                trackedSetTimeout(() => {
+                    // Pick a random wall that's not currently showing a variant
+                    const availableWalls = Object.keys(wallVideoData).filter(
+                        wallName => !wallVideoData[wallName].currentVariant && wallVideos[wallName].variants.length > 0
+                    );
+                    
+                    if (availableWalls.length > 0) {
+                        const randomWall = availableWalls[Math.floor(Math.random() * availableWalls.length)];
+                        swapWallVideo(randomWall);
+                    }
+                    
+                    scheduleNextSwap();
+                }, delay);
+            };
+            
+            scheduleNextSwap();
+        }
+
+        function swapFloorTexture() {
+            if (!floorMesh) return;
+            
+            // Pick a random floor texture
+            const randomFloor = floorTextures[Math.floor(Math.random() * floorTextures.length)];
+            
+            // Load new texture
+            const textureLoader = new THREE.TextureLoader();
+            textureLoader.load(randomFloor, (texture) => {
+                texture.minFilter = THREE.LinearFilter;
+                texture.magFilter = THREE.LinearFilter;
+                
+                // Update floor material
+                floorMesh.material.map = texture;
+                floorMesh.material.emissiveMap = texture;
+                floorMesh.material.needsUpdate = true;
+            });
+        }
+
+        function startFloorSwapping() {
+            // Randomly swap floor every 30 seconds (testing)
+            const scheduleNextFloorSwap = () => {
+                const delay = 30000; // 30 seconds for testing
+                
+                trackedSetTimeout(() => {
+                    swapFloorTexture();
+                    scheduleNextFloorSwap();
+                }, delay);
+            };
+            
+            scheduleNextFloorSwap();
+        }
+
         function createRoom() {
             const wallDistance = 35; // Increased from 20 to 35 for more spacious room
             const wallHeight = GRID_HEIGHT + 12; // Add 12 units extra height for taller room
@@ -8238,13 +8601,16 @@
             const wallThickness = 0.5;
             const roomFloorOffset = -8; // Move room floor down to -8
             
-            // North Wall (Blue) - behind when viewing from south
-            const northWallTexture = new THREE.TextureLoader().load('walls/wall_n.png');
+            // North Wall (Blue) - video texture
+            const northVideoData = createVideoTexture(wallVideos.north.default);
+            wallVideoData.north.video = northVideoData.video;
+            wallVideoData.north.texture = northVideoData.texture;
+            
             const northWall = new THREE.Mesh(
                 new THREE.BoxGeometry(roomWidth, wallHeight, wallThickness),
                 new THREE.MeshPhongMaterial({ 
-                    map: northWallTexture,
-                    emissiveMap: northWallTexture,
+                    map: northVideoData.texture,
+                    emissiveMap: northVideoData.texture,
                     emissive: 0xffffff,
                     emissiveIntensity: 0.5,
                     side: THREE.DoubleSide 
@@ -8253,14 +8619,18 @@
             northWall.position.set(GRID_WIDTH / 2, roomFloorOffset + wallHeight / 2, GRID_DEPTH + wallDistance);
             scene.add(northWall);
             roomWalls.push(northWall);
+            wallVideoData.north.mesh = northWall;
             
-            // South Wall (Red)
-            const southWallTexture = new THREE.TextureLoader().load('walls/wall_s.png');
+            // South Wall (Red) - video texture
+            const southVideoData = createVideoTexture(wallVideos.south.default);
+            wallVideoData.south.video = southVideoData.video;
+            wallVideoData.south.texture = southVideoData.texture;
+            
             const southWall = new THREE.Mesh(
                 new THREE.BoxGeometry(roomWidth, wallHeight, wallThickness),
                 new THREE.MeshPhongMaterial({ 
-                    map: southWallTexture,
-                    emissiveMap: southWallTexture,
+                    map: southVideoData.texture,
+                    emissiveMap: southVideoData.texture,
                     emissive: 0xffffff,
                     emissiveIntensity: 0.5,
                     side: THREE.DoubleSide 
@@ -8269,14 +8639,18 @@
             southWall.position.set(GRID_WIDTH / 2, roomFloorOffset + wallHeight / 2, -wallDistance);
             scene.add(southWall);
             roomWalls.push(southWall);
+            wallVideoData.south.mesh = southWall;
             
-            // East Wall (Green)
-            const eastWallTexture = new THREE.TextureLoader().load('walls/wall_e.png');
+            // East Wall (Green) - video texture
+            const eastVideoData = createVideoTexture(wallVideos.east.default);
+            wallVideoData.east.video = eastVideoData.video;
+            wallVideoData.east.texture = eastVideoData.texture;
+            
             const eastWall = new THREE.Mesh(
                 new THREE.BoxGeometry(wallThickness, wallHeight, roomDepth),
                 new THREE.MeshPhongMaterial({ 
-                    map: eastWallTexture,
-                    emissiveMap: eastWallTexture,
+                    map: eastVideoData.texture,
+                    emissiveMap: eastVideoData.texture,
                     emissive: 0xffffff,
                     emissiveIntensity: 0.5,
                     side: THREE.DoubleSide 
@@ -8285,14 +8659,18 @@
             eastWall.position.set(GRID_WIDTH + wallDistance, roomFloorOffset + wallHeight / 2, GRID_DEPTH / 2);
             scene.add(eastWall);
             roomWalls.push(eastWall);
+            wallVideoData.east.mesh = eastWall;
             
-            // West Wall (Yellow)
-            const westWallTexture = new THREE.TextureLoader().load('walls/wall_w.png');
+            // West Wall (Yellow) - video texture
+            const westVideoData = createVideoTexture(wallVideos.west.default);
+            wallVideoData.west.video = westVideoData.video;
+            wallVideoData.west.texture = westVideoData.texture;
+            
             const westWall = new THREE.Mesh(
                 new THREE.BoxGeometry(wallThickness, wallHeight, roomDepth),
                 new THREE.MeshPhongMaterial({ 
-                    map: westWallTexture,
-                    emissiveMap: westWallTexture,
+                    map: westVideoData.texture,
+                    emissiveMap: westVideoData.texture,
                     emissive: 0xffffff,
                     emissiveIntensity: 0.5,
                     side: THREE.DoubleSide 
@@ -8301,9 +8679,11 @@
             westWall.position.set(-wallDistance, roomFloorOffset + wallHeight / 2, GRID_DEPTH / 2);
             scene.add(westWall);
             roomWalls.push(westWall);
+            wallVideoData.west.mesh = westWall;
             
-            // Floor (Dark Gray)
-            const floorTexture = new THREE.TextureLoader().load('walls/floor_a.png');
+            // Floor (Dark Gray) - pick random floor texture to start
+            const initialFloor = floorTextures[Math.floor(Math.random() * floorTextures.length)];
+            const floorTexture = new THREE.TextureLoader().load(initialFloor);
             floorTexture.minFilter = THREE.LinearFilter;
             floorTexture.magFilter = THREE.LinearFilter;
             const floor = new THREE.Mesh(
@@ -8320,6 +8700,7 @@
             floor.receiveShadow = true; // Receive shadows from models
             scene.add(floor);
             roomWalls.push(floor);
+            floorMesh = floor; // Store reference for swapping
             
             // Ceiling (Darker Gray)
             const ceiling = new THREE.Mesh(
@@ -8668,6 +9049,10 @@
                 }
             });
             
+            // Restart wall and floor swapping systems (they were killed by timeout clearing)
+            startWallVariantSwapping();
+            startFloorSwapping();
+            
             // Reset floor cell animations
             floorAnimationTime = 0;
             floorCells.forEach(cell => {
@@ -8764,6 +9149,9 @@
             initializeChainQueue();
             
             updateHUD();
+            
+            // Play game start sound
+            playSound('Game_Start_Begin');
         }
         
         // Function to pre-fill grid with random links (3-6 rows from bottom)
@@ -8818,6 +9206,7 @@
             // Load current settings
             document.getElementById('showHitboxes').checked = settings.showHitboxes;
             document.getElementById('autoRestart').checked = settings.autoRestart;
+            document.getElementById('sfxEnabled').checked = settings.sfxEnabled;
             document.getElementById('aiEnabled').checked = settings.aiEnabled;
         }
         
@@ -8831,7 +9220,11 @@
         function updateSettings() {
             settings.showHitboxes = document.getElementById('showHitboxes').checked;
             settings.autoRestart = document.getElementById('autoRestart').checked;
+            settings.sfxEnabled = document.getElementById('sfxEnabled').checked;
             settings.aiEnabled = document.getElementById('aiEnabled').checked;
+            
+            // Update global sound effects toggle
+            sfxEnabled = settings.sfxEnabled;
             
             // Update placement box visibility
             updatePlacementBoxVisibility();
@@ -9244,12 +9637,14 @@
                 currentState = GameState.PAUSED;
                 pauseStartTime = Date.now(); // Track when pause started
                 document.getElementById('pauseScreen').style.display = 'flex';
+                playSound('Game_Pause');
             }
         }
         
         function resumeGame() {
             if (currentState === GameState.PAUSED) {
                 currentState = GameState.PLAYING;
+                playSound('Game_Resume');
                 // Add pause duration to total paused time
                 if (pauseStartTime) {
                     totalPausedTime += Date.now() - pauseStartTime;
@@ -9324,6 +9719,10 @@
             if (newLevel > level) {
                 const oldLevel = level;
                 level = newLevel;
+                
+                // Play level up sound
+                playSound('Level_Up_Unlock');
+                
                 checkAchievements();
                 
                 // Show level 10 notification when reaching or passing level 10
@@ -10264,9 +10663,11 @@
             switch(key) {
                 case 'ArrowLeft':
                     fallingChain.rotation = (rotation - 90) % 360;
+                    playSound('Chain_Rotate_90');
                     break;
                 case 'ArrowRight':
                     fallingChain.rotation = (rotation + 90) % 360;
+                    playSound('Chain_Rotate_90');
                     break;
                 case 'ArrowUp':
                 case 'ArrowDown':
@@ -10795,6 +11196,8 @@
         function flipChain() {
             if (!fallingChain || fallingChain.length < 2) return; // Need at least 2 links to flip
             
+            playSound('Chain_Flip');
+            
             // Swap the linkTypes array - reverse first and last element
             const temp = fallingChain.linkTypes[0];
             fallingChain.linkTypes[0] = fallingChain.linkTypes[fallingChain.length - 1];
@@ -11017,6 +11420,7 @@
         
         function gameOver() {
             currentState = GameState.GAMEOVER;
+            playSound('Game_Over_Lose');
             saveHighScore(score, level);
             checkAchievements();
             
@@ -11318,11 +11722,11 @@
                 }
             }
             
-            // Play appropriate sound
+            // Play appropriate hit sound
             if (hitFloor) {
-                // Sound removed
+                playSound('Chain_Hit_Floor');
             } else if (hitChain) {
-                // Sound removed
+                playSound('Chain_Hit_Block');
             }
             
             // Lock each link to grid
@@ -11411,6 +11815,9 @@
                 if (!floorClearBonusAwarded) break;
             }
             
+            // Play chain lock sound
+            playSound('Chain_Lock_In_Place');
+            
             // Check for consensus
             checkConsensus();
             
@@ -11445,6 +11852,9 @@
             }
             
             if (clustersToRemove.length > 0) {
+                // Play match found sound
+                playSound('Match_Found_6_Links');
+                
                 // Wait 1 second before clearing, then wait for staggered removal to complete
                 trackedSetTimeout(() => {
                     const maxDelay = Math.max(...clustersToRemove.map(c => c.length)) * 50;
@@ -11485,6 +11895,10 @@
                 floorClearBonusAwarded = true;
                 score += 10000;
                 updateHUD();
+                
+                // Play floor clear bonus sound
+                playSound('Floor_Clear_Bonus');
+                
                 // Bonus for clearing floor removed (was music-related)
                 
                 // Show bonus message
@@ -11759,6 +12173,11 @@
                     if (grid[x][y][z]) {
                         stats.typesClearedSet.add(grid[x][y][z].type.name);
                         
+                        // Play varied block destruction sound
+                        const destroySounds = ['Chain_Destroy_01', 'Chain_Destroy_02', 'Chain_Destroy_03', 'Chain_Destroy_04', 'Chain_Destroy_05'];
+                        const randomDestroySound = destroySounds[index % destroySounds.length];
+                        playSound(randomDestroySound, 0.6);
+                        
                         // Spawn break particle effect based on block type
                         const blockType = grid[x][y][z].type.name;
                         let colorPrefix = '';
@@ -11808,6 +12227,19 @@
                 
                 // Spawn combo particle effect based on combo multiplier
                 if (combo > oldCombo && combo >= 1.0) {
+                    // Play combo sound based on multiplier
+                    if (combo >= 5.0) {
+                        playSound('Combo_Multiplier_x6_Plus');
+                    } else if (combo >= 4.0) {
+                        playSound('Combo_Multiplier_x5');
+                    } else if (combo >= 3.0) {
+                        playSound('Combo_Multiplier_x4');
+                    } else if (combo >= 2.0) {
+                        playSound('Combo_Multiplier_x3');
+                    } else if (combo >= 1.5) {
+                        playSound('Combo_Multiplier_x2');
+                    }
+                    
                     // Determine number of particles based on combo (max 3 particles)
                     const numParticles = Math.min(3, Math.floor(combo * 2)); // 1.0x=2, 1.5x=3, 2.0x=3 (capped)
                     
@@ -11866,6 +12298,9 @@
         function resetCombo() {
             const now = Date.now();
             if (now - lastClearTime > 2000) {
+                if (combo > 1.0) {
+                    playSound('Combo_Break', 0.5);
+                }
                 combo = 1.0;
                 stats.consecutiveClears = 0;
             }

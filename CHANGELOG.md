@@ -2,6 +2,159 @@
 
 # Changelog
 
+## v0.20.40 - Dynamic Video Walls & Floor Texture System (2025-11-21)
+- **Summary:**
+  - Added dynamic video wall textures with variant swapping system
+  - Implemented randomized floor texture swapping
+  - 4 video walls (north, south, east, west) with 12 total variant videos
+  - 17 floor textures (10 PNG, 7 JPG) with automatic rotation
+
+- **Video Wall System:**
+  - Each wall has a default looping video texture
+  - Wall variants play once then return to default
+  - North wall: 2 variants (wall_north_a, wall_north_b)
+  - South wall: 1 variant (wall_south_a)
+  - East wall: 5 variants (wall_east_open_a through e)
+  - West wall: 4 variants (wall_west_a through d)
+  - Variants swap every 30-90 seconds (configurable)
+  - Only one wall shows variant at a time
+  
+- **Floor Texture System:**
+  - 17 unique floor textures randomly selected
+  - Floor texture swaps every 2-5 minutes
+  - Smooth texture transitions
+  - Random floor texture on game start
+  
+- **Implementation Details:**
+  - HTML5 video elements with THREE.VideoTexture
+  - Event-driven variant-to-default return system
+  - Proper video loop control (variants play once, defaults loop)
+  - Material texture updates with needsUpdate flag
+  - Memory management with video cleanup
+  - Systems restart on new game to prevent timeout conflicts
+  
+- **Bug Fixes:**
+  - Fixed variant videos looping forever instead of returning to default
+  - Fixed swapping systems being killed by startGame() timeout clearing
+  - Added systems restart in startGame() function
+  - Proper shouldLoop parameter implementation
+  
+- **Debug Features:**
+  - Console logging for all swap events
+  - Wall selection tracking
+  - Video load status monitoring
+  - Floor texture update confirmation
+
+## v0.20.39 - Version Update (2025-11-20)
+- Minor version increment for tracking purposes
+
+## v0.20.38 - In-Game Sound Toggle Button (2025-11-20)
+- **Summary:**
+  - Added dedicated sound effects toggle button to in-game control panel
+  - Quick access to audio controls without opening settings menu
+  - Visual feedback with speaker icons (🔊/🔇)
+
+- **Control Panel Integration:**
+  - New sound button positioned between "Animations" and "Color Picker" buttons
+  - Button matches existing control panel styling and behavior
+  - Active state shows 🔊 icon, inactive shows 🔇 icon
+  - Tooltip: "Toggle Sound Effects"
+  
+- **Functionality:**
+  - `toggleSoundEffects()` function toggles sfxEnabled global variable
+  - Syncs with settings object and persists via localStorage
+  - Updates button appearance in real-time
+  - Works in conjunction with settings menu checkbox
+  
+- **User Experience:**
+  - One-click access to mute/unmute during gameplay
+  - No need to pause or open settings menu
+  - Button state correctly loads on game start
+  - Setting persists across sessions
+
+## v0.20.37 - Sound Effects Toggle (2025-11-20)
+- **Summary:**
+  - Added sound effects on/off toggle in settings menu
+  - Enabled by default for optimal gameplay experience
+
+- **Settings Menu:**
+  - New "Sound Effects" checkbox in settings panel
+  - Positioned between "Auto Restart Game" and "AI Player" options
+  - Defaults to ON (checked) for new users
+  - Syncs with global sfxEnabled variable
+  - Setting persists across game sessions via localStorage
+
+- **Implementation Details:**
+  - Added sfxEnabled property to settings object (default: true)
+  - Settings panel UI updated with sound effects checkbox
+  - updateSettings() function syncs checkbox state with global audio toggle
+  - loadSettings() ensures saved preference loads on game start
+  - All 46 sound effects respect this master toggle
+
+## v0.20.35 - Comprehensive Sound System Integration (2025-11-20)
+- **Summary:**
+  - Added complete sound system with 46 sound effects across all game categories
+  - Implemented audio caching and recycling for optimal performance
+  - Integrated Lumines-style techno/house sound design throughout gameplay
+  - Musical block destruction creates evolving soundtrack during play
+
+- **Audio System Features:**
+  - Intelligent audio caching prevents redundant file loading
+  - Sound cloning for overlapping effects (rapid-fire sounds)
+  - Master volume control and SFX toggle
+  - Preloading system ensures no audio lag during gameplay
+  - 46 professionally designed sound effects organized by category
+
+- **Sound Categories Implemented:**
+  - **UI & Menu (5 sounds):** Button hover, click, menu open/close, error feedback
+  - **Game State (4 sounds):** Game start, game over, pause, resume
+  - **Progression (3 sounds):** Level up, achievement unlock, block type unlock
+  - **Special Abilities (6 sounds):** All 4 character specials plus sandblasting event
+  - **Chain Interaction (7 sounds):** Drop, rotate, flip, hit floor/block, lock in place
+  - **Block Destruction (8 sounds):** Match found, 5 varied destruction notes, broken link mark/destroy
+  - **Combo System (7 sounds):** Progressive multiplier sounds (x2 through x6+), combo break
+  - **Special Events (4 sounds):** Floor clear bonus, encrypted block, hypermode activate/deactivate
+  - **Ambient (2 sounds):** Grid hum, tension when stack is high (not yet implemented)
+
+- **Musical Gameplay Integration:**
+  - Block destruction uses 5 different musical notes (C3, E3, G3, A3, C4) that create melodies when clearing clusters
+  - Combo multipliers build in intensity and pitch as combos increase
+  - Core gameplay sounds (chain movements, hits) designed as rhythmic percussion elements
+  - Sounds layer together to create evolving techno/house groove during play
+
+- **Sound Triggers:**
+  - Game start/over: Energetic launch and dignified game over sequences
+  - Pause/Resume: Time-freeze and time-resume pitch-bend effects
+  - Special abilities: Each character has unique powerful activation sound
+  - Chain interactions: Rotate, flip sounds on player input; hit sounds on collision detection
+  - Match detection: Celebratory synth chord when 6+ blocks matched
+  - Block clearing: Staggered musical destruction notes creating melody
+  - Combos: Progressive sounds from simple accent (x2) to complex arpeggio (x6+)
+  - Level progression: Triumphant fanfare on each level increase
+  - Floor clear: Grand celebration for clearing entire bottom row
+
+- **Performance Optimizations:**
+  - Audio files cached on init to prevent repeated loading
+  - Cloning used for overlapping sounds to prevent cutoff
+  - Volume multipliers applied per-sound for mixing balance
+  - Lightweight WAV files optimized for web delivery
+
+- **Technical Implementation:**
+  - Audio system initialized in init() function
+  - playSound(soundId, volumeMultiplier) for one-shot effects
+  - playAmbient(soundId) for looping background sounds (prepared for future use)
+  - All 46 sound files organized in categorized subdirectories
+  - Fail-safe error handling prevents crashes from missing audio files
+
+- **Impact:**
+  - Game now has complete audio feedback for all player actions
+  - Musical sound design creates synesthetic puzzle-solving experience
+  - Professional Lumines-style electronic aesthetic fully realized
+  - Gameplay feels more responsive and rewarding with audio cues
+  - Block clearing becomes musical performance as notes stack and layer
+
+---
+
 ## v0.20.34 - Chain Preview UI Transparency Improvements (2025-11-20)
 - **Summary:**
   - Improved chain preview hint box transparency for better gameplay visibility
