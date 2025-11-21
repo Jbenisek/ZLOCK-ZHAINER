@@ -2,6 +2,30 @@
 
 # Changelog
 
+## v0.20.34 - Chain Preview UI Transparency Improvements (2025-11-20)
+- **Summary:**
+  - Improved chain preview hint box transparency for better gameplay visibility
+  - Removed backdrop blur effect to allow clear view through the preview window
+  - Preview box now sits transparently over gameplay area without obscuring view
+
+- **UI Changes:**
+  - Changed chain preview background opacity from 0.9 to 0.3 (70% more transparent)
+  - Removed `backdrop-filter: blur(10px)` from #chainPreview CSS
+  - Players can now clearly see game grid through the NEXT/THEN/AFTER preview window
+  - Preview box remains visible but non-intrusive during active gameplay
+
+- **Technical Details:**
+  - Modified #chainPreview CSS background from `rgba(20, 27, 34, 0.9)` to `rgba(20, 27, 34, 0.3)`
+  - Removed backdrop-filter property entirely for crisp view-through
+  - Border and padding remain unchanged for consistent UI structure
+
+- **Impact:**
+  - Better visibility of blocks falling in the play area behind preview
+  - Less visual obstruction during critical gameplay moments
+  - Maintains preview functionality while minimizing screen real estate impact
+
+---
+
 ## v0.20.33 - Material Emissive Property Fix (2025-11-20)
 - **Summary:**
   - Fixed crash when marking links as broken with non-emissive materials
