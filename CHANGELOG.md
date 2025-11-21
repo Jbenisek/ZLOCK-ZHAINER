@@ -2,6 +2,30 @@
 
 # Changelog
 
+## v0.20.33 - Material Emissive Property Fix (2025-11-20)
+- **Summary:**
+  - Fixed crash when marking links as broken with non-emissive materials
+  - Added property checking for material emissive support
+  - Prevents TypeError on materials without emissive properties
+
+- **Bug Fix:**
+  - Modified `markLinkAsBroken()` to check if material has emissive property before using it
+  - Added fallback to set color directly for materials without emissive (like MeshBasicMaterial)
+  - Prevents crash: "Cannot read properties of undefined (reading 'setHex')"
+
+- **Technical Details:**
+  - High quality mode now checks `child.material.emissive` exists before calling `setHex()`
+  - Falls back to `child.material.color.setHex()` for non-emissive materials
+  - Handles edge cases where meshes may have different material types
+  - Material types: MeshPhongMaterial and MeshStandardMaterial have emissive, MeshBasicMaterial does not
+
+- **Impact:**
+  - Game no longer crashes when broken links have MeshBasicMaterial
+  - Glowing effect works correctly across all material types
+  - More robust error handling for material properties
+
+---
+
 ## v0.20.32 - Grid Effect & Color Settings Persistence (2025-11-20)
 - **Summary:**
   - Added localStorage persistence for grid effect and color customization settings

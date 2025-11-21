@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.32</title>
+    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.33</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -2412,7 +2412,7 @@
                 <strong>NOTE:</strong><br>Skipping past Level 10<br>disables most achievements
             </div>
             <div style="margin-top: 40px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #89A0B4;">
-                Version v0.20.32 • 2025-11-20
+                Version v0.20.33 • 2025-11-20
             </div>
         </div>
     </div>
@@ -2423,7 +2423,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.20.32';
+        const GAME_VERSION = 'v0.20.33';
         
         // Game State
         const GameState = {
@@ -11642,10 +11642,16 @@
             link.mesh.traverse((child) => {
                 if (child.isMesh && child.material) {
                     if (highQualityMode) {
-                        // HD mode: Clone MeshPhongMaterial and add white emissive glow
+                        // HD mode: Clone material and add white emissive glow
                         child.material = child.material.clone();
-                        child.material.emissive.setHex(0xFFFFFF);
-                        child.material.emissiveIntensity = 2.5;
+                        // Check if material supports emissive properties (MeshPhongMaterial, MeshStandardMaterial, etc.)
+                        if (child.material.emissive) {
+                            child.material.emissive.setHex(0xFFFFFF);
+                            child.material.emissiveIntensity = 2.5;
+                        } else {
+                            // Fallback for materials without emissive (like MeshBasicMaterial)
+                            child.material.color.setHex(0xFFFFFF);
+                        }
                     } else {
                         // LQ mode: Replace with bright white MeshBasicMaterial
                         child.material = new THREE.MeshBasicMaterial({
