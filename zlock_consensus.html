@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.31</title>
+    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.32</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -2412,7 +2412,7 @@
                 <strong>NOTE:</strong><br>Skipping past Level 10<br>disables most achievements
             </div>
             <div style="margin-top: 40px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #89A0B4;">
-                Version v0.20.31 • 2025-11-20
+                Version v0.20.32 • 2025-11-20
             </div>
         </div>
     </div>
@@ -2423,7 +2423,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.20.31';
+        const GAME_VERSION = 'v0.20.32';
         
         // Game State
         const GameState = {
@@ -2876,7 +2876,12 @@
             colorBlindMode: 'none', // 'none', 'protanopia', 'deuteranopia', 'tritanopia'
             showHitboxes: false,
             autoRestart: true, // Auto restart game on game over
-            aiEnabled: false // AI player for testing
+            aiEnabled: false, // AI player for testing
+            currentGridEffect: 0, // Grid effect index
+            floorHintColor: 0x00FFFF, // Floor hint color (hex)
+            laserLineColor: 0x00FFFF, // Laser line color (hex)
+            floorHintEnabled: true, // Floor hint visibility
+            laserLineEnabled: true // Laser line visibility
         };
         
         // ===== PARTICLE PLACEMENT SYSTEM =====
@@ -3498,6 +3503,13 @@
                 settings = { ...settings, ...JSON.parse(saved) };
             }
             
+            // Load grid effect and color settings
+            if (settings.currentGridEffect !== undefined) currentGridEffect = settings.currentGridEffect;
+            if (settings.floorHintColor !== undefined) floorHintColor = settings.floorHintColor;
+            if (settings.laserLineColor !== undefined) laserLineColor = settings.laserLineColor;
+            if (settings.floorHintEnabled !== undefined) floorHintEnabled = settings.floorHintEnabled;
+            if (settings.laserLineEnabled !== undefined) laserLineEnabled = settings.laserLineEnabled;
+            
             // ===== AI PLAYER =====
             // Initialize AI state from settings
             aiState.enabled = settings.aiEnabled;
@@ -3508,6 +3520,13 @@
         }
         
         function saveSettings() {
+            // Update settings with current values
+            settings.currentGridEffect = currentGridEffect;
+            settings.floorHintColor = floorHintColor;
+            settings.laserLineColor = laserLineColor;
+            settings.floorHintEnabled = floorHintEnabled;
+            settings.laserLineEnabled = laserLineEnabled;
+            
             localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
         }
         
@@ -3755,6 +3774,27 @@
         let animationsEnabled = true;
         let highQualityMode = true; // true = High Performance, false = Cartoon
         
+        // Calculate player light intensity based on current zoom level
+        function calculatePlayerLightIntensity() {
+            let playerLightIntensity = 8.0; // Default for max zoom out
+            if (cameraDistance === maxCameraDistance) {
+                playerLightIntensity = 8.0; // Full intensity when zoomed out
+            } else if (cameraDistance === baseCameraDistance) {
+                playerLightIntensity = 4.0; // Half intensity at default zoom
+            } else if (cameraDistance === minCameraDistance) {
+                playerLightIntensity = 1.0; // Very low intensity when zoomed in
+            } else if (cameraDistance < baseCameraDistance) {
+                // Interpolate between min and default
+                const factor = (cameraDistance - minCameraDistance) / (baseCameraDistance - minCameraDistance);
+                playerLightIntensity = 1.0 + (4.0 - 1.0) * factor;
+            } else {
+                // Interpolate between default and max
+                const factor = (cameraDistance - baseCameraDistance) / (maxCameraDistance - baseCameraDistance);
+                playerLightIntensity = 4.0 + (8.0 - 4.0) * factor;
+            }
+            return playerLightIntensity;
+        }
+        
         function toggleLights() {
             lightsEnabled = !lightsEnabled;
             const lightsBtn = document.getElementById('lightsBtn');
@@ -3771,7 +3811,9 @@
                 fillLight.intensity = 0.6;
                 ambientLight.intensity = 0.3;
                 rimLight.intensity = 0.4;
-                if (playerLight && !isTopDownView) playerLight.intensity = 8.0;
+                if (playerLight && !isTopDownView) {
+                    playerLight.intensity = calculatePlayerLightIntensity();
+                }
                 lightsBtn.textContent = '💡';
                 lightsBtn.classList.add('active');
             }
@@ -4151,6 +4193,7 @@
             btn.textContent = effect.icon;
             btn.title = `Grid Effect: ${effect.name}`;
             applyGridEffect();
+            saveSettings(); // Save current grid effect
         }
         
         function applyGridEffect() {
@@ -4280,7 +4323,8 @@
                 
                 switch(effect.name) {
                     case 'None':
-                        tube.material.color.setHex(0x00FFFF);
+                        // Use custom laser line color when effect is None
+                        tube.material.color.setHex(laserLineColor);
                         tube.material.opacity = 0.3;
                         break;
                         
@@ -4982,6 +5026,9 @@
                     indicator.visible = false;
                 }
             });
+            
+            // Save settings to localStorage
+            saveSettings();
             
             document.getElementById('colorPickerModal').style.display = 'none';
         }
@@ -8025,10 +8072,10 @@
         }
         
         function fireLaserBlast(x, z) {
-            // Create small purple tube down the center
+            // Create small tube down the center with custom laser color
             const tubeGeometry = new THREE.CylinderGeometry(0.15, 0.15, GRID_HEIGHT + 20, 8);
             const tubeMaterial = new THREE.MeshBasicMaterial({
-                color: 0x9D00FF // Purple
+                color: laserLineColor !== null ? laserLineColor : 0x9D00FF // Use custom color or default purple
             });
             const tube = new THREE.Mesh(tubeGeometry, tubeMaterial);
             tube.position.set(x + 0.5, GRID_HEIGHT / 2, z + 0.5);
@@ -8470,25 +8517,7 @@
             camera.updateProjectionMatrix();
             
             // Calculate dynamic player light intensity based on zoom
-            // Zoomed out (max distance) = 8.0 intensity (looks good)
-            // Default (base distance) = lower intensity
-            // Zoomed in (min distance) = lowest intensity to prevent blowout
-            let playerLightIntensity = 8.0; // Default for max zoom out
-            if (cameraDistance === maxCameraDistance) {
-                playerLightIntensity = 8.0; // Full intensity when zoomed out
-            } else if (cameraDistance === baseCameraDistance) {
-                playerLightIntensity = 4.0; // Half intensity at default zoom
-            } else if (cameraDistance === minCameraDistance) {
-                playerLightIntensity = 1.0; // Very low intensity when zoomed in
-            } else if (cameraDistance < baseCameraDistance) {
-                // Interpolate between min and default
-                const factor = (cameraDistance - minCameraDistance) / (baseCameraDistance - minCameraDistance);
-                playerLightIntensity = 1.0 + (4.0 - 1.0) * factor;
-            } else {
-                // Interpolate between default and max
-                const factor = (cameraDistance - baseCameraDistance) / (maxCameraDistance - baseCameraDistance);
-                playerLightIntensity = 4.0 + (8.0 - 4.0) * factor;
-            }
+            const playerLightIntensity = calculatePlayerLightIntensity();
             
             if (isTopDownView) {
                 // Top-down view - directly above the center of the grid
@@ -11787,10 +11816,10 @@
                     
                     // Spawn particles
                     for (let i = 0; i < numParticles; i++) {
-                        // Random position above the grid
-                        const randomX = Math.random() * GRID_WIDTH;
-                        const randomY = 12 + Math.random() * 8; // Between 12 and 20 units high
-                        const randomZ = Math.random() * GRID_DEPTH;
+                        // Random position spread across entire screen area
+                        const randomX = -2 + Math.random() * (GRID_WIDTH + 4); // Spread beyond grid edges
+                        const randomY = 4 + Math.random() * 12; // Between 4 and 16 units high (lower and more spread)
+                        const randomZ = -2 + Math.random() * (GRID_DEPTH + 4); // Spread beyond grid edges
                         
                         // Randomly select one of the combo effects
                         const randomEffect = comboEffects[Math.floor(Math.random() * comboEffects.length)];

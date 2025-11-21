@@ -2,6 +2,37 @@
 
 # Changelog
 
+## v0.20.32 - Grid Effect & Color Settings Persistence (2025-11-20)
+- **Summary:**
+  - Added localStorage persistence for grid effect and color customization settings
+  - Fixed laser tube color to respect custom player color when grid effect is "None"
+  - Grid effect selection, laser line color, and floor hint color now persist across sessions
+
+- **Settings Persistence:**
+  - Added `currentGridEffect`, `floorHintColor`, `laserLineColor`, `floorHintEnabled`, `laserLineEnabled` to settings object
+  - Updated `saveSettings()` to save grid and color customization state
+  - Updated `loadSettings()` to restore grid and color settings on game load
+  - Settings automatically saved when cycling grid effects or applying color changes
+
+- **Laser Tube Color Fix:**
+  - When grid effect is "None", column tubes now use custom `laserLineColor` instead of hardcoded cyan
+  - Respects player customization from Grid Color Settings menu
+  - Only applies custom color when effect is "None" - themed effects override color
+
+- **User Experience:**
+  - Grid effect selection persists between game sessions
+  - Custom laser and floor colors saved and restored automatically
+  - Color picker settings applied immediately and saved to localStorage
+  - No need to reconfigure visual preferences on each game load
+
+- **Technical Details:**
+  - Modified `cycleGridEffect()` to call `saveSettings()`
+  - Modified `applyColorSettings()` to call `saveSettings()`
+  - Modified `applyTubeEffects()` to use `laserLineColor` when effect.name === 'None'
+  - Settings stored in localStorage under `STORAGE_KEYS.SETTINGS`
+
+---
+
 ## v0.20.31 - Grid Frame Depth Settings Fix (2025-11-20)
 - **Summary:**
   - Fixed particle effect rendering issues on floor grid
