@@ -25,13 +25,26 @@ mimetypes.add_type('image/jpeg', '.jpeg')
 class GameHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     """Custom handler with proper binary file support"""
     
+    # Increase timeout for large file transfers (videos)
+    timeout = 300  # 5 minutes instead of default 60 seconds
+    
     def end_headers(self):
         # Add CORS headers for cross-origin requests
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
-        # Disable caching for development
-        self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate')
+        
+        # Enable aggressive caching for large static assets (models, videos, audio)
+        # HTML files: no cache (for development iteration)
+        if self.path.endswith('.html'):
+            self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate')
+        # Large binary assets: cache for 24 hours (browser stores in memory/disk)
+        elif self.path.endswith(('.glb', '.gltf', '.mp4', '.mp3', '.wav', '.ogg', '.png', '.jpg', '.jpeg')):
+            self.send_header('Cache-Control', 'public, max-age=86400')  # 24 hours cache
+            self.send_header('Expires', 'Thu, 31 Dec 2026 23:59:59 GMT')  # Far future expiry
+        else:
+            self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate')
+        
         super().end_headers()
     
     def guess_type(self, path):
@@ -65,8 +78,16 @@ def main():
     # Enable address reuse to prevent "Address already in use" errors
     socketserver.TCPServer.allow_reuse_address = True
     
+    # Increase request queue size for handling multiple simultaneous video requests
+    # Safe to set high for local dev - allows browser to queue all 4 videos + assets at once
+    socketserver.TCPServer.request_queue_size = 50
+    
     try:
         httpd = socketserver.TCPServer(("0.0.0.0", PORT), GameHTTPRequestHandler)
+        
+        # Set socket timeout to prevent hanging connections
+        httpd.socket.settimeout(300)  # 5 minute socket timeout
+        
         print(f"Server successfully bound to port {PORT}")
         print(f"Server is now running and accepting connections...\n")
         httpd.serve_forever()

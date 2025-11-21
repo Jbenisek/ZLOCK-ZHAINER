@@ -1591,6 +1591,18 @@
 <body>
     <div id="overlay" onclick="closeAllPanels()"></div>
     
+    <!-- Loading Modal -->
+    <div id="loadingModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); display: flex; align-items: center; justify-content: center; z-index: 10000;">
+        <div style="background: linear-gradient(135deg, #1a2332 0%, #0d1218 100%); padding: 40px 60px; border-radius: 15px; border: 2px solid #3498DB; box-shadow: 0 10px 50px rgba(52, 152, 219, 0.5); text-align: center; min-width: 400px;">
+            <div style="font-size: 48px; margin-bottom: 20px; animation: pulse 1.5s ease-in-out infinite;">⏳</div>
+            <div style="font-size: 24px; font-weight: bold; color: #3498DB; margin-bottom: 10px;">Loading Game Assets</div>
+            <div id="loadingIndicator" style="font-size: 18px; color: #89A0B4; margin-bottom: 20px;">Initializing...</div>
+            <div style="width: 100%; height: 30px; background: rgba(52, 152, 219, 0.2); border-radius: 15px; overflow: hidden; border: 1px solid #3498DB;">
+                <div id="loadingBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #3498DB, #2ECC71); transition: width 0.3s ease; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 14px;"></div>
+            </div>
+        </div>
+    </div>
+    
     <div id="settingsPanel">
         <div class="panelTitle">SETTINGS</div>
         <div class="settingRow">
@@ -1613,7 +1625,12 @@
             <span class="settingLabel">AI Player (Testing)</span>
             <input type="checkbox" id="aiEnabled" onchange="updateSettings()">
         </div>
-        <button class="button" style="margin-top: 30px; background: #EB5757;" onclick="clearHighScores()">CLEAR HIGH SCORES<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">X</span></button>
+        <button class="button" style="margin-top: 30px; background: #F39C12;" onclick="clearGameCache()">CLEAR GAME CACHE<span style="display: inline-block; width: 26px; height: 26px; background: #E67E22; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">🗑</span></button>
+        <div style="margin: 10px 0; padding: 10px; background: rgba(243, 156, 18, 0.1); border-radius: 5px; font-size: 11px; color: #89A0B4;">
+            💡 Use this if assets fail to load or you experience visual glitches.<br>
+            This will clear all cached game files and reload the page.
+        </div>
+        <button class="button" style="margin-top: 20px; background: #EB5757;" onclick="clearHighScores()">CLEAR HIGH SCORES<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">X</span></button>
         <button class="button closeButton" onclick="closeAllPanels()" style="margin-top: 20px; width: 100%;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
     </div>
     
@@ -2400,18 +2417,18 @@
 ```        <div id="titleScreen">
             <div id="title">ZLOCK</div>
             <div id="subtitle">ZHAINER</div>
-            <button class="button" onclick="startGame()">START GAME<span style="display: inline-block; width: 26px; height: 26px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">A</span></button>
+            <button class="button" onclick="startGame()" disabled style="opacity: 0.5; cursor: not-allowed;">START GAME<span style="display: inline-block; width: 26px; height: 26px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">A</span></button>
             <button class="button" onclick="showSettings()">SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">▶</span></button>
             <button class="button" onclick="showHighScores()">HIGH SCORES<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">X</span></button>
             <button class="button" onclick="showAchievements()">ACHIEVEMENTS<span style="display: inline-block; width: 26px; height: 26px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">Y</span></button>
             <button class="aboutButton" onclick="showHowToPlay()" style="background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); border-color: #2A9D8F; bottom: 125px;">📖 HOW TO PLAY & CONTROLS<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 10px; font-weight: bold; color: white; font-size: 12px;">SELECT</span></button>
             <button class="aboutButton" onclick="showAbout()">ABOUT / DONATE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
-            <button class="preFillButton" onclick="startGameWithPreFill()">NEED MORE ACTION? PRE-FILLED GRID<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 8px; font-weight: bold; color: white; font-size: 12px;">▲</span></button>
-            <button class="skipButton" onclick="startGameAtLevel10()">BEEN HERE BEFORE? SKIP TUTORIAL <br>LEVEL 10<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 8px; font-weight: bold; color: white; font-size: 12px;">◀</span></button>
-            <button class="skipButton50" onclick="startGameAtLevel50()">ARE YOU GOOD? NORMAL MODE <br>LEVEL 50<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 8px; font-weight: bold; color: white; font-size: 12px;">▶</span></button>
-            <button class="skipButton100" onclick="startGameAtLevel100()">YOU'VE GOT THIS? EXPERT MODE<br>LEVEL 100<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 8px; font-weight: bold; color: white; font-size: 12px;">▼</span></button>
-            <button class="skipButton1000" onclick="startGameAtLevel1000()">ARE YOU LOCO? INSANE MODE<br>LEVEL 1000</button>
-            <button class="skipButton10000" onclick="startGameAtLevel10000()">WILL YOU BE MY SUPERHUMAN!<br>LEVEL 10,000</button>
+            <button class="preFillButton" onclick="startGameWithPreFill()" disabled style="opacity: 0.5; cursor: not-allowed;">NEED MORE ACTION? PRE-FILLED GRID<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 8px; font-weight: bold; color: white; font-size: 12px;">▲</span></button>
+            <button class="skipButton" onclick="startGameAtLevel10()" disabled style="opacity: 0.5; cursor: not-allowed;">BEEN HERE BEFORE? SKIP TUTORIAL <br>LEVEL 10<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 8px; font-weight: bold; color: white; font-size: 12px;">◀</span></button>
+            <button class="skipButton50" onclick="startGameAtLevel50()" disabled style="opacity: 0.5; cursor: not-allowed;">ARE YOU GOOD? NORMAL MODE <br>LEVEL 50<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 8px; font-weight: bold; color: white; font-size: 12px;">▶</span></button>
+            <button class="skipButton100" onclick="startGameAtLevel100()" disabled style="opacity: 0.5; cursor: not-allowed;">YOU'VE GOT THIS? EXPERT MODE<br>LEVEL 100<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 8px; font-weight: bold; color: white; font-size: 12px;">▼</span></button>
+            <button class="skipButton1000" onclick="startGameAtLevel1000()" disabled style="opacity: 0.5; cursor: not-allowed;">ARE YOU LOCO? INSANE MODE<br>LEVEL 1000</button>
+            <button class="skipButton10000" onclick="startGameAtLevel10000()" disabled style="opacity: 0.5; cursor: not-allowed;">WILL YOU BE MY SUPERHUMAN!<br>LEVEL 10,000</button>
             <div style="position: absolute; left: 60px; top: calc(50% + 470px); font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #89A0B4; width: 220px; text-align: center; line-height: 1.4;">
                 <strong>NOTE:</strong><br>Skipping past Level 10<br>disables most achievements
             </div>
@@ -2505,11 +2522,30 @@
         
         // Preload and cache audio files
         function preloadAudio() {
-            Object.keys(AUDIO_FILES).forEach(id => {
+            const audioKeys = Object.keys(AUDIO_FILES);
+            assetsToLoad += audioKeys.length;
+            
+            audioKeys.forEach(id => {
                 const audio = new Audio(AUDIO_FILES[id]);
                 audio.volume = masterVolume;
                 audio.preload = 'auto';
+                
+                // Track loading completion
+                audio.addEventListener('canplaythrough', () => {
+                    audioLoaded++;
+                    assetsLoaded++;
+                    updateLoadingProgress();
+                }, { once: true });
+                
+                audio.addEventListener('error', (e) => {
+                    console.warn(`Failed to load audio: ${id}`, e);
+                    audioLoaded++;
+                    assetsLoaded++;
+                    updateLoadingProgress();
+                }, { once: true });
+                
                 audioCache[id] = audio;
+                // Don't force load - preload='auto' respects browser cache
             });
         }
         
@@ -2727,6 +2763,15 @@
         let modelLoaded = false;
         let tableModel = null;
         let tableModelLoaded = false;
+        let allAssetsReady = false;
+        
+        // Asset preloading tracking
+        let assetsToLoad = 0;
+        let assetsLoaded = 0;
+        let audioLoaded = 0;
+        let videosLoaded = 0;
+        let modelsLoadedCount = 0;
+        let imagesLoaded = 0;
         
         // Zooko model and animation
         let zookoModel = null;
@@ -6094,6 +6139,12 @@
             // Preload all audio files
             preloadAudio();
             
+            // Preload all video files
+            preloadVideos();
+            
+            // Preload all image textures
+            preloadImages();
+            
             // Setup renderer
             const canvas = document.getElementById('renderCanvas');
             renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
@@ -6234,16 +6285,21 @@
             loadModelPlacements();
             
             // Preload floor animation atlases
+            assetsToLoad += 2;
             const atlasLoader = new THREE.TextureLoader();
             atlasLoader.load('effect/atlas_f.png', (texture) => {
                 texture.magFilter = THREE.LinearFilter;
                 texture.minFilter = THREE.LinearMipMapLinearFilter;
                 floorAtlasF = texture;
+                assetsLoaded++;
+                updateLoadingProgress();
             });
             atlasLoader.load('effect/atlas_g.png', (texture) => {
                 texture.magFilter = THREE.LinearFilter;
                 texture.minFilter = THREE.LinearMipMapLinearFilter;
                 floorAtlasG = texture;
+                assetsLoaded++;
+                updateLoadingProgress();
             });
             
             // ===== AI PLAYER =====
@@ -6511,6 +6567,7 @@
             
             let loadedCount = 0;
             const totalAssets = 6; // 2 OBJs (HQ + LQ) + 4 textures
+            assetsToLoad += totalAssets;
             
             const textures = {};
             let baseModelHQ = null;
@@ -6518,10 +6575,15 @@
             
             function checkAllLoaded() {
                 loadedCount++;
+                assetsLoaded++;
+                modelsLoadedCount++;
+                updateLoadingProgress();
+                
                 if (loadedCount === totalAssets) {
                     // All assets loaded - create model variants with different textures
                     createModelVariants();
                     modelLoaded = true;
+                    checkAllAssetsReady(); // Check if all assets including videos are ready
                     createCornerFeedTubes();
                 }
             }
@@ -6629,10 +6691,15 @@
         }
         
         function loadTableModel() {
+            assetsToLoad++;
             const loader = new THREE.GLTFLoader();
             loader.load(
                 'models/Zcash_GameTable_A.glb',
                 function(gltf) {
+                    assetsLoaded++;
+                    modelsLoadedCount++;
+                    updateLoadingProgress();
+                    
                     tableModel = gltf.scene;
                     tableModelLoaded = true;
                     tableModel.scale.set(10, 10, 10);
@@ -6746,10 +6813,18 @@
         }
         
         function loadZookoModel() {
+            assetsToLoad++;
             const loader = new THREE.GLTFLoader();
             loader.load(
                 'people/zooko_a.glb',
                 function(gltf) {
+                    assetsLoaded++;
+                    modelsLoadedCount++;
+                    updateLoadingProgress();
+                    assetsLoaded++;
+                    modelsLoadedCount++;
+                    updateLoadingProgress();
+                    
                     zookoModel = gltf.scene;
                     zookoLoaded = true;
                     
@@ -6825,10 +6900,18 @@
         }
         
         function loadCyberAxeModel() {
+            assetsToLoad++;
             const loader = new THREE.GLTFLoader();
             loader.load(
                 'people/cyberaxe_a.glb',
                 function(gltf) {
+                    assetsLoaded++;
+                    modelsLoadedCount++;
+                    updateLoadingProgress();
+                    assetsLoaded++;
+                    modelsLoadedCount++;
+                    updateLoadingProgress();
+                    
                     cyberAxeModel = gltf.scene;
                     cyberAxeLoaded = true;
                     
@@ -6909,10 +6992,18 @@
         }
         
         function loadZancasModel() {
+            assetsToLoad++;
             const loader = new THREE.GLTFLoader();
             loader.load(
                 'people/zancas_a.glb',
                 function(gltf) {
+                    assetsLoaded++;
+                    modelsLoadedCount++;
+                    updateLoadingProgress();
+                    assetsLoaded++;
+                    modelsLoadedCount++;
+                    updateLoadingProgress();
+                    
                     zancasModel = gltf.scene;
                     zancasLoaded = true;
                     
@@ -7273,10 +7364,18 @@
         }
         
         function loadNateModel() {
+            assetsToLoad++;
             const loader = new THREE.GLTFLoader();
             loader.load(
                 'people/nate_a.glb',
                 function(gltf) {
+                    assetsLoaded++;
+                    modelsLoadedCount++;
+                    updateLoadingProgress();
+                    assetsLoaded++;
+                    modelsLoadedCount++;
+                    updateLoadingProgress();
+                    
                     nateModel = gltf.scene;
                     nateLoaded = true;
                     
@@ -8437,7 +8536,7 @@
             },
             west: {
                 default: 'videos/wall_west.mp4',
-                variants: ['videos/wall_west_a.mp4', 'videos/wall_west_b.mp4', 'videos/wall_west_c.mp4', 'videos/wall_west_d.mp4']
+                variants: ['videos/wall_west_a.mp4', 'videos/wall_west_b.mp4', 'videos/wall_west_c.mp4']
             }
         };
 
@@ -8451,27 +8550,114 @@
 
         // Floor texture variants
         const floorTextures = [
-            'walls/floor (1).png',
-            'walls/floor (2).png',
             'walls/floor (3).png',
-            'walls/floor (4).png',
-            'walls/floor (5).png',
-            'walls/floor (6).png',
             'walls/floor (7).png',
             'walls/floor (8).png',
-            'walls/floor (9).png',
-            'walls/floor (10).png',
-            'walls/floor (1).jpg',
-            'walls/floor (2).jpg',
-            'walls/floor (3).jpg',
-            'walls/floor (4).jpg',
-            'walls/floor (5).jpg',
-            'walls/floor (6).jpg',
-            'walls/floor (7).jpg'
+            'walls/floor (9).png'
         ];
 
         // Store floor mesh reference
         let floorMesh = null;
+        
+        // Preload videos into cache
+        function preloadVideos() {
+            const videoList = [
+                ...Object.values(wallVideos.north).flat(),
+                ...Object.values(wallVideos.south).flat(),
+                ...Object.values(wallVideos.east).flat(),
+                ...Object.values(wallVideos.west).flat()
+            ];
+            
+            assetsToLoad += videoList.length;
+            
+            videoList.forEach(videoPath => {
+                const video = document.createElement('video');
+                video.src = videoPath;
+                video.preload = 'auto';
+                video.muted = true;
+                
+                video.addEventListener('canplaythrough', () => {
+                    videosLoaded++;
+                    assetsLoaded++;
+                    updateLoadingProgress();
+                }, { once: true });
+                
+                video.addEventListener('error', (e) => {
+                    console.warn(`Failed to load video: ${videoPath}`, e);
+                    videosLoaded++;
+                    assetsLoaded++;
+                    updateLoadingProgress();
+                }, { once: true });
+                
+                // Don't force load - preload='auto' respects browser cache
+            });
+        }
+        
+        // Preload image textures into cache
+        function preloadImages() {
+            const imageList = [
+                // Character head icons (UI)
+                'people/zooko_a_head_compressed.png',
+                'people/Nate_a_head_compressed.png',
+                'people/Zancas_a_head_compressed.png',
+                'people/cyberaxe_a_head_compressed.png',
+                // Sandblast icon (UI)
+                'items/sandblast_compressed.png',
+                // Donation QR code
+                'items/CyberAxeZcashWalletQR.PNG',
+                // Floor textures
+                'walls/floor (3).png',
+                'walls/floor (7).png',
+                'walls/floor (8).png',
+                'walls/floor (9).png',
+                // Chain color textures
+                'models/chain_yellow.png',
+                'models/chain_blue.png',
+                'models/chain_green.png',
+                'models/chain_red.png',
+                // Particle atlas textures
+                'effect/atlas_f.png',
+                'effect/atlas_g.png'
+            ];
+            
+            assetsToLoad += imageList.length;
+            
+            imageList.forEach(imagePath => {
+                const img = new Image();
+                img.src = imagePath;
+                
+                img.addEventListener('load', () => {
+                    assetsLoaded++;
+                    imagesLoaded++;
+                    console.log(`Image loaded: ${imagePath} (${imagesLoaded}/${imageList.length})`);
+                    updateLoadingProgress();
+                }, { once: true });
+                
+                img.addEventListener('error', (e) => {
+                    assetsLoaded++;
+                    console.error(`Failed to load image: ${imagePath}`, e);
+                    updateLoadingProgress();
+                }, { once: true });
+            });
+        }
+        
+        // Update loading progress indicator
+        function updateLoadingProgress() {
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const loadingBar = document.getElementById('loadingBar');
+            
+            if (loadingIndicator && assetsToLoad > 0) {
+                const percent = Math.floor((assetsLoaded / assetsToLoad) * 100);
+                loadingIndicator.textContent = `${percent}% Complete (${assetsLoaded}/${assetsToLoad} assets)`;
+                
+                if (loadingBar) {
+                    loadingBar.style.width = `${percent}%`;
+                    loadingBar.textContent = `${percent}%`;
+                }
+            }
+            
+            checkAllAssetsReady();
+        }
 
         function createVideoTexture(videoPath, shouldLoop = true) {
             const video = document.createElement('video');
@@ -8480,7 +8666,14 @@
             video.muted = true;
             video.autoplay = true;
             video.playsInline = true;
-            video.play();
+            
+            // Handle play promise to avoid AbortError
+            const playPromise = video.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    // Video play was interrupted, ignore
+                });
+            }
             
             const texture = new THREE.VideoTexture(video);
             texture.minFilter = THREE.LinearFilter;
@@ -8489,11 +8682,69 @@
             return { video, texture };
         }
 
+        function checkAllAssetsReady() {
+            // Only consider ready when ALL assets are loaded (models, audio, videos, images)
+            if (assetsToLoad > 0 && assetsLoaded >= assetsToLoad && !allAssetsReady) {
+                allAssetsReady = true;
+                console.log(`All assets loaded! (${assetsLoaded}/${assetsToLoad})`);
+                console.log(`- Audio: ${audioLoaded} files`);
+                console.log(`- Videos: ${videosLoaded} files`);
+                console.log(`- Models: ${modelsLoadedCount} files`);
+                console.log(`- Images: ${imagesLoaded} files`);
+                
+                // Update loading modal to show completion
+                const loadingIndicator = document.getElementById('loadingIndicator');
+                const loadingBar = document.getElementById('loadingBar');
+                const loadingModal = document.getElementById('loadingModal');
+                
+                if (loadingIndicator) {
+                    loadingIndicator.textContent = '✓ All Assets Ready!';
+                    loadingIndicator.style.color = '#2ECC71';
+                }
+                
+                if (loadingBar) {
+                    loadingBar.style.width = '100%';
+                    loadingBar.textContent = '100%';
+                    loadingBar.style.background = 'linear-gradient(90deg, #2ECC71, #27AE60)';
+                }
+                
+                // Fade out and remove loading modal after 1 second
+                if (loadingModal) {
+                    setTimeout(() => {
+                        loadingModal.style.opacity = '0';
+                        loadingModal.style.transition = 'opacity 0.5s ease';
+                        setTimeout(() => {
+                            loadingModal.style.display = 'none';
+                        }, 500);
+                    }, 1000);
+                }
+                
+                // Enable start buttons
+                const startButtons = document.querySelectorAll('.button, .preFillButton, .skipButton, .skipButton50, .skipButton100, .skipButton1000, .skipButton10000');
+                startButtons.forEach(btn => {
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    btn.style.cursor = 'pointer';
+                });
+            }
+        }
+
         function swapWallVideo(wallName) {
             const data = wallVideoData[wallName];
             const config = wallVideos[wallName];
             
             if (!data.mesh || config.variants.length === 0) return;
+            
+            // Clean up old video FIRST (before creating new one)
+            if (data.video) {
+                data.video.pause();
+                data.video.src = '';
+                data.video = null;
+            }
+            if (data.texture) {
+                data.texture.dispose();
+                data.texture = null;
+            }
             
             // Choose random variant
             const variantPath = config.variants[Math.floor(Math.random() * config.variants.length)];
@@ -8506,12 +8757,6 @@
             data.mesh.material.emissiveMap = texture;
             data.mesh.material.needsUpdate = true;
             
-            // Clean up old video
-            if (data.video) {
-                data.video.pause();
-                data.video.src = '';
-            }
-            
             // Store new video
             data.video = video;
             data.texture = texture;
@@ -8519,17 +8764,23 @@
             
             // Schedule return to default after video plays once
             video.addEventListener('ended', () => {
+                // Clean up variant video FIRST
+                if (data.video) {
+                    data.video.pause();
+                    data.video.src = '';
+                    data.video = null;
+                }
+                if (data.texture) {
+                    data.texture.dispose();
+                    data.texture = null;
+                }
+                
                 // Return to default (loop this one)
                 const { video: defaultVideo, texture: defaultTexture } = createVideoTexture(config.default, true);
                 
                 data.mesh.material.map = defaultTexture;
                 data.mesh.material.emissiveMap = defaultTexture;
                 data.mesh.material.needsUpdate = true;
-                
-                if (data.video) {
-                    data.video.pause();
-                    data.video.src = '';
-                }
                 
                 data.video = defaultVideo;
                 data.texture = defaultTexture;
@@ -8602,7 +8853,7 @@
             const roomFloorOffset = -8; // Move room floor down to -8
             
             // North Wall (Blue) - video texture
-            const northVideoData = createVideoTexture(wallVideos.north.default);
+            const northVideoData = createVideoTexture(wallVideos.north.default, true);
             wallVideoData.north.video = northVideoData.video;
             wallVideoData.north.texture = northVideoData.texture;
             
@@ -8622,7 +8873,7 @@
             wallVideoData.north.mesh = northWall;
             
             // South Wall (Red) - video texture
-            const southVideoData = createVideoTexture(wallVideos.south.default);
+            const southVideoData = createVideoTexture(wallVideos.south.default, true);
             wallVideoData.south.video = southVideoData.video;
             wallVideoData.south.texture = southVideoData.texture;
             
@@ -8642,7 +8893,7 @@
             wallVideoData.south.mesh = southWall;
             
             // East Wall (Green) - video texture
-            const eastVideoData = createVideoTexture(wallVideos.east.default);
+            const eastVideoData = createVideoTexture(wallVideos.east.default, true);
             wallVideoData.east.video = eastVideoData.video;
             wallVideoData.east.texture = eastVideoData.texture;
             
@@ -8662,7 +8913,7 @@
             wallVideoData.east.mesh = eastWall;
             
             // West Wall (Yellow) - video texture
-            const westVideoData = createVideoTexture(wallVideos.west.default);
+            const westVideoData = createVideoTexture(wallVideos.west.default, true);
             wallVideoData.west.video = westVideoData.video;
             wallVideoData.west.texture = westVideoData.texture;
             
@@ -8973,7 +9224,20 @@
         }
         
         function startGame(startingLevel = 1, preFillGrid = false) {
-            if (!modelLoaded) return;
+            if (!allAssetsReady) {
+                console.warn('Models still loading... Please wait.');
+                // Show visual feedback
+                const titleScreen = document.getElementById('titleScreen');
+                if (titleScreen && !titleScreen.querySelector('.loadingMessage')) {
+                    const msg = document.createElement('div');
+                    msg.className = 'loadingMessage';
+                    msg.style.cssText = 'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(231, 76, 60, 0.9); color: white; padding: 20px 40px; border-radius: 10px; font-size: 18px; font-weight: bold; z-index: 10000;';
+                    msg.textContent = `Loading models... Please wait.`;
+                    titleScreen.appendChild(msg);
+                    setTimeout(() => msg.remove(), 2000);
+                }
+                return;
+            }
             
             // Clear the grid and remove all existing blocks
             for (let x = 0; x < GRID_WIDTH; x++) {
@@ -9263,6 +9527,24 @@
             }
             
             saveSettings();
+        }
+        
+        function clearGameCache() {
+            if (confirm('Clear all cached game assets and reload the page?\n\nThis will fix loading issues but requires re-downloading all assets (videos, audio, models).')) {
+                // Clear browser cache for this page using Cache API
+                if ('caches' in window) {
+                    caches.keys().then(function(names) {
+                        for (let name of names) {
+                            caches.delete(name);
+                        }
+                    });
+                }
+                
+                // Force reload from server (bypass cache)
+                setTimeout(() => {
+                    window.location.reload(true);
+                }, 500);
+            }
         }
         
         function clearHighScores() {
