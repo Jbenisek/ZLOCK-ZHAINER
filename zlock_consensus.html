@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.48</title>
+    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.46</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -2769,6 +2769,7 @@
         let assetsToLoad = 0;
         let assetsLoaded = 0;
         let audioLoaded = 0;
+        let videosLoaded = 0;
         let modelsLoadedCount = 0;
         let imagesLoaded = 0;
         
@@ -6138,9 +6139,6 @@
             // Preload all audio files
             preloadAudio();
             
-            // Preload all video files
-            preloadVideos();
-            
             // Preload all image textures
             preloadImages();
             
@@ -8513,20 +8511,32 @@
             animateRing();
         }
         
-        // Wall video configuration - single default video per wall
+        // Wall video configuration
         const wallVideos = {
-            north: 'videos/wall_north.mp4',
-            south: 'videos/wall_south.mp4',
-            east: 'videos/wall_east.mp4',
-            west: 'videos/wall_west.mp4'
+            north: {
+                default: 'videos/wall_north.mp4',
+                variants: ['videos/wall_north_a.mp4', 'videos/wall_north_b.mp4']
+            },
+            south: {
+                default: 'videos/wall_south.mp4',
+                variants: ['videos/wall_south_a.mp4']
+            },
+            east: {
+                default: 'videos/wall_east.mp4',
+                variants: ['videos/wall_east_open_a.mp4', 'videos/wall_east_open_b.mp4', 'videos/wall_east_open_c.mp4', 'videos/wall_east_open_d.mp4', 'videos/wall_east_open_e.mp4']
+            },
+            west: {
+                default: 'videos/wall_west.mp4',
+                variants: ['videos/wall_west_a.mp4', 'videos/wall_west_b.mp4', 'videos/wall_west_c.mp4']
+            }
         };
 
         // Store wall video elements and data
         const wallVideoData = {
-            north: { video: null, texture: null, mesh: null },
-            south: { video: null, texture: null, mesh: null },
-            east: { video: null, texture: null, mesh: null },
-            west: { video: null, texture: null, mesh: null }
+            north: { video: null, texture: null, mesh: null, currentVariant: false, variantCache: [] },
+            south: { video: null, texture: null, mesh: null, currentVariant: false, variantCache: [] },
+            east: { video: null, texture: null, mesh: null, currentVariant: false, variantCache: [] },
+            west: { video: null, texture: null, mesh: null, currentVariant: false, variantCache: [] }
         };
 
         // Floor texture variants
@@ -8539,31 +8549,7 @@
 
         // Store floor mesh reference
         let floorMesh = null;
-        
-        // Preload videos into cache
-        function preloadVideos() {
-            const videoList = Object.values(wallVideos);
-            
-            assetsToLoad += videoList.length;
-            
-            videoList.forEach(videoPath => {
-                const video = document.createElement('video');
-                video.src = videoPath;
-                video.preload = 'auto';
-                video.muted = true;
-                
-                video.addEventListener('canplaythrough', () => {
-                    assetsLoaded++;
-                    updateLoadingProgress();
-                }, { once: true });
-                
-                video.addEventListener('error', (e) => {
-                    console.warn(`Failed to load video: ${videoPath}`, e);
-                    assetsLoaded++;
-                    updateLoadingProgress();
-                }, { once: true });
-            });
-        }
+
         
         // Preload image textures into cache
         function preloadImages() {
@@ -8636,19 +8622,21 @@
             video.loop = shouldLoop;
             video.muted = true;
             video.playsInline = true;
-            video.preload = 'auto';
             video.crossOrigin = 'anonymous';
-            // Don't autoplay - browsers block it. Start manually after user interaction.
+            video.autoplay = true;
+            video.load();
             
             const texture = new THREE.VideoTexture(video);
             texture.minFilter = THREE.LinearFilter;
             texture.magFilter = THREE.LinearFilter;
-            texture.format = THREE.RGBFormat;
             
             return { video, texture };
         }
         
-
+        function startAllWallVideos() {
+            // Old system (if still exists)
+            if (wallVideoData.east.video) wallVideoData.east.video.play();
+        }
 
         function checkAllAssetsReady() {
             // Only consider ready when ALL assets are loaded (models, audio, videos, images)
@@ -8692,7 +8680,15 @@
             }
         }
 
+        function swapWallVideo(wallName) {
+            // DISABLED - no video swapping/recycling
+            return;
+        }
 
+        function startWallVariantSwapping() {
+            // DISABLED - no timers, no video recycling
+            return;
+        }
 
         function swapFloorTexture() {
             if (!floorMesh) return;
@@ -8735,85 +8731,57 @@
             const wallThickness = 0.5;
             const roomFloorOffset = -8; // Move room floor down to -8
             
-            // North Wall (Blue) - video texture
-            const northVideoData = createVideoTexture(wallVideos.north, true);
-            wallVideoData.north.video = northVideoData.video;
-            wallVideoData.north.texture = northVideoData.texture;
-            
+            // North Wall - wall_n.png texture
+            const northTexture = new THREE.TextureLoader().load('walls/wall_n.png');
             const northWall = new THREE.Mesh(
                 new THREE.BoxGeometry(roomWidth, wallHeight, wallThickness),
                 new THREE.MeshPhongMaterial({ 
-                    map: northVideoData.texture,
-                    emissiveMap: northVideoData.texture,
-                    emissive: 0xffffff,
-                    emissiveIntensity: 0.5,
+                    map: northTexture,
                     side: THREE.DoubleSide 
                 })
             );
             northWall.position.set(GRID_WIDTH / 2, roomFloorOffset + wallHeight / 2, GRID_DEPTH + wallDistance);
             scene.add(northWall);
             roomWalls.push(northWall);
-            wallVideoData.north.mesh = northWall;
             
-            // South Wall (Red) - video texture
-            const southVideoData = createVideoTexture(wallVideos.south, true);
-            wallVideoData.south.video = southVideoData.video;
-            wallVideoData.south.texture = southVideoData.texture;
-            
+            // South Wall - wall_s.png texture
+            const southTexture = new THREE.TextureLoader().load('walls/wall_s.png');
             const southWall = new THREE.Mesh(
                 new THREE.BoxGeometry(roomWidth, wallHeight, wallThickness),
                 new THREE.MeshPhongMaterial({ 
-                    map: southVideoData.texture,
-                    emissiveMap: southVideoData.texture,
-                    emissive: 0xffffff,
-                    emissiveIntensity: 0.5,
+                    map: southTexture,
                     side: THREE.DoubleSide 
                 })
             );
             southWall.position.set(GRID_WIDTH / 2, roomFloorOffset + wallHeight / 2, -wallDistance);
             scene.add(southWall);
             roomWalls.push(southWall);
-            wallVideoData.south.mesh = southWall;
             
-            // East Wall (Green) - video texture
-            const eastVideoData = createVideoTexture(wallVideos.east, true);
-            wallVideoData.east.video = eastVideoData.video;
-            wallVideoData.east.texture = eastVideoData.texture;
-            
+            // East Wall - wall_e.png texture
+            const eastTexture = new THREE.TextureLoader().load('walls/wall_e.png');
             const eastWall = new THREE.Mesh(
                 new THREE.BoxGeometry(wallThickness, wallHeight, roomDepth),
                 new THREE.MeshPhongMaterial({ 
-                    map: eastVideoData.texture,
-                    emissiveMap: eastVideoData.texture,
-                    emissive: 0xffffff,
-                    emissiveIntensity: 0.5,
+                    map: eastTexture,
                     side: THREE.DoubleSide 
                 })
             );
             eastWall.position.set(GRID_WIDTH + wallDistance, roomFloorOffset + wallHeight / 2, GRID_DEPTH / 2);
             scene.add(eastWall);
             roomWalls.push(eastWall);
-            wallVideoData.east.mesh = eastWall;
             
-            // West Wall (Yellow) - video texture
-            const westVideoData = createVideoTexture(wallVideos.west, true);
-            wallVideoData.west.video = westVideoData.video;
-            wallVideoData.west.texture = westVideoData.texture;
-            
+            // West Wall - wall_w.png texture
+            const westTexture = new THREE.TextureLoader().load('walls/wall_w.png');
             const westWall = new THREE.Mesh(
                 new THREE.BoxGeometry(wallThickness, wallHeight, roomDepth),
                 new THREE.MeshPhongMaterial({ 
-                    map: westVideoData.texture,
-                    emissiveMap: westVideoData.texture,
-                    emissive: 0xffffff,
-                    emissiveIntensity: 0.5,
+                    map: westTexture,
                     side: THREE.DoubleSide 
                 })
             );
             westWall.position.set(-wallDistance, roomFloorOffset + wallHeight / 2, GRID_DEPTH / 2);
             scene.add(westWall);
             roomWalls.push(westWall);
-            wallVideoData.west.mesh = westWall;
             
             // Floor (Dark Gray) - pick random floor texture to start
             const initialFloor = floorTextures[Math.floor(Math.random() * floorTextures.length)];
@@ -9196,14 +9164,12 @@
                 }
             });
             
-            // Restart floor swapping system (it was killed by timeout clearing)
+            // Restart wall and floor swapping systems (they were killed by timeout clearing)
+            startWallVariantSwapping();
             startFloorSwapping();
             
-            // Ensure wall videos are playing (in case they were paused)
-            if (wallVideoData.north.video && wallVideoData.north.video.paused) wallVideoData.north.video.play().catch(e => {});
-            if (wallVideoData.south.video && wallVideoData.south.video.paused) wallVideoData.south.video.play().catch(e => {});
-            if (wallVideoData.east.video && wallVideoData.east.video.paused) wallVideoData.east.video.play().catch(e => {});
-            if (wallVideoData.west.video && wallVideoData.west.video.paused) wallVideoData.west.video.play().catch(e => {});
+            // Start wall videos playing (after user interaction)
+            startAllWallVideos();
             
             // Reset floor cell animations
             floorAnimationTime = 0;
@@ -12713,7 +12679,13 @@
             }
             
             // Update LED pulse effect on walls
-            updateLEDPulse();
+            // updateLEDPulse();
+            
+            // Update video textures
+            if (wallVideoData.north.texture) wallVideoData.north.texture.needsUpdate = true;
+            if (wallVideoData.south.texture) wallVideoData.south.texture.needsUpdate = true;
+            if (wallVideoData.east.texture) wallVideoData.east.texture.needsUpdate = true;
+            if (wallVideoData.west.texture) wallVideoData.west.texture.needsUpdate = true;
             
             // TEST: Loop particle effect
             // testParticleTimer += deltaTime * 1000;

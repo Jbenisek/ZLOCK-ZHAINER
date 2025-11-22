@@ -8,6 +8,8 @@ import http.server
 import socketserver
 import mimetypes
 import sys
+import os
+import re
 
 PORT = 4243
 
@@ -18,6 +20,7 @@ mimetypes.add_type('application/json', '.json')
 mimetypes.add_type('audio/mpeg', '.mp3')
 mimetypes.add_type('audio/wav', '.wav')
 mimetypes.add_type('audio/ogg', '.ogg')
+mimetypes.add_type('video/mp4', '.mp4')
 mimetypes.add_type('image/png', '.png')
 mimetypes.add_type('image/jpeg', '.jpg')
 mimetypes.add_type('image/jpeg', '.jpeg')
@@ -54,8 +57,81 @@ class GameHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         # Force binary for GLB files
         if path.endswith('.glb'):
             return 'model/gltf-binary'
+        # Force video/mp4 for MP4 files
+        elif path.endswith('.mp4'):
+            return 'video/mp4'
         
         return mimetype or 'application/octet-stream'
+    
+    def do_GET(self):
+        """Override to handle Range requests for video streaming"""
+        # Check if this is a video file request
+        if self.path.endswith('.mp4'):
+            return self.send_video_range()
+        else:
+            return super().do_GET()
+    
+    def send_video_range(self):
+        """Handle HTTP Range requests for video streaming"""
+        path = self.translate_path(self.path)
+        
+        try:
+            f = open(path, 'rb')
+        except OSError:
+            self.send_error(404, "File not found")
+            return None
+        
+        try:
+            fs = os.fstat(f.fileno())
+            file_len = fs.st_size
+            
+            # Check for Range header
+            range_header = self.headers.get('Range')
+            
+            if range_header:
+                # Parse range header
+                match = re.search(r'bytes=(\d+)-(\d*)', range_header)
+                if match:
+                    start = int(match.group(1))
+                    end = int(match.group(2)) if match.group(2) else file_len - 1
+                    
+                    # Validate range
+                    if start >= file_len:
+                        self.send_error(416, "Range Not Satisfiable")
+                        return None
+                    
+                    # Clamp end
+                    end = min(end, file_len - 1)
+                    content_len = end - start + 1
+                    
+                    # Send 206 Partial Content
+                    self.send_response(206)
+                    self.send_header('Content-type', 'video/mp4')
+                    self.send_header('Content-Range', f'bytes {start}-{end}/{file_len}')
+                    self.send_header('Content-Length', str(content_len))
+                    self.send_header('Accept-Ranges', 'bytes')
+                    self.end_headers()
+                    
+                    # Send partial content
+                    f.seek(start)
+                    self.wfile.write(f.read(content_len))
+                else:
+                    # Invalid range format, send full file
+                    self.send_full_video(f, file_len)
+            else:
+                # No range header, send full file
+                self.send_full_video(f, file_len)
+        finally:
+            f.close()
+    
+    def send_full_video(self, f, file_len):
+        """Send complete video file"""
+        self.send_response(200)
+        self.send_header('Content-type', 'video/mp4')
+        self.send_header('Content-Length', str(file_len))
+        self.send_header('Accept-Ranges', 'bytes')
+        self.end_headers()
+        self.wfile.write(f.read())
     
     def handle(self):
         """Override to catch BrokenPipeError from client disconnects"""
