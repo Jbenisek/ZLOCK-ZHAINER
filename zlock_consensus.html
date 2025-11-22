@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.47</title>
+    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.48</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -2769,7 +2769,6 @@
         let assetsToLoad = 0;
         let assetsLoaded = 0;
         let audioLoaded = 0;
-        let videosLoaded = 0;
         let modelsLoadedCount = 0;
         let imagesLoaded = 0;
         
@@ -8514,32 +8513,20 @@
             animateRing();
         }
         
-        // Wall video configuration
+        // Wall video configuration - single default video per wall
         const wallVideos = {
-            north: {
-                default: 'videos/wall_north.mp4',
-                variants: ['videos/wall_north_a.mp4', 'videos/wall_north_b.mp4']
-            },
-            south: {
-                default: 'videos/wall_south.mp4',
-                variants: ['videos/wall_south_a.mp4']
-            },
-            east: {
-                default: 'videos/wall_east.mp4',
-                variants: ['videos/wall_east_open_a.mp4', 'videos/wall_east_open_b.mp4', 'videos/wall_east_open_c.mp4', 'videos/wall_east_open_d.mp4', 'videos/wall_east_open_e.mp4']
-            },
-            west: {
-                default: 'videos/wall_west.mp4',
-                variants: ['videos/wall_west_a.mp4', 'videos/wall_west_b.mp4', 'videos/wall_west_c.mp4']
-            }
+            north: 'videos/wall_north.mp4',
+            south: 'videos/wall_south.mp4',
+            east: 'videos/wall_east.mp4',
+            west: 'videos/wall_west.mp4'
         };
 
         // Store wall video elements and data
         const wallVideoData = {
-            north: { video: null, texture: null, mesh: null, currentVariant: false, variantCache: [] },
-            south: { video: null, texture: null, mesh: null, currentVariant: false, variantCache: [] },
-            east: { video: null, texture: null, mesh: null, currentVariant: false, variantCache: [] },
-            west: { video: null, texture: null, mesh: null, currentVariant: false, variantCache: [] }
+            north: { video: null, texture: null, mesh: null },
+            south: { video: null, texture: null, mesh: null },
+            east: { video: null, texture: null, mesh: null },
+            west: { video: null, texture: null, mesh: null }
         };
 
         // Floor texture variants
@@ -8553,14 +8540,9 @@
         // Store floor mesh reference
         let floorMesh = null;
         
-        // Preload videos into cache AND create variant video/texture pairs
+        // Preload videos into cache
         function preloadVideos() {
-            const videoList = [
-                ...Object.values(wallVideos.north).flat(),
-                ...Object.values(wallVideos.south).flat(),
-                ...Object.values(wallVideos.east).flat(),
-                ...Object.values(wallVideos.west).flat()
-            ];
+            const videoList = Object.values(wallVideos);
             
             assetsToLoad += videoList.length;
             
@@ -8571,28 +8553,15 @@
                 video.muted = true;
                 
                 video.addEventListener('canplaythrough', () => {
-                    videosLoaded++;
                     assetsLoaded++;
                     updateLoadingProgress();
                 }, { once: true });
                 
                 video.addEventListener('error', (e) => {
                     console.warn(`Failed to load video: ${videoPath}`, e);
-                    videosLoaded++;
                     assetsLoaded++;
                     updateLoadingProgress();
                 }, { once: true });
-                
-                // Don't force load - preload='auto' respects browser cache
-            });
-            
-            // Create cached variant video/texture pairs for instant swapping
-            Object.keys(wallVideos).forEach(wallName => {
-                const config = wallVideos[wallName];
-                config.variants.forEach(variantPath => {
-                    const { video: variantVideo, texture: variantTexture } = createVideoTexture(variantPath, false);
-                    wallVideoData[wallName].variantCache.push({ video: variantVideo, texture: variantTexture, path: variantPath });
-                });
             });
         }
         
@@ -8679,21 +8648,7 @@
             return { video, texture };
         }
         
-        function startAllWallVideos() {
-            // Start all wall videos after user interaction (clicking Start Game)
-            if (wallVideoData.north.video) {
-                wallVideoData.north.video.play().catch(e => console.warn('North video play failed:', e));
-            }
-            if (wallVideoData.south.video) {
-                wallVideoData.south.video.play().catch(e => console.warn('South video play failed:', e));
-            }
-            if (wallVideoData.east.video) {
-                wallVideoData.east.video.play().catch(e => console.warn('East video play failed:', e));
-            }
-            if (wallVideoData.west.video) {
-                wallVideoData.west.video.play().catch(e => console.warn('West video play failed:', e));
-            }
-        }
+
 
         function checkAllAssetsReady() {
             // Only consider ready when ALL assets are loaded (models, audio, videos, images)
@@ -8737,81 +8692,7 @@
             }
         }
 
-        function swapWallVideo(wallName) {
-            const data = wallVideoData[wallName];
-            const config = wallVideos[wallName];
-            
-            if (!data.mesh || data.variantCache.length === 0) return;
-            if (data.currentVariant) return; // Already playing variant, don't interrupt
-            
-            // Store the original default video/texture to reuse later
-            const originalDefaultVideo = data.video;
-            const originalDefaultTexture = data.texture;
-            
-            // Choose random variant from CACHE (instant, no loading delay!)
-            const randomVariant = data.variantCache[Math.floor(Math.random() * data.variantCache.length)];
-            const variantVideo = randomVariant.video;
-            const variantTexture = randomVariant.texture;
-            
-            // Reset variant video to start (it may have been played before)
-            variantVideo.currentTime = 0;
-            
-            // Update material INSTANTLY (no loading = no flash)
-            data.mesh.material.map = variantTexture;
-            data.mesh.material.emissiveMap = variantTexture;
-            data.mesh.material.needsUpdate = true;
-            
-            // Track current state
-            data.currentVariant = true;
-            
-            // Start playing the variant video
-            variantVideo.play().catch(e => console.warn('Variant video play failed:', e));
-            
-            // Schedule return to default after video plays once
-            const onEnded = () => {
-                // Stop the variant video
-                variantVideo.pause();
-                variantVideo.currentTime = 0; // Reset for next use
-                
-                // Restore original default video/texture (instant!)
-                data.mesh.material.map = originalDefaultTexture;
-                data.mesh.material.emissiveMap = originalDefaultTexture;
-                data.mesh.material.needsUpdate = true;
-                
-                data.currentVariant = false;
-                
-                // Resume playing the original default video
-                originalDefaultVideo.play().catch(e => console.warn('Default video play failed:', e));
-                
-                // Remove this specific listener
-                variantVideo.removeEventListener('ended', onEnded);
-            };
-            
-            variantVideo.addEventListener('ended', onEnded);
-        }
 
-        function startWallVariantSwapping() {
-            // Randomly swap wall variants every 30 seconds (testing)
-            const scheduleNextSwap = () => {
-                const delay = 30000; // 30 seconds for testing
-                
-                setTimeout(() => {
-                    // Pick a random wall that's not currently showing a variant
-                    const availableWalls = Object.keys(wallVideoData).filter(
-                        wallName => !wallVideoData[wallName].currentVariant && wallVideos[wallName].variants.length > 0
-                    );
-                    
-                    if (availableWalls.length > 0) {
-                        const randomWall = availableWalls[Math.floor(Math.random() * availableWalls.length)];
-                        swapWallVideo(randomWall);
-                    }
-                    
-                    scheduleNextSwap();
-                }, delay);
-            };
-            
-            scheduleNextSwap();
-        }
 
         function swapFloorTexture() {
             if (!floorMesh) return;
@@ -8855,7 +8736,7 @@
             const roomFloorOffset = -8; // Move room floor down to -8
             
             // North Wall (Blue) - video texture
-            const northVideoData = createVideoTexture(wallVideos.north.default, true);
+            const northVideoData = createVideoTexture(wallVideos.north, true);
             wallVideoData.north.video = northVideoData.video;
             wallVideoData.north.texture = northVideoData.texture;
             
@@ -8875,7 +8756,7 @@
             wallVideoData.north.mesh = northWall;
             
             // South Wall (Red) - video texture
-            const southVideoData = createVideoTexture(wallVideos.south.default, true);
+            const southVideoData = createVideoTexture(wallVideos.south, true);
             wallVideoData.south.video = southVideoData.video;
             wallVideoData.south.texture = southVideoData.texture;
             
@@ -8895,7 +8776,7 @@
             wallVideoData.south.mesh = southWall;
             
             // East Wall (Green) - video texture
-            const eastVideoData = createVideoTexture(wallVideos.east.default, true);
+            const eastVideoData = createVideoTexture(wallVideos.east, true);
             wallVideoData.east.video = eastVideoData.video;
             wallVideoData.east.texture = eastVideoData.texture;
             
@@ -8915,7 +8796,7 @@
             wallVideoData.east.mesh = eastWall;
             
             // West Wall (Yellow) - video texture
-            const westVideoData = createVideoTexture(wallVideos.west.default, true);
+            const westVideoData = createVideoTexture(wallVideos.west, true);
             wallVideoData.west.video = westVideoData.video;
             wallVideoData.west.texture = westVideoData.texture;
             
@@ -9315,12 +9196,14 @@
                 }
             });
             
-            // Restart wall and floor swapping systems (they were killed by timeout clearing)
-            startWallVariantSwapping();
+            // Restart floor swapping system (it was killed by timeout clearing)
             startFloorSwapping();
             
-            // Start wall videos playing (after user interaction)
-            startAllWallVideos();
+            // Ensure wall videos are playing (in case they were paused)
+            if (wallVideoData.north.video && wallVideoData.north.video.paused) wallVideoData.north.video.play().catch(e => {});
+            if (wallVideoData.south.video && wallVideoData.south.video.paused) wallVideoData.south.video.play().catch(e => {});
+            if (wallVideoData.east.video && wallVideoData.east.video.paused) wallVideoData.east.video.play().catch(e => {});
+            if (wallVideoData.west.video && wallVideoData.west.video.paused) wallVideoData.west.video.play().catch(e => {});
             
             // Reset floor cell animations
             floorAnimationTime = 0;

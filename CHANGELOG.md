@@ -2,6 +2,20 @@
 
 # Changelog
 
+## v0.20.48 - Unused Variable Cleanup (2025-11-21)
+- **Summary:**
+  - Removed unused `videosLoaded` variable declaration
+  - Code cleanup following wall video system simplification
+
+- **Changes:**
+  - Deleted `videosLoaded` variable (line 2772) - no longer needed after removing video variant system
+  - Video loading now uses unified `assetsLoaded` counter only
+
+- **Benefits:**
+  - **Cleaner Code:** No dead variables in codebase
+  - **Clarity:** Simpler asset tracking logic
+  - **Consistency:** All assets use single counter
+
 ## v0.20.47 - Debug Console Cleanup (2025-11-21)
 - **Summary:**
   - Removed all console.log debug statements from production code
