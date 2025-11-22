@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.45</title>
+    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.47</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -8536,10 +8536,10 @@
 
         // Store wall video elements and data
         const wallVideoData = {
-            north: { video: null, texture: null, mesh: null, currentVariant: false },
-            south: { video: null, texture: null, mesh: null, currentVariant: false },
-            east: { video: null, texture: null, mesh: null, currentVariant: false },
-            west: { video: null, texture: null, mesh: null, currentVariant: false }
+            north: { video: null, texture: null, mesh: null, currentVariant: false, variantCache: [] },
+            south: { video: null, texture: null, mesh: null, currentVariant: false, variantCache: [] },
+            east: { video: null, texture: null, mesh: null, currentVariant: false, variantCache: [] },
+            west: { video: null, texture: null, mesh: null, currentVariant: false, variantCache: [] }
         };
 
         // Floor texture variants
@@ -8553,7 +8553,7 @@
         // Store floor mesh reference
         let floorMesh = null;
         
-        // Preload videos into cache
+        // Preload videos into cache AND create variant video/texture pairs
         function preloadVideos() {
             const videoList = [
                 ...Object.values(wallVideos.north).flat(),
@@ -8584,6 +8584,15 @@
                 }, { once: true });
                 
                 // Don't force load - preload='auto' respects browser cache
+            });
+            
+            // Create cached variant video/texture pairs for instant swapping
+            Object.keys(wallVideos).forEach(wallName => {
+                const config = wallVideos[wallName];
+                config.variants.forEach(variantPath => {
+                    const { video: variantVideo, texture: variantTexture } = createVideoTexture(variantPath, false);
+                    wallVideoData[wallName].variantCache.push({ video: variantVideo, texture: variantTexture, path: variantPath });
+                });
             });
         }
         
@@ -8623,7 +8632,6 @@
                 img.addEventListener('load', () => {
                     assetsLoaded++;
                     imagesLoaded++;
-                    console.log(`Image loaded: ${imagePath} (${imagesLoaded}/${imageList.length})`);
                     updateLoadingProgress();
                 }, { once: true });
                 
@@ -8691,11 +8699,6 @@
             // Only consider ready when ALL assets are loaded (models, audio, videos, images)
             if (assetsToLoad > 0 && assetsLoaded >= assetsToLoad && !allAssetsReady) {
                 allAssetsReady = true;
-                console.log(`All assets loaded! (${assetsLoaded}/${assetsToLoad})`);
-                console.log(`- Audio: ${audioLoaded} files`);
-                console.log(`- Videos: ${videosLoaded} files`);
-                console.log(`- Models: ${modelsLoadedCount} files`);
-                console.log(`- Images: ${imagesLoaded} files`);
                 
                 // Update loading modal to show completion
                 const loadingIndicator = document.getElementById('loadingIndicator');
@@ -8738,52 +8741,53 @@
             const data = wallVideoData[wallName];
             const config = wallVideos[wallName];
             
-            if (!data.mesh || config.variants.length === 0) return;
+            if (!data.mesh || data.variantCache.length === 0) return;
             if (data.currentVariant) return; // Already playing variant, don't interrupt
             
             // Store the original default video/texture to reuse later
             const originalDefaultVideo = data.video;
             const originalDefaultTexture = data.texture;
             
-            // Choose random variant
-            const variantPath = config.variants[Math.floor(Math.random() * config.variants.length)];
+            // Choose random variant from CACHE (instant, no loading delay!)
+            const randomVariant = data.variantCache[Math.floor(Math.random() * data.variantCache.length)];
+            const variantVideo = randomVariant.video;
+            const variantTexture = randomVariant.texture;
             
-            // Create new video texture (DON'T loop - play once then return to default)
-            const { video: variantVideo, texture: variantTexture } = createVideoTexture(variantPath, false);
+            // Reset variant video to start (it may have been played before)
+            variantVideo.currentTime = 0;
             
-            // Update material
+            // Update material INSTANTLY (no loading = no flash)
             data.mesh.material.map = variantTexture;
             data.mesh.material.emissiveMap = variantTexture;
             data.mesh.material.needsUpdate = true;
             
-            // Store variant video
-            data.video = variantVideo;
-            data.texture = variantTexture;
+            // Track current state
             data.currentVariant = true;
             
             // Start playing the variant video
             variantVideo.play().catch(e => console.warn('Variant video play failed:', e));
             
             // Schedule return to default after video plays once
-            variantVideo.addEventListener('ended', () => {
-                // Clean up variant video properly
+            const onEnded = () => {
+                // Stop the variant video
                 variantVideo.pause();
-                variantVideo.removeAttribute('src');
-                variantVideo.load(); // Force release of video resources
-                variantTexture.dispose();
+                variantVideo.currentTime = 0; // Reset for next use
                 
-                // Restore original default video/texture (no new allocation!)
+                // Restore original default video/texture (instant!)
                 data.mesh.material.map = originalDefaultTexture;
                 data.mesh.material.emissiveMap = originalDefaultTexture;
                 data.mesh.material.needsUpdate = true;
                 
-                data.video = originalDefaultVideo;
-                data.texture = originalDefaultTexture;
                 data.currentVariant = false;
                 
                 // Resume playing the original default video
                 originalDefaultVideo.play().catch(e => console.warn('Default video play failed:', e));
-            }, { once: true });
+                
+                // Remove this specific listener
+                variantVideo.removeEventListener('ended', onEnded);
+            };
+            
+            variantVideo.addEventListener('ended', onEnded);
         }
 
         function startWallVariantSwapping() {
@@ -8791,7 +8795,7 @@
             const scheduleNextSwap = () => {
                 const delay = 30000; // 30 seconds for testing
                 
-                trackedSetTimeout(() => {
+                setTimeout(() => {
                     // Pick a random wall that's not currently showing a variant
                     const availableWalls = Object.keys(wallVideoData).filter(
                         wallName => !wallVideoData[wallName].currentVariant && wallVideos[wallName].variants.length > 0
@@ -9552,7 +9556,6 @@
             localStorage.removeItem(STORAGE_KEYS.HIGH_SCORES);
             localStorage.removeItem(STORAGE_KEYS.GAME_HISTORY);
             highScores = [];
-            console.log('High scores and game history cleared!');
             
             // Show brief notification
             const bonusMsg = document.getElementById('bonusMessage');
@@ -9911,8 +9914,6 @@
             if (currentState === GameState.PAUSED) {
                 currentState = GameState.PLAYING;
             }
-            
-            console.log('All hints skipped');
         }
         
         function pauseGame() {
@@ -10238,7 +10239,6 @@
         function onGamepadConnected(e) {
             gamepadConnected = true;
             gamepadIndex = e.gamepad.index;
-            console.log(`🎮 Gamepad connected: ${e.gamepad.id}`);
             
             // Show notification to user
             if (typeof showNotification === 'function') {
@@ -10251,7 +10251,6 @@
                 gamepadConnected = false;
                 gamepadIndex = null;
                 gamepadButtonStates = {};
-                console.log('🎮 Gamepad disconnected');
                 
                 if (typeof showNotification === 'function') {
                     showNotification('🎮 Controller Disconnected', 2000);

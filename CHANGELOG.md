@@ -2,11 +2,74 @@
 
 # Changelog
 
+## v0.20.47 - Debug Console Cleanup (2025-11-21)
+- **Summary:**
+  - Removed all console.log debug statements from production code
+  - Cleaner browser console output
+  - Improved code professionalism
+
+- **Console Logs Removed (5 total):**
+  - `preloadImages()` - Image loading progress log
+  - `clearHighScores()` - High scores cleared confirmation
+  - `skipAllHints()` - Hints skipped confirmation
+  - `onGamepadConnected()` - Gamepad connection log
+  - `onGamepadDisconnected()` - Gamepad disconnection log
+
+- **Console Warnings Retained:**
+  - Video playback errors (console.warn) - kept for debugging video issues
+  - Asset loading errors (console.error) - kept for debugging missing files
+
+- **Benefits:**
+  - **Professional:** No debug spam in production
+  - **Performance:** Slightly faster execution (no string formatting)
+  - **Clean Console:** Only errors and warnings visible to users
+  - **Maintainability:** Clearer separation between debug and production code
+
+## v0.20.46 - Video Wall System Removal (2025-11-21)
+- **Summary:**
+  - Removed broken video wall system entirely
+  - Restored original PNG wall textures
+  - Simplified codebase by eliminating ~200+ lines of video management code
+  - Improved reliability and browser compatibility
+
+- **Breaking Changes:**
+  - **Video System Removed:** Deleted all wall video functionality
+  - **Texture Restoration:** Reverted to static PNG wall textures (wall_n.png, wall_s.png, wall_e.png, wall_w.png)
+  - **Asset Cleanup:** Removed 12 MP4 wall video files from asset loading pipeline
+
+- **Code Removed:**
+  - **Configuration Objects:** `wallVideos` and `wallVideoData` (video path and runtime state storage)
+  - **Functions Deleted (6 total):**
+    - `preloadVideos()` - Video asset preloading (~45 lines)
+    - `createVideoTexture()` - VideoTexture creation wrapper
+    - `startAllWallVideos()` - Playback initialization
+    - `swapWallVideo()` - Variant swapping logic (~50 lines)
+    - `startWallVariantSwapping()` - Scheduling system
+  - **Init Calls:** Removed `preloadVideos()` from `init()` function
+  - **Game Start:** Removed `startWallVariantSwapping()` and `startAllWallVideos()` from `startGame()`
+
+- **Code Modified:**
+  - **createRoom() Function:** Replaced video-based wall creation with simple TextureLoader
+    - North wall: `walls/wall_n.png`
+    - South wall: `walls/wall_s.png`
+    - East wall: `walls/wall_e.png`
+    - West wall: `walls/wall_w.png`
+  - **Wall Material:** MeshPhongMaterial with emissiveMap for consistent lighting
+  - **Emissive Settings:** emissive: 0xffffff, emissiveIntensity: 0.5
+
+- **Benefits:**
+  - **Reliability:** Eliminates video playback compatibility issues across browsers
+  - **Performance:** Removes video decoding overhead and memory management complexity
+  - **Simplicity:** Static textures are easier to maintain and debug
+  - **Asset Size:** Eliminates need for 12 MP4 video files
+  - **Code Clarity:** ~200 fewer lines of video management code
+
 ## v0.20.45 - Video System Memory Leak Fix (2025-11-21)
 - **Summary:**
   - Fixed memory leak in wall video variant swapping system
   - Fixed truncated texture reference bug
   - Optimized video element lifecycle management
+  - **NOTE:** This version deprecated - video system fully removed in v0.20.46
 
 - **Bug Fixes:**
   - **Truncated Code:** Fixed incomplete texture reference `map: so` → `map: southVideoData.texture` at line 8881
