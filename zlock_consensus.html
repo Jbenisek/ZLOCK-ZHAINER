@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.40</title>
+    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.45</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -2457,67 +2457,67 @@
         // Audio file paths mapped to IDs
         const AUDIO_FILES = {
             // UI & Menu
-            'UI_Button_Hover': 'sound_effects/UI_Menu/UI_Button_Hover.wav',
-            'UI_Button_Click': 'sound_effects/UI_Menu/UI_Button_Click.wav',
-            'UI_Menu_Open': 'sound_effects/UI_Menu/UI_Menu_Open.wav',
-            'UI_Menu_Close': 'sound_effects/UI_Menu/UI_Menu_Close.wav',
-            'UI_Error_Invalid_Move': 'sound_effects/UI_Menu/UI_Error_Invalid_Move.wav',
+            'UI_Button_Hover': 'sound_effects/sfx/UI_Button_Hover.mp3',
+            'UI_Button_Click': 'sound_effects/sfx/UI_Button_Click.mp3',
+            'UI_Menu_Open': 'sound_effects/sfx/UI_Menu_Open.mp3',
+            'UI_Menu_Close': 'sound_effects/sfx/UI_Menu_Close.mp3',
+            'UI_Error_Invalid_Move': 'sound_effects/sfx/UI_Error_Invalid_Move.mp3',
             
             // Game State
-            'Game_Start_Begin': 'sound_effects/Game_State/Game_Start_Begin.wav',
-            'Game_Over_Lose': 'sound_effects/Game_State/Game_Over_Lose.wav',
-            'Game_Pause': 'sound_effects/Game_State/Game_Pause.wav',
-            'Game_Resume': 'sound_effects/Game_State/Game_Resume.wav',
+            'Game_Start_Begin': 'sound_effects/sfx/Game_Start_Begin.mp3',
+            'Game_Over_Lose': 'sound_effects/sfx/Game_Over_Lose.mp3',
+            'Game_Pause': 'sound_effects/sfx/Game_Pause.mp3',
+            'Game_Resume': 'sound_effects/sfx/Game_Resume.mp3',
             
             // Progression
-            'Level_Up_Unlock': 'sound_effects/Progression/Level_Up_Unlock.wav',
-            'Achievement_Unlock': 'sound_effects/Progression/Achievement_Unlock.wav',
-            'Block_Type_Unlock': 'sound_effects/Progression/Block_Type_Unlock.wav',
+            'Level_Up_Unlock': 'sound_effects/sfx/Level_Up_Unlock.mp3',
+            'Achievement_Unlock': 'sound_effects/sfx/Achievement_Unlock.mp3',
+            'Block_Type_Unlock': 'sound_effects/sfx/Block_Type_Unlock.mp3',
             
             // Special Abilities
-            'Special_Zooko_Activate': 'sound_effects/Special_Abilities/Special_Zooko_Activate.wav',
-            'Special_Nate_Activate': 'sound_effects/Special_Abilities/Special_Nate_Activate.wav',
-            'Special_Zancas_Activate': 'sound_effects/Special_Abilities/Special_Zancas_Activate.wav',
-            'Special_CyberAxe_Activate': 'sound_effects/Special_Abilities/Special_CyberAxe_Activate.wav',
-            'Sandblasting_Event_Start': 'sound_effects/Special_Abilities/Sandblasting_Event_Start.wav',
-            'Sandblasting_Link_Drop': 'sound_effects/Special_Abilities/Sandblasting_Link_Drop.wav',
+            'Special_Zooko_Activate': 'sound_effects/sfx/Special_Zooko_Activate.mp3',
+            'Special_Nate_Activate': 'sound_effects/sfx/Special_Nate_Activate.mp3',
+            'Special_Zancas_Activate': 'sound_effects/sfx/Special_Zancas_Activate.mp3',
+            'Special_CyberAxe_Activate': 'sound_effects/sfx/Special_CyberAxe_Activate.mp3',
+            'Sandblasting_Event_Start': 'sound_effects/sfx/Sandblasting_Event_Start.mp3',
+            'Sandblasting_Link_Drop': 'sound_effects/sfx/Sandblasting_Link_Drop.mp3',
             
             // Chain Interaction
-            'Chain_Drop_Start': 'sound_effects/Chain_Interaction/Chain_Drop_Start.wav',
-            'Chain_Drop_Fast': 'sound_effects/Chain_Interaction/Chain_Drop_Fast.wav',
-            'Chain_Hit_Floor': 'sound_effects/Chain_Interaction/Chain_Hit_Floor.wav',
-            'Chain_Hit_Block': 'sound_effects/Chain_Interaction/Chain_Hit_Block.wav',
-            'Chain_Rotate_90': 'sound_effects/Chain_Interaction/Chain_Rotate_90.wav',
-            'Chain_Flip': 'sound_effects/Chain_Interaction/Chain_Flip.wav',
-            'Chain_Lock_In_Place': 'sound_effects/Chain_Interaction/Chain_Lock_In_Place.wav',
+            'Chain_Drop_Start': 'sound_effects/sfx/Chain_Drop_Start.mp3',
+            'Chain_Drop_Fast': 'sound_effects/sfx/Chain_Drop_Fast.mp3',
+            'Chain_Hit_Floor': 'sound_effects/sfx/Chain_Hit_Floor.mp3',
+            'Chain_Hit_Block': 'sound_effects/sfx/Chain_Hit_Block.mp3',
+            'Chain_Rotate_90': 'sound_effects/sfx/Chain_Rotate_90.mp3',
+            'Chain_Flip': 'sound_effects/sfx/Chain_Flip.mp3',
+            'Chain_Lock_In_Place': 'sound_effects/sfx/Chain_Lock_In_Place.mp3',
             
             // Block Destruction
-            'Match_Found_6_Links': 'sound_effects/Block_Destruction/Match_Found_6_Links.wav',
-            'Chain_Destroy_01': 'sound_effects/Block_Destruction/Chain_Destroy_01.wav',
-            'Chain_Destroy_02': 'sound_effects/Block_Destruction/Chain_Destroy_02.wav',
-            'Chain_Destroy_03': 'sound_effects/Block_Destruction/Chain_Destroy_03.wav',
-            'Chain_Destroy_04': 'sound_effects/Block_Destruction/Chain_Destroy_04.wav',
-            'Chain_Destroy_05': 'sound_effects/Block_Destruction/Chain_Destroy_05.wav',
-            'Broken_Link_Mark': 'sound_effects/Block_Destruction/Broken_Link_Mark.wav',
-            'Broken_Link_Click_Destroy': 'sound_effects/Block_Destruction/Broken_Link_Click_Destroy.wav',
+            'Match_Found_6_Links': 'sound_effects/sfx/Match_Found_6_Links.mp3',
+            'Chain_Destroy_01': 'sound_effects/sfx/Chain_Destroy_01.mp3',
+            'Chain_Destroy_02': 'sound_effects/sfx/Chain_Destroy_02.mp3',
+            'Chain_Destroy_03': 'sound_effects/sfx/Chain_Destroy_03.mp3',
+            'Chain_Destroy_04': 'sound_effects/sfx/Chain_Destroy_04.mp3',
+            'Chain_Destroy_05': 'sound_effects/sfx/Chain_Destroy_05.mp3',
+            'Broken_Link_Mark': 'sound_effects/sfx/Broken_Link_Mark.mp3',
+            'Broken_Link_Click_Destroy': 'sound_effects/sfx/Broken_Link_Click_Destroy.mp3',
             
             // Combo System
-            'Combo_Multiplier_x2': 'sound_effects/Combo_System/Combo_Multiplier_x2.wav',
-            'Combo_Multiplier_x3': 'sound_effects/Combo_System/Combo_Multiplier_x3.wav',
-            'Combo_Multiplier_x4': 'sound_effects/Combo_System/Combo_Multiplier_x4.wav',
-            'Combo_Multiplier_x5': 'sound_effects/Combo_System/Combo_Multiplier_x5.wav',
-            'Combo_Multiplier_x6_Plus': 'sound_effects/Combo_System/Combo_Multiplier_x6_Plus.wav',
-            'Combo_Break': 'sound_effects/Combo_System/Combo_Break.wav',
+            'Combo_Multiplier_x2': 'sound_effects/sfx/Combo_Multiplier_x2.mp3',
+            'Combo_Multiplier_x3': 'sound_effects/sfx/Combo_Multiplier_x3.mp3',
+            'Combo_Multiplier_x4': 'sound_effects/sfx/Combo_Multiplier_x4.mp3',
+            'Combo_Multiplier_x5': 'sound_effects/sfx/Combo_Multiplier_x5.mp3',
+            'Combo_Multiplier_x6_Plus': 'sound_effects/sfx/Combo_Multiplier_x6_Plus.mp3',
+            'Combo_Break': 'sound_effects/sfx/Combo_Break.mp3',
             
             // Special Events
-            'Floor_Clear_Bonus': 'sound_effects/Special_Events/Floor_Clear_Bonus.wav',
-            'Encrypted_Block_Destroy': 'sound_effects/Special_Events/Encrypted_Block_Destroy.wav',
-            'Hypermode_Activate': 'sound_effects/Special_Events/Hypermode_Activate.wav',
-            'Hypermode_Deactivate': 'sound_effects/Special_Events/Hypermode_Deactivate.wav',
+            'Floor_Clear_Bonus': 'sound_effects/sfx/Floor_Clear_Bonus.mp3',
+            'Encrypted_Block_Destroy': 'sound_effects/sfx/Encrypted_Block_Destroy.mp3',
+            'Hypermode_Activate': 'sound_effects/sfx/Hypermode_Activate.mp3',
+            'Hypermode_Deactivate': 'sound_effects/sfx/Hypermode_Deactivate.mp3',
             
             // Ambient
-            'Ambient_Grid_Hum': 'sound_effects/Ambient_Atmosphere/Ambient_Grid_Hum.wav',
-            'Ambient_Tension_High_Stack': 'sound_effects/Ambient_Atmosphere/Ambient_Tension_High_Stack.wav'
+            'Ambient_Grid_Hum': 'sound_effects/sfx/Ambient_Grid_Hum.mp3',
+            'Ambient_Tension_High_Stack': 'sound_effects/sfx/Ambient_Tension_High_Stack.mp3'
         };
         
         // Preload and cache audio files
@@ -6314,12 +6314,6 @@
             // Initialize compass
             updateCompass();
             
-            // Start wall variant swapping system
-            startWallVariantSwapping();
-            
-            // Start floor texture swapping system
-            startFloorSwapping();
-            
             // Start render loop
             animate();
         }
@@ -8664,22 +8658,33 @@
             video.src = videoPath;
             video.loop = shouldLoop;
             video.muted = true;
-            video.autoplay = true;
             video.playsInline = true;
-            
-            // Handle play promise to avoid AbortError
-            const playPromise = video.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    // Video play was interrupted, ignore
-                });
-            }
+            video.preload = 'auto';
+            video.crossOrigin = 'anonymous';
+            // Don't autoplay - browsers block it. Start manually after user interaction.
             
             const texture = new THREE.VideoTexture(video);
             texture.minFilter = THREE.LinearFilter;
             texture.magFilter = THREE.LinearFilter;
+            texture.format = THREE.RGBFormat;
             
             return { video, texture };
+        }
+        
+        function startAllWallVideos() {
+            // Start all wall videos after user interaction (clicking Start Game)
+            if (wallVideoData.north.video) {
+                wallVideoData.north.video.play().catch(e => console.warn('North video play failed:', e));
+            }
+            if (wallVideoData.south.video) {
+                wallVideoData.south.video.play().catch(e => console.warn('South video play failed:', e));
+            }
+            if (wallVideoData.east.video) {
+                wallVideoData.east.video.play().catch(e => console.warn('East video play failed:', e));
+            }
+            if (wallVideoData.west.video) {
+                wallVideoData.west.video.play().catch(e => console.warn('West video play failed:', e));
+            }
         }
 
         function checkAllAssetsReady() {
@@ -8734,57 +8739,50 @@
             const config = wallVideos[wallName];
             
             if (!data.mesh || config.variants.length === 0) return;
+            if (data.currentVariant) return; // Already playing variant, don't interrupt
             
-            // Clean up old video FIRST (before creating new one)
-            if (data.video) {
-                data.video.pause();
-                data.video.src = '';
-                data.video = null;
-            }
-            if (data.texture) {
-                data.texture.dispose();
-                data.texture = null;
-            }
+            // Store the original default video/texture to reuse later
+            const originalDefaultVideo = data.video;
+            const originalDefaultTexture = data.texture;
             
             // Choose random variant
             const variantPath = config.variants[Math.floor(Math.random() * config.variants.length)];
             
             // Create new video texture (DON'T loop - play once then return to default)
-            const { video, texture } = createVideoTexture(variantPath, false);
+            const { video: variantVideo, texture: variantTexture } = createVideoTexture(variantPath, false);
             
             // Update material
-            data.mesh.material.map = texture;
-            data.mesh.material.emissiveMap = texture;
+            data.mesh.material.map = variantTexture;
+            data.mesh.material.emissiveMap = variantTexture;
             data.mesh.material.needsUpdate = true;
             
-            // Store new video
-            data.video = video;
-            data.texture = texture;
+            // Store variant video
+            data.video = variantVideo;
+            data.texture = variantTexture;
             data.currentVariant = true;
             
+            // Start playing the variant video
+            variantVideo.play().catch(e => console.warn('Variant video play failed:', e));
+            
             // Schedule return to default after video plays once
-            video.addEventListener('ended', () => {
-                // Clean up variant video FIRST
-                if (data.video) {
-                    data.video.pause();
-                    data.video.src = '';
-                    data.video = null;
-                }
-                if (data.texture) {
-                    data.texture.dispose();
-                    data.texture = null;
-                }
+            variantVideo.addEventListener('ended', () => {
+                // Clean up variant video properly
+                variantVideo.pause();
+                variantVideo.removeAttribute('src');
+                variantVideo.load(); // Force release of video resources
+                variantTexture.dispose();
                 
-                // Return to default (loop this one)
-                const { video: defaultVideo, texture: defaultTexture } = createVideoTexture(config.default, true);
-                
-                data.mesh.material.map = defaultTexture;
-                data.mesh.material.emissiveMap = defaultTexture;
+                // Restore original default video/texture (no new allocation!)
+                data.mesh.material.map = originalDefaultTexture;
+                data.mesh.material.emissiveMap = originalDefaultTexture;
                 data.mesh.material.needsUpdate = true;
                 
-                data.video = defaultVideo;
-                data.texture = defaultTexture;
+                data.video = originalDefaultVideo;
+                data.texture = originalDefaultTexture;
                 data.currentVariant = false;
+                
+                // Resume playing the original default video
+                originalDefaultVideo.play().catch(e => console.warn('Default video play failed:', e));
             }, { once: true });
         }
 
@@ -9316,6 +9314,9 @@
             // Restart wall and floor swapping systems (they were killed by timeout clearing)
             startWallVariantSwapping();
             startFloorSwapping();
+            
+            // Start wall videos playing (after user interaction)
+            startAllWallVideos();
             
             // Reset floor cell animations
             floorAnimationTime = 0;

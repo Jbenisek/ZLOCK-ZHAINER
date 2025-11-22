@@ -2,6 +2,79 @@
 
 # Changelog
 
+## v0.20.45 - Video System Memory Leak Fix (2025-11-21)
+- **Summary:**
+  - Fixed memory leak in wall video variant swapping system
+  - Fixed truncated texture reference bug
+  - Optimized video element lifecycle management
+
+- **Bug Fixes:**
+  - **Truncated Code:** Fixed incomplete texture reference `map: so` → `map: southVideoData.texture` at line 8881
+  - **Memory Leak:** Wall variant videos were creating new default video elements every 30 seconds instead of reusing originals
+  - **Video Lifecycle:** Variant videos now properly disposed with `removeAttribute('src')` and `.load()` to release resources
+  
+- **Technical Implementation:**
+  - Modified `swapWallVideo()` function to store original default video/texture references
+  - Variant videos play once then restore original references (no new allocation)
+  - Proper cleanup: pause → removeAttribute('src') → load() → dispose texture
+  - Default videos created once in `createRoom()`, reused across entire game session
+  
+- **Performance Impact:**
+  - Eliminated video element creation every 30 seconds (4 walls × video creation overhead)
+  - Reduced DOM video element count from growing unbounded to fixed 4 default + temporary variants
+  - Texture memory properly released when variants complete
+
+## v0.20.44 - Audio Migration to MP3 (2025-11-21)
+- **Summary:**
+  - Migrated all sound effects from WAV to MP3 format
+  - AI-generated sound effects with improved quality
+  - Reduced audio file count and size
+  - Consolidated audio into single sfx/ directory
+
+- **Audio Format Migration:**
+  - **Format Change:** All 44 sound effects converted from .wav to .mp3
+  - **AI Generation:** New sound effects professionally regenerated using AI audio synthesis
+  - **File Organization:** All MP3 files consolidated into `sound_effects/sfx/` directory
+  - **Removed Folders:** Deleted 9 categorized WAV folders (UI_Menu, Game_State, Progression, etc.)
+  - **File Size Reduction:** MP3 compression significantly reduces total audio asset size
+  
+- **Sound Effect Updates:**
+  - **44 Total Sound Effects:**
+    - 5 UI sounds (button hover/click, menu open/close, error)
+    - 4 Game State sounds (start, game over, pause, resume)
+    - 3 Progression sounds (level up, achievement, block type unlock)
+    - 6 Special Ability sounds (4 character abilities + sandblasting event)
+    - 7 Chain Interaction sounds (drop, hit, rotate, flip, lock)
+    - 8 Block Destruction sounds (match found, 5 destruction tiers, broken link)
+    - 6 Combo System sounds (5 multiplier tiers + combo break)
+    - 4 Special Event sounds (floor clear, encrypted block, hypermode)
+    - 2 Ambient sounds (grid hum, tension high stack)
+    
+- **File Renaming Process:**
+  - AI-generated files had long descriptive names (e.g., "Achievement_Unlock_–_Distinct,_satisfying...mp3")
+  - Created PowerShell script to rename all 44 files to proper game IDs
+  - Pattern matching used to strip descriptions while preserving ID prefixes
+  - All files successfully renamed to simple format (e.g., "Achievement_Unlock.mp3")
+  
+- **Asset Count Update:**
+  - **Total Assets:** Still 96 (audio format change only)
+  - 44 audio files (.mp3) - previously 52 .wav files
+  - 12 video files (.mp4)
+  - 11 model files (.glb)
+  - 19 image files (.png/.PNG)
+  - 2 atlas textures (.png)
+  
+- **Technical Implementation:**
+  - Updated all audio paths in soundEffects object
+  - Changed from categorized folders to single `sfx/` directory
+  - Browser MP3 support is universal (all modern browsers)
+  - Maintains same playback quality with smaller file sizes
+  
+- **File Cleanup:**
+  - Deleted 9 old WAV category folders and all .wav files
+  - Streamlined audio directory structure
+  - Cleaner project organization with single audio folder
+
 ## v0.20.43 - Image Preloading & Cache Management (2025-11-21)
 - **Summary:**
   - Added comprehensive image/texture preloading system
