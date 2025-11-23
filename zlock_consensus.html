@@ -876,23 +876,28 @@
             max-width: 500px;
         }
         
-        #musicTickerText {
+        #musicTickerWrapper {
+            display: flex;
+            width: fit-content;
+            animation: scrollTicker 30s linear infinite;
+        }
+        
+        #musicTicker:hover #musicTickerWrapper {
+            animation-duration: 60s;
+        }
+        
+        .tickerText {
             color: #F2C94C;
             font-family: 'JetBrains Mono', monospace;
             font-size: 14px;
             font-weight: 700;
             white-space: nowrap;
-            display: inline-block;
-            animation: scrollTicker 30s linear infinite;
-        }
-        
-        #musicTicker:hover #musicTickerText {
-            animation-duration: 60s;
+            padding-right: 100px;
         }
         
         @keyframes scrollTicker {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
         }
         
         #gameControlsButtons {
@@ -2186,7 +2191,10 @@
             
             <div id="gameControls">
                 <div id="musicTicker">
-                    <div id="musicTickerText">♫ Level Track: Sprout Genesis (Levels 1-19) ♫</div>
+                    <div id="musicTickerWrapper">
+                        <span class="tickerText" id="musicTickerText1">♫ Level Track: Sprout Genesis (Levels 1-19) ♫</span>
+                        <span class="tickerText" id="musicTickerText2">♫ Level Track: Sprout Genesis (Levels 1-19) ♫</span>
+                    </div>
                 </div>
                 <div id="gameControlsButtons">
                     <button id="lightsBtn" class="active" onclick="toggleLights()" title="Toggle Lights">💡</button>
@@ -2630,12 +2638,12 @@
                 <strong>NOTE:</strong><br>Skipping past Level 10<br>disables most achievements
             </div>
             <div style="margin-top: 40px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #89A0B4;">
-                Version v0.20.60 • 2025-11-23
+                Version v0.20.61 • 2025-11-23
             </div>
         </div>
     </div>
     <div style="position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); color: rgba(255, 255, 255, 0.3); font-size: 12px; font-family: 'JetBrains Mono', monospace; pointer-events: none; z-index: 100;">
-        Version v0.20.60 • 2025-11-23
+        Version v0.20.61 • 2025-11-23
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -2644,7 +2652,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.20.60';
+        const GAME_VERSION = 'v0.20.61';
         
         // ===== AUDIO SYSTEM =====
         const audioCache = {}; // Cache for all audio files
@@ -9194,8 +9202,9 @@
             }
             
             // Update music ticker with track name
-            const tickerText = document.getElementById('musicTickerText');
-            if (tickerText && trackData.name) {
+            const tickerText1 = document.getElementById('musicTickerText1');
+            const tickerText2 = document.getElementById('musicTickerText2');
+            if (tickerText1 && tickerText2 && trackData.name) {
                 // Pick a new random fact each time track changes
                 if (tickerFacts.length > 0) {
                     currentTickerFact = tickerFacts[Math.floor(Math.random() * tickerFacts.length)];
@@ -9213,11 +9222,9 @@
                 }
                 
                 // Combine music info with fun fact
-                if (currentTickerFact) {
-                    tickerText.textContent = `${musicInfo}  •  ${currentTickerFact}`;
-                } else {
-                    tickerText.textContent = musicInfo;
-                }
+                const finalText = currentTickerFact ? `${musicInfo}  •  ${currentTickerFact}` : musicInfo;
+                tickerText1.textContent = finalText;
+                tickerText2.textContent = finalText;
             }
             
             // Convert musicVolume (1-150) to multiplier (0.01-1.5)
@@ -9240,18 +9247,18 @@
                     themeAudio.loop = false;
                     
                     // Update ticker with theme name and random fact
-                    if (tickerText && randomTheme.name) {
+                    const tickerText1 = document.getElementById('musicTickerText1');
+                    const tickerText2 = document.getElementById('musicTickerText2');
+                    if (tickerText1 && tickerText2 && randomTheme.name) {
                         // Pick a new random fact
                         if (tickerFacts.length > 0) {
                             currentTickerFact = tickerFacts[Math.floor(Math.random() * tickerFacts.length)];
                         }
                         
                         const musicInfo = `♫ Theme Song: ${randomTheme.name} ♫`;
-                        if (currentTickerFact) {
-                            tickerText.textContent = `${musicInfo}  •  ${currentTickerFact}`;
-                        } else {
-                            tickerText.textContent = musicInfo;
-                        }
+                        const finalText = currentTickerFact ? `${musicInfo}  •  ${currentTickerFact}` : musicInfo;
+                        tickerText1.textContent = finalText;
+                        tickerText2.textContent = finalText;
                     }
                     
                     // When theme ends, go back to level track
@@ -9359,19 +9366,18 @@
                     themeAudio.loop = false;
                     
                     // Update ticker with theme name and random fact
-                    const tickerText = document.getElementById('musicTickerText');
-                    if (tickerText && randomTheme.name) {
+                    const tickerText1 = document.getElementById('musicTickerText1');
+                    const tickerText2 = document.getElementById('musicTickerText2');
+                    if (tickerText1 && tickerText2 && randomTheme.name) {
                         // Pick a new random fact
                         if (tickerFacts.length > 0) {
                             currentTickerFact = tickerFacts[Math.floor(Math.random() * tickerFacts.length)];
                         }
                         
                         const musicInfo = `♫ Theme Song: ${randomTheme.name} ♫`;
-                        if (currentTickerFact) {
-                            tickerText.textContent = `${musicInfo}  •  ${currentTickerFact}`;
-                        } else {
-                            tickerText.textContent = musicInfo;
-                        }
+                        const finalText = currentTickerFact ? `${musicInfo}  •  ${currentTickerFact}` : musicInfo;
+                        tickerText1.textContent = finalText;
+                        tickerText2.textContent = finalText;
                     }
                     
                     // When theme ends, go to level track
