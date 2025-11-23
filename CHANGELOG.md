@@ -2,6 +2,134 @@
 
 # Changelog
 
+## v0.20.58 - Music Ticker Fun Facts (2025-11-23)
+- **Summary:**
+  - Added 55 fun facts about Zcash, privacy tech, and CyberAxe to music ticker
+  - Facts scroll alongside music track information
+  - Adjustable scroll speed with hover slowdown
+  - Ticker width constraints to prevent control panel expansion
+
+- **Ticker Facts System:**
+  - Created ticker_facts.json with 55 curated facts
+  - Topics: Zcash history, network upgrades, key contributors, wallets, privacy tech, CyberAxe projects
+  - Random fact selection on each track change
+  - Facts loaded via JSON fetch on game start
+  - Seamless integration with existing music ticker
+
+- **Ticker Display:**
+  - Format: "♫ Track Name ♫ • [Random Fun Fact]"
+  - 30-second scroll duration (2x slower than original)
+  - Hover slowdown: 60-second duration when mouse over ticker
+  - Max-width: 500px to prevent control panel overflow
+  - Smooth scrolling animation with readable speed
+
+- **Technical Implementation:**
+  - ticker_facts.json: Clean JSON array of 55 fact strings
+  - Facts rotate on every track change (theme or level)
+  - currentTickerFact variable stores active fact
+  - Hover CSS selector for animation slowdown
+  - Constrained ticker and button container widths
+
+## v0.20.57 - Smart Music Toggle System (2025-11-23)
+- **Summary:**
+  - Enhanced music control modal with intelligent track switching
+  - Prevents music playback interruption when toggling theme/level music
+  - Enforces at least one music type always enabled
+  - Seamless transitions between track types
+
+- **Smart Toggle Logic:**
+  - At least one toggle (theme or level) must remain enabled at all times
+  - Attempting to disable both will prevent the second toggle from being unchecked
+  - Ensures continuous music playback during gameplay
+
+- **Automatic Track Switching:**
+  - Disabling theme music while theme playing: Automatically switches to level track
+  - Disabling level music while level playing: Automatically switches to random theme
+  - loadMusic() intelligently routes to alternate track type when requested type is disabled
+  - No silent gaps or playback interruptions
+
+- **Enhanced Playback Controls:**
+  - Previous button: Plays theme if enabled, otherwise plays level track
+  - Next button: Intelligently chooses between theme/level based on enabled toggles
+  - Both enabled: 50/50 random selection
+  - Only one enabled: Plays from the enabled type
+  - All controls respect toggle state in real-time
+
+- **Toggle Behavior Updates:**
+  - updateThemeMusicToggle(): Prevents disabling if level also disabled, auto-switches to level track
+  - updateLevelMusicToggle(): Prevents disabling if theme also disabled, auto-switches to theme track
+  - Track type detection: Checks musicTracks array to determine if current track is theme or level
+  - Immediate response to toggle changes with smooth transitions
+
+## v0.20.56 - Advanced Music Controls (2025-11-23)
+- **Summary:**
+  - Music control modal with playback controls and advanced settings
+  - Separate toggles for theme and level music
+  - Play/pause, previous, and next track controls
+  - Integrated volume slider and smart track filtering
+
+- **Music Control Modal:**
+  - Expandable modal above control panel (280px width)
+  - Playback controls: Previous (⏮), Play/Pause (⏸/▶), Next (⏭)
+  - Volume slider (1-150 range) with live value display
+  - Theme music toggle (enable/disable theme songs)
+  - Level music toggle (enable/disable level tracks)
+  - Close button (✕) for compact UI
+  - Cyan theme matching game aesthetic
+
+- **Smart Playback System:**
+  - Previous button: Skips to random theme song
+  - Next button: Plays random track (50% theme, 50% level)
+  - Play/Pause: Toggles current track with button state update
+  - Volume slider: Real-time updates to current track
+  - Respects theme/level toggles when switching tracks
+
+- **Toggle Integration:**
+  - loadMusic() checks theme/level toggles before playing tracks
+  - startMusicSystem() respects toggles on game start
+  - Theme randomization skips if theme music disabled
+  - Level tracks play directly if theme music disabled
+  - All transitions honor user preferences
+
+- **Settings Integration:**
+  - Added themeMusicEnabled and levelMusicEnabled checkboxes to settings panel
+  - Settings panel now has 8 toggles in 2-column grid
+  - Toggles persist via localStorage
+  - Load/save in showSettings() and updateSettings()
+
+- **Control Panel Update:**
+  - Music toggle button replaced with "Music Controls" button
+  - Opens modal on click
+  - Modal positioned at bottom: 45px, right: 280px
+  - Compact design for quick access
+
+## v0.20.55 - UI Polish & Music Variety (2025-11-23)
+- **Summary:**
+  - Compact settings panel with 2-column grid layout
+  - Random theme song on game start for variety
+  - Removed button min-width constraints
+  - Improved space efficiency across UI
+
+- **Settings Panel Redesign:**
+  - 2-column grid layout for all 6 toggles (50% vertical space reduction)
+  - Shortened labels: "Hitboxes", "Auto Restart", "Sound FX", "Music", "TV/Story", "AI Player"
+  - Compact volume sliders (150px width, 11px font)
+  - Side-by-side action buttons (Clear Cache | Clear Scores)
+  - Condensed help text and tighter spacing
+  - More organized, cleaner appearance
+
+- **Music System Enhancement:**
+  - Game now starts with random theme song instead of always "Sprout Genesis"
+  - Prevents repetition fatigue when restarting early levels (1-20)
+  - Theme plays first, then transitions to appropriate level track
+  - Adds variety and freshness to game start experience
+
+- **Button Improvements:**
+  - Removed `min-width: 280px` constraint from `.button` class
+  - Changed to `width: auto` for content-based sizing
+  - Buttons now properly compact in grid layouts
+  - Better responsive behavior in settings panel
+
 ## v0.20.54 - Music Ticker & Zcash Branding (2025-11-23)
 - **Summary:**
   - Added scrolling music ticker above control panel

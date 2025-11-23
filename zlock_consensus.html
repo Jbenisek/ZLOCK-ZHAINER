@@ -111,7 +111,7 @@
             letter-spacing: 1px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(10px);
-            min-width: 280px;
+            width: auto;
         }
         
         .button:hover {
@@ -873,6 +873,7 @@
             overflow: hidden;
             position: relative;
             height: 30px;
+            max-width: 500px;
         }
         
         #musicTickerText {
@@ -882,7 +883,11 @@
             font-weight: 700;
             white-space: nowrap;
             display: inline-block;
-            animation: scrollTicker 15s linear infinite;
+            animation: scrollTicker 30s linear infinite;
+        }
+        
+        #musicTicker:hover #musicTickerText {
+            animation-duration: 60s;
         }
         
         @keyframes scrollTicker {
@@ -895,6 +900,7 @@
             gap: 4px;
             justify-content: center;
             align-items: center;
+            max-width: 500px;
         }
         
         #gameControlsButtons button {
@@ -1631,51 +1637,68 @@
     
     <div id="settingsPanel">
         <div class="panelTitle">SETTINGS</div>
-        <div class="settingRow">
-            <span class="settingLabel">Show Hitboxes (Debug)</span>
-            <input type="checkbox" id="showHitboxes" onchange="updateSettings()">
+        
+        <!-- Compact 2-column layout for toggles -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+            <div class="settingRow" style="margin: 0;">
+                <span class="settingLabel" style="font-size: 11px;">Hitboxes</span>
+                <input type="checkbox" id="showHitboxes" onchange="updateSettings()">
+            </div>
+            <div class="settingRow" style="margin: 0;">
+                <span class="settingLabel" style="font-size: 11px;">Auto Restart</span>
+                <input type="checkbox" id="autoRestart" checked onchange="updateSettings()">
+            </div>
+            <div class="settingRow" style="margin: 0;">
+                <span class="settingLabel" style="font-size: 11px;">Sound FX</span>
+                <input type="checkbox" id="sfxEnabled" checked onchange="updateSettings()">
+            </div>
+            <div class="settingRow" style="margin: 0;">
+                <span class="settingLabel" style="font-size: 11px;">Music</span>
+                <input type="checkbox" id="musicEnabled" checked onchange="updateSettings()">
+            </div>
+            <div class="settingRow" style="margin: 0;">
+                <span class="settingLabel" style="font-size: 11px;">Theme Songs</span>
+                <input type="checkbox" id="themeMusicEnabled" checked onchange="updateSettings()">
+            </div>
+            <div class="settingRow" style="margin: 0;">
+                <span class="settingLabel" style="font-size: 11px;">Level Music</span>
+                <input type="checkbox" id="levelMusicEnabled" checked onchange="updateSettings()">
+            </div>
+            <div class="settingRow" style="margin: 0;">
+                <span class="settingLabel" style="font-size: 11px;">TV/Story</span>
+                <input type="checkbox" id="tvEnabled" checked onchange="updateSettings()">
+            </div>
+            <div class="settingRow" style="margin: 0;">
+                <span class="settingLabel" style="font-size: 11px;">AI Player</span>
+                <input type="checkbox" id="aiEnabled" onchange="updateSettings()">
+            </div>
         </div>
-        <div style="margin: 10px 0; padding: 10px; background: rgba(0, 255, 255, 0.1); border-radius: 5px; font-size: 11px; color: #89A0B4;">
-            💡 Enable hitboxes, then press <strong style="color: #00ffff;">P</strong> to create particle placements.<br>
-            Click boxes to edit, click arrows to move, test/duplicate/delete in menu.
+        
+        <div style="margin: 10px 0; padding: 8px; background: rgba(0, 255, 255, 0.1); border-radius: 5px; font-size: 10px; color: #89A0B4;">
+            💡 Enable hitboxes, press <strong style="color: #00ffff;">P</strong> to create placements
         </div>
-        <div class="settingRow">
-            <span class="settingLabel">Auto Restart Game</span>
-            <input type="checkbox" id="autoRestart" checked onchange="updateSettings()">
+        
+        <!-- Volume sliders -->
+        <div class="settingRow" style="margin-bottom: 10px;">
+            <span class="settingLabel" style="font-size: 11px;">SFX Volume</span>
+            <input type="range" id="sfxVolume" min="1" max="150" value="25" oninput="updateSettings()" style="width: 150px;">
+            <span id="sfxVolumeValue" style="margin-left: 8px; font-weight: bold; color: #2D9CDB; font-size: 11px;">25</span>
         </div>
-        <div class="settingRow">
-            <span class="settingLabel">Sound Effects</span>
-            <input type="checkbox" id="sfxEnabled" checked onchange="updateSettings()">
+        <div class="settingRow" style="margin-bottom: 15px;">
+            <span class="settingLabel" style="font-size: 11px;">Music Volume</span>
+            <input type="range" id="musicVolume" min="1" max="150" value="75" oninput="updateSettings()" style="width: 150px;">
+            <span id="musicVolumeValue" style="margin-left: 8px; font-weight: bold; color: #2D9CDB; font-size: 11px;">75</span>
         </div>
-        <div class="settingRow">
-            <span class="settingLabel">SFX Volume (1-150)</span>
-            <input type="range" id="sfxVolume" min="1" max="150" value="25" oninput="updateSettings()" style="width: 200px;">
-            <span id="sfxVolumeValue" style="margin-left: 10px; font-weight: bold; color: #2D9CDB;">25</span>
+        
+        <!-- Compact action buttons -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
+            <button class="button" style="background: #F39C12; padding: 8px; font-size: 11px;" onclick="clearGameCache()">CLEAR CACHE</button>
+            <button class="button" style="background: #EB5757; padding: 8px; font-size: 11px;" onclick="clearHighScores()">CLEAR SCORES</button>
         </div>
-        <div class="settingRow">
-            <span class="settingLabel">Music</span>
-            <input type="checkbox" id="musicEnabled" checked onchange="updateSettings()">
+        <div style="margin: 8px 0; padding: 8px; background: rgba(243, 156, 18, 0.1); border-radius: 5px; font-size: 10px; color: #89A0B4;">
+            💡 Clear cache if assets fail to load or have visual glitches
         </div>
-        <div class="settingRow">
-            <span class="settingLabel">Music Volume (1-150)</span>
-            <input type="range" id="musicVolume" min="1" max="150" value="75" oninput="updateSettings()" style="width: 200px;">
-            <span id="musicVolumeValue" style="margin-left: 10px; font-weight: bold; color: #2D9CDB;">75</span>
-        </div>
-        <div class="settingRow">
-            <span class="settingLabel">TV/Story Screen</span>
-            <input type="checkbox" id="tvEnabled" checked onchange="updateSettings()">
-        </div>
-        <div class="settingRow" style="border-top: 2px solid #26313B; padding-top: 20px; margin-top: 20px;">
-            <span class="settingLabel">AI Player (Testing)</span>
-            <input type="checkbox" id="aiEnabled" onchange="updateSettings()">
-        </div>
-        <button class="button" style="margin-top: 30px; background: #F39C12;" onclick="clearGameCache()">CLEAR GAME CACHE<span style="display: inline-block; width: 26px; height: 26px; background: #E67E22; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">🗑</span></button>
-        <div style="margin: 10px 0; padding: 10px; background: rgba(243, 156, 18, 0.1); border-radius: 5px; font-size: 11px; color: #89A0B4;">
-            💡 Use this if assets fail to load or you experience visual glitches.<br>
-            This will clear all cached game files and reload the page.
-        </div>
-        <button class="button" style="margin-top: 20px; background: #EB5757;" onclick="clearHighScores()">CLEAR HIGH SCORES<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">X</span></button>
-        <button class="button closeButton" onclick="closeAllPanels()" style="margin-top: 20px; width: 100%;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
+        <button class="button closeButton" onclick="closeAllPanels()" style="margin-top: 10px; width: 100%; padding: 10px; font-size: 12px;">CLOSE</button>
     </div>
     
     <div id="highScoresPanel">
@@ -2172,13 +2195,60 @@
                     <button id="modelsBtn" class="active" onclick="toggleButton2()" title="Toggle 3D Models">🧍</button>
                     <button id="animationsBtn" class="active" onclick="toggleButton3()" title="Toggle Animations">🎬</button>
                     <button id="soundBtn" class="active" onclick="toggleSoundEffects()" title="Toggle Sound Effects">🔊</button>
-                    <button id="musicBtn" class="active" onclick="toggleMusic()" title="Toggle Music">🎵</button>
+                    <button id="musicBtn" class="active" onclick="toggleMusicControl()" title="Music Controls">🎵</button>
                     <button id="tvBtn" class="active" onclick="toggleTV()" title="Toggle TV/Story Screen">📺</button>
                     <button id="colorPickerBtn" onclick="toggleColorPicker()" title="Grid Color Settings">🎨</button>
                     <button id="controlsBtn" onclick="toggleControls()" title="Toggle Controls Panel">⌨️</button>
                     <button id="gridEffectBtn" onclick="cycleGridEffect()" title="Grid Effect: None">🌌</button>
                     <button id="qualityBtn" class="active" onclick="toggleQuality()" title="Quality: High Performance">🎭</button>
                 </div>
+            </div>
+            
+            <!-- Music Control Modal -->
+            <div id="musicControlModal" style="
+                display: none;
+                position: absolute;
+                bottom: 45px;
+                right: 280px;
+                background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
+                border: 2px solid #2A9D8F;
+                border-radius: 8px;
+                padding: 12px;
+                z-index: 10000;
+                min-width: 280px;
+                pointer-events: auto;
+                backdrop-filter: blur(10px);
+                box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8);
+            ">
+                <h3 style="margin: 0 0 10px 0; color: #2A9D8F; font-family: 'JetBrains Mono', monospace; font-size: 12px; text-align: center; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">Music Controls</h3>
+                
+                <!-- Playback Controls -->
+                <div style="display: flex; gap: 6px; justify-content: center; margin-bottom: 12px;">
+                    <button onclick="musicPrevious()" style="padding: 8px 12px; background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); color: #F2C94C; border: 2px solid #2A9D8F; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">⏮</button>
+                    <button id="musicPlayPauseBtn" onclick="musicPlayPause()" style="padding: 8px 16px; background: linear-gradient(135deg, rgba(42, 157, 143, 0.4), rgba(42, 157, 143, 0.3)); color: #F2C94C; border: 2px solid #F2C94C; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">⏸</button>
+                    <button onclick="musicNext()" style="padding: 8px 12px; background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); color: #F2C94C; border: 2px solid #2A9D8F; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">⏭</button>
+                </div>
+                
+                <!-- Volume Control -->
+                <div style="margin-bottom: 12px;">
+                    <label style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 10px; display: block; margin-bottom: 4px;">Volume:</label>
+                    <input type="range" id="musicVolumeSlider" min="1" max="150" value="75" oninput="updateMusicVolumeFromSlider()" style="width: 100%;">
+                    <span id="musicVolumeSliderValue" style="color: #2D9CDB; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: bold;">75</span>
+                </div>
+                
+                <!-- Music Type Toggles -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <input type="checkbox" id="themeMusicToggle" checked onchange="updateThemeMusicToggle()" style="cursor: pointer;">
+                        <label for="themeMusicToggle" style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 10px; cursor: pointer;">Themes</label>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <input type="checkbox" id="levelMusicToggle" checked onchange="updateLevelMusicToggle()" style="cursor: pointer;">
+                        <label for="levelMusicToggle" style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 10px; cursor: pointer;">Levels</label>
+                    </div>
+                </div>
+                
+                <button onclick="closeMusicControl()" style="width: 100%; padding: 6px; background: linear-gradient(135deg, rgba(231, 76, 60, 0.3), rgba(231, 76, 60, 0.2)); color: #E9F0F7; border: 2px solid #E74C3C; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: bold; text-transform: uppercase;">Close</button>
             </div>
             
             <!-- Color Picker Modal -->
@@ -2482,12 +2552,12 @@
                 <strong>NOTE:</strong><br>Skipping past Level 10<br>disables most achievements
             </div>
             <div style="margin-top: 40px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #89A0B4;">
-                Version v0.20.54 • 2025-11-23
+                Version v0.20.58 • 2025-11-23
             </div>
         </div>
     </div>
     <div style="position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); color: rgba(255, 255, 255, 0.3); font-size: 12px; font-family: 'JetBrains Mono', monospace; pointer-events: none; z-index: 100;">
-        Version v0.20.54 • 2025-11-23
+        Version v0.20.58 • 2025-11-23
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -2496,7 +2566,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.20.54';
+        const GAME_VERSION = 'v0.20.58';
         
         // ===== AUDIO SYSTEM =====
         const audioCache = {}; // Cache for all audio files
@@ -2504,8 +2574,33 @@
         let sfxEnabled = true; // Master SFX toggle
         let musicEnabled = true; // Master music toggle
         let tvEnabled = true; // TV/Story screen toggle
+        let themeMusicEnabled = true; // Theme songs toggle
+        let levelMusicEnabled = true; // Level tracks toggle
         let sfxVolume = 25; // Sound effects volume (1-150)
         let musicVolume = 75; // Music volume (1-150)
+        
+        // Ticker facts system
+        let tickerFacts = [];
+        let currentTickerFact = '';
+        
+        // Load ticker facts from JSON file
+        fetch('ticker_facts.json')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                tickerFacts = data.facts;
+                console.log(`Loaded ${tickerFacts.length} ticker facts`);
+                
+                // Pick initial random fact
+                if (tickerFacts.length > 0) {
+                    currentTickerFact = tickerFacts[Math.floor(Math.random() * tickerFacts.length)];
+                }
+            })
+            .catch(err => console.log('Ticker facts loading failed:', err));
         
         // Audio file paths mapped to IDs
         const AUDIO_FILES = {
@@ -3112,6 +3207,8 @@
             sfxEnabled: true, // Sound effects on/off
             musicEnabled: true, // Music on/off
             tvEnabled: true, // TV/Story screen on/off
+            themeMusicEnabled: true, // Theme songs on/off
+            levelMusicEnabled: true, // Level tracks on/off
             sfxVolume: 25, // Sound effects volume (1-150)
             musicVolume: 75, // Music volume (1-150)
             currentGridEffect: 0, // Grid effect index
@@ -4506,6 +4603,149 @@
             
             // Save settings
             saveSettings();
+        }
+        
+        function toggleMusicControl() {
+            const modal = document.getElementById('musicControlModal');
+            if (modal.style.display === 'none') {
+                // Update controls to current values
+                document.getElementById('musicVolumeSlider').value = musicVolume;
+                document.getElementById('musicVolumeSliderValue').textContent = musicVolume;
+                document.getElementById('themeMusicToggle').checked = themeMusicEnabled;
+                document.getElementById('levelMusicToggle').checked = levelMusicEnabled;
+                
+                // Update play/pause button state
+                const playPauseBtn = document.getElementById('musicPlayPauseBtn');
+                if (currentMusic && !currentMusic.paused) {
+                    playPauseBtn.textContent = '⏸';
+                } else {
+                    playPauseBtn.textContent = '▶';
+                }
+                
+                modal.style.display = 'block';
+            } else {
+                modal.style.display = 'none';
+            }
+        }
+        
+        function closeMusicControl() {
+            document.getElementById('musicControlModal').style.display = 'none';
+        }
+        
+        function updateMusicVolumeFromSlider() {
+            const slider = document.getElementById('musicVolumeSlider');
+            const value = parseInt(slider.value);
+            musicVolume = value;
+            settings.musicVolume = value;
+            document.getElementById('musicVolumeSliderValue').textContent = value;
+            document.getElementById('musicVolumeValue').textContent = value;
+            saveSettings();
+        }
+        
+        function updateThemeMusicToggle() {
+            const newValue = document.getElementById('themeMusicToggle').checked;
+            
+            // Prevent both from being disabled
+            if (!newValue && !levelMusicEnabled) {
+                document.getElementById('themeMusicToggle').checked = true;
+                return;
+            }
+            
+            themeMusicEnabled = newValue;
+            settings.themeMusicEnabled = themeMusicEnabled;
+            saveSettings();
+            
+            // If disabling theme music and currently playing a theme, skip to level track
+            if (!themeMusicEnabled && currentMusic) {
+                // Check if current track is a theme (theme tracks have no minLevel)
+                const isCurrentTheme = musicTracks.every(track => !currentMusic.src.endsWith(track.file));
+                if (isCurrentTheme) {
+                    currentMusic.pause();
+                    const levelTrack = getMusicForLevel(level);
+                    loadMusic(levelTrack);
+                }
+            }
+        }
+        
+        function updateLevelMusicToggle() {
+            const newValue = document.getElementById('levelMusicToggle').checked;
+            
+            // Prevent both from being disabled
+            if (!newValue && !themeMusicEnabled) {
+                document.getElementById('levelMusicToggle').checked = true;
+                return;
+            }
+            
+            levelMusicEnabled = newValue;
+            settings.levelMusicEnabled = levelMusicEnabled;
+            saveSettings();
+            
+            // If disabling level music and currently playing a level track, skip to theme
+            if (!levelMusicEnabled && currentMusic) {
+                // Check if current track is a level track (level tracks have minLevel)
+                const isCurrentLevel = musicTracks.some(track => currentMusic.src.endsWith(track.file));
+                if (isCurrentLevel) {
+                    currentMusic.pause();
+                    const randomTheme = themeTracks[Math.floor(Math.random() * themeTracks.length)];
+                    loadMusic(randomTheme);
+                }
+            }
+        }
+        
+        function musicPlayPause() {
+            const btn = document.getElementById('musicPlayPauseBtn');
+            if (currentMusic) {
+                if (currentMusic.paused) {
+                    currentMusic.play().catch(err => console.log('Play error:', err));
+                    btn.textContent = '⏸';
+                } else {
+                    currentMusic.pause();
+                    btn.textContent = '▶';
+                }
+            }
+        }
+        
+        function musicPrevious() {
+            // Skip to previous track (go back in level or random theme)
+            if (currentMusic) {
+                currentMusic.pause();
+            }
+            
+            // If theme music is enabled, play random theme, otherwise play level track
+            if (themeMusicEnabled) {
+                const randomTheme = themeTracks[Math.floor(Math.random() * themeTracks.length)];
+                loadMusic(randomTheme);
+            } else if (levelMusicEnabled) {
+                const levelTrack = getMusicForLevel(level);
+                loadMusic(levelTrack);
+            }
+        }
+        
+        function musicNext() {
+            // Skip to next track
+            if (currentMusic) {
+                currentMusic.pause();
+            }
+            
+            // Randomly choose between theme and level track, respecting toggles
+            if (themeMusicEnabled && levelMusicEnabled) {
+                // Both enabled: 50/50 chance
+                if (Math.random() < 0.5) {
+                    const randomTheme = themeTracks[Math.floor(Math.random() * themeTracks.length)];
+                    loadMusic(randomTheme);
+                } else {
+                    const levelTrack = getMusicForLevel(level);
+                    loadMusic(levelTrack);
+                }
+            } else if (themeMusicEnabled) {
+                // Only theme enabled
+                const randomTheme = themeTracks[Math.floor(Math.random() * themeTracks.length)];
+                loadMusic(randomTheme);
+            } else if (levelMusicEnabled) {
+                // Only level enabled
+                const levelTrack = getMusicForLevel(level);
+                loadMusic(levelTrack);
+            }
         }
         
         function cycleGridEffect() {
@@ -8846,6 +9086,25 @@
         function loadMusic(trackData) {
             if (!musicEnabled) return;
             
+            // Check if theme or level music is disabled - skip to alternate type
+            const isTheme = trackData.minLevel === undefined;
+            if (isTheme && !themeMusicEnabled) {
+                // Theme disabled, play level track instead
+                if (levelMusicEnabled) {
+                    const levelTrack = getMusicForLevel(level);
+                    loadMusic(levelTrack);
+                }
+                return;
+            }
+            if (!isTheme && !levelMusicEnabled) {
+                // Level disabled, play theme instead
+                if (themeMusicEnabled) {
+                    const randomTheme = themeTracks[Math.floor(Math.random() * themeTracks.length)];
+                    loadMusic(randomTheme);
+                }
+                return;
+            }
+            
             // Check if we're already playing this track
             if (currentMusic && currentMusic.src.endsWith(trackData.file)) {
                 return; // Don't restart the same track
@@ -8854,14 +9113,27 @@
             // Update music ticker with track name
             const tickerText = document.getElementById('musicTickerText');
             if (tickerText && trackData.name) {
+                // Pick a new random fact each time track changes
+                if (tickerFacts.length > 0) {
+                    currentTickerFact = tickerFacts[Math.floor(Math.random() * tickerFacts.length)];
+                }
+                
                 // Check if this is a level track or theme track
+                let musicInfo = '';
                 if (trackData.minLevel !== undefined) {
                     // Level track - show level range
                     const levelRange = trackData.maxLevel === 999999 ? `${trackData.minLevel}+` : `${trackData.minLevel}-${trackData.maxLevel}`;
-                    tickerText.textContent = `♫ Level Track: ${trackData.name} (Levels ${levelRange}) ♫`;
+                    musicInfo = `♫ Level Track: ${trackData.name} (Levels ${levelRange}) ♫`;
                 } else {
                     // Theme track
-                    tickerText.textContent = `♫ Theme Song: ${trackData.name} ♫`;
+                    musicInfo = `♫ Theme Song: ${trackData.name} ♫`;
+                }
+                
+                // Combine music info with fun fact
+                if (currentTickerFact) {
+                    tickerText.textContent = `${musicInfo}  •  ${currentTickerFact}`;
+                } else {
+                    tickerText.textContent = musicInfo;
                 }
             }
             
@@ -8877,22 +9149,34 @@
             newMusic.addEventListener('ended', () => {
                 const shouldPlayTheme = Math.random() < 0.5; // 50% chance
                 
-                if (shouldPlayTheme) {
+                if (shouldPlayTheme && themeMusicEnabled) { // Only play theme if enabled
                     // Pick random theme
                     const randomTheme = themeTracks[Math.floor(Math.random() * themeTracks.length)];
                     const themeAudio = new Audio(randomTheme.file);
                     themeAudio.volume = volumeScale;
                     themeAudio.loop = false;
                     
-                    // Update ticker with theme name
+                    // Update ticker with theme name and random fact
                     if (tickerText && randomTheme.name) {
-                        tickerText.textContent = `♫ Theme Song: ${randomTheme.name} ♫`;
+                        // Pick a new random fact
+                        if (tickerFacts.length > 0) {
+                            currentTickerFact = tickerFacts[Math.floor(Math.random() * tickerFacts.length)];
+                        }
+                        
+                        const musicInfo = `♫ Theme Song: ${randomTheme.name} ♫`;
+                        if (currentTickerFact) {
+                            tickerText.textContent = `${musicInfo}  •  ${currentTickerFact}`;
+                        } else {
+                            tickerText.textContent = musicInfo;
+                        }
                     }
                     
                     // When theme ends, go back to level track
                     themeAudio.addEventListener('ended', () => {
-                        const levelTrack = getMusicForLevel(level);
-                        loadMusic(levelTrack);
+                        if (levelMusicEnabled) { // Only resume level track if enabled
+                            const levelTrack = getMusicForLevel(level);
+                            loadMusic(levelTrack);
+                        }
                     });
                     
                     themeAudio.play().catch(err => console.log('Theme play error:', err));
@@ -8980,10 +9264,49 @@
         function startMusicSystem() {
             if (musicEnabled && !musicAnimationFrameId) {
                 currentMusicLevel = level;
-                const initialTrack = getMusicForLevel(level);
-                if (initialTrack) {
-                    loadMusic(initialTrack);
+                
+                // Start with a random theme song for variety (especially for levels 1-20 restarts)
+                // But only if theme music is enabled
+                if (themeMusicEnabled) {
+                    const randomTheme = themeTracks[Math.floor(Math.random() * themeTracks.length)];
+                    const volumeScale = musicVolume / 100;
+                    
+                    const themeAudio = new Audio(randomTheme.file);
+                    themeAudio.volume = volumeScale;
+                    themeAudio.loop = false;
+                    
+                    // Update ticker with theme name and random fact
+                    const tickerText = document.getElementById('musicTickerText');
+                    if (tickerText && randomTheme.name) {
+                        // Pick a new random fact
+                        if (tickerFacts.length > 0) {
+                            currentTickerFact = tickerFacts[Math.floor(Math.random() * tickerFacts.length)];
+                        }
+                        
+                        const musicInfo = `♫ Theme Song: ${randomTheme.name} ♫`;
+                        if (currentTickerFact) {
+                            tickerText.textContent = `${musicInfo}  •  ${currentTickerFact}`;
+                        } else {
+                            tickerText.textContent = musicInfo;
+                        }
+                    }
+                    
+                    // When theme ends, go to level track
+                    themeAudio.addEventListener('ended', () => {
+                        if (levelMusicEnabled) { // Only play level track if enabled
+                            const levelTrack = getMusicForLevel(level);
+                            loadMusic(levelTrack);
+                        }
+                    });
+                    
+                    themeAudio.play().catch(err => console.log('Theme play error:', err));
+                    currentMusic = themeAudio;
+                } else if (levelMusicEnabled) {
+                    // If theme music is disabled, start directly with level track
+                    const levelTrack = getMusicForLevel(level);
+                    loadMusic(levelTrack);
                 }
+                
                 animateMusicSystem();
             }
         }
@@ -9819,6 +10142,8 @@
             document.getElementById('sfxVolumeValue').textContent = settings.sfxVolume;
             document.getElementById('musicVolume').value = settings.musicVolume;
             document.getElementById('musicVolumeValue').textContent = settings.musicVolume;
+            document.getElementById('themeMusicEnabled').checked = settings.themeMusicEnabled;
+            document.getElementById('levelMusicEnabled').checked = settings.levelMusicEnabled;
             document.getElementById('tvEnabled').checked = settings.tvEnabled;
             document.getElementById('aiEnabled').checked = settings.aiEnabled;
         }
@@ -9837,6 +10162,8 @@
             settings.musicEnabled = document.getElementById('musicEnabled').checked;
             settings.sfxVolume = parseInt(document.getElementById('sfxVolume').value);
             settings.musicVolume = parseInt(document.getElementById('musicVolume').value);
+            settings.themeMusicEnabled = document.getElementById('themeMusicEnabled').checked;
+            settings.levelMusicEnabled = document.getElementById('levelMusicEnabled').checked;
             settings.tvEnabled = document.getElementById('tvEnabled').checked;
             settings.aiEnabled = document.getElementById('aiEnabled').checked;
             
@@ -9851,6 +10178,8 @@
             // Update global music toggle and volume
             musicEnabled = settings.musicEnabled;
             musicVolume = settings.musicVolume;
+            themeMusicEnabled = settings.themeMusicEnabled;
+            levelMusicEnabled = settings.levelMusicEnabled;
             if (musicEnabled) {
                 startMusicSystem();
             } else {
