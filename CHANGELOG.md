@@ -2,6 +2,59 @@
 
 # Changelog
 
+## v0.20.51 - Complete Story System (2025-11-22)
+- **Summary:**
+  - Extended story animations through level 1011+
+  - Added chapters 6-10 (levels 60-109)
+  - Added "going up" story arc (levels 200-1010)
+  - Added ending screen (level 1011+)
+  - Complete story coverage for all gameplay levels
+
+- **Story Chapters Added:**
+  - Levels 60-69: story_lvl_6 (pingpong) + story_lvl_6_idle
+  - Levels 70-79: story_lvl_7 (pingpong) + story_lvl_7_idle
+  - Levels 80-89: story_lvl_8 (pingpong) + story_lvl_8_idle
+  - Levels 90-99: story_lvl_9 (pingpong) + story_lvl_9_idle
+  - Levels 100-105: story_lvl_10 (pingpong) + story_lvl_10_idle
+  - Levels 106-199: story_lvl_10_idle_2 (extended idle)
+
+- **Ascension Arc:**
+  - Levels 200-399: story_up_1 + story_up_1_idle
+  - Levels 400-599: story_up_2 + story_up_2_idle
+  - Levels 600-799: story_up_3 + story_up_3_idle
+  - Levels 800-999: story_up_4 + story_up_4_idle
+  - Levels 1000-1010: story_up_5 + story_up_5_idle
+  - Levels 1011+: end.png (final ending screen)
+
+- **System Stats:**
+  - Total animations: 35
+  - Level coverage: 1-1011+
+  - All animations: 8x16 atlas, 128 frames, 16fps
+  - Pingpong animations at milestone levels
+  - Looping idles for progression levels
+
+## v0.20.50 - Extended Story Content (2025-11-22)
+- **Summary:**
+  - Extended story animations through level 59
+  - Added 4 new story chapters (levels 20-59)
+  - Each chapter has pingpong intro + looping idle animation
+
+- **Story Animations Added:**
+  - Level 20: story_lvl_2.png (pingpong)
+  - Levels 21-29: story_lvl_2_idle.png (loop)
+  - Level 30: story_lvl_3.png (pingpong)
+  - Levels 31-39: story_lvl_3_idle.png (loop)
+  - Level 40: story_lvl_4.png (pingpong)
+  - Levels 41-49: story_lvl_4_idle.png (loop)
+  - Level 50: story_lvl_5.png (pingpong)
+  - Levels 51-59: story_lvl_5_idle.png (loop)
+
+- **Story Pattern:**
+  - Each decade starts with pingpong animation at level X0
+  - Followed by looping idle animation for levels X1-X9
+  - Consistent 8x16 atlas, 128 frames, 16fps across all animations
+  - Total coverage: Levels 1-59 (16 total animations)
+
 ## v0.20.49 - TV Story Screen Refinements (2025-11-22)
 - **Summary:**
   - Fixed TV screen aspect ratio to match 16:9 artwork

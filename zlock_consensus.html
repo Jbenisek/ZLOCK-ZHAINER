@@ -1766,7 +1766,7 @@
     <div id="gameContainer">
         <canvas id="renderCanvas"></canvas>
         
-        <div id="versionDisplay">v0.20.49</div>
+        <div id="versionDisplay">v0.20.51</div>
         
         <div id="performanceDisplay">
             <div><span class="perf-label">FPS:</span> <span class="perf-value" id="fpsValue">60</span></div>
@@ -2433,12 +2433,12 @@
                 <strong>NOTE:</strong><br>Skipping past Level 10<br>disables most achievements
             </div>
             <div style="margin-top: 40px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #89A0B4;">
-                Version v0.20.49 • 2025-11-22
+                Version v0.20.51 • 2025-11-22
             </div>
         </div>
     </div>
     <div style="position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); color: rgba(255, 255, 255, 0.3); font-size: 12px; font-family: 'JetBrains Mono', monospace; pointer-events: none; z-index: 100;">
-        Version v0.20.49 • 2025-11-22
+        Version v0.20.51 • 2025-11-22
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -2447,7 +2447,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.20.49';
+        const GAME_VERSION = 'v0.20.51';
         
         // ===== AUDIO SYSTEM =====
         const audioCache = {}; // Cache for all audio files
@@ -8566,8 +8566,38 @@
             { file: 'story/intro/intro_c.png', minLevel: 5, maxLevel: 5, cols: 8, rows: 16, fps: 16 },
             { file: 'story/intro/intro_d.png', minLevel: 6, maxLevel: 7, cols: 8, rows: 16, fps: 16 },
             { file: 'story/intro/intro_e.png', minLevel: 8, maxLevel: 9, cols: 8, rows: 16, fps: 16 },
-            { file: 'story/lvl1/story_lvl_1.png', minLevel: 10, maxLevel: 10, cols: 8, rows: 16, fps: 16, pingpong: true },
-            { file: 'story/lvl1/story_lvl_1_loop.png', minLevel: 11, maxLevel: 19, cols: 8, rows: 16, fps: 16 }
+            { file: 'story/lvl1/story_lvl_1.png', minLevel: 10, maxLevel: 12, cols: 8, rows: 16, fps: 16, pingpong: true },
+            { file: 'story/lvl1/story_lvl_1_loop.png', minLevel: 13, maxLevel: 19, cols: 8, rows: 16, fps: 16 },
+            { file: 'story/lvl2/story_lvl_2.png', minLevel: 20, maxLevel: 22, cols: 8, rows: 16, fps: 16, pingpong: true },
+            { file: 'story/lvl2/story_lvl_2_idle.png', minLevel: 23, maxLevel: 29, cols: 8, rows: 16, fps: 16 },
+            { file: 'story/lvl3/story_lvl_3.png', minLevel: 30, maxLevel: 32, cols: 8, rows: 16, fps: 16, pingpong: true },
+            { file: 'story/lvl3/story_lvl_3_idle.png', minLevel: 33, maxLevel: 39, cols: 8, rows: 16, fps: 16 },
+            { file: 'story/lvl4/story_lvl_4.png', minLevel: 40, maxLevel: 42, cols: 8, rows: 16, fps: 16, pingpong: true },
+            { file: 'story/lvl4/story_lvl_4_idle.png', minLevel: 43, maxLevel: 49, cols: 8, rows: 16, fps: 16 },
+            { file: 'story/lvl5/story_lvl_5.png', minLevel: 50, maxLevel: 52, cols: 8, rows: 16, fps: 16, pingpong: true },
+            { file: 'story/lvl5/story_lvl_5_idle.png', minLevel: 53, maxLevel: 59, cols: 8, rows: 16, fps: 16 },
+            { file: 'story/lvl6/story_lvl_6.png', minLevel: 60, maxLevel: 62, cols: 8, rows: 16, fps: 16, pingpong: true },
+            { file: 'story/lvl6/story_lvl_6_idle.png', minLevel: 63, maxLevel: 69, cols: 8, rows: 16, fps: 16 },
+            { file: 'story/lvl7/story_lvl_7.png', minLevel: 70, maxLevel: 72, cols: 8, rows: 16, fps: 16, pingpong: true },
+            { file: 'story/lvl7/story_lvl_7_idle.png', minLevel: 73, maxLevel: 79, cols: 8, rows: 16, fps: 16 },
+            { file: 'story/lvl8/story_lvl_8.png', minLevel: 80, maxLevel: 82, cols: 8, rows: 16, fps: 16, pingpong: true },
+            { file: 'story/lvl8/story_lvl_8_idle.png', minLevel: 83, maxLevel: 89, cols: 8, rows: 16, fps: 16 },
+            { file: 'story/lvl9/story_lvl_9.png', minLevel: 90, maxLevel: 92, cols: 8, rows: 16, fps: 16, pingpong: true },
+            { file: 'story/lvl9/story_lvl_9_idle.png', minLevel: 93, maxLevel: 99, cols: 8, rows: 16, fps: 16 },
+            { file: 'story/lvl10/story_lvl_10.png', minLevel: 100, maxLevel: 102, cols: 8, rows: 16, fps: 16, pingpong: true },
+            { file: 'story/lvl10/story_lvl_10_idle.png', minLevel: 103, maxLevel: 105, cols: 8, rows: 16, fps: 16 },
+            { file: 'story/lvl10/story_lvl_10_idle_2.png', minLevel: 106, maxLevel: 199, cols: 8, rows: 16, fps: 16 },
+            { file: 'story/up_1/story_up_1.png', minLevel: 200, maxLevel: 210, cols: 8, rows: 16, fps: 16 },
+            { file: 'story/up_1/story_up_1_idle.png', minLevel: 211, maxLevel: 399, cols: 8, rows: 16, fps: 16 },
+            { file: 'story/up_2/story_up_2.png', minLevel: 400, maxLevel: 410, cols: 8, rows: 16, fps: 16 },
+            { file: 'story/up_2/story_up_2_idle.png', minLevel: 411, maxLevel: 599, cols: 8, rows: 16, fps: 16 },
+            { file: 'story/up_3/story_up_3.png', minLevel: 600, maxLevel: 610, cols: 8, rows: 16, fps: 16 },
+            { file: 'story/up_3/story_up_3_idle.png', minLevel: 611, maxLevel: 799, cols: 8, rows: 16, fps: 16 },
+            { file: 'story/up_4/story_up_4.png', minLevel: 800, maxLevel: 810, cols: 8, rows: 16, fps: 16 },
+            { file: 'story/up_4/story_up_4_idle.png', minLevel: 811, maxLevel: 999, cols: 8, rows: 16, fps: 16 },
+            { file: 'story/up_5/story_up_5.png', minLevel: 1000, maxLevel: 1005, cols: 8, rows: 16, fps: 16 },
+            { file: 'story/up_5/story_up_5_idle.png', minLevel: 1006, maxLevel: 1010, cols: 8, rows: 16, fps: 16 },
+            { file: 'story/end/end.png', minLevel: 1011, maxLevel: 999999, cols: 8, rows: 16, fps: 16 }
         ];
         
         function getTVStoryAnimation(currentLevel) {
