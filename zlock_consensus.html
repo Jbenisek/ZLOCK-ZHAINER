@@ -114,14 +114,33 @@
             width: auto;
         }
         
-        .button:hover {
+        .menuButton {
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
+            color: #E9F0F7;
+            border: 2px solid #2A9D8F;
+            border-radius: 8px;
+            padding: 14px 40px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin: 8px;
+            pointer-events: all;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            width: 380px;
+        }
+        
+        .button:hover, .menuButton:hover {
             background: linear-gradient(135deg, rgba(20, 27, 34, 0.95), rgba(42, 157, 143, 0.2));
             box-shadow: 0 6px 25px rgba(42, 157, 143, 0.4);
             transform: translateY(-2px);
             border-color: #4ECDC4;
         }
         
-        .button:active {
+        .button:active, .menuButton:active {
             background: linear-gradient(135deg, rgba(10, 14, 18, 0.98), rgba(15, 19, 24, 0.95));
             transform: translateY(0px);
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
@@ -856,16 +875,15 @@
             bottom: 20px;
             right: 280px;
             pointer-events: all;
-            background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.3), rgba(20, 27, 34, 0.3));
             border: 2px solid #2A9D8F;
             border-radius: 8px;
             padding: 4px;
-            backdrop-filter: blur(10px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
         
         #musicTicker {
-            background: rgba(42, 157, 143, 0.25);
+            background: rgba(42, 157, 143, 0.3);
             border-bottom: 1px solid #2A9D8F;
             padding: 8px 10px;
             margin: -4px -4px 2px -4px;
@@ -1750,10 +1768,10 @@
     
     <div id="pauseScreen">
         <div id="pauseTitle">PAUSED</div>
-        <button class="button" onclick="resumeGame()">RESUME<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
-        <button class="button" onclick="restartFromPause()">RESTART<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">X</span></button>
-        <button class="button" onclick="showSettingsFromPause()">SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">Y</span></button>
-        <button class="button" onclick="quitToMenu()">QUIT TO MENU<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 10px; font-weight: bold; color: white; font-size: 12px;">◀</span></button>
+        <button class="menuButton" onclick="resumeGame()">RESUME<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
+        <button class="menuButton" onclick="restartFromPause()">RESTART<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">X</span></button>
+        <button class="menuButton" onclick="showSettingsFromPause()">SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">Y</span></button>
+        <button class="menuButton" onclick="quitToMenu()">QUIT TO MENU<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 10px; font-weight: bold; color: white; font-size: 12px;">◀</span></button>
     </div>
     
     <div id="level10Notification">
@@ -2544,10 +2562,10 @@
 ```        <div id="titleScreen">
             <div id="title">ZLOCK</div>
             <div id="subtitle">ZHAINER</div>
-            <button class="button" onclick="startGame()" disabled style="opacity: 0.5; cursor: not-allowed;">START GAME<span style="display: inline-block; width: 26px; height: 26px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">A</span></button>
-            <button class="button" onclick="showSettings()">SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">▶</span></button>
-            <button class="button" onclick="showHighScores()">HIGH SCORES<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">X</span></button>
-            <button class="button" onclick="showAchievements()">ACHIEVEMENTS<span style="display: inline-block; width: 26px; height: 26px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">Y</span></button>
+            <button class="menuButton" onclick="startGame()" disabled style="opacity: 0.5; cursor: not-allowed;">START GAME<span style="display: inline-block; width: 26px; height: 26px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">A</span></button>
+            <button class="menuButton" onclick="showSettings()">SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">▶</span></button>
+            <button class="menuButton" onclick="showHighScores()">HIGH SCORES<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">X</span></button>
+            <button class="menuButton" onclick="showAchievements()">ACHIEVEMENTS<span style="display: inline-block; width: 26px; height: 26px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">Y</span></button>
             <button class="aboutButton" onclick="showHowToPlay()" style="background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); border-color: #2A9D8F; bottom: 125px;">📖 HOW TO PLAY & CONTROLS<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 10px; font-weight: bold; color: white; font-size: 12px;">SELECT</span></button>
             <button class="aboutButton" onclick="showAbout()">ABOUT / DONATE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
             <button class="preFillButton" onclick="startGameWithPreFill()" disabled style="opacity: 0.5; cursor: not-allowed;">NEED MORE ACTION? PRE-FILLED GRID<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 8px; font-weight: bold; color: white; font-size: 12px;">▲</span></button>
@@ -2638,12 +2656,12 @@
                 <strong>NOTE:</strong><br>Skipping past Level 10<br>disables most achievements
             </div>
             <div style="margin-top: 40px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #89A0B4;">
-                Version v0.20.61 • 2025-11-23
+                Version v0.20.62 • 2025-11-23
             </div>
         </div>
     </div>
     <div style="position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); color: rgba(255, 255, 255, 0.3); font-size: 12px; font-family: 'JetBrains Mono', monospace; pointer-events: none; z-index: 100;">
-        Version v0.20.61 • 2025-11-23
+        Version v0.20.62 • 2025-11-23
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -2652,7 +2670,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.20.61';
+        const GAME_VERSION = 'v0.20.62';
         
         // ===== AUDIO SYSTEM =====
         const audioCache = {}; // Cache for all audio files
@@ -9556,7 +9574,7 @@
                 }
                 
                 // Enable start buttons
-                const startButtons = document.querySelectorAll('.button, .preFillButton, .skipButton, .skipButton50, .skipButton100, .skipButton1000, .skipButton10000');
+                const startButtons = document.querySelectorAll('.button, .menuButton, .preFillButton, .skipButton, .skipButton50, .skipButton100, .skipButton1000, .skipButton10000');
                 startButtons.forEach(btn => {
                     btn.disabled = false;
                     btn.style.opacity = '1';

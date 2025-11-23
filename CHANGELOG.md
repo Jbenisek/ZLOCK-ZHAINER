@@ -2,6 +2,34 @@
 
 # Changelog
 
+## v0.20.62 - UI Consistency & Control Panel Transparency (2025-11-23)
+- **Summary:**
+  - Fixed menu button width consistency across all screens
+  - Increased control panel transparency for better visibility
+  - Removed backdrop blur for cleaner appearance
+  - Dedicated button class prevents CSS conflicts
+
+- **Menu Button Improvements:**
+  - Created new `.menuButton` class with fixed 380px width
+  - Applied to main menu buttons: START GAME, SETTINGS, HIGH SCORES, ACHIEVEMENTS
+  - Applied to pause menu buttons: RESUME, RESTART, SETTINGS, QUIT TO MENU
+  - Prevents buttons from resizing due to shared CSS styles
+  - Maintains consistent layout across all menu screens
+
+- **Button Class Separation:**
+  - `.button` class: Flexible width for modal/notification buttons
+  - `.menuButton` class: Fixed 380px width for main/pause menu buttons
+  - Both classes share same hover/active states
+  - Added `.menuButton` to asset loading enable selector
+  - Fixed start button initialization after asset loading
+
+- **Control Panel Transparency:**
+  - Reduced #gameControls background opacity from 0.95/0.9 to 0.3
+  - Removed backdrop-filter blur effect for cleaner look
+  - Increased #musicTicker background from 0.25 to 0.3 alpha
+  - Better visibility of game grid behind control panel
+  - Maintains readability while reducing visual obstruction
+
 ## v0.20.61 - Seamless Ticker Scrolling (2025-11-23)
 - **Summary:**
   - Fixed music ticker gap issue with seamless continuous scrolling
