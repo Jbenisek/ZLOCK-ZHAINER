@@ -2,6 +2,26 @@
 
 # Changelog
 
+## v0.20.60 - Expanded Floor Texture Rotation (2025-11-23)
+- **Summary:**
+  - Added 5 additional floor textures to rotation system
+  - Increased variety from 4 to 9 different floor patterns
+  - All available floor texture assets now utilized
+  - Enhanced visual diversity as levels progress
+
+- **Floor Texture Expansion:**
+  - Previous: 4 textures (floor 3, 7, 8, 9)
+  - Current: 9 textures (floor 1, 2, 3, 5, 6, 7, 8, 9, 10)
+  - Added to rotation: floor (1).png, floor (2).png, floor (5).png, floor (6).png, floor (10).png
+  - Updated preload array to include all 9 textures
+  - Random selection maintains unpredictability
+
+- **Asset Audit:**
+  - Identified unused assets in models/~eol/ folder (deprecated old chain models)
+  - Identified unused assets: zooko_staff.glb, roof_a.png
+  - Identified unused floor JPG variants (only PNG used)
+  - All utilized floor PNG textures now active in game rotation
+
 ## v0.20.59 - YouTube Story Video Link (2025-11-23)
 - **Summary:**
   - Added prominent YouTube video link to title screen
