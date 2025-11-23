@@ -2548,16 +2548,94 @@
             <button class="skipButton100" onclick="startGameAtLevel100()" disabled style="opacity: 0.5; cursor: not-allowed;">YOU'VE GOT THIS? EXPERT MODE<br>LEVEL 100<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 8px; font-weight: bold; color: white; font-size: 12px;">▼</span></button>
             <button class="skipButton1000" onclick="startGameAtLevel1000()" disabled style="opacity: 0.5; cursor: not-allowed;">ARE YOU LOCO? INSANE MODE<br>LEVEL 1000</button>
             <button class="skipButton10000" onclick="startGameAtLevel10000()" disabled style="opacity: 0.5; cursor: not-allowed;">WILL YOU BE MY SUPERHUMAN!<br>LEVEL 10,000</button>
+            
+            <!-- YouTube Story Video Link -->
+            <a href="https://youtu.be/GukOAeaMuyw" target="_blank" style="
+                position: absolute;
+                right: 80px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 320px;
+                background: linear-gradient(135deg, rgba(10, 14, 18, 0.98), rgba(20, 27, 34, 0.95));
+                border: 3px solid #FF0000;
+                border-radius: 16px;
+                padding: 0;
+                overflow: hidden;
+                text-decoration: none;
+                transition: all 0.3s ease;
+                box-shadow: 0 8px 32px rgba(255, 0, 0, 0.4);
+                cursor: pointer;
+            " onmouseover="this.style.transform='translateY(-50%) scale(1.05)'; this.style.boxShadow='0 12px 40px rgba(255, 0, 0, 0.6)'; this.style.borderColor='#FF3333';" onmouseout="this.style.transform='translateY(-50%) scale(1)'; this.style.boxShadow='0 8px 32px rgba(255, 0, 0, 0.4)'; this.style.borderColor='#FF0000';">
+                <!-- YouTube Thumbnail -->
+                <div style="position: relative; width: 100%; height: 180px; background: #000;">
+                    <img src="https://img.youtube.com/vi/GukOAeaMuyw/maxresdefault.jpg" style="width: 100%; height: 100%; object-fit: cover;" alt="Full Story Video">
+                    <!-- Play Button Overlay -->
+                    <div style="
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        width: 68px;
+                        height: 48px;
+                        background: rgba(255, 0, 0, 0.9);
+                        border-radius: 14px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        transition: all 0.3s ease;
+                    ">
+                        <div style="
+                            width: 0;
+                            height: 0;
+                            border-left: 18px solid white;
+                            border-top: 12px solid transparent;
+                            border-bottom: 12px solid transparent;
+                            margin-left: 4px;
+                        "></div>
+                    </div>
+                </div>
+                <!-- Video Info -->
+                <div style="padding: 16px; text-align: center;">
+                    <div style="
+                        font-family: 'JetBrains Mono', monospace;
+                        font-size: 18px;
+                        font-weight: 900;
+                        color: #2A9D8F;
+                        margin-bottom: 8px;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                    ">🎬 Watch Full Story</div>
+                    <div style="
+                        font-family: 'JetBrains Mono', monospace;
+                        font-size: 13px;
+                        color: #89A0B4;
+                        line-height: 1.4;
+                    ">The complete ZLOCK ZHAINER<br>animated Tunnels of Privacy video</div>
+                    <div style="
+                        margin-top: 12px;
+                        padding: 8px 16px;
+                        background: rgba(255, 0, 0, 0.15);
+                        border: 1px solid #FF0000;
+                        border-radius: 8px;
+                        font-family: 'JetBrains Mono', monospace;
+                        font-size: 12px;
+                        font-weight: 700;
+                        color: #FF6B6B;
+                        display: inline-block;
+                    ">▶ WATCH ON YOUTUBE</div>
+                </div>
+            </a>
+            
             <div style="position: absolute; left: 60px; top: calc(50% + 470px); font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #89A0B4; width: 220px; text-align: center; line-height: 1.4;">
                 <strong>NOTE:</strong><br>Skipping past Level 10<br>disables most achievements
             </div>
             <div style="margin-top: 40px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #89A0B4;">
-                Version v0.20.58 • 2025-11-23
+                Version v0.20.59 • 2025-11-23
             </div>
         </div>
     </div>
     <div style="position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); color: rgba(255, 255, 255, 0.3); font-size: 12px; font-family: 'JetBrains Mono', monospace; pointer-events: none; z-index: 100;">
-        Version v0.20.58 • 2025-11-23
+        Version v0.20.59 • 2025-11-23
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -2566,7 +2644,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.20.58';
+        const GAME_VERSION = 'v0.20.59';
         
         // ===== AUDIO SYSTEM =====
         const audioCache = {}; // Cache for all audio files

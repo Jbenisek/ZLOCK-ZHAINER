@@ -2,6 +2,36 @@
 
 # Changelog
 
+## v0.20.59 - YouTube Story Video Link (2025-11-23)
+- **Summary:**
+  - Added prominent YouTube video link to title screen
+  - Stylish card design with video thumbnail and hover effects
+  - Positioned on right side of title screen for easy access
+  - Direct link to full ZLOCK ZHAINER story and gameplay video
+
+- **YouTube Video Card:**
+  - Location: Right side of title screen, vertically centered
+  - Size: 320px width with 180px thumbnail
+  - Video thumbnail: Auto-loaded from YouTube (maxresdefault quality)
+  - YouTube branding: Red border (#FF0000) and classic play button overlay
+  - Link: https://youtu.be/GukOAeaMuyw
+
+- **Card Design:**
+  - Dark gradient background matching game theme
+  - 3px red border with glow shadow effect
+  - Rounded corners (16px border-radius)
+  - YouTube play button overlay on thumbnail
+  - Title: "🎬 Watch Full Story" in cyan (#2A9D8F)
+  - Subtitle: "The complete ZLOCK ZHAINER lore & gameplay video"
+  - Call-to-action button: "▶ WATCH ON YOUTUBE" in red theme
+
+- **Hover Effects:**
+  - Scale animation: 1.05x zoom on hover
+  - Enhanced glow: Shadow intensifies on hover
+  - Border brightens to #FF3333
+  - Smooth 0.3s transitions
+  - Opens in new tab when clicked
+
 ## v0.20.58 - Music Ticker Fun Facts (2025-11-23)
 - **Summary:**
   - Added 55 fun facts about Zcash, privacy tech, and CyberAxe to music ticker
