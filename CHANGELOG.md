@@ -2,6 +2,34 @@
 
 # Changelog
 
+## v0.20.61 - Seamless Ticker Scrolling (2025-11-23)
+- **Summary:**
+  - Fixed music ticker gap issue with seamless continuous scrolling
+  - Duplicated ticker content for infinite loop effect
+  - No more empty spaces between ticker loops
+  - Smooth, professional news-ticker style animation
+
+- **Ticker Animation Overhaul:**
+  - Previous: Single text element scrolling 100% to -100% with visible gaps
+  - Current: Wrapper with duplicated content scrolling 0% to -50% seamlessly
+  - Added musicTickerWrapper container with flex layout
+  - Two identical text spans (musicTickerText1 and musicTickerText2)
+  - 100px right padding between duplicates for natural spacing
+
+- **Technical Implementation:**
+  - New wrapper element animates instead of individual text
+  - Animation moves wrapper from translateX(0) to translateX(-50%)
+  - When first copy scrolls off-screen, second copy is already visible
+  - Creates infinite loop illusion with no visible restart
+  - All ticker update functions now set both text elements simultaneously
+
+- **Code Updates:**
+  - Updated loadMusic() ticker assignments (3 locations)
+  - Updated theme randomization ticker in ended event handler
+  - Updated startMusicSystem() ticker initialization
+  - All updates use tickerText1 and tickerText2 elements
+  - Maintained hover slowdown functionality (30s default, 60s on hover)
+
 ## v0.20.60 - Expanded Floor Texture Rotation (2025-11-23)
 - **Summary:**
   - Added 5 additional floor textures to rotation system
