@@ -864,6 +864,32 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
         
+        #musicTicker {
+            background: rgba(42, 157, 143, 0.25);
+            border-bottom: 1px solid #2A9D8F;
+            padding: 8px 10px;
+            margin: -4px -4px 2px -4px;
+            border-radius: 6px 6px 0 0;
+            overflow: hidden;
+            position: relative;
+            height: 30px;
+        }
+        
+        #musicTickerText {
+            color: #F2C94C;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 700;
+            white-space: nowrap;
+            display: inline-block;
+            animation: scrollTicker 15s linear infinite;
+        }
+        
+        @keyframes scrollTicker {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        
         #gameControlsButtons {
             display: flex;
             gap: 4px;
@@ -1621,6 +1647,24 @@
             <span class="settingLabel">Sound Effects</span>
             <input type="checkbox" id="sfxEnabled" checked onchange="updateSettings()">
         </div>
+        <div class="settingRow">
+            <span class="settingLabel">SFX Volume (1-150)</span>
+            <input type="range" id="sfxVolume" min="1" max="150" value="25" oninput="updateSettings()" style="width: 200px;">
+            <span id="sfxVolumeValue" style="margin-left: 10px; font-weight: bold; color: #2D9CDB;">25</span>
+        </div>
+        <div class="settingRow">
+            <span class="settingLabel">Music</span>
+            <input type="checkbox" id="musicEnabled" checked onchange="updateSettings()">
+        </div>
+        <div class="settingRow">
+            <span class="settingLabel">Music Volume (1-150)</span>
+            <input type="range" id="musicVolume" min="1" max="150" value="75" oninput="updateSettings()" style="width: 200px;">
+            <span id="musicVolumeValue" style="margin-left: 10px; font-weight: bold; color: #2D9CDB;">75</span>
+        </div>
+        <div class="settingRow">
+            <span class="settingLabel">TV/Story Screen</span>
+            <input type="checkbox" id="tvEnabled" checked onchange="updateSettings()">
+        </div>
         <div class="settingRow" style="border-top: 2px solid #26313B; padding-top: 20px; margin-top: 20px;">
             <span class="settingLabel">AI Player (Testing)</span>
             <input type="checkbox" id="aiEnabled" onchange="updateSettings()">
@@ -2118,6 +2162,9 @@
             </div>
             
             <div id="gameControls">
+                <div id="musicTicker">
+                    <div id="musicTickerText">♫ Level Track: Sprout Genesis (Levels 1-19) ♫</div>
+                </div>
                 <div id="gameControlsButtons">
                     <button id="lightsBtn" class="active" onclick="toggleLights()" title="Toggle Lights">💡</button>
                     <button id="particlesBtn" class="active" onclick="toggleParticles()" title="Toggle Particles">✨</button>
@@ -2125,6 +2172,8 @@
                     <button id="modelsBtn" class="active" onclick="toggleButton2()" title="Toggle 3D Models">🧍</button>
                     <button id="animationsBtn" class="active" onclick="toggleButton3()" title="Toggle Animations">🎬</button>
                     <button id="soundBtn" class="active" onclick="toggleSoundEffects()" title="Toggle Sound Effects">🔊</button>
+                    <button id="musicBtn" class="active" onclick="toggleMusic()" title="Toggle Music">🎵</button>
+                    <button id="tvBtn" class="active" onclick="toggleTV()" title="Toggle TV/Story Screen">📺</button>
                     <button id="colorPickerBtn" onclick="toggleColorPicker()" title="Grid Color Settings">🎨</button>
                     <button id="controlsBtn" onclick="toggleControls()" title="Toggle Controls Panel">⌨️</button>
                     <button id="gridEffectBtn" onclick="cycleGridEffect()" title="Grid Effect: None">🌌</button>
@@ -2433,12 +2482,12 @@
                 <strong>NOTE:</strong><br>Skipping past Level 10<br>disables most achievements
             </div>
             <div style="margin-top: 40px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #89A0B4;">
-                Version v0.20.51 • 2025-11-22
+                Version v0.20.54 • 2025-11-23
             </div>
         </div>
     </div>
     <div style="position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); color: rgba(255, 255, 255, 0.3); font-size: 12px; font-family: 'JetBrains Mono', monospace; pointer-events: none; z-index: 100;">
-        Version v0.20.51 • 2025-11-22
+        Version v0.20.54 • 2025-11-23
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -2447,12 +2496,16 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.20.51';
+        const GAME_VERSION = 'v0.20.54';
         
         // ===== AUDIO SYSTEM =====
         const audioCache = {}; // Cache for all audio files
         let masterVolume = 0.7; // Global volume control
         let sfxEnabled = true; // Master SFX toggle
+        let musicEnabled = true; // Master music toggle
+        let tvEnabled = true; // TV/Story screen toggle
+        let sfxVolume = 25; // Sound effects volume (1-150)
+        let musicVolume = 75; // Music volume (1-150)
         
         // Audio file paths mapped to IDs
         const AUDIO_FILES = {
@@ -2555,17 +2608,20 @@
             
             const cached = audioCache[soundId];
             
+            // Convert sfxVolume (1-150) to multiplier (0.01-1.5)
+            const volumeScale = sfxVolume / 100;
+            
             // If already playing, clone it for overlap (important for rapid-fire sounds)
             if (!cached.paused && !cached.ended) {
                 const clone = cached.cloneNode();
-                clone.volume = masterVolume * volumeMultiplier;
+                clone.volume = volumeScale * volumeMultiplier;
                 clone.play().catch(e => console.warn('Audio play failed:', e));
                 return;
             }
             
             // Reuse cached audio
             cached.currentTime = 0;
-            cached.volume = masterVolume * volumeMultiplier;
+            cached.volume = volumeScale * volumeMultiplier;
             cached.play().catch(e => console.warn('Audio play failed:', e));
         }
         
@@ -2573,9 +2629,12 @@
         function playAmbient(soundId, volumeMultiplier = 1.0) {
             if (!sfxEnabled || !audioCache[soundId]) return;
             
+            // Convert sfxVolume (1-150) to multiplier (0.01-1.5)
+            const volumeScale = sfxVolume / 100;
+            
             const audio = audioCache[soundId];
             audio.loop = true;
-            audio.volume = masterVolume * volumeMultiplier;
+            audio.volume = volumeScale * volumeMultiplier;
             audio.play().catch(e => console.warn('Audio play failed:', e));
         }
         
@@ -3051,6 +3110,10 @@
             autoRestart: true, // Auto restart game on game over
             aiEnabled: false, // AI player for testing
             sfxEnabled: true, // Sound effects on/off
+            musicEnabled: true, // Music on/off
+            tvEnabled: true, // TV/Story screen on/off
+            sfxVolume: 25, // Sound effects volume (1-150)
+            musicVolume: 75, // Music volume (1-150)
             currentGridEffect: 0, // Grid effect index
             floorHintColor: 0x00FFFF, // Floor hint color (hex)
             laserLineColor: 0x00FFFF, // Laser line color (hex)
@@ -4391,6 +4454,54 @@
                 btn.classList.remove('active');
                 btn.textContent = '🔇';
                 btn.title = 'Toggle Sound Effects';
+            }
+            
+            // Save settings
+            saveSettings();
+        }
+        
+        function toggleMusic() {
+            const btn = document.getElementById('musicBtn');
+            
+            // Toggle the global music variable
+            musicEnabled = !musicEnabled;
+            settings.musicEnabled = musicEnabled;
+            
+            // Update button state
+            if (musicEnabled) {
+                btn.classList.add('active');
+                btn.textContent = '🎵';
+                btn.title = 'Toggle Music';
+                startMusicSystem();
+            } else {
+                btn.classList.remove('active');
+                btn.textContent = '🔇';
+                btn.title = 'Toggle Music';
+                stopMusicSystem();
+            }
+            
+            // Save settings
+            saveSettings();
+        }
+        
+        function toggleTV() {
+            const btn = document.getElementById('tvBtn');
+            
+            // Toggle the global TV variable
+            tvEnabled = !tvEnabled;
+            settings.tvEnabled = tvEnabled;
+            
+            // Update button state
+            if (tvEnabled) {
+                btn.classList.add('active');
+                btn.textContent = '📺';
+                btn.title = 'Toggle TV/Story Screen';
+                startTVSystem();
+            } else {
+                btn.classList.remove('active');
+                btn.textContent = '🚫';
+                btn.title = 'Toggle TV/Story Screen';
+                stopTVSystem();
             }
             
             // Save settings
@@ -8646,6 +8757,11 @@
         
         // SEPARATE animation loop for TV screen only
         function animateTVScreen() {
+            if (!tvEnabled) {
+                tvAnimationFrameId = null;
+                return;
+            }
+            
             tvAnimationFrameId = requestAnimationFrame(animateTVScreen);
             
             if (tvScreen && tvScreen.userData.flipbook) {
@@ -8676,6 +8792,230 @@
                     
                     fb.lastFrameTime = currentTime;
                 }
+            }
+        }
+        
+        // ===================================================================
+        // MUSIC SYSTEM - SEPARATE LOOP (ISOLATED FROM MAIN GAME)
+        // ===================================================================
+        let currentMusic = null;
+        let musicAnimationFrameId = null;
+        let currentMusicLevel = -1;
+        
+        const musicTracks = [
+            { file: 'music/level_1.webm', minLevel: 1, maxLevel: 19, name: 'Sprout Genesis' },
+            { file: 'music/level_2.webm', minLevel: 20, maxLevel: 29, name: 'Sapling Awakening' },
+            { file: 'music/level_3.webm', minLevel: 30, maxLevel: 39, name: 'Shielded Dreams' },
+            { file: 'music/level_4.webm', minLevel: 40, maxLevel: 49, name: 'Blossom Protocol' },
+            { file: 'music/level_5.webm', minLevel: 50, maxLevel: 59, name: 'Heartwood Harmony' },
+            { file: 'music/level_6.webm', minLevel: 60, maxLevel: 69, name: 'Canopy Rising' },
+            { file: 'music/level_7.webm', minLevel: 70, maxLevel: 79, name: 'NU5 Evolution' },
+            { file: 'music/level_8.webm', minLevel: 80, maxLevel: 89, name: 'Orchard Grove' },
+            { file: 'music/level_9.webm', minLevel: 90, maxLevel: 99, name: 'Zashi Velocity' },
+            { file: 'music/level_10.webm', minLevel: 100, maxLevel: 199, name: 'Cypherpunk Anthem' },
+            { file: 'music/up_1.webm', minLevel: 200, maxLevel: 399, name: 'Privacy Ascent' },
+            { file: 'music/up_2.webm', minLevel: 400, maxLevel: 599, name: 'Zero Knowledge' },
+            { file: 'music/up_3.webm', minLevel: 600, maxLevel: 799, name: 'Freedom Protocol' },
+            { file: 'music/up_4.webm', minLevel: 800, maxLevel: 999, name: 'Zingo Calm' },
+            { file: 'music/up_5.webm', minLevel: 1000, maxLevel: 999999, name: 'Infinite Shielding' }
+        ];
+        
+        const themeTracks = [
+            { file: 'music/theme_a.webm', name: 'Electric Coin Company' },
+            { file: 'music/theme_b.webm', name: 'Zcash Foundation' },
+            { file: 'music/theme_c_boss.webm', name: 'Proof of Work Battle' },
+            { file: 'music/theme_d.webm', name: 'ZecWallet Lite' },
+            { file: 'music/theme_e.webm', name: 'Private by Default' },
+            { file: 'music/theme_f.webm', name: 'Halo Arc Dreams' },
+            { file: 'music/theme_g.webm', name: 'Mining the Future' },
+            { file: 'music/theme_h.webm', name: 'zkSNARK Symphony' },
+            { file: 'music/theme_i.webm', name: 'Trusted Setup Ceremony' },
+            { file: 'music/theme_j.webm', name: 'Shielded Sunset' }
+        ];
+        
+        function getMusicForLevel(currentLevel) {
+            for (let i = 0; i < musicTracks.length; i++) {
+                const track = musicTracks[i];
+                if (currentLevel >= track.minLevel && currentLevel <= track.maxLevel) {
+                    return track;
+                }
+            }
+            return musicTracks[0];
+        }
+        
+        function loadMusic(trackData) {
+            if (!musicEnabled) return;
+            
+            // Check if we're already playing this track
+            if (currentMusic && currentMusic.src.endsWith(trackData.file)) {
+                return; // Don't restart the same track
+            }
+            
+            // Update music ticker with track name
+            const tickerText = document.getElementById('musicTickerText');
+            if (tickerText && trackData.name) {
+                // Check if this is a level track or theme track
+                if (trackData.minLevel !== undefined) {
+                    // Level track - show level range
+                    const levelRange = trackData.maxLevel === 999999 ? `${trackData.minLevel}+` : `${trackData.minLevel}-${trackData.maxLevel}`;
+                    tickerText.textContent = `♫ Level Track: ${trackData.name} (Levels ${levelRange}) ♫`;
+                } else {
+                    // Theme track
+                    tickerText.textContent = `♫ Theme Song: ${trackData.name} ♫`;
+                }
+            }
+            
+            // Convert musicVolume (1-150) to multiplier (0.01-1.5)
+            const volumeScale = musicVolume / 100;
+            
+            // Create new audio element
+            const newMusic = new Audio(trackData.file);
+            newMusic.loop = false; // Changed to false so we can handle ended event
+            newMusic.volume = 0; // Start silent
+            
+            // When song ends, maybe play a theme, then resume level track
+            newMusic.addEventListener('ended', () => {
+                const shouldPlayTheme = Math.random() < 0.5; // 50% chance
+                
+                if (shouldPlayTheme) {
+                    // Pick random theme
+                    const randomTheme = themeTracks[Math.floor(Math.random() * themeTracks.length)];
+                    const themeAudio = new Audio(randomTheme.file);
+                    themeAudio.volume = volumeScale;
+                    themeAudio.loop = false;
+                    
+                    // Update ticker with theme name
+                    if (tickerText && randomTheme.name) {
+                        tickerText.textContent = `♫ Theme Song: ${randomTheme.name} ♫`;
+                    }
+                    
+                    // When theme ends, go back to level track
+                    themeAudio.addEventListener('ended', () => {
+                        const levelTrack = getMusicForLevel(level);
+                        loadMusic(levelTrack);
+                    });
+                    
+                    themeAudio.play().catch(err => console.log('Theme play error:', err));
+                    currentMusic = themeAudio;
+                    themeAudio.loop = false;
+                    
+                    // When theme ends, go back to level track
+                    themeAudio.addEventListener('ended', () => {
+                        const levelTrack = getMusicForLevel(level);
+                        loadMusic(levelTrack);
+                    });
+                    
+                    themeAudio.play().catch(err => console.log('Theme play error:', err));
+                    currentMusic = themeAudio;
+                } else {
+                    // Just loop the level track again
+                    newMusic.currentTime = 0;
+                    newMusic.play().catch(err => console.log('Music replay error:', err));
+                }
+            });
+            
+            newMusic.play().catch(err => console.log('Music autoplay blocked:', err));
+            
+            // Crossfade: fade out old, fade in new
+            const fadeDuration = 2000; // 2 seconds
+            const fadeSteps = 60; // 60 steps
+            const fadeInterval = fadeDuration / fadeSteps;
+            let fadeStep = 0;
+            
+            const fadeTimer = setInterval(() => {
+                fadeStep++;
+                const progress = fadeStep / fadeSteps;
+                
+                // Fade out old music
+                if (currentMusic && currentMusic !== newMusic) {
+                    currentMusic.volume = volumeScale * (1 - progress);
+                }
+                
+                // Fade in new music
+                newMusic.volume = volumeScale * progress;
+                
+                if (fadeStep >= fadeSteps) {
+                    clearInterval(fadeTimer);
+                    
+                    // Stop and cleanup old music
+                    if (currentMusic && currentMusic !== newMusic) {
+                        currentMusic.pause();
+                    }
+                    
+                    // Set new music as current
+                    currentMusic = newMusic;
+                }
+            }, fadeInterval);
+        }
+        
+        // SEPARATE animation loop for music system
+        function animateMusicSystem() {
+            if (!musicEnabled) {
+                musicAnimationFrameId = null;
+                return;
+            }
+            
+            musicAnimationFrameId = requestAnimationFrame(animateMusicSystem);
+            
+            // Check if level changed and we need a different track
+            if (level !== currentMusicLevel) {
+                const oldTrack = getMusicForLevel(currentMusicLevel);
+                const newTrack = getMusicForLevel(level);
+                
+                // Only switch if track file is different
+                if (oldTrack.file !== newTrack.file) {
+                    loadMusic(newTrack);
+                }
+                
+                currentMusicLevel = level;
+            }
+            
+            // Update volume dynamically based on musicVolume (1-150 range)
+            if (currentMusic) {
+                const volumeScale = musicVolume / 100;
+                currentMusic.volume = volumeScale;
+            }
+        }
+        
+        function startMusicSystem() {
+            if (musicEnabled && !musicAnimationFrameId) {
+                currentMusicLevel = level;
+                const initialTrack = getMusicForLevel(level);
+                if (initialTrack) {
+                    loadMusic(initialTrack);
+                }
+                animateMusicSystem();
+            }
+        }
+        
+        function stopMusicSystem() {
+            if (musicAnimationFrameId) {
+                cancelAnimationFrame(musicAnimationFrameId);
+                musicAnimationFrameId = null;
+            }
+            if (currentMusic) {
+                currentMusic.pause();
+                currentMusic = null;
+            }
+            currentMusicLevel = -1;
+        }
+        
+        function startTVSystem() {
+            if (tvEnabled && !tvAnimationFrameId) {
+                if (tvScreen) {
+                    tvScreen.visible = true;
+                }
+                animateTVScreen();
+            }
+        }
+        
+        function stopTVSystem() {
+            if (tvAnimationFrameId) {
+                cancelAnimationFrame(tvAnimationFrameId);
+                tvAnimationFrameId = null;
+            }
+            if (tvScreen) {
+                tvScreen.visible = false;
             }
         }
         
@@ -9315,6 +9655,11 @@
             // Start wall videos playing (after user interaction)
             startAllWallVideos();
             
+            // Start music system (requires user interaction for autoplay)
+            if (musicEnabled) {
+                startMusicSystem();
+            }
+            
             // Reset floor cell animations
             floorAnimationTime = 0;
             floorCells.forEach(cell => {
@@ -9469,6 +9814,12 @@
             document.getElementById('showHitboxes').checked = settings.showHitboxes;
             document.getElementById('autoRestart').checked = settings.autoRestart;
             document.getElementById('sfxEnabled').checked = settings.sfxEnabled;
+            document.getElementById('musicEnabled').checked = settings.musicEnabled;
+            document.getElementById('sfxVolume').value = settings.sfxVolume;
+            document.getElementById('sfxVolumeValue').textContent = settings.sfxVolume;
+            document.getElementById('musicVolume').value = settings.musicVolume;
+            document.getElementById('musicVolumeValue').textContent = settings.musicVolume;
+            document.getElementById('tvEnabled').checked = settings.tvEnabled;
             document.getElementById('aiEnabled').checked = settings.aiEnabled;
         }
         
@@ -9483,10 +9834,36 @@
             settings.showHitboxes = document.getElementById('showHitboxes').checked;
             settings.autoRestart = document.getElementById('autoRestart').checked;
             settings.sfxEnabled = document.getElementById('sfxEnabled').checked;
+            settings.musicEnabled = document.getElementById('musicEnabled').checked;
+            settings.sfxVolume = parseInt(document.getElementById('sfxVolume').value);
+            settings.musicVolume = parseInt(document.getElementById('musicVolume').value);
+            settings.tvEnabled = document.getElementById('tvEnabled').checked;
             settings.aiEnabled = document.getElementById('aiEnabled').checked;
             
-            // Update global sound effects toggle
+            // Update volume display values
+            document.getElementById('sfxVolumeValue').textContent = settings.sfxVolume;
+            document.getElementById('musicVolumeValue').textContent = settings.musicVolume;
+            
+            // Update global sound effects toggle and volume
             sfxEnabled = settings.sfxEnabled;
+            sfxVolume = settings.sfxVolume;
+            
+            // Update global music toggle and volume
+            musicEnabled = settings.musicEnabled;
+            musicVolume = settings.musicVolume;
+            if (musicEnabled) {
+                startMusicSystem();
+            } else {
+                stopMusicSystem();
+            }
+            
+            // Update global TV toggle
+            tvEnabled = settings.tvEnabled;
+            if (tvEnabled) {
+                startTVSystem();
+            } else {
+                stopTVSystem();
+            }
             
             // Update placement box visibility
             updatePlacementBoxVisibility();

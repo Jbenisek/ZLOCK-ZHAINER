@@ -2,6 +2,99 @@
 
 # Changelog
 
+## v0.20.54 - Music Ticker & Zcash Branding (2025-11-23)
+- **Summary:**
+  - Added scrolling music ticker above control panel
+  - Renamed all tracks with Zcash/privacy/cypherpunk themes
+  - TV/Story screen toggle system with performance controls
+  - Enhanced ticker display with track type and level ranges
+
+- **Music Ticker System:**
+  - Scrolling ticker bar above control panel buttons
+  - 15-second smooth scroll animation
+  - Displays track name, type (Level/Theme), and level ranges
+  - Format: "♫ Level Track: [Name] (Levels [Range]) ♫" or "♫ Theme Song: [Name] ♫"
+  - Larger 14px text with improved visibility (0.25 alpha background)
+  - Auto-updates when tracks change
+
+- **Zcash-Themed Track Names:**
+  - **Level Tracks:** Sprout Genesis, Sapling Awakening, Shielded Dreams, Blossom Protocol, Heartwood Harmony, Canopy Rising, NU5 Evolution, Orchard Grove, Zashi Velocity, Cypherpunk Anthem, Privacy Ascent, Zero Knowledge, Freedom Protocol, Nighthawk Flight, Infinite Shielding
+  - **Theme Tracks:** Electric Coin Company, Zcash Foundation, Proof of Work Battle, ZecWallet Lite, Private by Default, Halo Arc Dreams, Mining the Future, zkSNARK Symphony, Trusted Setup Ceremony, Shielded Sunset
+  - References Zcash network upgrades, wallets, projects, and privacy concepts
+
+- **TV/Story Screen Controls:**
+  - 📺 Toggle button in control panel
+  - Settings panel checkbox with persistence
+  - `startTVSystem()` / `stopTVSystem()` functions
+  - Animation loop completely stops when disabled (no performance drain)
+  - TV mesh visibility control
+
+## v0.20.53 - Music System Enhancements (2025-11-23)
+- **Summary:**
+  - Added theme song randomization (theme_a through theme_j)
+  - Volume control sliders for SFX and Music (1-150 range)
+  - Music toggle button in control panel
+  - Fixed level-based track switching detection
+  - Music starts on game start (bypasses browser autoplay restrictions)
+
+- **Theme Song Integration:**
+  - 50% chance to play random theme song when level track ends
+  - 10 theme songs available (theme_a.webm - theme_j.webm)
+  - Automatically returns to level-appropriate track after theme finishes
+  - Seamless mixing throughout gameplay
+
+- **Volume Controls:**
+  - SFX Volume slider: 1-150 range, default 25 (0.25x multiplier)
+  - Music Volume slider: 1-150 range, default 75 (0.75x multiplier)
+  - Real-time volume adjustment during playback
+  - Values persist via localStorage
+
+- **Control Panel:**
+  - Added 🎵 Music toggle button next to sound effects
+  - Instant enable/disable without game restart
+
+- **Bug Fixes:**
+  - Fixed level track switching (level 19→20 now properly switches from level_1 to level_2)
+  - Music system now starts on game start instead of page load
+  - Proper track comparison logic in animateMusicSystem()
+
+## v0.20.52 - Music System (2025-11-22)
+- **Summary:**
+  - Added music system in its own game loop and animation loop
+  - 15 music tracks mapped to level ranges
+  - Seamless track switching based on level progression
+  - Settings panel integration with toggle and persistence
+
+- **Music System Implementation:**
+  - Independent `musicAnimationFrameId` loop separate from main game
+  - `getMusicForLevel()`: Automatic track selection based on current level
+  - `loadMusic()`: Audio element creation with loop and volume control
+  - `animateMusicSystem()`: Detects level changes and switches tracks
+  - `startMusicSystem()` / `stopMusicSystem()`: Full lifecycle management
+  - Volume controlled by global `masterVolume` setting (0.7)
+
+- **Music Tracks:**
+  - Level 1-19: `level_1.webm`
+  - Level 20-29: `level_2.webm`
+  - Level 30-39: `level_3.webm`
+  - Level 40-49: `level_4.webm`
+  - Level 50-59: `level_5.webm`
+  - Level 60-69: `level_6.webm`
+  - Level 70-79: `level_7.webm`
+  - Level 80-89: `level_8.webm`
+  - Level 90-99: `level_9.webm`
+  - Level 100-199: `level_10.webm`
+  - Level 200-399: `up_1.webm`
+  - Level 400-599: `up_2.webm`
+  - Level 600-799: `up_3.webm`
+  - Level 800-999: `up_4.webm`
+  - Level 1000+: `up_5.webm`
+
+- **Settings Integration:**
+  - Music toggle checkbox added to settings panel
+  - `musicEnabled` flag with localStorage persistence
+  - Settings apply immediately without game restart
+
 ## v0.20.51 - Complete Story System (2025-11-22)
 - **Summary:**
   - Extended story animations through level 1011+
