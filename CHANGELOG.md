@@ -2,6 +2,74 @@
 
 # Changelog
 
+## v0.20.49 - TV Story Screen Refinements (2025-11-22)
+- **Summary:**
+  - Fixed TV screen aspect ratio to match 16:9 artwork
+  - Added pingpong animation playback for level 10
+  - Extended story content through level 19
+  - Repositioned NPC model
+
+- **TV Screen Updates:**
+  - Corrected aspect ratio from 4:3 to 16:9 (41.25 x 23.203125)
+  - Final size scaled 37.5% larger than original for optimal visibility
+  - Proper aspect ratio prevents artwork distortion
+
+- **Animation System:**
+  - Added pingpong playback mode (plays forward then reverses)
+  - Level 10 uses pingpong for story_lvl_1.png
+  - Direction flag tracks forward/reverse playback
+
+- **Story Content:**
+  - Removed intro_f.png
+  - Extended intro_e to levels 8-9
+  - Added story_lvl_1_loop.png for levels 11-19
+  - Total coverage: Levels 1-19
+
+- **Scene Updates:**
+  - Moved female_3_idle.glb NPC from (17, -8.25, 36) to (23, -8.3, 35)
+
+## v0.20.48 - TV Story Screen Expansion (2025-11-22)
+- **Summary:**
+  - Increased TV screen size by 50%
+  - Added 4 additional story animations (levels 6-10)
+  - Repositioned TV screen lower on north wall
+
+- **TV Screen Updates:**
+  - Size increased from 20x15 to 30x22.5
+  - Position adjusted to Y=10 for better visibility
+  - Enhanced story presentation
+
+- **Story Animations Added:**
+  - intro_d: Levels 6-7
+  - intro_e: Level 8
+  - intro_f: Level 9
+  - story_lvl_1: Level 10 (in story/lvl1/ directory)
+  - Total: 7 story animations covering levels 1-10
+
+## v0.20.47 - TV Story Screen System (2025-11-22)
+- **Summary:**
+  - Added TV Story Screen on north wall for story animations
+  - Separate animation loop isolated from main game loop
+  - Template system for level-based story animations
+
+- **TV Story Screen:**
+  - 20x15 plane positioned at (3, 20, 38.5) on north wall
+  - Flipbook animation system (8x16 atlas, 128 frames, 16fps)
+  - Independent animation loop (animateTVScreen) for zero main game impact
+  - Rotated 180° (Math.PI) for correct text orientation
+
+- **Story Animation System:**
+  - Level-based animation switching via getTVStoryAnimation()
+  - Template arrays: storyAnimations[] for one-time, storyLoops[] for ranges
+  - Async texture loading eliminates black frame flashing
+  - Three intro animations configured (levels 1-6)
+
+- **Technical Implementation:**
+  - Separate requestAnimationFrame loop for TV only
+  - No performance impact on main game rendering
+  - Simple frame counter with modulo loop
+  - Texture offset calculations: col/cols and row position
+
 ## v0.20.46 - Wall Texture Restoration (2025-11-22)
 - **Summary:**
   - Restored static PNG wall textures after removing non-functional video wall system
