@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.72</title>
+    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.75</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -1734,7 +1734,9 @@
         <div style="margin: 8px 0; padding: 8px; background: rgba(243, 156, 18, 0.1); border-radius: 5px; font-size: 10px; color: #89A0B4;">
             💡 Clear cache if assets fail to load or have visual glitches
         </div>
-        <button class="button closeButton" onclick="closeAllPanels()" style="margin-top: 10px; width: 100%; padding: 10px; font-size: 12px;">CLOSE</button>
+        <button class="button closeButton" onclick="closeAllPanels()" style="margin-top: 10px; width: 100%; padding: 10px; font-size: 12px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
+        <div id="versionDisplay" style="display: block; width: 100%; margin-top: 15px; padding: 10px 0; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A7A8F; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+        </div>
     </div>
     
     <div id="highScoresPanel">
@@ -1879,8 +1881,6 @@
     
     <div id="gameContainer">
         <canvas id="renderCanvas"></canvas>
-        
-        <div id="versionDisplay">v0.20.72</div>
         
         <div id="performanceDisplay">
             <div><span class="perf-label">FPS:</span> <span class="perf-value" id="fpsValue">60</span></div>
@@ -2693,7 +2693,7 @@
             <!-- YouTube Story Video Link -->
             <a href="https://youtu.be/GukOAeaMuyw" target="_blank" style="
                 position: absolute;
-                right: 80px;
+                right: 60px;
                 top: 50%;
                 transform: translateY(-50%);
                 width: 320px;
@@ -2813,14 +2813,7 @@
                     </div>
                 </div>
             </div>
-            
-            <div style="margin-top: 40px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #89A0B4;">
-                Version v0.20.72 • 2025-11-23
-            </div>
         </div>
-    </div>
-    <div style="position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); color: rgba(255, 255, 255, 0.3); font-size: 12px; font-family: 'JetBrains Mono', monospace; pointer-events: none; z-index: 100;">
-        Version v0.20.72 • 2025-11-23
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -2829,7 +2822,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.20.72';
+        const GAME_VERSION = 'v0.20.75';
         
         // ===== AUDIO SYSTEM =====
         const audioCache = {}; // Cache for all audio files
@@ -3266,7 +3259,7 @@
         let cyberAxeLeftHandBone = null;
         let cyberAxeLeftHandOffset = { x: 0, y: 0, z: 0 }; // Offset from left hand bone to particle spawn point
         let cyberAxeChestBone = null;
-        let cyberAxeChestOffset = { x: -0.25, y: 0.25, z: 4 }; // Offset from chest bone to particle spawn point
+        let cyberAxeChestOffset = { x: -0.25, y: 2, z: 4 }; // Offset from chest bone to particle spawn point
         let cyberAxeShieldLoopId = null; // Track chest shield particle loop
         
         // Nate model and animation
@@ -6877,6 +6870,9 @@
         });
         
         function init() {
+            // Set version display
+            document.getElementById('versionDisplay').textContent = `Version ${GAME_VERSION} • 2025-11-23`;
+            
             // Populate particle dropdown for custom replacements
             populateParticleDropdown();
             

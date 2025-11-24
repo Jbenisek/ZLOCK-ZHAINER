@@ -2,6 +2,57 @@
 
 # Changelog
 
+## v0.20.75 - Version Display Positioning Fix (2025-11-23)
+- **Summary:**
+  - Fixed version display centering in Settings panel
+  - Moved version display to bottom of Settings panel for better visibility
+
+- **UI Fixes:**
+  - Version display now properly centered in Settings panel
+  - Added `display: block` and `width: 100%` to versionDisplay div
+  - Positioned after Close button with top border separator
+  - Uses JetBrains Mono font, 11px, subtle color (#5A7A8F)
+  - Only visible when Settings panel is open (ESC key)
+
+- **Technical Details:**
+  - Line 1739: versionDisplay div with proper block-level centering
+  - Removed from gameplay area and title screen completely
+  - Single source: GAME_VERSION constant dynamically populates on init()
+
+## v0.20.74 - Version System Consolidation (2025-11-23)
+- **Summary:**
+  - Removed redundant version displays throughout the UI
+  - Consolidated to single version source and single display location
+
+- **Version System Cleanup:**
+  - Removed hardcoded version from title screen bottom
+  - Removed hardcoded version from game screen overlay
+  - Removed duplicate bottom-center version display
+  - Now only 1 version constant: GAME_VERSION (line 2832)
+  - Now only 1 display location: bottom-center (dynamically populated)
+  - Version display auto-updates from GAME_VERSION on init()
+  - Future version updates require changing only 2 lines: title tag + GAME_VERSION constant
+
+- **Technical Details:**
+  - Removed versionDisplay div from game container (was line 1883)
+  - Removed version text from title screen (was line 2818)
+  - Consolidated bottom version div to use id="versionDisplay"
+  - Added dynamic population in init(): document.getElementById('versionDisplay').textContent = `Version ${GAME_VERSION} • 2025-11-23`
+
+## v0.20.73 - CyberAxe Shield Particle Position Adjustment (2025-11-23)
+- **Summary:**
+  - Adjusted CyberAxe idle shield particle effect vertical position
+
+- **Visual Adjustments:**
+  - Modified cyberAxeChestOffset Y value from 0.25 to 2.0
+  - Shield particle now displays at more appropriate chest height
+  - Better visual alignment with CyberAxe character model during idle animation
+
+- **Technical Details:**
+  - Line 3269: cyberAxeChestOffset = { x: -0.25, y: 2, z: 4 }
+  - Offset applied in startCyberAxeShieldLoop() at line 7567
+  - Effect spawns relative to chest bone with bone-tracking enabled
+
 ## v0.20.72 - Custom Particle System & Editor Integration (2025-11-23)
 - **Summary:**
   - Added Tools panel with Particle Editor link and custom particle import system
