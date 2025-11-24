@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.75</title>
+    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.81</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -1708,6 +1708,10 @@
                 <span class="settingLabel" style="font-size: 11px;">AI Player</span>
                 <input type="checkbox" id="aiEnabled" onchange="updateSettings()">
             </div>
+            <div class="settingRow" style="margin: 0;">
+                <span class="settingLabel" style="font-size: 11px;">AI Fast Play</span>
+                <input type="checkbox" id="aiFastPlay" checked onchange="updateSettings()">
+            </div>
         </div>
         
         <div style="margin: 10px 0; padding: 8px; background: rgba(0, 255, 255, 0.1); border-radius: 5px; font-size: 10px; color: #89A0B4;">
@@ -1886,6 +1890,7 @@
             <div><span class="perf-label">FPS:</span> <span class="perf-value" id="fpsValue">60</span></div>
             <div><span class="perf-label">Memory:</span> <span class="perf-value" id="memoryValue">0 MB</span></div>
             <div><span class="perf-label">Particles:</span> <span class="perf-value" id="particleCount">0</span></div>
+            <div><span class="perf-label">Combo FX:</span> <span class="perf-value" id="comboEffectCount">0</span></div>
         </div>
         
         <!-- Special Abilities Panel -->
@@ -2169,6 +2174,8 @@
             <div id="levelDisplay">
                 <div id="levelLabel">LEVEL</div>
                 <div id="levelValue">1</div>
+                <div id="highScoreLabel" style="font-size: 11px; color: rgba(255, 255, 255, 0.5); margin-top: 3px; font-family: 'JetBrains Mono', monospace;">HIGH SCORE</div>
+                <div id="highScoreValue" style="font-size: 14px; color: #F39C12; font-family: 'JetBrains Mono', monospace; font-weight: bold;">0</div>
             </div>
             
             <div id="scoreDisplay">
@@ -2822,7 +2829,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.20.75';
+        const GAME_VERSION = 'v0.20.81';
         
         // ===== AUDIO SYSTEM =====
         const audioCache = {}; // Cache for all audio files
@@ -3070,6 +3077,8 @@
         let usedAI = false; // Track if AI was ever used during this game
         let combo = 1.0;
         let lastClearTime = 0;
+        let lastComboParticleTime = 0; // Rate limit combo particles to 1 per second
+        let comboEffectCounter = 0; // Track combo effects for diagnostics
         let floorClearBonusAwarded = false;
         let consensusCleared = 0;
         let level10NotificationShown = false; // Track if we've shown the level 10 popup
@@ -3480,6 +3489,7 @@
             showHitboxes: false,
             autoRestart: true, // Auto restart game on game over
             aiEnabled: false, // AI player for testing
+            aiFastPlay: true, // AI uses instant drop when true, fast drop when false
             sfxEnabled: true, // Sound effects on/off
             musicEnabled: true, // Music on/off
             tvEnabled: true, // TV/Story screen on/off
@@ -4100,7 +4110,9 @@
             targetX: null,
             targetZ: null,
             targetRotation: 0,
-            hasDecided: false
+            hasDecided: false,
+            lastDropTime: 0, // Track when last chain was dropped
+            dropDelay: 1000 // 1 second delay between drops
         };
         // ===== END AI PLAYER SECTION =====
         
@@ -4140,6 +4152,7 @@
             if (document.getElementById('musicVolumeValue')) document.getElementById('musicVolumeValue').textContent = settings.musicVolume;
             if (document.getElementById('musicVolumeSlider')) document.getElementById('musicVolumeSlider').value = settings.musicVolume;
             if (document.getElementById('musicVolumeSliderValue')) document.getElementById('musicVolumeSliderValue').textContent = settings.musicVolume;
+            if (document.getElementById('aiFastPlay')) document.getElementById('aiFastPlay').checked = settings.aiFastPlay;
             
             // Update title screen music controls
             if (document.getElementById('titleThemeMusicToggle')) document.getElementById('titleThemeMusicToggle').checked = settings.themeMusicEnabled;
@@ -4184,6 +4197,16 @@
             if (saved) {
                 highScores = JSON.parse(saved);
             }
+            updateHighScoreDisplay();
+        }
+        
+        function updateHighScoreDisplay() {
+            if (highScores.length > 0) {
+                const topScore = highScores[0].score;
+                document.getElementById('highScoreValue').textContent = topScore.toLocaleString();
+            } else {
+                document.getElementById('highScoreValue').textContent = '0';
+            }
         }
         
         function saveHighScore(score, level) {
@@ -4205,6 +4228,9 @@
             highScores.sort((a, b) => b.score - a.score);
             highScores = highScores.slice(0, 20);
             localStorage.setItem(STORAGE_KEYS.HIGH_SCORES, JSON.stringify(highScores));
+            
+            // Update HUD high score display
+            updateHighScoreDisplay();
             
             // Add to game history (last 5) - include all games
             let gameHistory = JSON.parse(localStorage.getItem(STORAGE_KEYS.GAME_HISTORY) || '[]');
@@ -6933,7 +6959,7 @@
             
             // Setup lighting
             // Main key light - warm, softer intensity
-            keyLight = new THREE.DirectionalLight(0xFFFFFF, 0.8);
+            keyLight = new THREE.DirectionalLight(0xFFFFFF, 0.56);
             keyLight.position.set(5, 20, 8);
             keyLight.castShadow = true;
             keyLight.shadow.mapSize.width = 2048;
@@ -6948,21 +6974,21 @@
             scene.add(keyLight);
             
             // Fill light - cool tone, reduced intensity
-            fillLight = new THREE.DirectionalLight(0xBBDDFF, 0.3);
+            fillLight = new THREE.DirectionalLight(0xBBDDFF, 0.21);
             fillLight.position.set(-8, 10, -5);
             scene.add(fillLight);
             
             // Ambient light - soft overall illumination
-            ambientLight = new THREE.AmbientLight(0x404855, 0.5);
+            ambientLight = new THREE.AmbientLight(0x404855, 0.35);
             scene.add(ambientLight);
             
             // Rim light for character separation
-            rimLight = new THREE.DirectionalLight(0xFFFFFF, 0.4);
+            rimLight = new THREE.DirectionalLight(0xFFFFFF, 0.28);
             rimLight.position.set(0, 5, -15);
             scene.add(rimLight);
             
             // Player position light - soft spotlight from camera position
-            playerLight = new THREE.SpotLight(0xFFFFFF, 15, 37.5, Math.PI / 3, 1.5, 1.8);
+            playerLight = new THREE.SpotLight(0xFFFFFF, 10.5, 37.5, Math.PI / 3, 1.5, 1.8);
             playerLight.position.set(0, 0, 0); // Will be updated by updateCameraPosition()
             playerLight.target.position.set(GRID_WIDTH / 2, cameraHeight, GRID_DEPTH / 2);
             playerLight.castShadow = false;
@@ -10111,6 +10137,9 @@
                 new THREE.BoxGeometry(roomWidth, wallHeight, wallThickness),
                 new THREE.MeshPhongMaterial({ 
                     map: northTexture,
+                    emissiveMap: northTexture,
+                    emissive: 0xffffff,
+                    emissiveIntensity: 0.3,
                     side: THREE.DoubleSide 
                 })
             );
@@ -10124,6 +10153,9 @@
                 new THREE.BoxGeometry(roomWidth, wallHeight, wallThickness),
                 new THREE.MeshPhongMaterial({ 
                     map: southTexture,
+                    emissiveMap: southTexture,
+                    emissive: 0xffffff,
+                    emissiveIntensity: 0.3,
                     side: THREE.DoubleSide 
                 })
             );
@@ -10137,6 +10169,9 @@
                 new THREE.BoxGeometry(wallThickness, wallHeight, roomDepth),
                 new THREE.MeshPhongMaterial({ 
                     map: eastTexture,
+                    emissiveMap: eastTexture,
+                    emissive: 0xffffff,
+                    emissiveIntensity: 0.3,
                     side: THREE.DoubleSide 
                 })
             );
@@ -10150,6 +10185,9 @@
                 new THREE.BoxGeometry(wallThickness, wallHeight, roomDepth),
                 new THREE.MeshPhongMaterial({ 
                     map: westTexture,
+                    emissiveMap: westTexture,
+                    emissive: 0xffffff,
+                    emissiveIntensity: 0.3,
                     side: THREE.DoubleSide 
                 })
             );
@@ -10168,7 +10206,7 @@
                     map: floorTexture,
                     emissiveMap: floorTexture,
                     emissive: 0xffffff,
-                    emissiveIntensity: 0.5,
+                    emissiveIntensity: 0.05,
                     side: THREE.DoubleSide 
                 })
             );
@@ -10750,6 +10788,7 @@
             settings.levelMusicEnabled = document.getElementById('levelMusicEnabled').checked;
             settings.tvEnabled = document.getElementById('tvEnabled').checked;
             settings.aiEnabled = document.getElementById('aiEnabled').checked;
+            settings.aiFastPlay = document.getElementById('aiFastPlay').checked;
             
             // Update volume display values
             document.getElementById('sfxVolumeValue').textContent = settings.sfxVolume;
@@ -10793,9 +10832,15 @@
                 level50NotificationShown = true;
                 glowingLinksGuideShown = true;
             }
-            // Reset AI drop speed when turning off AI
-            if (!settings.aiEnabled && instantDrop) {
+            // Reset AI drop speed when turning off AI or changing fast play mode
+            if (!settings.aiEnabled) {
                 instantDrop = false;
+                fastDrop = false;
+            }
+            // Clear drop flags when changing fast play mode
+            if (settings.aiEnabled) {
+                instantDrop = false;
+                fastDrop = false;
             }
             document.getElementById('aiIndicator').style.display = settings.aiEnabled ? 'block' : 'none';
             // ===== END AI PLAYER =====
@@ -11100,6 +11145,10 @@
             const wasPaused = currentState === GameState.PAUSED;
             if (!wasPaused && currentState === GameState.PLAYING) {
                 currentState = GameState.PAUSED;
+                // Pause music when game pauses
+                if (currentMusic && !currentMusic.paused) {
+                    currentMusic.pause();
+                }
             }
             
             // Show notification
@@ -11113,6 +11162,10 @@
             // Resume game
             if (currentState === GameState.PAUSED) {
                 currentState = GameState.PLAYING;
+                // Resume music when game resumes
+                if (currentMusic && currentMusic.paused && !userPausedMusic) {
+                    currentMusic.play().catch(err => console.log('Resume music error:', err));
+                }
             }
         }
         
@@ -11124,6 +11177,10 @@
             const wasPaused = currentState === GameState.PAUSED;
             if (!wasPaused && currentState === GameState.PLAYING) {
                 currentState = GameState.PAUSED;
+                // Pause music when game pauses
+                if (currentMusic && !currentMusic.paused) {
+                    currentMusic.pause();
+                }
             }
             
             // Show notification
@@ -11137,6 +11194,10 @@
             // Resume game
             if (currentState === GameState.PAUSED) {
                 currentState = GameState.PLAYING;
+                // Resume music when game resumes
+                if (currentMusic && currentMusic.paused && !userPausedMusic) {
+                    currentMusic.play().catch(err => console.log('Resume music error:', err));
+                }
             }
         }
         
@@ -11148,6 +11209,10 @@
             const wasPaused = currentState === GameState.PAUSED;
             if (!wasPaused && currentState === GameState.PLAYING) {
                 currentState = GameState.PAUSED;
+                // Pause music when game pauses
+                if (currentMusic && !currentMusic.paused) {
+                    currentMusic.pause();
+                }
             }
             
             // Show notification
@@ -11161,6 +11226,10 @@
             // Resume game
             if (currentState === GameState.PAUSED) {
                 currentState = GameState.PLAYING;
+                // Resume music when game resumes
+                if (currentMusic && currentMusic.paused && !userPausedMusic) {
+                    currentMusic.play().catch(err => console.log('Resume music error:', err));
+                }
             }
         }
         
@@ -11172,6 +11241,10 @@
             const wasPaused = currentState === GameState.PAUSED;
             if (!wasPaused && currentState === GameState.PLAYING) {
                 currentState = GameState.PAUSED;
+                // Pause music when game pauses
+                if (currentMusic && !currentMusic.paused) {
+                    currentMusic.pause();
+                }
             }
             
             // Show notification
@@ -11185,6 +11258,10 @@
             // Resume game
             if (currentState === GameState.PAUSED) {
                 currentState = GameState.PLAYING;
+                // Resume music when game resumes
+                if (currentMusic && currentMusic.paused && !userPausedMusic) {
+                    currentMusic.play().catch(err => console.log('Resume music error:', err));
+                }
             }
         }
         
@@ -11214,6 +11291,10 @@
                 pauseStartTime = Date.now(); // Track when pause started
                 document.getElementById('pauseScreen').style.display = 'flex';
                 playSound('Game_Pause');
+                // Pause music when game pauses
+                if (currentMusic && !currentMusic.paused) {
+                    currentMusic.pause();
+                }
             }
         }
         
@@ -11228,6 +11309,10 @@
                 }
                 document.getElementById('pauseScreen').style.display = 'none';
                 lastUpdateTime = Date.now(); // Reset timing to prevent jumps
+                // Resume music when game resumes
+                if (currentMusic && currentMusic.paused && !userPausedMusic) {
+                    currentMusic.play().catch(err => console.log('Resume music error:', err));
+                }
             }
         }
         
@@ -11416,6 +11501,17 @@
         function onKeyDown(e) {
             keys[e.key.toLowerCase()] = true;
             
+            // Escape key to toggle pause
+            if (e.key === 'Escape') {
+                if (currentState === GameState.PLAYING) {
+                    pauseGame();
+                } else if (currentState === GameState.PAUSED) {
+                    resumeGame();
+                }
+                e.preventDefault();
+                return;
+            }
+            
             // P key to create new particle placement (dev tool)
             if (e.key.toLowerCase() === 'p' && settings.showHitboxes) {
                 createParticlePlacement();
@@ -11474,16 +11570,20 @@
                 if (timeSinceLastSpace < doubleTapThreshold && timeSinceLastSpace > 0) {
                     instantDrop = true;
                     fastDrop = false; // Override normal fast drop
+                    lastSpaceTime = currentTime;
+                    stats.fastDropsUsed++;
+                    if (stats.fastDropsUsed >= 10) unlockAchievement('fast_drop');
                 } else {
-                    // Single tap - fast drop
-                    playSound('Chain_Drop_Fast');
-                    fastDrop = true;
-                    instantDrop = false;
+                    // Single press - enable fast drop while held
+                    if (!fastDrop) {
+                        playSound('Chain_Drop_Fast');
+                        fastDrop = true;
+                        lastSpaceTime = currentTime;
+                        stats.fastDropsUsed++;
+                        if (stats.fastDropsUsed >= 10) unlockAchievement('fast_drop');
+                    }
                 }
                 
-                lastSpaceTime = currentTime;
-                stats.fastDropsUsed++;
-                if (stats.fastDropsUsed >= 10) unlockAchievement('fast_drop');
                 e.preventDefault();
             }
             
@@ -11524,6 +11624,12 @@
                 zancasCharge = 100;
                 cyberaxeCharge = 100;
                 updateSpecialAbilityBars();
+                e.preventDefault();
+            }
+            
+            // Cheat: Trigger sandblasting event with - key
+            if (e.key === '-' || e.key === '_') {
+                triggerSandblastingEvent();
                 e.preventDefault();
             }
         }
@@ -13245,15 +13351,20 @@
             let gravityMultiplier;
             if (instantDrop && !cyberAxeSpecialActive) {
                 gravityMultiplier = 20; // Super fast drop (AI or player double-tap space)
-            } else if (fastDrop) {
-                gravityMultiplier = levelScaling * 2.5; // Fast drop scales with level (2.5x normal)
+                chainVelocity += gravity * gravityMultiplier * deltaTime;
             } else {
                 gravityMultiplier = levelScaling; // Normal speed scales with level
+                chainVelocity += gravity * gravityMultiplier * deltaTime; // Accumulate velocity
             }
             
-            chainVelocity += gravity * gravityMultiplier * deltaTime;
+            // Apply 1.5x speed multiplier if fast drop is active
+            let movement;
+            if (fastDrop) {
+                movement = chainVelocity * deltaTime * 1.5; // 1.5x current velocity
+            } else {
+                movement = chainVelocity * deltaTime;
+            }
             
-            const movement = chainVelocity * deltaTime;
             const newY = fallingChain.y - movement;
             
             // Check collisions for all links
@@ -13638,7 +13749,7 @@
                 
                 // Wait 1 second before clearing, then wait for staggered removal to complete
                 trackedSetTimeout(() => {
-                    const maxDelay = Math.max(...clustersToRemove.map(c => c.length)) * 50;
+                    const maxDelay = Math.max(...clustersToRemove.map(c => c.length)) * 1;
                     clustersToRemove.forEach(cluster => clearCluster(cluster));
                     updateCombo();
                     // Wait for all blocks to be removed before applying gravity
@@ -13988,7 +14099,7 @@
                         }
                     }
                     grid[x][y][z] = null;
-                }, index * 50);
+                }, index * 1);
             });
             
             stats.clustersCleared++;
@@ -14011,6 +14122,25 @@
                 const newMultiplier = Math.floor(combo);
                 
                 if (newMultiplier > oldMultiplier && combo >= 1.0) {
+                    // Rate limit: Only spawn combo particles once per second
+                    if (now - lastComboParticleTime < 1000) {
+                        // Too soon, skip particle spawn but play sound
+                        if (combo >= 5.0) {
+                            playSound('Combo_Multiplier_x6_Plus');
+                        } else if (combo >= 4.0) {
+                            playSound('Combo_Multiplier_x5');
+                        } else if (combo >= 3.0) {
+                            playSound('Combo_Multiplier_x4');
+                        } else if (combo >= 2.0) {
+                            playSound('Combo_Multiplier_x3');
+                        } else if (combo >= 1.5) {
+                            playSound('Combo_Multiplier_x2');
+                        }
+                        return;
+                    }
+                    
+                    lastComboParticleTime = now;
+                    
                     // Play combo sound based on multiplier
                     if (combo >= 5.0) {
                         playSound('Combo_Multiplier_x6_Plus');
@@ -14035,34 +14165,45 @@
                         'combo_s', 'combo_t', 'combo_u', 'combo_v'
                     ];
                     
-                    // Spawn particles
+                    // Spawn particles with 1 second delay between each
                     for (let i = 0; i < numParticles; i++) {
-                        // Random position spread across entire screen area
-                        const randomX = -2 + Math.random() * (GRID_WIDTH + 4); // Spread beyond grid edges
-                        const randomY = 4 + Math.random() * 12; // Between 4 and 16 units high (lower and more spread)
-                        const randomZ = -2 + Math.random() * (GRID_DEPTH + 4); // Spread beyond grid edges
-                        
-                        // Randomly select one of the combo effects
-                        const randomEffect = comboEffects[Math.floor(Math.random() * comboEffects.length)];
-                        
-                        // Generate random start and end colors
-                        const randomColorStart = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
-                        const randomColorEnd = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
-                        
-                        spawnParticleEffect(
-                            `effect/${randomEffect}.json`,
-                            randomX,
-                            randomY,
-                            randomZ,
-                            { 
-                                spawnMode: 'world', 
-                                rotation: { x: 0, y: 0, z: 0 },
-                                colorOverride: {
-                                    colorStart: randomColorStart,
-                                    colorEnd: randomColorEnd
+                        trackedSetTimeout(() => {
+                            comboEffectCounter++;
+                            document.getElementById('comboEffectCount').textContent = comboEffectCounter;
+                            
+                            // Decrement counter after 3 seconds
+                            trackedSetTimeout(() => {
+                                comboEffectCounter--;
+                                document.getElementById('comboEffectCount').textContent = comboEffectCounter;
+                            }, 3000);
+                            
+                            // Random position spread across entire screen area
+                            const randomX = -2 + Math.random() * (GRID_WIDTH + 4); // Spread beyond grid edges
+                            const randomY = 4 + Math.random() * 12; // Between 4 and 16 units high (lower and more spread)
+                            const randomZ = -2 + Math.random() * (GRID_DEPTH + 4); // Spread beyond grid edges
+                            
+                            // Randomly select one of the combo effects
+                            const randomEffect = comboEffects[Math.floor(Math.random() * comboEffects.length)];
+                            
+                            // Generate random start and end colors
+                            const randomColorStart = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+                            const randomColorEnd = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+                            
+                            spawnParticleEffect(
+                                `effect/${randomEffect}.json`,
+                                randomX,
+                                randomY,
+                                randomZ,
+                                { 
+                                    spawnMode: 'world', 
+                                    rotation: { x: 0, y: 0, z: 0 },
+                                    colorOverride: {
+                                        colorStart: randomColorStart,
+                                        colorEnd: randomColorEnd
+                                    }
                                 }
-                            }
-                        );
+                            );
+                        }, i * 1000); // Delay each particle by 1 second (i * 1000ms)
                     }
                 }
             } else {
@@ -14329,10 +14470,15 @@
                     topLink.position.y + 2,
                     topLink.position.z
                 );
+                
+                // Smooth color cycling (HSL color wheel rotation)
+                const time = Date.now() * 0.001; // Convert to seconds
+                const hue = (time * 0.2) % 1.0; // Rotate through hue every 5 seconds
+                chainLight.color.setHSL(hue, 1.0, 0.5); // Full saturation, medium lightness
             }
             
             // Update LED pulse effect on walls
-            // updateLEDPulse();
+            updateLEDPulse();
             
             // Update video textures
             if (wallVideoData.north.texture) wallVideoData.north.texture.needsUpdate = true;
@@ -14362,12 +14508,22 @@
             // Complete cycle every 4 seconds (frequency = 0.25 Hz)
             const time = Date.now() * 0.001; // Convert to seconds
             const pulseValue = Math.sin(time * Math.PI * 0.5) * 0.5 + 0.5; // Oscillate between 0 and 1
-            const intensity = 0.3 + (pulseValue * 0.3); // Vary between 0.3 and 0.6
+            
+            // Walls: pulse between 0.3 and 0.6
+            const wallIntensity = 0.3 + (pulseValue * 0.3);
+            
+            // Floor: darker but more noticeable pulse between 0.05 and 0.15
+            const floorIntensity = 0.05 + (pulseValue * 0.10);
             
             // Apply to all room walls with emissive materials
             roomWalls.forEach(wall => {
                 if (wall.material && wall.material.emissiveIntensity !== undefined) {
-                    wall.material.emissiveIntensity = intensity;
+                    // Check if this is the floor (lowest Y position)
+                    if (wall === floorMesh) {
+                        wall.material.emissiveIntensity = floorIntensity;
+                    } else {
+                        wall.material.emissiveIntensity = wallIntensity;
+                    }
                 }
             });
         }
@@ -14532,12 +14688,19 @@
                     }
                     aiState.nextMoveTime = now + effectiveMoveDelay;
                 } else {
-                    // At target position - drop it!
-                    // Only set instantDrop if AI is actually enabled AND no special is active
-                    if (aiState.enabled && !cyberAxeSpecialActive) {
-                        instantDrop = true;
+                    // At target position - check if enough time has passed since last drop
+                    if (now - aiState.lastDropTime >= aiState.dropDelay) {
+                        // Use instant drop or fast drop based on settings.aiFastPlay
+                        if (aiState.enabled && !cyberAxeSpecialActive) {
+                            if (settings.aiFastPlay) {
+                                instantDrop = true;
+                            } else {
+                                fastDrop = true;
+                            }
+                            aiState.lastDropTime = now; // Record drop time
+                        }
+                        aiState.hasDecided = false; // Reset for next chain
                     }
-                    aiState.hasDecided = false; // Reset for next chain
                 }
             }
         }

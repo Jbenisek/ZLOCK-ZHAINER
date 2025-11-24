@@ -2,6 +2,150 @@
 
 # Changelog
 
+## v0.20.81 - Floor LED Pulse Improvements (2025-11-23)
+- **Summary:**
+  - Reduced floor brightness significantly
+  - Added more noticeable LED pulse effect to floor
+  - Floor and walls now have independent pulse ranges
+
+- **Floor Lighting:**
+  - Base emissive intensity: 0.25 → 0.05 (80% darker)
+  - Pulse range: 0.05 to 0.15 (3x pulse amplitude vs previous 0.08-0.12)
+  - More visible LED breathing effect while staying dark overall
+  - Prevents floor from overpowering the room lighting
+
+- **LED Pulse System:**
+  - Walls: pulse between 0.3 and 0.6 (unchanged)
+  - Floor: independent pulse between 0.05 and 0.15
+  - Both sync to same 4-second cycle
+  - Floor pulse is more dramatic relative to its darker base
+
+## v0.20.80 - AI Fast Play Setting & Improved Drop Controls (2025-11-23)
+- **Summary:**
+  - Added AI Fast Play toggle in settings
+  - Fixed fast drop to use constant speed multiplier
+  - Improved spacebar hold behavior
+
+- **AI Fast Play Setting:**
+  - New toggle in settings panel: "AI Fast Play"
+  - When enabled (default): AI uses instant drop (immediate placement)
+  - When disabled: AI uses fast drop (1.5x speed)
+  - Only affects AI behavior, player controls unchanged
+  - Setting is saved and loaded from localStorage
+  - 1-second delay between AI drops regardless of mode
+
+- **Fast Drop Improvements:**
+  - Holding spacebar now applies 1.5x speed multiplier to current velocity
+  - No longer accelerates infinitely when held
+  - Releases back to normal speed when spacebar released
+  - Double-tap spacebar still triggers instant drop
+  - Fast drop sound only plays once per press
+
+- **Technical Changes:**
+  - Fast drop multiplies movement by 1.5x instead of modifying gravity
+  - Prevents repeated keydown events from stacking
+  - Cleaner velocity calculation for instant vs fast vs normal drop
+
+## v0.20.79 - Performance & AI Improvements (2025-11-23)
+- **Summary:**
+  - Drastically improved block destruction speed
+  - Fixed AI player drop behavior
+
+- **Block Destruction Performance:**
+  - Reduced destruction delay from 50ms to 1ms per block
+  - 30-block cluster now clears in 30ms instead of 1500ms (98% faster)
+  - Eliminates perceived "hitch" during large cluster clears
+  - Visual effect remains smooth but much faster
+
+- **AI Player Improvements:**
+  - AI now uses fast drop instead of instant drop
+  - Added 1-second delay between chain placements
+  - Prevents AI from breaking game with rapid-fire drops
+  - Makes AI gameplay watchable and debuggable
+
+## v0.20.78 - Music Pause Integration & Escape Key Controls (2025-11-23)
+- **Summary:**
+  - Music now pauses/resumes with all game pause states
+  - Escape key toggles pause menu
+  - Added sandblasting debug trigger
+
+- **Music Pause System:**
+  - Music pauses when game pauses (pause menu, notifications)
+  - Music resumes when game resumes (respects userPausedMusic flag)
+  - Implemented for:
+    - Pause menu (pauseGame/resumeGame)
+    - Level 10 notification
+    - Level 20 notification
+    - Level 50 notification
+    - Glowing links guide
+  - Audio state properly maintained across all pause/resume scenarios
+
+- **Keyboard Controls:**
+  - Escape key now toggles pause menu (pause when playing, resume when paused)
+  - Previous behavior: no Escape key handler
+  - Escape key prevents default browser behavior
+
+- **Debug Features:**
+  - Added `-` key to trigger sandblasting event (diagnostic test)
+  - Matches existing `+` key pattern for special ability charging
+
+## v0.20.77 - Wall Emissive System Restoration & Lighting Balance (2025-11-23)
+- **Summary:**
+  - Restored wall LED pulsing animation system
+  - Added emissive properties to all 4 room walls
+  - Rebalanced room lighting to compensate for wall glow
+  - Reduced floor brightness for better visual balance
+
+- **Wall Emissive System:**
+  - Re-enabled updateLEDPulse() in animation loop (previously commented out)
+  - All 4 walls now have emissive properties:
+    - North wall: emissiveMap + emissive 0xffffff + intensity 0.3
+    - South wall: emissiveMap + emissive 0xffffff + intensity 0.3
+    - East wall: emissiveMap + emissive 0xffffff + intensity 0.3
+    - West wall: emissiveMap + emissive 0xffffff + intensity 0.3
+  - Walls pulse between 0.3 and 0.6 intensity using sine wave (4-second cycle)
+  - Floor emissiveMap automatically matches current texture during random swaps
+  - Toggle button (💠/⚫) in game controls fully functional
+  - System pauses during sandblasting event
+
+- **Lighting Rebalance (30% reduction):**
+  - Key light: 0.8 → 0.56
+  - Fill light: 0.3 → 0.21
+  - Ambient light: 0.5 → 0.35
+  - Rim light: 0.4 → 0.28
+  - Player light: 15 → 10.5
+  - Compensates for added wall glow to maintain visual balance
+
+- **Floor Brightness (50% reduction):**
+  - Floor emissiveIntensity: 0.5 → 0.25
+  - Reduces overly bright floor glow
+  - Better contrast with pulsing walls
+
+- **Technical Details:**
+  - Lines 10126-10172: Added emissive properties to all wall materials
+  - Line 10190: Floor emissiveIntensity reduced to 0.25
+  - Line 14350: updateLEDPulse() uncommented and active
+  - Lines 6951-6982: All room lights reduced by 30%
+  - Wall textures serve as both map and emissiveMap for selective glow
+
+## v0.20.76 - High Score HUD Display (2025-11-23)
+- **Summary:**
+  - Added high score display to Level HUD element
+  - Shows current top score during gameplay
+
+- **HUD Additions:**
+  - High score label and value now displayed under Level in top-left HUD
+  - Label: 11px, semi-transparent white, JetBrains Mono
+  - Value: 14px, gold color (#F39C12), bold, formatted with commas
+  - Updates automatically when high scores are loaded or saved
+  - Shows "0" if no high scores exist
+
+- **Technical Implementation:**
+  - Added highScoreLabel and highScoreValue divs to levelDisplay container (line 2172-2173)
+  - New updateHighScoreDisplay() function reads top score from highScores array
+  - Called on loadHighScores() and after saveHighScore()
+  - Uses toLocaleString() for comma-separated number formatting
+
 ## v0.20.75 - Version Display Positioning Fix (2025-11-23)
 - **Summary:**
   - Fixed version display centering in Settings panel

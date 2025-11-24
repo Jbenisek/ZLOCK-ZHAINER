@@ -1,6 +1,6 @@
 {
   "name": "combo_d",
-  "particleCount": 10,
+  "particleCount": 5,
   "emissionRate": 5,
   "emitDuration": 2,
   "lifetime": 2.2,

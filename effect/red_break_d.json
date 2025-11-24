@@ -1,6 +1,6 @@
 {
   "name": "break_d",
-  "particleCount": 10,
+  "particleCount": 3,
   "emissionRate": 5,
   "emitDuration": 0.5,
   "lifetime": 1.1,
