@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.90</title>
+    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.93</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -2910,7 +2910,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.20.90';
+        const GAME_VERSION = 'v0.20.93';
         
         // ===== AUDIO SYSTEM =====
         const audioCache = {}; // Cache for all audio files
@@ -4254,8 +4254,11 @@
         }
         // ===== END STORY INTRO BACKGROUND ANIMATION =====
         
-        let highScores = [];
         let achievements = [];
+        
+        // Achievement notification queue
+        let achievementQueue = [];
+        let isShowingAchievement = false;
         
         function loadSettings() {
             const saved = localStorage.getItem(STORAGE_KEYS.SETTINGS);
@@ -4461,8 +4464,21 @@
                 achievement.unlocked = true;
                 playSound('Achievement_Unlock');
                 localStorage.setItem(STORAGE_KEYS.ACHIEVEMENTS, JSON.stringify(achievements));
-                showAchievementNotification(achievement);
+                queueAchievementNotification(achievement);
             }
+        }
+        
+        function queueAchievementNotification(achievement) {
+            achievementQueue.push(achievement);
+            processAchievementQueue();
+        }
+        
+        function processAchievementQueue() {
+            if (isShowingAchievement || achievementQueue.length === 0) return;
+            
+            isShowingAchievement = true;
+            const achievement = achievementQueue.shift();
+            showAchievementNotification(achievement);
         }
         
         function showAchievementNotification(achievement) {
@@ -4491,7 +4507,12 @@
             
             trackedSetTimeout(() => {
                 notif.style.animation = 'slideOut 0.3s ease-in';
-                trackedSetTimeout(() => document.body.removeChild(notif), 300);
+                trackedSetTimeout(() => {
+                    document.body.removeChild(notif);
+                    isShowingAchievement = false;
+                    // Process next achievement in queue after a 500ms delay
+                    trackedSetTimeout(() => processAchievementQueue(), 500);
+                }, 300);
             }, 3000);
         }
         
@@ -11092,6 +11113,10 @@
                 }
             });
             
+            // Reset combo effect counter
+            comboEffectCounter = 0;
+            document.getElementById('comboEffectCount').textContent = '0';
+            
             // Calculate starting score based on level (level - 1) * 1000
             const startingScore = (startingLevel - 1) * 1000;
             
@@ -15113,19 +15138,37 @@
                 }
             }
             
-            // Prefer lower positions (faster to place)
-            score += (GRID_HEIGHT - landY) * 10;
+            // CRITICAL: Prevent game over - if this would reach top, massive penalty
+            if (landY >= GRID_HEIGHT - 1) {
+                return -100000; // Absolutely avoid losing the game
+            }
             
-            // Check for matches below
+            // Strong penalty for dangerous heights (above 80%)
+            if (landY >= GRID_HEIGHT * 0.8) {
+                score -= 5000; // Very dangerous
+            } else if (landY >= GRID_HEIGHT * 0.7) {
+                score -= 1000; // Dangerous
+            } else if (landY >= GRID_HEIGHT * 0.6) {
+                score -= 300; // Getting risky
+            }
+            
+            // Prefer lower positions (more room to grow)
+            const availableSpace = GRID_HEIGHT - landY;
+            score += availableSpace * 50; // Big bonus for available space
+            
+            // Prefer positions with lower heights (better distribution)
+            score += (GRID_HEIGHT - landY) * 30;
+            
+            // Check for matches below (vertical)
             if (landY > 0 && grid[x][landY - 1][z] !== null) {
                 const chainType = fallingChain.type;
                 const belowType = grid[x][landY - 1][z].type;
                 if (chainType === belowType) {
-                    score += 100; // Big bonus for matching
+                    score += 75; // Bonus for vertical matching
                 }
             }
             
-            // Check for matches around
+            // Check for matches around (horizontal)
             const neighbors = [
                 [x + 1, z], [x - 1, z], [x, z + 1], [x, z - 1]
             ];
@@ -15133,19 +15176,44 @@
                 if (nx >= 0 && nx < GRID_WIDTH && nz >= 0 && nz < GRID_DEPTH) {
                     if (grid[nx][landY][nz] !== null) {
                         if (grid[nx][landY][nz].type === fallingChain.type) {
-                            score += 50;
+                            score += 100;
                         }
                     }
                 }
             });
             
-            // Avoid stacking too high
-            if (landY > GRID_HEIGHT * 0.7) {
-                score -= 200;
+            // Check if this move could lead to a board clear (10,000 point bonus opportunity)
+            // Count blocks remaining at floor level (y=0) and low levels
+            let floorBlockCount = 0;
+            let lowLevelMatchCount = 0;
+            for (let gx = 0; gx < GRID_WIDTH; gx++) {
+                for (let gz = 0; gz < GRID_DEPTH; gz++) {
+                    if (grid[gx][0][gz] !== null) {
+                        floorBlockCount++;
+                        // Check if this position could match with the falling chain at floor
+                        if (gx === x && gz === z && landY === 0 && grid[gx][0][gz].type === fallingChain.type) {
+                            lowLevelMatchCount++;
+                        }
+                    }
+                    // Also check y=1 for potential matches that could clear to floor
+                    if (grid[gx][1][gz] !== null && gx === x && gz === z && landY <= 1 && grid[gx][1][gz].type === fallingChain.type) {
+                        lowLevelMatchCount++;
+                    }
+                }
             }
             
-            // Random variation to make it less predictable
-            score += Math.random() * 10;
+            // If floor is nearly clear (5 or fewer blocks) and this creates matches at low levels, big bonus
+            if (floorBlockCount > 0 && floorBlockCount <= 5 && lowLevelMatchCount > 0) {
+                score += 500; // Significant bonus for moves that could lead to board clear
+            }
+            
+            // If floor is very close to clear (2 or fewer blocks) and we're placing low, huge bonus
+            if (floorBlockCount > 0 && floorBlockCount <= 2 && landY <= 2) {
+                score += 1000; // Major incentive to clear the board for 10k bonus
+            }
+            
+            // Random variation to make it less predictable (smaller now)
+            score += Math.random() * 5;
             
             return score;
         }

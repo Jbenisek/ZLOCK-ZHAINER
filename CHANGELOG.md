@@ -2,6 +2,47 @@
 
 # Changelog
 
+## v0.20.93 - AI Scoring Refinements (2025-11-24)
+- **Summary:**
+  - Refined AI scoring to prioritize horizontal matches over vertical
+  - Added board clear detection for 10,000 point bonus opportunity awareness
+
+- **AI Scoring Adjustments:**
+  - **Horizontal Match Priority**: Horizontal matches now score +100 (was +50)
+  - **Vertical Match Score**: Vertical matches now score +75 (was +100)
+  - **Board Clear Detection**: 
+    - +500 bonus when floor has ≤5 blocks and move creates low-level matches
+    - +1000 bonus when floor has ≤2 blocks and placing at low levels (y≤2)
+  - **Rationale**: Horizontal matches create better combo chains; AI should recognize the 10,000 point floor clear bonus as a valuable strategic goal
+  - **Impact**: AI now actively pursues board clears when close to completion and favors horizontal spreading patterns
+
+## v0.20.92 - AI Survival Logic Improvement (2025-11-24)
+- **Summary:**
+  - Dramatically improved AI player survival by prioritizing game-over prevention
+  - AI now intelligently uses all available grid space instead of losing
+
+- **AI Logic Improvements:**
+  - **Critical Game Over Prevention**: -100,000 penalty for moves that would cause game over (was only -200 for high stacks)
+  - **Graduated Height Penalties**: 
+    - Above 80% height: -5000 (very dangerous)
+    - Above 70% height: -1000 (dangerous)
+    - Above 60% height: -300 (getting risky)
+  - **Space Preference**: +50 bonus per available height unit (encourages using shorter columns)
+  - **Height Distribution**: +30 bonus for spreading blocks evenly across grid
+  - **Reduced Randomness**: Lowered from ±10 to ±5 so survival logic dominates decision-making
+  - **Impact**: AI now survives significantly longer by intelligently distributing blocks across the entire grid
+
+## v0.20.91 - Combo FX Counter Reset Fix (2025-11-24)
+- **Summary:**
+  - Fixed combo FX counter accumulating across game restarts during auto-restart sessions
+  - Counter now properly resets to 0 on each game start
+
+- **Performance Counter Fix:**
+  - **Root Cause**: comboEffectCounter was incremented/decremented during gameplay but never reset in startGame()
+  - **Solution**: Added comboEffectCounter reset to 0 in startGame() function alongside other game state resets
+  - **Impact**: Diagnostic counter now accurately reflects active combo particle effects instead of accumulating indefinitely across restarts
+  - **Discovery**: Bug found during overnight auto-restart gameplay testing (counter showed 76 with no active effects)
+
 ## v0.20.90 - Controller Input Fix (2025-11-24)
 - **Summary:**
   - Fixed controller A button carrying over from loading screen to title menu
