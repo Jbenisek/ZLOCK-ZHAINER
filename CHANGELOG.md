@@ -2,6 +2,41 @@
 
 # Changelog
 
+## v0.20.72 - Custom Particle System & Editor Integration (2025-11-23)
+- **Summary:**
+  - Added Tools panel with Particle Editor link and custom particle import system
+  - Users can now replace any in-game particle effect with custom creations
+  - Particle Editor now loads all 70 game effects as default templates
+
+- **Particle Customization System:**
+  - New "🛠️ PARTICLE EDITOR" button opens particle_editor.html in new tab
+  - Custom particle import panel with dropdown selection
+  - Dropdown lists all 70+ game particle effects organized by category
+  - Friendly names (e.g., "Blue Break A", "CyberAxe - Electric", "Combo V (5x)")
+  - Users select target effect to replace from dropdown
+  - Choose custom JSON file from Particle Editor exports
+  - Apply button activates replacement for current session
+  - Real-time feedback with file validation and success notifications
+
+- **Particle Editor Updates:**
+  - Removed 20 generic placeholder templates (Firework, Smoke, etc.)
+  - Added all 70 game particle effects as default templates:
+    - 24 block break effects (blue/green/red/yellow × 6 variants)
+    - 22 combo effects (combo_a through combo_v)
+    - 5 drop effects (default + 4 colors)
+    - 24 character special effects (CyberAxe, Nate, Zancas, Zooko)
+  - Templates auto-load from effect/ folder on startup
+  - Display names converted from filenames (e.g., "cyberaxe_shield" → "Cyberaxe Shield")
+  - Users can now edit actual game effects and export customizations
+
+- **Technical Implementation:**
+  - customParticleEffects object stores replacements keyed by effect path
+  - loadParticleEffectFromJSON() checks custom cache before fetching defaults
+  - populateParticleDropdown() builds selection UI from gameParticleEffects array
+  - handleCustomParticleFileSelect() validates JSON and enables apply button
+  - applyCustomParticle() activates replacement and shows confirmation
+  - Particle Editor uses async loadGameEffectsAsTemplates() for template loading
+
 ## v0.20.71 - Loading Screen Cleanup (2025-11-23)
 - **Summary:**
   - Removed inaccurate MB and download speed tracking

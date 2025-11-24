@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.71</title>
+    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.72</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -1880,7 +1880,7 @@
     <div id="gameContainer">
         <canvas id="renderCanvas"></canvas>
         
-        <div id="versionDisplay">v0.20.71</div>
+        <div id="versionDisplay">v0.20.72</div>
         
         <div id="performanceDisplay">
             <div><span class="perf-label">FPS:</span> <span class="perf-value" id="fpsValue">60</span></div>
@@ -2586,6 +2586,97 @@
 ```        <div id="titleScreen">
             <div id="title">ZLOCK</div>
             <div id="subtitle">ZHAINER</div>
+            
+            <!-- Tools Panel (Top Right) -->
+            <div style="position: absolute; right: 60px; top: 120px; display: flex; flex-direction: column; gap: 12px; width: 320px;">
+                <!-- Particle Editor Link -->
+                <a href="particle_editor.html" target="_blank" style="
+                    padding: 12px 20px;
+                    background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
+                    border: 2px solid #9B59B6;
+                    border-radius: 8px;
+                    font-family: 'JetBrains Mono', monospace;
+                    font-size: 14px;
+                    font-weight: 700;
+                    color: #BFD1E0;
+                    text-decoration: none;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 4px 15px rgba(155, 89, 182, 0.3);
+                    cursor: pointer;
+                    text-align: center;
+                " onmouseover="this.style.background='linear-gradient(135deg, rgba(155, 89, 182, 0.4), rgba(155, 89, 182, 0.3))'; this.style.borderColor='#BB79D6'; this.style.boxShadow='0 6px 20px rgba(155, 89, 182, 0.6)';" onmouseout="this.style.background='linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9))'; this.style.borderColor='#9B59B6'; this.style.boxShadow='0 4px 15px rgba(155, 89, 182, 0.3)';">
+                    🛠️ PARTICLE EDITOR
+                </a>
+                
+                <!-- Custom Particle Import Panel -->
+                <div style="
+                    padding: 15px;
+                    background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
+                    border: 2px solid #E67E22;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 15px rgba(230, 126, 34, 0.3);
+                ">
+                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: #F39C12; margin-bottom: 10px; text-transform: uppercase; text-align: center;">📦 Replace Particle Effect</div>
+                    
+                    <!-- Particle Selection Dropdown -->
+                    <select id="particleReplaceTarget" style="
+                        width: 100%;
+                        padding: 8px;
+                        margin-bottom: 10px;
+                        background: rgba(0, 0, 0, 0.5);
+                        border: 1px solid #E67E22;
+                        border-radius: 4px;
+                        color: #BFD1E0;
+                        font-family: 'JetBrains Mono', monospace;
+                        font-size: 11px;
+                        cursor: pointer;
+                    ">
+                        <option value="">-- Select Effect to Replace --</option>
+                    </select>
+                    
+                    <!-- Choose File Button -->
+                    <button onclick="document.getElementById('customParticleImport').click()" style="
+                        width: 100%;
+                        padding: 10px;
+                        margin-bottom: 8px;
+                        background: linear-gradient(135deg, rgba(230, 126, 34, 0.3), rgba(230, 126, 34, 0.2));
+                        border: 1px solid #E67E22;
+                        border-radius: 4px;
+                        font-family: 'JetBrains Mono', monospace;
+                        font-size: 12px;
+                        font-weight: 700;
+                        color: #BFD1E0;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                    " onmouseover="this.style.background='linear-gradient(135deg, rgba(230, 126, 34, 0.5), rgba(230, 126, 34, 0.4))'; this.style.borderColor='#F39C12';" onmouseout="this.style.background='linear-gradient(135deg, rgba(230, 126, 34, 0.3), rgba(230, 126, 34, 0.2))'; this.style.borderColor='#E67E22';">
+                        Choose Custom JSON File
+                    </button>
+                    <div id="selectedFileName" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #89A0B4; text-align: center; margin-bottom: 8px; min-height: 14px;">No file selected</div>
+                    
+                    <!-- Apply Button -->
+                    <button id="applyCustomParticle" onclick="applyCustomParticle()" disabled style="
+                        width: 100%;
+                        padding: 10px;
+                        background: linear-gradient(135deg, rgba(46, 204, 113, 0.3), rgba(46, 204, 113, 0.2));
+                        border: 1px solid #27AE60;
+                        border-radius: 4px;
+                        font-family: 'JetBrains Mono', monospace;
+                        font-size: 12px;
+                        font-weight: 700;
+                        color: #BFD1E0;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        opacity: 0.5;
+                    ">
+                        ✓ APPLY REPLACEMENT
+                    </button>
+                </div>
+                
+                <input type="file" id="customParticleImport" accept=".json" style="display: none;" onchange="handleCustomParticleFileSelect(event)">
+            </div>
+            
             <button class="menuButton" onclick="startGame()" disabled style="opacity: 0.5; cursor: not-allowed;">START GAME<span style="display: inline-block; width: 26px; height: 26px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">A</span></button>
             <button class="menuButton" onclick="showSettings()">SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">▶</span></button>
             <button class="menuButton" onclick="showHighScores()">HIGH SCORES<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">X</span></button>
@@ -2724,12 +2815,12 @@
             </div>
             
             <div style="margin-top: 40px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #89A0B4;">
-                Version v0.20.71 • 2025-11-23
+                Version v0.20.72 • 2025-11-23
             </div>
         </div>
     </div>
     <div style="position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); color: rgba(255, 255, 255, 0.3); font-size: 12px; font-family: 'JetBrains Mono', monospace; pointer-events: none; z-index: 100;">
-        Version v0.20.71 • 2025-11-23
+        Version v0.20.72 • 2025-11-23
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -2738,7 +2829,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.20.71';
+        const GAME_VERSION = 'v0.20.72';
         
         // ===== AUDIO SYSTEM =====
         const audioCache = {}; // Cache for all audio files
@@ -6786,6 +6877,9 @@
         });
         
         function init() {
+            // Populate particle dropdown for custom replacements
+            populateParticleDropdown();
+            
             // Preload all audio files
             preloadAudio();
             
@@ -12263,8 +12357,199 @@
             }
         }
         
+        // Custom particle effect storage
+        const customParticleEffects = {};
+        let pendingCustomParticleData = null;
+        
+        // All game particle effect files (for dropdown)
+        const gameParticleEffects = [
+            { path: 'effect/blue_break_a.json', name: 'Blue Break A' },
+            { path: 'effect/blue_break_b.json', name: 'Blue Break B' },
+            { path: 'effect/blue_break_c.json', name: 'Blue Break C' },
+            { path: 'effect/blue_break_d.json', name: 'Blue Break D' },
+            { path: 'effect/blue_break_e.json', name: 'Blue Break E' },
+            { path: 'effect/blue_break_f.json', name: 'Blue Break F' },
+            { path: 'effect/green_break_a.json', name: 'Green Break A' },
+            { path: 'effect/green_break_b.json', name: 'Green Break B' },
+            { path: 'effect/green_break_c.json', name: 'Green Break C' },
+            { path: 'effect/green_break_d.json', name: 'Green Break D' },
+            { path: 'effect/green_break_e.json', name: 'Green Break E' },
+            { path: 'effect/green_break_f.json', name: 'Green Break F' },
+            { path: 'effect/red_break_a.json', name: 'Red Break A' },
+            { path: 'effect/red_break_b.json', name: 'Red Break B' },
+            { path: 'effect/red_break_c.json', name: 'Red Break C' },
+            { path: 'effect/red_break_d.json', name: 'Red Break D' },
+            { path: 'effect/red_break_e.json', name: 'Red Break E' },
+            { path: 'effect/red_break_f.json', name: 'Red Break F' },
+            { path: 'effect/yellow_break_a.json', name: 'Yellow Break A' },
+            { path: 'effect/yellow_break_b.json', name: 'Yellow Break B' },
+            { path: 'effect/yellow_break_c.json', name: 'Yellow Break C' },
+            { path: 'effect/yellow_break_d.json', name: 'Yellow Break D' },
+            { path: 'effect/yellow_break_e.json', name: 'Yellow Break E' },
+            { path: 'effect/yellow_break_f.json', name: 'Yellow Break F' },
+            { path: 'effect/combo_a.json', name: 'Combo A (1x)' },
+            { path: 'effect/combo_b.json', name: 'Combo B' },
+            { path: 'effect/combo_c.json', name: 'Combo C' },
+            { path: 'effect/combo_d.json', name: 'Combo D' },
+            { path: 'effect/combo_e.json', name: 'Combo E' },
+            { path: 'effect/combo_f.json', name: 'Combo F' },
+            { path: 'effect/combo_g.json', name: 'Combo G (2x)' },
+            { path: 'effect/combo_h.json', name: 'Combo H' },
+            { path: 'effect/combo_i.json', name: 'Combo I' },
+            { path: 'effect/combo_j.json', name: 'Combo J' },
+            { path: 'effect/combo_k.json', name: 'Combo K' },
+            { path: 'effect/combo_l.json', name: 'Combo L' },
+            { path: 'effect/combo_m.json', name: 'Combo M (3x)' },
+            { path: 'effect/combo_n.json', name: 'Combo N' },
+            { path: 'effect/combo_o.json', name: 'Combo O' },
+            { path: 'effect/combo_p.json', name: 'Combo P' },
+            { path: 'effect/combo_q.json', name: 'Combo Q' },
+            { path: 'effect/combo_r.json', name: 'Combo R' },
+            { path: 'effect/combo_s.json', name: 'Combo S (4x)' },
+            { path: 'effect/combo_t.json', name: 'Combo T' },
+            { path: 'effect/combo_u.json', name: 'Combo U' },
+            { path: 'effect/combo_v.json', name: 'Combo V (5x)' },
+            { path: 'effect/drop_effect_a.json', name: 'Drop Effect (Default)' },
+            { path: 'effect/drop_effect_blue.json', name: 'Drop Effect (Blue)' },
+            { path: 'effect/drop_effect_green.json', name: 'Drop Effect (Green)' },
+            { path: 'effect/drop_effect_red.json', name: 'Drop Effect (Red)' },
+            { path: 'effect/drop_effect_yellow.json', name: 'Drop Effect (Yellow)' },
+            { path: 'effect/cyberaxe_electric.json', name: 'CyberAxe - Electric' },
+            { path: 'effect/cyberaxe_electric_left.json', name: 'CyberAxe - Electric Left' },
+            { path: 'effect/cyberaxe_electric_walls.json', name: 'CyberAxe - Electric Walls' },
+            { path: 'effect/cyberaxe_electric_walls_blue.json', name: 'CyberAxe - Walls Blue' },
+            { path: 'effect/cyberaxe_electric_walls_chain.json', name: 'CyberAxe - Walls Chain' },
+            { path: 'effect/cyberaxe_electric_walls_red.json', name: 'CyberAxe - Walls Red' },
+            { path: 'effect/cyberaxe_electric_walls_spark.json', name: 'CyberAxe - Walls Spark' },
+            { path: 'effect/cyberaxe_electric_walls_yellow.json', name: 'CyberAxe - Walls Yellow' },
+            { path: 'effect/cyberaxe_shield.json', name: 'CyberAxe - Shield' },
+            { path: 'effect/cyberaxe_special_laser_a.json', name: 'CyberAxe - Special Laser A' },
+            { path: 'effect/cyberaxe_special_laser_b.json', name: 'CyberAxe - Special Laser B' },
+            { path: 'effect/cyberaxe_special_laser_c.json', name: 'CyberAxe - Special Laser C' },
+            { path: 'effect/nate_special.json', name: 'Nate - Special' },
+            { path: 'effect/nate_special_break.json', name: 'Nate - Special Break' },
+            { path: 'effect/zancas_special.json', name: 'Zancas - Special' },
+            { path: 'effect/zancas_special_break.json', name: 'Zancas - Special Break' },
+            { path: 'effect/zancas_special_orb.json', name: 'Zancas - Special Orb' },
+            { path: 'effect/zancas_special_orb_left.json', name: 'Zancas - Special Orb Left' },
+            { path: 'effect/zooko_hat.json', name: 'Zooko - Hat' },
+            { path: 'effect/zooko_shield.json', name: 'Zooko - Shield' },
+            { path: 'effect/zooko_special.json', name: 'Zooko - Special' },
+            { path: 'effect/zooko_special_break.json', name: 'Zooko - Special Break' }
+        ];
+        
+        // Populate particle effect dropdown
+        function populateParticleDropdown() {
+            const dropdown = document.getElementById('particleReplaceTarget');
+            if (!dropdown) return;
+            
+            gameParticleEffects.forEach(effect => {
+                const option = document.createElement('option');
+                option.value = effect.path;
+                option.textContent = effect.name;
+                dropdown.appendChild(option);
+            });
+        }
+        
+        // Handle custom particle file selection
+        function handleCustomParticleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const config = JSON.parse(e.target.result);
+                    pendingCustomParticleData = config;
+                    
+                    // Update UI
+                    document.getElementById('selectedFileName').textContent = file.name;
+                    document.getElementById('selectedFileName').style.color = '#2ECC71';
+                    
+                    // Enable apply button if target is selected
+                    const targetPath = document.getElementById('particleReplaceTarget').value;
+                    const applyBtn = document.getElementById('applyCustomParticle');
+                    if (targetPath) {
+                        applyBtn.disabled = false;
+                        applyBtn.style.opacity = '1';
+                        applyBtn.style.cursor = 'pointer';
+                        applyBtn.onmouseover = function() {
+                            this.style.background = 'linear-gradient(135deg, rgba(46, 204, 113, 0.5), rgba(46, 204, 113, 0.4))';
+                            this.style.borderColor = '#2ECC71';
+                        };
+                        applyBtn.onmouseout = function() {
+                            this.style.background = 'linear-gradient(135deg, rgba(46, 204, 113, 0.3), rgba(46, 204, 113, 0.2))';
+                            this.style.borderColor = '#27AE60';
+                        };
+                    }
+                } catch (err) {
+                    console.error('Failed to parse JSON:', err);
+                    document.getElementById('selectedFileName').textContent = 'Invalid JSON file';
+                    document.getElementById('selectedFileName').style.color = '#E74C3C';
+                    pendingCustomParticleData = null;
+                }
+            };
+            reader.readAsText(file);
+            
+            // Reset file input
+            event.target.value = '';
+        }
+        
+        // Apply custom particle replacement
+        function applyCustomParticle() {
+            const targetPath = document.getElementById('particleReplaceTarget').value;
+            
+            if (!targetPath) {
+                showNotification('No Target Selected', 'Please select which particle effect to replace.', 3000);
+                return;
+            }
+            
+            if (!pendingCustomParticleData) {
+                showNotification('No File Loaded', 'Please choose a custom JSON file first.', 3000);
+                return;
+            }
+            
+            // Store the custom particle
+            customParticleEffects[targetPath] = pendingCustomParticleData;
+            
+            // Find the effect name
+            const effect = gameParticleEffects.find(e => e.path === targetPath);
+            const effectName = effect ? effect.name : targetPath;
+            
+            showNotification(
+                'Custom Particle Applied!',
+                `"${effectName}" will now use your custom particle effect.\n\nThis replacement is active for this session.`,
+                5000
+            );
+            
+            console.log(`✅ Replaced: ${targetPath}`);
+            
+            // Reset UI
+            pendingCustomParticleData = null;
+            document.getElementById('selectedFileName').textContent = 'No file selected';
+            document.getElementById('selectedFileName').style.color = '#89A0B4';
+            document.getElementById('particleReplaceTarget').value = '';
+            const applyBtn = document.getElementById('applyCustomParticle');
+            applyBtn.disabled = true;
+            applyBtn.style.opacity = '0.5';
+            applyBtn.style.cursor = 'not-allowed';
+            applyBtn.onmouseover = null;
+            applyBtn.onmouseout = null;
+        }
+        
+        // Import custom particle JSON files (OLD - kept for backwards compatibility)
+        function importCustomParticles(event) {
+            handleCustomParticleFileSelect(event);
+        }
+        
         // Advanced particle effect system (JSON-based)
         function loadParticleEffectFromJSON(jsonPath, callback) {
+            // Check if custom particle exists first
+            if (customParticleEffects[jsonPath]) {
+                if (callback) callback(customParticleEffects[jsonPath]);
+                return;
+            }
+            
             fetch(jsonPath)
                 .then(response => response.text())
                 .then(text => {
