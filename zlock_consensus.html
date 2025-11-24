@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.81</title>
+    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.86</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -76,6 +76,20 @@
             justify-content: center;
             z-index: 100;
             pointer-events: all;
+        }
+        
+        #storyIntroBackground {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: opacity 2s ease-in-out;
         }
         
         #title {
@@ -1668,6 +1682,16 @@
             <div style="width: 100%; height: 30px; background: rgba(52, 152, 219, 0.2); border-radius: 15px; overflow: hidden; border: 1px solid #3498DB;">
                 <div id="loadingBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #3498DB, #2ECC71); transition: width 0.3s ease; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 14px;"></div>
             </div>
+            
+            <!-- Click to Play prompt (hidden until ready) -->
+            <div id="clickToPlayPrompt" style="display: none; margin-top: 30px; font-size: 24px; color: #2ECC71; font-weight: bold; animation: pulse 1.5s ease-in-out infinite; cursor: pointer;">
+                <div style="margin-bottom: 10px;">🎮 CLICK TO PLAY 🎮</div>
+                <div style="font-size: 14px; color: #89A0B4;">
+                    <span style="display: inline-block; padding: 5px 10px; background: rgba(52, 152, 219, 0.3); border-radius: 5px; margin-right: 5px;">MOUSE</span>
+                    or
+                    <span style="display: inline-block; padding: 5px 10px; background: rgba(46, 204, 113, 0.3); border-radius: 5px; margin-left: 5px;">🎮 A</span>
+                </div>
+            </div>
         </div>
     </div>
     
@@ -2591,6 +2615,9 @@
         </div>
         
 ```        <div id="titleScreen">
+            <!-- Story Intro Background Animation -->
+            <div id="storyIntroBackground"></div>
+            
             <div id="title">ZLOCK</div>
             <div id="subtitle">ZHAINER</div>
             
@@ -2778,6 +2805,45 @@
                 <strong>NOTE:</strong><br>Skipping past Level 10<br>disables most achievements
             </div>
             
+            <!-- Title Screen Music Ticker -->
+            <div id="titleMusicTicker" style="
+                position: absolute;
+                bottom: 10px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(42, 157, 143, 0.3);
+                border: 2px solid #2A9D8F;
+                border-radius: 8px;
+                overflow: hidden;
+                height: 30px;
+                min-width: 320px;
+                max-width: 500px;
+            ">
+                <div id="titleMusicTickerWrapper" style="
+                    display: flex;
+                    width: fit-content;
+                    animation: scrollTicker 30s linear infinite;
+                    padding: 8px 0;
+                ">
+                    <span class="tickerText" style="
+                        color: #F2C94C;
+                        font-family: 'JetBrains Mono', monospace;
+                        font-size: 14px;
+                        font-weight: 700;
+                        white-space: nowrap;
+                        padding-right: 100px;
+                    ">♫ Theme Song: ZLOCK CHAINER Main Theme ♫</span>
+                    <span class="tickerText" style="
+                        color: #F2C94C;
+                        font-family: 'JetBrains Mono', monospace;
+                        font-size: 14px;
+                        font-weight: 700;
+                        white-space: nowrap;
+                        padding-right: 100px;
+                    ">♫ Theme Song: ZLOCK CHAINER Main Theme ♫</span>
+                </div>
+            </div>
+            
             <!-- Title Screen Music Control Panel -->
             <div id="titleMusicControl" style="
                 position: absolute;
@@ -2786,7 +2852,7 @@
                 transform: translateX(-50%);
                 background: linear-gradient(135deg, rgba(10, 14, 18, 0.3), rgba(20, 27, 34, 0.25));
                 border: 2px solid #2A9D8F;
-                border-radius: 8px;
+                border-radius: 0 0 8px 8px;
                 padding: 12px 16px;
                 min-width: 320px;
                 backdrop-filter: blur(10px);
@@ -2804,12 +2870,14 @@
                 <!-- Volume Control -->
                 <div style="margin-bottom: 12px;">
                     <label style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 10px; display: block; margin-bottom: 4px;">Volume:</label>
-                    <input type="range" id="titleMusicVolumeSlider" min="1" max="150" value="75" oninput="updateMusicVolumeFromTitleSlider()" style="width: 100%;">
-                    <span id="titleMusicVolumeSliderValue" style="color: #2D9CDB; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: bold;">75</span>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="range" id="titleMusicVolumeSlider" min="1" max="150" value="75" oninput="updateMusicVolumeFromTitleSlider()" style="flex: 1;">
+                        <span id="titleMusicVolumeSliderValue" style="color: #2D9CDB; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: bold; min-width: 30px; text-align: right;">75</span>
+                    </div>
                 </div>
                 
                 <!-- Music Type Toggles -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div style="display: flex; justify-content: center; gap: 24px;">
                     <div style="display: flex; align-items: center; gap: 6px;">
                         <input type="checkbox" id="titleThemeMusicToggle" checked onchange="updateThemeMusicToggle()" style="cursor: pointer;">
                         <label for="titleThemeMusicToggle" style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 10px; cursor: pointer;">Themes</label>
@@ -2829,7 +2897,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.20.81';
+        const GAME_VERSION = 'v0.20.89';
         
         // ===== AUDIO SYSTEM =====
         const audioCache = {}; // Cache for all audio files
@@ -3268,7 +3336,7 @@
         let cyberAxeLeftHandBone = null;
         let cyberAxeLeftHandOffset = { x: 0, y: 0, z: 0 }; // Offset from left hand bone to particle spawn point
         let cyberAxeChestBone = null;
-        let cyberAxeChestOffset = { x: -0.25, y: 2, z: 4 }; // Offset from chest bone to particle spawn point
+        let cyberAxeChestOffset = { x: -0.25, y: 1, z: 4 }; // Offset from chest bone to particle spawn point
         let cyberAxeShieldLoopId = null; // Track chest shield particle loop
         
         // Nate model and animation
@@ -3784,7 +3852,7 @@
                 },
                 {
                     id: 2,
-                    position: { x: 23, y: -8.3, z: 35 },
+                    position: { x: 34, y: -8.3, z: 15.5 },
                     rotation: { x: 0, y: 190, z: 0 },
                     scale: 12,
                     modelPath: 'people/female_3_idle.glb',
@@ -3792,7 +3860,7 @@
                 },
                 {
                     id: 3,
-                    position: { x: -21, y: -9, z: 36 },
+                    position: { x: -28.5, y: -9, z: 36 },
                     rotation: { x: 0, y: 140, z: 0 },
                     scale: 12,
                     modelPath: 'people/alien_male_1_idle.glb',
@@ -4116,6 +4184,63 @@
         };
         // ===== END AI PLAYER SECTION =====
         
+        // ===== STORY INTRO BACKGROUND ANIMATION =====
+        // intro_a.png is 8x16 atlas (128 frames) at 16fps
+        let storyIntroCurrentFrame = 0;
+        let storyIntroDirection = 1; // 1 = forward, -1 = backward (ping-pong)
+        let storyIntroIntervalId = null;
+        const INTRO_COLS = 8;
+        const INTRO_ROWS = 16;
+        const INTRO_TOTAL_FRAMES = 128;
+        const INTRO_FPS = 16;
+        
+        function startStoryIntroAnimation() {
+            const bgElement = document.getElementById('storyIntroBackground');
+            if (!bgElement) return;
+            
+            // Check if player has unlocked "Veil Threshold" (level 99) achievement
+            const veilThresholdUnlocked = achievements.find(a => a.id === 'level_99')?.unlocked || false;
+            const imageFile = veilThresholdUnlocked ? 'story/end/end.png' : 'story/intro/intro_a.png';
+            
+            // Set intro_a atlas as background (or end.png if unlocked)
+            bgElement.style.backgroundImage = `url('${imageFile}')`;
+            bgElement.style.backgroundSize = `${INTRO_COLS * 100}% ${INTRO_ROWS * 100}%`;
+            bgElement.style.opacity = '1';
+            
+            // Start frame animation at 16fps
+            const frameInterval = 1000 / INTRO_FPS; // ~62.5ms per frame
+            storyIntroIntervalId = window.setInterval(() => {
+                // Calculate current frame position in atlas
+                const col = storyIntroCurrentFrame % INTRO_COLS;
+                const row = Math.floor(storyIntroCurrentFrame / INTRO_COLS);
+                
+                // Set background position to show current frame
+                const xPercent = (col / (INTRO_COLS - 1)) * 100;
+                const yPercent = (row / (INTRO_ROWS - 1)) * 100;
+                bgElement.style.backgroundPosition = `${xPercent}% ${yPercent}%`;
+                
+                // Advance frame with ping-pong
+                storyIntroCurrentFrame += storyIntroDirection;
+                
+                // Reverse at boundaries (ping-pong mode)
+                if (storyIntroCurrentFrame >= INTRO_TOTAL_FRAMES - 1) {
+                    storyIntroCurrentFrame = INTRO_TOTAL_FRAMES - 1;
+                    storyIntroDirection = -1;
+                } else if (storyIntroCurrentFrame <= 0) {
+                    storyIntroCurrentFrame = 0;
+                    storyIntroDirection = 1;
+                }
+            }, frameInterval);
+        }
+        
+        function stopStoryIntroAnimation() {
+            if (storyIntroIntervalId) {
+                window.clearInterval(storyIntroIntervalId);
+                storyIntroIntervalId = null;
+            }
+        }
+        // ===== END STORY INTRO BACKGROUND ANIMATION =====
+        
         let highScores = [];
         let achievements = [];
         
@@ -4294,12 +4419,12 @@
                 { id: 'level_75', name: 'Elite Miner', desc: 'Reach level 75', unlocked: false, tier: 'very-hard' },
                 { id: 'score_1000000', name: 'Millionaire', desc: 'Score 1,000,000 points', unlocked: false, tier: 'very-hard' },
                 { id: 'level_99', name: 'Veil Threshold', desc: 'Reach level 99', unlocked: false, tier: 'very-hard' },
-                { id: 'veil_protocol', name: 'Decryption Attempted', desc: 'Enter Veil Protocol', unlocked: false, tier: 'very-hard' },
+                { id: 'veil_protocol', name: 'Decryption Attempted', desc: 'Reach level 500', unlocked: false, tier: 'very-hard' },
                 { id: 'clear_size_30', name: 'Mega Network', desc: 'Clear a cluster of 30 links', unlocked: false, tier: 'very-hard' },
                 { id: 'clears_500', name: 'Clear Legend', desc: 'Clear 500 clusters in one game', unlocked: false, tier: 'very-hard' },
                 { id: 'perfect_10', name: 'Perfect Ten', desc: 'Clear 10 clusters in a row without missing', unlocked: false, tier: 'very-hard' },
-                { id: 'veil_100', name: 'Veil Survivor', desc: 'Place 100 chains in Veil Protocol', unlocked: false, tier: 'very-hard' },
-                { id: 'veil_complete', name: 'Satoshi\'s Shadow', desc: 'Complete all 1000 moves in Veil Protocol', unlocked: false, tier: 'very-hard' },
+                { id: 'veil_100', name: 'Hero Funder', desc: 'Open the About/Donate panel', unlocked: false, tier: 'very-hard' },
+                { id: 'veil_complete', name: 'Satoshi\'s Shadow', desc: 'Reach level 1000', unlocked: false, tier: 'very-hard' },
                 { id: 'score_5000000', name: 'Legend', desc: 'Score 5,000,000 points', unlocked: false, tier: 'very-hard' }
             ];
             
@@ -4394,7 +4519,7 @@
             
             // Level-based (special rules)
             if (earnedNotSkipped) {
-                // All levels if earned from level 1
+                // All levels if earned from level 1 or 10 (tutorial skip)
                 if (level >= 2) unlockAchievement('level_2');
                 if (level >= 5) unlockAchievement('level_5');
                 if (level >= 10) unlockAchievement('level_10');
@@ -4404,14 +4529,10 @@
                 if (level >= 50) unlockAchievement('level_50');
                 if (level >= 75) unlockAchievement('level_75');
                 if (level >= 99) unlockAchievement('level_99');
-            } else {
-                // If skipped, only award the exact milestone you started at or above
-                if (startLevel === 10 && level >= 10) unlockAchievement('level_10');
-                if (startLevel === 50 && level >= 50) unlockAchievement('level_50');
-                if (startLevel === 100 && level >= 99) unlockAchievement('level_99');
-                if (startLevel === 1000 && level >= 99) unlockAchievement('level_99');
-                if (startLevel === 10000 && level >= 99) unlockAchievement('level_99');
+                if (level >= 500) unlockAchievement('veil_protocol');
+                if (level >= 1000) unlockAchievement('veil_complete');
             }
+            // If skipped to 50, 100, 1000, or 10000 - NO level achievements allowed
             
             // Stats-based (only if earned)
             if (earnedNotSkipped) {
@@ -6897,7 +7018,114 @@
         
         function init() {
             // Set version display
-            document.getElementById('versionDisplay').textContent = `Version ${GAME_VERSION} • 2025-11-23`;
+            document.getElementById('versionDisplay').textContent = `Version ${GAME_VERSION} • 2025-11-24`;
+            
+            // Start story intro background animation
+            startStoryIntroAnimation();
+            
+            // Setup ticker animation listener to change fact on each loop
+            const titleTickerWrapper = document.getElementById('titleMusicTickerWrapper');
+            if (titleTickerWrapper) {
+                titleTickerWrapper.addEventListener('animationiteration', () => {
+                    // Pick a new random fact each time the ticker loops
+                    if (tickerFacts.length > 0) {
+                        currentTickerFact = tickerFacts[Math.floor(Math.random() * tickerFacts.length)];
+                        
+                        // Update ticker text with new fact
+                        const titleTickerSpans = titleTickerWrapper.getElementsByClassName('tickerText');
+                        if (currentMusic && titleTickerSpans.length > 0) {
+                            // Reconstruct the music info based on current track
+                            let musicInfo = '';
+                            // Find the current track in musicTracks or themeTracks
+                            const currentTrackName = currentMusic.src.split('/').pop();
+                            let trackData = null;
+                            
+                            // Search in musicTracks
+                            for (const track of musicTracks) {
+                                if (currentMusic.src.endsWith(track.file)) {
+                                    trackData = track;
+                                    break;
+                                }
+                            }
+                            
+                            // Search in themeTracks if not found
+                            if (!trackData) {
+                                for (const track of themeTracks) {
+                                    if (currentMusic.src.endsWith(track.file)) {
+                                        trackData = track;
+                                        break;
+                                    }
+                                }
+                            }
+                            
+                            if (trackData) {
+                                if (trackData.minLevel !== undefined) {
+                                    const levelRange = trackData.maxLevel === 999999 ? `${trackData.minLevel}+` : `${trackData.minLevel}-${trackData.maxLevel}`;
+                                    musicInfo = `♫ Level Track: ${trackData.name} (Levels ${levelRange}) ♫`;
+                                } else {
+                                    musicInfo = `♫ Theme Song: ${trackData.name} ♫`;
+                                }
+                                
+                                const finalText = currentTickerFact ? `${musicInfo}  •  ${currentTickerFact}` : musicInfo;
+                                Array.from(titleTickerSpans).forEach(span => {
+                                    span.textContent = finalText;
+                                });
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Setup in-game ticker animation listener to change fact on each loop
+            const musicTickerWrapper = document.getElementById('musicTickerWrapper');
+            if (musicTickerWrapper) {
+                musicTickerWrapper.addEventListener('animationiteration', () => {
+                    // Pick a new random fact each time the ticker loops
+                    if (tickerFacts.length > 0) {
+                        currentTickerFact = tickerFacts[Math.floor(Math.random() * tickerFacts.length)];
+                        
+                        // Update in-game ticker with new fact
+                        const tickerText1 = document.getElementById('musicTickerText1');
+                        const tickerText2 = document.getElementById('musicTickerText2');
+                        if (currentMusic && tickerText1 && tickerText2) {
+                            // Reconstruct the music info based on current track
+                            let musicInfo = '';
+                            let trackData = null;
+                            
+                            // Search in musicTracks
+                            for (const track of musicTracks) {
+                                if (currentMusic.src.endsWith(track.file)) {
+                                    trackData = track;
+                                    break;
+                                }
+                            }
+                            
+                            // Search in themeTracks if not found
+                            if (!trackData) {
+                                for (const track of themeTracks) {
+                                    if (currentMusic.src.endsWith(track.file)) {
+                                        trackData = track;
+                                        break;
+                                    }
+                                }
+                            }
+                            
+                            if (trackData) {
+                                if (trackData.minLevel !== undefined) {
+                                    const levelRange = trackData.maxLevel === 999999 ? `${trackData.minLevel}+` : `${trackData.minLevel}-${trackData.maxLevel}`;
+                                    musicInfo = `♫ Level Track: ${trackData.name} (Levels ${levelRange}) ♫`;
+                                } else {
+                                    musicInfo = `♫ Theme Song: ${trackData.name} ♫`;
+                                }
+                                
+                                const finalText = currentTickerFact ? `${musicInfo}  •  ${currentTickerFact}` : musicInfo;
+                                tickerText1.textContent = finalText;
+                                tickerText2.textContent = finalText;
+                            }
+                        }
+                    }
+                });
+            }
             
             // Populate particle dropdown for custom replacements
             populateParticleDropdown();
@@ -7724,7 +7952,7 @@
                     cyberAxeLoaded = true;
                     
                     // Position CyberAxe across from Zooko (diagonal opposite corner)
-                    cyberAxeModel.position.set(25, -9, 25);
+                    cyberAxeModel.position.set(33, -8.5, 30);
                     cyberAxeModel.rotation.y = cyberAxeBaseRotation; // Face toward center
                     cyberAxeModel.scale.set(14, 14, 14);
                     
@@ -9552,6 +9780,7 @@
         ];
         
         const themeTracks = [
+            { file: 'music/main_theme.webm', name: 'ZLOCK CHAINER Main Theme' },
             { file: 'music/theme_a.webm', name: 'Electric Coin Company' },
             { file: 'music/theme_b.webm', name: 'Zcash Foundation' },
             { file: 'music/theme_c_boss.webm', name: 'Proof of Work Battle' },
@@ -9625,6 +9854,31 @@
                 const finalText = currentTickerFact ? `${musicInfo}  •  ${currentTickerFact}` : musicInfo;
                 tickerText1.textContent = finalText;
                 tickerText2.textContent = finalText;
+            }
+            
+            // Update title screen ticker
+            const titleTickerWrapper = document.getElementById('titleMusicTickerWrapper');
+            if (titleTickerWrapper && trackData.name) {
+                const titleTickerSpans = titleTickerWrapper.getElementsByClassName('tickerText');
+                
+                // Check if this is a level track or theme track
+                let musicInfo = '';
+                if (trackData.minLevel !== undefined) {
+                    // Level track - show level range
+                    const levelRange = trackData.maxLevel === 999999 ? `${trackData.minLevel}+` : `${trackData.minLevel}-${trackData.maxLevel}`;
+                    musicInfo = `♫ Level Track: ${trackData.name} (Levels ${levelRange}) ♫`;
+                } else {
+                    // Theme track
+                    musicInfo = `♫ Theme Song: ${trackData.name} ♫`;
+                }
+                
+                // Combine music info with fun fact
+                const finalText = currentTickerFact ? `${musicInfo}  •  ${currentTickerFact}` : musicInfo;
+                
+                // Update both spans
+                Array.from(titleTickerSpans).forEach(span => {
+                    span.textContent = finalText;
+                });
             }
             
             // Convert musicVolume (1-150) to multiplier (0.01-1.5)
@@ -10047,6 +10301,8 @@
                 const loadingIndicator = document.getElementById('loadingIndicator');
                 const loadingBar = document.getElementById('loadingBar');
                 const loadingModal = document.getElementById('loadingModal');
+                const loadingNote = document.getElementById('loadingNote');
+                const clickToPlayPrompt = document.getElementById('clickToPlayPrompt');
                 
                 if (loadingIndicator) {
                     loadingIndicator.textContent = '✓ All Assets Ready!';
@@ -10059,24 +10315,69 @@
                     loadingBar.style.background = 'linear-gradient(90deg, #2ECC71, #27AE60)';
                 }
                 
-                // Fade out and remove loading modal after 1 second
-                if (loadingModal) {
-                    setTimeout(() => {
-                        loadingModal.style.opacity = '0';
-                        loadingModal.style.transition = 'opacity 0.5s ease';
-                        setTimeout(() => {
-                            loadingModal.style.display = 'none';
-                        }, 500);
-                    }, 1000);
+                // Hide loading note and show Click to Play prompt
+                if (loadingNote) {
+                    loadingNote.style.display = 'none';
                 }
                 
-                // Enable start buttons
-                const startButtons = document.querySelectorAll('.button, .menuButton, .preFillButton, .skipButton, .skipButton50, .skipButton100, .skipButton1000, .skipButton10000');
-                startButtons.forEach(btn => {
-                    btn.disabled = false;
-                    btn.style.opacity = '1';
-                    btn.style.cursor = 'pointer';
-                });
+                if (clickToPlayPrompt) {
+                    clickToPlayPrompt.style.display = 'block';
+                    
+                    // Add click handler
+                    const handleClick = () => {
+                        // Start main theme music if music is enabled
+                        if (musicEnabled && themeMusicEnabled) {
+                            const mainTheme = themeTracks[0]; // Main theme is first in themeTracks array
+                            loadMusic(mainTheme);
+                        }
+                        
+                        // Fade out and remove loading modal
+                        if (loadingModal) {
+                            loadingModal.style.opacity = '0';
+                            loadingModal.style.transition = 'opacity 0.5s ease';
+                            setTimeout(() => {
+                                loadingModal.style.display = 'none';
+                            }, 500);
+                        }
+                        
+                        // Enable start buttons
+                        const startButtons = document.querySelectorAll('.button, .menuButton, .preFillButton, .skipButton, .skipButton50, .skipButton100, .skipButton1000, .skipButton10000');
+                        startButtons.forEach(btn => {
+                            btn.disabled = false;
+                            btn.style.opacity = '1';
+                            btn.style.cursor = 'pointer';
+                        });
+                        
+                        // Remove click handler
+                        clickToPlayPrompt.removeEventListener('click', handleClick);
+                    };
+                    
+                    clickToPlayPrompt.addEventListener('click', handleClick);
+                    
+                    // Start gamepad polling for A button
+                    pollGamepadForClickToPlay();
+                }
+            }
+        }
+        
+        // Gamepad polling for Click to Play
+        function pollGamepadForClickToPlay() {
+            const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+            for (let i = 0; i < gamepads.length; i++) {
+                const gp = gamepads[i];
+                if (gp && gp.buttons[0] && gp.buttons[0].pressed) { // A button
+                    const clickToPlayPrompt = document.getElementById('clickToPlayPrompt');
+                    if (clickToPlayPrompt && clickToPlayPrompt.style.display !== 'none') {
+                        clickToPlayPrompt.click();
+                        return;
+                    }
+                }
+            }
+            
+            // Continue polling if loading modal is visible
+            const loadingModal = document.getElementById('loadingModal');
+            if (loadingModal && loadingModal.style.display !== 'none') {
+                requestAnimationFrame(pollGamepadForClickToPlay);
             }
         }
 
@@ -10244,6 +10545,145 @@
             
             // Start SEPARATE animation loop for TV screen
             animateTVScreen();
+            
+            // Hero Stat Cards around TV
+            createHeroStatCards();
+        }
+        
+        // Hero Stat Card System
+        let heroStatCards = {};
+        let heroStats = {
+            zancas: { str: 10, dex: 12, con: 11, int: 9, wis: 12, cha: 10, hp: 24, ac: 13 },
+            nate: { str: 9, dex: 13, con: 10, int: 11, wis: 12, cha: 8, hp: 22, ac: 12 },
+            zooko: { str: 8, dex: 11, con: 10, int: 13, wis: 11, cha: 9, hp: 18, ac: 11 },
+            cyberaxe: { str: 12, dex: 10, con: 12, int: 8, wis: 9, cha: 10, hp: 28, ac: 14 }
+        };
+        
+        function createHeroStatCards() {
+            const cardWidth = 512;
+            const cardHeight = 512;
+            
+            // Define heroes with their card positions and colors
+            const heroes = [
+                { name: 'Zancas', class: 'Monk/Cleric', key: 'zancas', color: '#27AE60', position: { x: -21.5, y: 18, z: 38.5 }, image: 'people/Zancas_a_head_compressed.png' },
+                { name: 'Nate', class: 'Ranger/Thief', key: 'nate', color: '#F2C94C', position: { x: -21.5, y: 8, z: 38.5 }, image: 'people/Nate_a_head_compressed.png' },
+                { name: 'Zooko', class: 'Wizard', key: 'zooko', color: '#EB5757', position: { x: 27.5, y: 18, z: 38.5 }, image: 'people/zooko_a_head_compressed.png' },
+                { name: 'CyberAxe', class: 'Fighter', key: 'cyberaxe', color: '#2E86DE', position: { x: 27.5, y: 8, z: 38.5 }, image: 'people/cyberaxe_a_head_compressed.png' }
+            ];
+            
+            heroes.forEach(hero => {
+                // Create canvas
+                const canvas = document.createElement('canvas');
+                canvas.width = cardWidth;
+                canvas.height = cardHeight;
+                const ctx = canvas.getContext('2d');
+                
+                // Create texture from canvas
+                const texture = new THREE.CanvasTexture(canvas);
+                texture.needsUpdate = true;
+                
+                // Store canvas and texture in heroStatCards
+                heroStatCards[hero.key] = { canvas, ctx, hero, texture };
+                
+                // Draw initial card (now texture is available)
+                drawHeroStatCard(hero.key);
+                
+                // Create plane with texture
+                const geometry = new THREE.PlaneGeometry(8, 8);
+                const material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide, transparent: true });
+                const plane = new THREE.Mesh(geometry, material);
+                plane.position.set(hero.position.x, hero.position.y, hero.position.z);
+                plane.rotation.set(0, Math.PI, 0);
+                scene.add(plane);
+                
+                // Store plane reference
+                heroStatCards[hero.key].plane = plane;
+            });
+        }
+        
+        function drawHeroStatCard(heroKey) {
+            const card = heroStatCards[heroKey];
+            if (!card) return;
+            
+            const { canvas, ctx, hero } = card;
+            const stats = heroStats[heroKey];
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Background with hero color
+            ctx.fillStyle = hero.color;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Dark overlay for better text contrast
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Load and draw portrait
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = () => {
+                // Draw portrait circle at top
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(256, 120, 80, 0, Math.PI * 2);
+                ctx.clip();
+                ctx.drawImage(img, 176, 40, 160, 160);
+                ctx.restore();
+                
+                // Portrait border
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.arc(256, 120, 80, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                card.texture.needsUpdate = true;
+            };
+            img.src = hero.image;
+            
+            // Hero name
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 36px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(hero.name, 256, 230);
+            
+            // Class name
+            ctx.font = '24px Arial';
+            ctx.fillStyle = '#cccccc';
+            ctx.fillText(`(${hero.class})`, 256, 260);
+            
+            // Stats - two columns
+            ctx.font = 'bold 28px monospace';
+            ctx.textAlign = 'left';
+            const leftX = 80;
+            const rightX = 300;
+            let y = 320;
+            const lineHeight = 35;
+            
+            // Left column: STR, DEX, CON, HP
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText(`STR: ${stats.str}`, leftX, y);
+            ctx.fillText(`INT: ${stats.int}`, rightX, y);
+            y += lineHeight;
+            
+            ctx.fillText(`DEX: ${stats.dex}`, leftX, y);
+            ctx.fillText(`WIS: ${stats.wis}`, rightX, y);
+            y += lineHeight;
+            
+            ctx.fillText(`CON: ${stats.con}`, leftX, y);
+            ctx.fillText(`CHA: ${stats.cha}`, rightX, y);
+            y += lineHeight;
+            
+            // HP and AC with emphasis
+            y += 10;
+            ctx.fillStyle = '#ff6b6b';
+            ctx.fillText(`HP:  ${stats.hp}`, leftX, y);
+            ctx.fillStyle = '#4dabf7';
+            ctx.fillText(`AC:  ${stats.ac}`, rightX, y);
+            
+            // Update texture
+            card.texture.needsUpdate = true;
         }
         
         function createFloorCells() {
@@ -10600,7 +11040,11 @@
             startAllWallVideos();
             
             // Start music system (requires user interaction for autoplay)
+            // Stop main theme and switch to level-appropriate music
             if (musicEnabled) {
+                if (currentMusic && currentMusic.src.endsWith('main_theme.webm')) {
+                    currentMusic.pause();
+                }
                 startMusicSystem();
             }
             
@@ -10619,6 +11063,7 @@
             
             // Reset game state
             document.getElementById('titleScreen').style.display = 'none';
+            stopStoryIntroAnimation(); // Stop background animation when game starts
             currentState = GameState.PLAYING;
             chainReadyToGlow = false;
             score = startingScore;
@@ -10803,11 +11248,6 @@
             musicVolume = settings.musicVolume;
             themeMusicEnabled = settings.themeMusicEnabled;
             levelMusicEnabled = settings.levelMusicEnabled;
-            if (musicEnabled) {
-                startMusicSystem();
-            } else {
-                stopMusicSystem();
-            }
             
             // Update global TV toggle
             tvEnabled = settings.tvEnabled;
@@ -10883,12 +11323,16 @@
         function clearHighScores() {
             localStorage.removeItem(STORAGE_KEYS.HIGH_SCORES);
             localStorage.removeItem(STORAGE_KEYS.GAME_HISTORY);
+            localStorage.removeItem(STORAGE_KEYS.ACHIEVEMENTS);
             highScores = [];
+            
+            // Reset achievements
+            initializeAchievements();
             
             // Show brief notification
             const bonusMsg = document.getElementById('bonusMessage');
             const bonusText = document.getElementById('bonusText');
-            bonusText.textContent = '✓ HIGH SCORES CLEARED!';
+            bonusText.textContent = '✓ HIGH SCORES & ACHIEVEMENTS CLEARED!';
             bonusMsg.style.display = 'block';
             
             // Hide notification after 2 seconds
@@ -10974,6 +11418,7 @@
             playSound('UI_Menu_Open');
             document.getElementById('overlay').style.display = 'block';
             document.getElementById('aboutPanel').style.display = 'block';
+            unlockAchievement('veil_100');
         }
         
         function showHowToPlay() {
@@ -11330,7 +11775,14 @@
             
             document.getElementById('pauseScreen').style.display = 'none';
             document.getElementById('titleScreen').style.display = 'flex';
+            startStoryIntroAnimation(); // Restart background animation on menu
             currentState = GameState.MENU;
+            
+            // Play main theme (same as Click to Play)
+            if (musicEnabled && themeMusicEnabled) {
+                const mainTheme = themeTracks[0];
+                loadMusic(mainTheme);
+            }
             
             // Clean up falling chain if exists
             if (fallingChain) {
@@ -13320,7 +13772,14 @@
                         startGame();
                     } else {
                         document.getElementById('titleScreen').style.display = 'flex';
+                        startStoryIntroAnimation(); // Restart background animation on menu
                         currentState = GameState.MENU;
+                        
+                        // Play main theme (same as Click to Play)
+                        if (musicEnabled && themeMusicEnabled) {
+                            const mainTheme = themeTracks[0];
+                            loadMusic(mainTheme);
+                        }
                     }
                 }
             }, 500);

@@ -2,6 +2,173 @@
 
 # Changelog
 
+## v0.20.89 - Model Placement Adjustments (2025-11-24)
+- **Summary:**
+  - Repositioned character models for improved scene composition
+  - Updated background character placement for better visual balance
+
+- **Character Positioning:**
+  - **CyberAxe**: Moved idle position to x: 33, z: 30 (from x: 25, z: 25)
+  - **Alien Male 1**: Repositioned to x: -28.5, z: 36 (from x: -21, z: 36)
+
+- **Technical Details:**
+  - Updated loadCyberAxeModel() position coordinates
+  - Modified modelPlacements array for alien_male_1_idle.glb
+
+## v0.20.88 - Ticker System Enhancements (2025-11-24)
+- **Summary:**
+  - Added music ticker to title screen with scrolling animation
+  - Fixed ticker facts to rotate on each scroll loop instead of staying static
+  - Improved user engagement with dynamic content updates
+
+- **Ticker Improvements:**
+  - **Title Screen Ticker**: New scrolling ticker at bottom of screen showing current music and random facts
+  - **Dynamic Fact Rotation**: Both title screen and in-game tickers now pick new random facts on each animation loop (every 30 seconds)
+  - **Initial Display**: Title screen ticker now correctly shows "ZLOCK CHAINER Main Theme" on load
+  - **Synchronized Updates**: Both tickers update with current playing music and rotate through ticker_facts.json
+
+- **Technical Implementation:**
+  - Added animation iteration event listeners to both titleMusicTickerWrapper and musicTickerWrapper
+  - Each loop picks new random fact from tickerFacts array
+  - Reconstructs music info based on currently playing track (theme or level)
+  - Updates all ticker text elements with combined music info and fact
+
+## v0.20.87 - Music Control UI Improvements (2025-11-24)
+- **Summary:**
+  - Enhanced title screen music control panel for better visual presentation
+  - Improved layout and alignment for professional appearance
+
+- **UI Improvements:**
+  - **Volume Display**: Moved volume number to right of slider (inline) instead of below
+  - **Checkbox Layout**: Centered "Themes" and "Levels" checkboxes with better spacing (24px gap)
+  - **Overall Design**: More balanced and professional-looking music control panel
+
+- **Technical Changes:**
+  - Volume control: Changed from stacked layout to flex layout with inline number display
+  - Music toggles: Changed from grid layout to centered flex layout
+  - Added min-width and text-align styling to volume value for consistent appearance
+
+## v0.20.86 - Music System Simplification (2025-11-24)
+- **Summary:**
+  - Simplified music playback to use consistent main theme across all menu interactions
+  - Removed dual music control systems that caused inconsistent behavior
+  - Menu music now plays same theme as "Click to Play" prompt
+
+- **Music System Changes:**
+  - **startGame()**: Removed all music control - no longer restarts music when clicking START GAME
+  - **quitToMenu()**: Now plays main theme directly using loadMusic(themeTracks[0])
+  - **gameOver()**: Now plays main theme directly using loadMusic(themeTracks[0])
+  - **Click to Play**: Continues to use loadMusic(themeTracks[0]) as before
+
+- **Behavior:**
+  - Click to Play → Plays main theme
+  - Click START GAME → Music continues uninterrupted
+  - Quit to Menu → Plays main theme (same song as Click to Play)
+  - Game Over → Plays main theme (same song as Click to Play)
+  - Consistent music experience across all menu transitions
+
+## v0.20.85 - Achievement System Fixes (2025-11-24)
+- **Summary:**
+  - Fixed achievement unlock requirements and level skip behavior
+  - Updated three Very Hard tier achievements with new unlock conditions
+  - Hero Funder achievement now unlocks when opening About/Donate panel
+
+- **Achievement Changes:**
+  - **Decryption Attempted** (veil_protocol): Changed from "Enter Veil Protocol" to "Reach level 500"
+  - **Satoshi's Shadow** (veil_complete): Changed from "Complete all 1000 moves in Veil Protocol" to "Reach level 1000"
+  - **Hero Funder** (formerly Veil Survivor, veil_100): Changed from "Place 100 chains in Veil Protocol" to "Open the About/Donate panel"
+
+- **Level Skip Achievement Fix:**
+  - Level-based achievements now ONLY unlock when starting from level 1 or 10
+  - Starting at levels 50, 100, 1000, or 10000 now correctly disables ALL level achievements
+  - Removed incorrect logic that allowed level achievements when skipping to high levels
+  - Maintains achievement integrity for players using level skip options
+
+- **Hero Funder Implementation:**
+  - showAbout() function now calls unlockAchievement('veil_100')
+  - Achievement unlocks when player opens About/Donate panel from any screen
+  - Encourages players to view donation information
+
+## v0.20.84 - Story Intro Background Animation (2025-11-24)
+- **Summary:**
+  - Added animated story intro background to title screen
+  - Uses intro_a.png atlas (8x16, 128 frames) at 16fps
+  - Ping-pong animation mode for seamless looping
+  - Full opacity background for maximum visual impact
+
+- **Title Screen Background:**
+  - Background displays intro_a.png spritesheet
+  - Frame animation cycles through 128 frames at 16fps
+  - Ping-pong mode reverses direction at animation end/start
+  - Background-position CSS used for frame-by-frame display
+  - Background-size set to 800% x 1600% (8 cols x 16 rows)
+
+- **Animation System:**
+  - startStoryIntroAnimation() starts frame cycling
+  - stopStoryIntroAnimation() clears interval on game start
+  - Frame position calculated: col = frame % 8, row = floor(frame / 8)
+  - Updates every ~62.5ms (1000ms / 16fps)
+  - Direction reverses at frame 0 and frame 127
+
+## v0.20.83 - Hero Stat Cards (2025-11-24)
+- **Summary:**
+  - Added D&D-style stat cards for all four heroes
+  - Stat cards display on colored planes around TV
+  - Shows hero portraits, names, classes, and 8 stats
+  - Foundation for dynamic gameplay-responsive character progression
+
+- **Hero Stat Cards:**
+  - 4 planes positioned around TV (8x8 units each)
+  - Green card (Zancas - Monk/Cleric) at upper left
+  - Yellow card (Nate - Ranger/Thief) at lower left
+  - Red card (Zooko - Wizard) at upper right
+  - Blue card (CyberAxe - Fighter) at lower right
+
+- **D&D Stats System:**
+  - 8 attributes displayed: STR, DEX, CON, INT, WIS, CHA, HP, AC
+  - Stats laid out in 2 columns (4 stats each side)
+  - Class-appropriate starting values (8-12 baseline)
+  - Hero portraits from people/[hero]_a_head_compressed.png
+  - Canvas-based rendering with color-coded backgrounds
+
+- **Hero Classes & Stat Focus:**
+  - CyberAxe (Fighter): High STR/CON/HP/AC
+  - Zooko (Wizard): High INT, low HP/AC
+  - Zancas (Monk/Cleric): Balanced WIS/DEX focus
+  - Nate (Ranger/Thief): High DEX/INT/WIS
+
+- **Future Expansion Ready:**
+  - System designed for dynamic stat updates at level breakpoints
+  - Special ability usage tracking will affect stat modifiers
+  - Visual effects planned for level ups and performance changes
+
+## v0.20.82 - Click to Play & Main Theme Music (2025-11-24)
+- **Summary:**
+  - Added "Click to Play" prompt to loading screen
+  - Main theme music starts on user interaction
+  - Controller support for loading screen interaction
+  - Lowered CyberAxe shield particle height
+
+- **Loading Screen Improvements:**
+  - "Click to Play" prompt appears when all assets are loaded
+  - Shows mouse and gamepad (A button) input options
+  - User must click/press A to start the game
+  - Prevents autoplay issues with audio
+
+- **Main Theme Music:**
+  - New main_theme.webm plays on Click to Play interaction
+  - Respects music enabled/disabled setting
+  - Smooth transition into game with music ready
+
+- **Gamepad Support:**
+  - A button can be used to trigger Click to Play
+  - Gamepad polling starts when assets are ready
+  - Consistent with in-game controller support
+
+- **Character Tweaks:**
+  - CyberAxe shield particle Y offset: 2 → 1
+  - Lower shield spawn position for better visual alignment
+
 ## v0.20.81 - Floor LED Pulse Improvements (2025-11-23)
 - **Summary:**
   - Reduced floor brightness significantly
