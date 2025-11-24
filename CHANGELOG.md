@@ -2,6 +2,220 @@
 
 # Changelog
 
+## v0.20.69 - Enhanced Loading Screen & Asset Preloading (2025-11-23)
+- **Summary:**
+  - Completely redesigned loading screen with detailed progress tracking
+  - Added ALL missing particle effect atlases and JSON preloading
+  - Fixed asset count accuracy (now always shows correct 100%)
+  - Added download speed and data size tracking
+  - Professional arcade game loading experience
+
+- **Loading Screen Improvements:**
+  - Categorized asset loading by type (Art, Sound, Effects, Models)
+  - Real-time progress for each category (X/Total format)
+  - Overall percentage with accurate total count
+  - Data transfer tracking (MB loaded / Total MB)
+  - Download speed indicator (KB/s)
+  - Added notice: "Full Arcade Game Compressed Into A Website"
+  - Cleaner, more informative UI layout
+
+- **Asset Preloading Fixes:**
+  - Added ALL 7 particle effect atlases (atlas_a through atlas_g)
+  - Added smoke_effects.png and misc1_effects.png atlases
+  - Preload all 70+ particle effect JSON files
+  - Preload break effects (24 files: blue/green/red/yellow × 6 variants)
+  - Preload combo effects (22 files: combo_a through combo_v)
+  - Preload drop effects (5 files: base + 4 colors)
+  - Preload all character special effects (24 files)
+  - Fixed models count tracking for all 5 GLB models
+
+- **Progress Accuracy:**
+  - Total assets: ~150+ (was showing incorrect counts)
+  - Art: 32 images (textures, UI, atlases)
+  - Sound: 46 audio files
+  - Effects: 70 particle JSON files
+  - Models: 5 GLB files (table + 4 characters)
+  - Loading bar now reaches exactly 100% when complete
+  - No more 92/86 or other incorrect totals
+
+- **Performance Metrics:**
+  - Estimated total download: ~10-15 MB
+  - Download speed tracking updates every 500ms
+  - Realistic byte size estimates for each asset type
+  - Better feedback for slower connections
+
+## v0.20.68 - Music Pause State Persistence (2025-11-23)
+- **Summary:**
+  - Fixed music auto-resuming after user manually paused
+  - Added user pause state tracking to prevent unwanted playback
+  - Music now respects manual pause across all automatic triggers
+
+- **Music Control Improvements:**
+  - Added `userPausedMusic` flag to track manual pause/play state
+  - When user manually pauses music, it stays paused even when:
+    - Level tracks end and try to load next track
+    - Theme songs finish and try to resume level track
+    - Music system attempts to auto-load new tracks
+  - Play/pause button state now accurately reflects user intent
+  - Music only auto-plays when user hasn't manually paused
+
+- **Bug Fixes:**
+  - Fixed music restarting on its own after being paused
+  - Fixed level transitions overriding user pause preference
+  - Fixed theme song completion forcing music to resume
+  - Music system now fully respects user control
+
+## v0.20.67 - Combo Particle Optimization (2025-11-23)
+- **Summary:**
+  - Fixed browser hitching during combo cascades
+  - Optimized combo particle spawning to prevent performance issues
+  - Particles now only spawn when combo multiplier level changes
+
+- **Particle Spawning Changes:**
+  - Combo particles now only spawn when multiplier level changes (1x→2x, 2x→3x, etc.)
+  - Previously spawned particles on every block clear during combo
+  - Number of particles matches combo level: 2x = 2 particles, 5x = 5 particles
+  - Prevents excessive particle spam during large cascades
+  - Dramatically reduces browser hitching and performance drops
+
+- **Performance Improvements:**
+  - Large cascades no longer spawn 15-30+ particles rapidly
+  - Combo feedback remains clear while eliminating lag
+  - Smoother gameplay during high-combo situations
+  - Better performance on lower-end systems
+
+## v0.20.66 - Complete Sound System Implementation (2025-11-23)
+- **Summary:**
+  - Implemented ALL sound effects that were missing
+  - Added 6 variant sound files to audio system
+  - Added randomization for variant sounds (Chain_Hit_Floor, Chain_Lock_In_Place)
+  - Fixed 23 sound effects that were defined but never used
+  - UI now has proper sound feedback for all interactions
+  - Complete audio coverage across entire game
+
+- **Missing Sound Files Added:**
+  - Chain_Hit_Floor_1.mp3 (variant)
+  - Chain_Hit_Floor_2.mp3 (variant)
+  - Chain_Hit_Floor_3.mp3 (variant)
+  - Chain_Lock_In_Place_1.mp3 (variant)
+  - Chain_Lock_In_Place_2.mp3 (variant)
+  - Ambient_Grid_Hum_1.mp3 (variant)
+
+- **UI Sound Effects Implemented:**
+  - UI_Menu_Open: Plays when opening settings, high scores, achievements, about panels
+  - UI_Menu_Close: Plays when closing any panel with closeAllPanels()
+  - UI_Button_Click: Plays on all notification close buttons, skip all hints button
+  - Menu navigation now has proper audio feedback
+  - Settings panel has sound on open/close
+
+- **Game Progression Sounds:**
+  - Achievement_Unlock: Plays when any achievement is unlocked
+  - Chain_Drop_Start: Plays when new chain spawns
+  - Chain_Drop_Fast: Plays when player activates fast drop (space key)
+  - Proper audio feedback for all progression milestones
+
+- **Sound Randomization:**
+  - Chain_Hit_Floor now randomly selects from 4 variants (base + 1/2/3)
+  - Chain_Lock_In_Place now randomly selects from 3 variants (base + 1/2)
+  - Adds variety to repetitive gameplay sounds
+  - Prevents audio fatigue during extended play sessions
+
+- **Sound Effects Summary:**
+  - Total sound files: 55 (51 in sfx/ + 4 in specials/)
+  - Total defined in AUDIO_FILES: 46
+  - Total actively used in gameplay: 34
+  - Unused feature sounds: 12 (Block_Type_Unlock, Broken_Link sounds, Hypermode sounds, Encrypted_Block_Destroy, Sandblasting_Link_Drop, Ambient sounds, UI_Error_Invalid_Move, some UI sounds)
+  - Old obsolete files: 4 (Special_*_Activate.mp3 replaced by specials/ folder)
+
+## v0.20.65 - Model Optimization & Material Fixes (2025-11-23)
+- **Summary:**
+  - Replaced Nate and CyberAxe models with smaller optimized versions
+  - Fixed shiny/metallic material issues on CyberAxe
+  - Reduced game file size and improved loading performance
+
+- **Model Replacements:**
+  - Replaced `nate_a.glb` with smaller optimized version
+  - Replaced `cyberaxe_a.glb` with smaller optimized version
+  - Maintained same visual quality with reduced file size
+  - Faster loading times for character models
+  - Reduced bandwidth usage for players
+
+- **Material Improvements:**
+  - Fixed CyberAxe face appearing overly shiny/metallic
+  - Set all CyberAxe materials to fully matte (roughness 1.0)
+  - Removed metalness from all CyberAxe materials (metalness 0.0)
+  - More natural skin appearance without metal-like reflections
+  - Applied material fixes to entire model, not just specific parts
+
+## v0.20.64 - Title Screen Music Controls & Settings Persistence (2025-11-23)
+- **Summary:**
+  - Added music control panel to title screen
+  - Fixed settings not loading/saving properly
+  - Fixed music controls synchronization
+  - Improved user experience for music management
+
+- **Title Screen Music Controls:**
+  - Added music control panel at bottom center of title screen
+  - Includes playback controls (previous, play/pause, next)
+  - Volume slider synced with in-game controls
+  - Theme/Level music toggles synced with in-game settings
+  - Semi-transparent background with blur effect
+  - Always visible on title screen for easy access
+
+- **Settings Persistence:**
+  - Fixed music volume not loading from saved settings
+  - Fixed music enabled/disabled state not persisting
+  - Fixed theme/level music toggles not loading on startup
+  - All music settings now properly save to localStorage
+  - Title screen controls load saved volume and toggle states
+  - Settings sync between title screen and in-game panels
+
+- **Music Control Improvements:**
+  - Play/pause button defaults to play icon (music doesn't autoplay)
+  - Play button starts music system if not already loaded
+  - Volume sliders apply changes to currently playing music
+  - Both sliders (title and in-game) stay synchronized
+  - Toggle changes sync across both control panels
+  - Fixed validation preventing both toggles from being disabled
+  - Used activeElement to detect which checkbox was clicked
+
+- **Bug Fixes:**
+  - Fixed toggle checkboxes not responding to clicks
+  - Fixed volume slider not affecting music playback
+  - Fixed play/pause button state synchronization
+  - Fixed duplicate closing braces in musicPlayPause function
+  - Removed extra code that was updating buttons during music load
+
+## v0.20.63 - High Scores AI Tracking & Start Level Indicators (2025-11-23)
+- **Summary:**
+  - Added AI usage tracking across all game modes
+  - Replaced emoji indicators with colored circles showing start levels
+  - Added start level legend to high scores panel
+  - AI games now included in high scores with AI badge
+
+- **AI Usage Tracking:**
+  - AI games now included in high scores (previously excluded)
+  - AI badge displays as purple "AI" text next to score entries
+  - Fixed AI tracking for all skip start levels (10, 50, 100, 1000, 10000)
+  - `usedAI` now initialized from `settings.aiEnabled` at game start
+  - AI badge appears if AI was enabled at any point during the game
+
+- **Start Level Indicators:**
+  - Replaced emoji circles with colored circles containing level numbers
+  - Green circle with "1" for level 1 starts
+  - Blue circle with "10" for level 10 starts
+  - Orange circle with "50" for level 50 starts
+  - Red circle with "100" for level 100 starts
+  - Purple circle with "1K" for level 1000 starts
+  - Yellow circle with "10K" for level 10000 starts
+  - Gray circle with custom number for any other start level
+
+- **High Scores UI:**
+  - Added legend at top of high scores panel explaining color-coded start levels
+  - Legend shows all 6 standard start levels with their colors
+  - Consistent indicator styling across "Top 10 High Scores" and "Last 5 Games"
+  - Better visual clarity for comparing different game modes
+
 ## v0.20.62 - UI Consistency & Control Panel Transparency (2025-11-23)
 - **Summary:**
   - Fixed menu button width consistency across all screens

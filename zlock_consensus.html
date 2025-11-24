@@ -1648,10 +1648,24 @@
     
     <!-- Loading Modal -->
     <div id="loadingModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); display: flex; align-items: center; justify-content: center; z-index: 10000;">
-        <div style="background: linear-gradient(135deg, #1a2332 0%, #0d1218 100%); padding: 40px 60px; border-radius: 15px; border: 2px solid #3498DB; box-shadow: 0 10px 50px rgba(52, 152, 219, 0.5); text-align: center; min-width: 400px;">
+        <div style="background: linear-gradient(135deg, #1a2332 0%, #0d1218 100%); padding: 40px 60px; border-radius: 15px; border: 2px solid #3498DB; box-shadow: 0 10px 50px rgba(52, 152, 219, 0.5); text-align: center; min-width: 500px;">
             <div style="font-size: 48px; margin-bottom: 20px; animation: pulse 1.5s ease-in-out infinite;">⏳</div>
-            <div style="font-size: 24px; font-weight: bold; color: #3498DB; margin-bottom: 10px;">Loading Game Assets</div>
-            <div id="loadingIndicator" style="font-size: 18px; color: #89A0B4; margin-bottom: 20px;">Initializing...</div>
+            <div style="font-size: 24px; font-weight: bold; color: #3498DB; margin-bottom: 10px;">ZLOCK CHAINER</div>
+            <div style="font-size: 14px; color: #F39C12; margin-bottom: 15px; font-style: italic;">Full Arcade Game Compressed Into A Website</div>
+            <div id="loadingNote" style="font-size: 12px; color: #89A0B4; margin-bottom: 20px; line-height: 1.5;">Loading game assets... This may take a moment on first visit</div>
+            
+            <!-- Category breakdown -->
+            <div style="margin-bottom: 15px; text-align: left; font-size: 13px; color: #89A0B4;">
+                <div id="loadingArt" style="margin-bottom: 5px;">🎨 Art: <span style="color: #3498DB; font-weight: bold;">0/0</span></div>
+                <div id="loadingSound" style="margin-bottom: 5px;">🔊 Sound: <span style="color: #3498DB; font-weight: bold;">0/0</span></div>
+                <div id="loadingEffects" style="margin-bottom: 5px;">✨ Effects: <span style="color: #3498DB; font-weight: bold;">0/0</span></div>
+                <div id="loadingModels" style="margin-bottom: 5px;">🎭 Models: <span style="color: #3498DB; font-weight: bold;">0/0</span></div>
+            </div>
+            
+            <!-- Overall progress -->
+            <div id="loadingIndicator" style="font-size: 18px; color: #2ECC71; margin-bottom: 10px; font-weight: bold;">0%</div>
+            <div id="loadingStats" style="font-size: 11px; color: #89A0B4; margin-bottom: 15px;">0 MB / 0 MB • 0 KB/s</div>
+            
             <div style="width: 100%; height: 30px; background: rgba(52, 152, 219, 0.2); border-radius: 15px; overflow: hidden; border: 1px solid #3498DB;">
                 <div id="loadingBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #3498DB, #2ECC71); transition: width 0.3s ease; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 14px;"></div>
             </div>
@@ -1726,6 +1740,17 @@
     
     <div id="highScoresPanel">
         <div class="panelTitle">HIGH SCORES</div>
+        <div style="text-align: center; margin: 15px 0; padding: 12px; background: rgba(10, 14, 18, 0.5); border-radius: 8px; border: 1px solid #26313B;">
+            <div style="color: #89A0B4; font-size: 12px; font-family: 'JetBrains Mono', monospace; margin-bottom: 8px; font-weight: 600;">Start Level Indicators:</div>
+            <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                <span style="color: #D4E3F0; font-size: 11px;">🟢 1</span>
+                <span style="color: #D4E3F0; font-size: 11px;">🔵 10</span>
+                <span style="color: #D4E3F0; font-size: 11px;">🟠 50</span>
+                <span style="color: #D4E3F0; font-size: 11px;">🔴 100</span>
+                <span style="color: #D4E3F0; font-size: 11px;">🟣 1000</span>
+                <span style="color: #D4E3F0; font-size: 11px;">🟡 10000</span>
+            </div>
+        </div>
         <div id="highScoresList"></div>
         <button class="button closeButton" onclick="closeAllPanels()" style="width: 100%; margin-top: 20px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
     </div>
@@ -2251,7 +2276,7 @@
                 <!-- Playback Controls -->
                 <div style="display: flex; gap: 6px; justify-content: center; margin-bottom: 12px;">
                     <button onclick="musicPrevious()" style="padding: 8px 12px; background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); color: #F2C94C; border: 2px solid #2A9D8F; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">⏮</button>
-                    <button id="musicPlayPauseBtn" onclick="musicPlayPause()" style="padding: 8px 16px; background: linear-gradient(135deg, rgba(42, 157, 143, 0.4), rgba(42, 157, 143, 0.3)); color: #F2C94C; border: 2px solid #F2C94C; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">⏸</button>
+                    <button id="musicPlayPauseBtn" onclick="musicPlayPause()" style="padding: 8px 16px; background: linear-gradient(135deg, rgba(42, 157, 143, 0.4), rgba(42, 157, 143, 0.3)); color: #F2C94C; border: 2px solid #F2C94C; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">▶</button>
                     <button onclick="musicNext()" style="padding: 8px 12px; background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); color: #F2C94C; border: 2px solid #2A9D8F; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">⏭</button>
                 </div>
                 
@@ -2655,13 +2680,57 @@
             <div style="position: absolute; left: 60px; top: calc(50% + 470px); font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #89A0B4; width: 220px; text-align: center; line-height: 1.4;">
                 <strong>NOTE:</strong><br>Skipping past Level 10<br>disables most achievements
             </div>
+            
+            <!-- Title Screen Music Control Panel -->
+            <div id="titleMusicControl" style="
+                position: absolute;
+                bottom: 60px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: linear-gradient(135deg, rgba(10, 14, 18, 0.3), rgba(20, 27, 34, 0.25));
+                border: 2px solid #2A9D8F;
+                border-radius: 8px;
+                padding: 12px 16px;
+                min-width: 320px;
+                backdrop-filter: blur(10px);
+                box-shadow: 0 10px 50px rgba(0, 0, 0, 0.6);
+            ">
+                <h3 style="margin: 0 0 10px 0; color: #2A9D8F; font-family: 'JetBrains Mono', monospace; font-size: 12px; text-align: center; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">🎵 Music Controls</h3>
+                
+                <!-- Playback Controls -->
+                <div style="display: flex; gap: 6px; justify-content: center; margin-bottom: 12px;">
+                    <button onclick="musicPrevious()" style="padding: 8px 12px; background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); color: #F2C94C; border: 2px solid #2A9D8F; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">⏮</button>
+                    <button id="titleMusicPlayPauseBtn" onclick="musicPlayPause()" style="padding: 8px 16px; background: linear-gradient(135deg, rgba(42, 157, 143, 0.4), rgba(42, 157, 143, 0.3)); color: #F2C94C; border: 2px solid #F2C94C; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">▶</button>
+                    <button onclick="musicNext()" style="padding: 8px 12px; background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); color: #F2C94C; border: 2px solid #2A9D8F; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">⏭</button>
+                </div>
+                
+                <!-- Volume Control -->
+                <div style="margin-bottom: 12px;">
+                    <label style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 10px; display: block; margin-bottom: 4px;">Volume:</label>
+                    <input type="range" id="titleMusicVolumeSlider" min="1" max="150" value="75" oninput="updateMusicVolumeFromTitleSlider()" style="width: 100%;">
+                    <span id="titleMusicVolumeSliderValue" style="color: #2D9CDB; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: bold;">75</span>
+                </div>
+                
+                <!-- Music Type Toggles -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <input type="checkbox" id="titleThemeMusicToggle" checked onchange="updateThemeMusicToggle()" style="cursor: pointer;">
+                        <label for="titleThemeMusicToggle" style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 10px; cursor: pointer;">Themes</label>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <input type="checkbox" id="titleLevelMusicToggle" checked onchange="updateLevelMusicToggle()" style="cursor: pointer;">
+                        <label for="titleLevelMusicToggle" style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 10px; cursor: pointer;">Levels</label>
+                    </div>
+                </div>
+            </div>
+            
             <div style="margin-top: 40px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #89A0B4;">
-                Version v0.20.62 • 2025-11-23
+                Version v0.20.65 • 2025-11-23
             </div>
         </div>
     </div>
     <div style="position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); color: rgba(255, 255, 255, 0.3); font-size: 12px; font-family: 'JetBrains Mono', monospace; pointer-events: none; z-index: 100;">
-        Version v0.20.62 • 2025-11-23
+        Version v0.20.65 • 2025-11-23
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -2670,7 +2739,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.20.62';
+        const GAME_VERSION = 'v0.20.65';
         
         // ===== AUDIO SYSTEM =====
         const audioCache = {}; // Cache for all audio files
@@ -2727,10 +2796,10 @@
             'Block_Type_Unlock': 'sound_effects/sfx/Block_Type_Unlock.mp3',
             
             // Special Abilities
-            'Special_Zooko_Activate': 'sound_effects/sfx/Special_Zooko_Activate.mp3',
-            'Special_Nate_Activate': 'sound_effects/sfx/Special_Nate_Activate.mp3',
-            'Special_Zancas_Activate': 'sound_effects/sfx/Special_Zancas_Activate.mp3',
-            'Special_CyberAxe_Activate': 'sound_effects/sfx/Special_CyberAxe_Activate.mp3',
+            'Special_Zooko_Activate': 'sound_effects/specials/zooko_special.mp3',
+            'Special_Nate_Activate': 'sound_effects/specials/nate_special.mp3',
+            'Special_Zancas_Activate': 'sound_effects/specials/zancas_special.mp3',
+            'Special_CyberAxe_Activate': 'sound_effects/specials/cyberaxe_special.mp3',
             'Sandblasting_Event_Start': 'sound_effects/sfx/Sandblasting_Event_Start.mp3',
             'Sandblasting_Link_Drop': 'sound_effects/sfx/Sandblasting_Link_Drop.mp3',
             
@@ -2738,10 +2807,15 @@
             'Chain_Drop_Start': 'sound_effects/sfx/Chain_Drop_Start.mp3',
             'Chain_Drop_Fast': 'sound_effects/sfx/Chain_Drop_Fast.mp3',
             'Chain_Hit_Floor': 'sound_effects/sfx/Chain_Hit_Floor.mp3',
+            'Chain_Hit_Floor_1': 'sound_effects/sfx/Chain_Hit_Floor_1.mp3',
+            'Chain_Hit_Floor_2': 'sound_effects/sfx/Chain_Hit_Floor_2.mp3',
+            'Chain_Hit_Floor_3': 'sound_effects/sfx/Chain_Hit_Floor_3.mp3',
             'Chain_Hit_Block': 'sound_effects/sfx/Chain_Hit_Block.mp3',
             'Chain_Rotate_90': 'sound_effects/sfx/Chain_Rotate_90.mp3',
             'Chain_Flip': 'sound_effects/sfx/Chain_Flip.mp3',
             'Chain_Lock_In_Place': 'sound_effects/sfx/Chain_Lock_In_Place.mp3',
+            'Chain_Lock_In_Place_1': 'sound_effects/sfx/Chain_Lock_In_Place_1.mp3',
+            'Chain_Lock_In_Place_2': 'sound_effects/sfx/Chain_Lock_In_Place_2.mp3',
             
             // Block Destruction
             'Match_Found_6_Links': 'sound_effects/sfx/Match_Found_6_Links.mp3',
@@ -2769,12 +2843,14 @@
             
             // Ambient
             'Ambient_Grid_Hum': 'sound_effects/sfx/Ambient_Grid_Hum.mp3',
+            'Ambient_Grid_Hum_1': 'sound_effects/sfx/Ambient_Grid_Hum_1.mp3',
             'Ambient_Tension_High_Stack': 'sound_effects/sfx/Ambient_Tension_High_Stack.mp3'
         };
         
         // Preload and cache audio files
         function preloadAudio() {
             const audioKeys = Object.keys(AUDIO_FILES);
+            audioTotal += audioKeys.length;
             assetsToLoad += audioKeys.length;
             
             audioKeys.forEach(id => {
@@ -2786,6 +2862,7 @@
                 audio.addEventListener('canplaythrough', () => {
                     audioLoaded++;
                     assetsLoaded++;
+                    loadedBytes += 50000; // Estimate ~50KB per audio file
                     updateLoadingProgress();
                 }, { once: true });
                 
@@ -2799,6 +2876,9 @@
                 audioCache[id] = audio;
                 // Don't force load - preload='auto' respects browser cache
             });
+            
+            // Estimate total size for audio
+            totalBytes += audioKeys.length * 50000; // ~50KB per file
         }
         
         // Play sound effect with volume control and recycling
@@ -3027,9 +3107,18 @@
         let assetsToLoad = 0;
         let assetsLoaded = 0;
         let audioLoaded = 0;
-        let videosLoaded = 0;
+        let audioTotal = 0;
+        let artLoaded = 0;
+        let artTotal = 0;
+        let effectsLoaded = 0;
+        let effectsTotal = 0;
         let modelsLoadedCount = 0;
-        let imagesLoaded = 0;
+        let modelsTotal = 0;
+        let totalBytes = 0;
+        let loadedBytes = 0;
+        let loadStartTime = Date.now();
+        let loadingLastUpdateTime = Date.now();
+        let lastLoadedBytes = 0;
         
         // Zooko model and animation
         let zookoModel = null;
@@ -3950,6 +4039,30 @@
             
             // Sync sound effects setting with global variable
             if (settings.sfxEnabled !== undefined) sfxEnabled = settings.sfxEnabled;
+            if (settings.sfxVolume !== undefined) sfxVolume = settings.sfxVolume;
+            
+            // Sync music settings with global variables
+            if (settings.musicEnabled !== undefined) musicEnabled = settings.musicEnabled;
+            if (settings.musicVolume !== undefined) musicVolume = settings.musicVolume;
+            if (settings.themeMusicEnabled !== undefined) themeMusicEnabled = settings.themeMusicEnabled;
+            if (settings.levelMusicEnabled !== undefined) levelMusicEnabled = settings.levelMusicEnabled;
+            
+            // Update UI elements with loaded settings
+            if (document.getElementById('musicEnabled')) document.getElementById('musicEnabled').checked = settings.musicEnabled;
+            if (document.getElementById('themeMusicEnabled')) document.getElementById('themeMusicEnabled').checked = settings.themeMusicEnabled;
+            if (document.getElementById('levelMusicEnabled')) document.getElementById('levelMusicEnabled').checked = settings.levelMusicEnabled;
+            if (document.getElementById('sfxVolume')) document.getElementById('sfxVolume').value = settings.sfxVolume;
+            if (document.getElementById('musicVolume')) document.getElementById('musicVolume').value = settings.musicVolume;
+            if (document.getElementById('sfxVolumeValue')) document.getElementById('sfxVolumeValue').textContent = settings.sfxVolume;
+            if (document.getElementById('musicVolumeValue')) document.getElementById('musicVolumeValue').textContent = settings.musicVolume;
+            if (document.getElementById('musicVolumeSlider')) document.getElementById('musicVolumeSlider').value = settings.musicVolume;
+            if (document.getElementById('musicVolumeSliderValue')) document.getElementById('musicVolumeSliderValue').textContent = settings.musicVolume;
+            
+            // Update title screen music controls
+            if (document.getElementById('titleThemeMusicToggle')) document.getElementById('titleThemeMusicToggle').checked = settings.themeMusicEnabled;
+            if (document.getElementById('titleLevelMusicToggle')) document.getElementById('titleLevelMusicToggle').checked = settings.levelMusicEnabled;
+            if (document.getElementById('titleMusicVolumeSlider')) document.getElementById('titleMusicVolumeSlider').value = settings.musicVolume;
+            if (document.getElementById('titleMusicVolumeSliderValue')) document.getElementById('titleMusicVolumeSliderValue').textContent = settings.musicVolume;
             
             // Update sound button UI state
             const soundBtn = document.getElementById('soundBtn');
@@ -4004,13 +4117,11 @@
                 date: new Date().toISOString()
             };
             
-            // Add to high scores (top 20) - exclude AI games
-            if (!usedAI) {
-                highScores.push(gameData);
-                highScores.sort((a, b) => b.score - a.score);
-                highScores = highScores.slice(0, 20);
-                localStorage.setItem(STORAGE_KEYS.HIGH_SCORES, JSON.stringify(highScores));
-            }
+            // Add to high scores (top 20) - include AI games
+            highScores.push(gameData);
+            highScores.sort((a, b) => b.score - a.score);
+            highScores = highScores.slice(0, 20);
+            localStorage.setItem(STORAGE_KEYS.HIGH_SCORES, JSON.stringify(highScores));
             
             // Add to game history (last 5) - include all games
             let gameHistory = JSON.parse(localStorage.getItem(STORAGE_KEYS.GAME_HISTORY) || '[]');
@@ -4101,6 +4212,7 @@
             const achievement = achievements.find(a => a.id === id);
             if (achievement && !achievement.unlocked) {
                 achievement.unlocked = true;
+                playSound('Achievement_Unlock');
                 localStorage.setItem(STORAGE_KEYS.ACHIEVEMENTS, JSON.stringify(achievements));
                 showAchievementNotification(achievement);
             }
@@ -4743,20 +4855,74 @@
             settings.musicVolume = value;
             document.getElementById('musicVolumeSliderValue').textContent = value;
             document.getElementById('musicVolumeValue').textContent = value;
+            document.getElementById('musicVolume').value = value;
+            
+            // Apply volume to current music
+            if (currentMusic) {
+                currentMusic.volume = musicVolume / 100;
+            }
+            
+            // Sync title screen slider
+            if (document.getElementById('titleMusicVolumeSlider')) {
+                document.getElementById('titleMusicVolumeSlider').value = value;
+                document.getElementById('titleMusicVolumeSliderValue').textContent = value;
+            }
+            saveSettings();
+        }
+        
+        function updateMusicVolumeFromTitleSlider() {
+            const slider = document.getElementById('titleMusicVolumeSlider');
+            const value = parseInt(slider.value);
+            musicVolume = value;
+            settings.musicVolume = value;
+            document.getElementById('titleMusicVolumeSliderValue').textContent = value;
+            
+            // Apply volume to current music
+            if (currentMusic) {
+                currentMusic.volume = musicVolume / 100;
+            }
+            
+            // Sync in-game sliders
+            if (document.getElementById('musicVolumeSlider')) {
+                document.getElementById('musicVolumeSlider').value = value;
+                document.getElementById('musicVolumeSliderValue').textContent = value;
+            }
+            if (document.getElementById('musicVolume')) {
+                document.getElementById('musicVolume').value = value;
+                document.getElementById('musicVolumeValue').textContent = value;
+            }
             saveSettings();
         }
         
         function updateThemeMusicToggle() {
-            const newValue = document.getElementById('themeMusicToggle').checked;
+            const inGameToggle = document.getElementById('themeMusicToggle');
+            const titleToggle = document.getElementById('titleThemeMusicToggle');
+            
+            // Get value from whichever checkbox was clicked
+            let newValue;
+            if (titleToggle && document.activeElement === titleToggle) {
+                newValue = titleToggle.checked;
+            } else if (inGameToggle && document.activeElement === inGameToggle) {
+                newValue = inGameToggle.checked;
+            } else {
+                // Fallback to current state
+                newValue = themeMusicEnabled;
+            }
             
             // Prevent both from being disabled
             if (!newValue && !levelMusicEnabled) {
-                document.getElementById('themeMusicToggle').checked = true;
+                if (inGameToggle) inGameToggle.checked = true;
+                if (titleToggle) titleToggle.checked = true;
                 return;
             }
             
             themeMusicEnabled = newValue;
             settings.themeMusicEnabled = themeMusicEnabled;
+            
+            // Sync both checkboxes
+            if (inGameToggle) inGameToggle.checked = newValue;
+            if (titleToggle) titleToggle.checked = newValue;
+            
             saveSettings();
             
             // If disabling theme music and currently playing a theme, skip to level track
@@ -4772,16 +4938,34 @@
         }
         
         function updateLevelMusicToggle() {
-            const newValue = document.getElementById('levelMusicToggle').checked;
+            const inGameToggle = document.getElementById('levelMusicToggle');
+            const titleToggle = document.getElementById('titleLevelMusicToggle');
+            
+            // Get value from whichever checkbox was clicked
+            let newValue;
+            if (titleToggle && document.activeElement === titleToggle) {
+                newValue = titleToggle.checked;
+            } else if (inGameToggle && document.activeElement === inGameToggle) {
+                newValue = inGameToggle.checked;
+            } else {
+                // Fallback to current state
+                newValue = levelMusicEnabled;
+            }
             
             // Prevent both from being disabled
             if (!newValue && !themeMusicEnabled) {
-                document.getElementById('levelMusicToggle').checked = true;
+                if (inGameToggle) inGameToggle.checked = true;
+                if (titleToggle) titleToggle.checked = true;
                 return;
             }
             
             levelMusicEnabled = newValue;
             settings.levelMusicEnabled = levelMusicEnabled;
+            
+            // Sync both checkboxes
+            if (inGameToggle) inGameToggle.checked = newValue;
+            if (titleToggle) titleToggle.checked = newValue;
+            
             saveSettings();
             
             // If disabling level music and currently playing a level track, skip to theme
@@ -4798,14 +4982,26 @@
         
         function musicPlayPause() {
             const btn = document.getElementById('musicPlayPauseBtn');
-            if (currentMusic) {
-                if (currentMusic.paused) {
-                    currentMusic.play().catch(err => console.log('Play error:', err));
-                    btn.textContent = '⏸';
-                } else {
-                    currentMusic.pause();
-                    btn.textContent = '▶';
-                }
+            const titleBtn = document.getElementById('titleMusicPlayPauseBtn');
+            
+            if (!currentMusic) {
+                // No music loaded yet, start the music system
+                startMusicSystem();
+                if (btn) btn.textContent = '⏸';
+                if (titleBtn) titleBtn.textContent = '⏸';
+                return;
+            }
+            
+            if (currentMusic.paused) {
+                currentMusic.play().catch(err => console.log('Play error:', err));
+                userPausedMusic = false; // User resumed
+                if (btn) btn.textContent = '⏸';
+                if (titleBtn) titleBtn.textContent = '⏸';
+            } else {
+                currentMusic.pause();
+                userPausedMusic = true; // User paused
+                if (btn) btn.textContent = '▶';
+                if (titleBtn) titleBtn.textContent = '▶';
             }
         }
         
@@ -6597,6 +6793,9 @@
             // Preload all image textures
             preloadImages();
             
+            // Preload particle effect JSONs
+            preloadParticleEffects();
+            
             // Setup renderer
             const canvas = document.getElementById('renderCanvas');
             renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
@@ -7138,6 +7337,8 @@
         
         function loadTableModel() {
             assetsToLoad++;
+            modelsTotal++;
+            totalBytes += 1500000; // ~1.5MB for table model
             const loader = new THREE.GLTFLoader();
             loader.load(
                 'models/Zcash_GameTable_A.glb',
@@ -7260,6 +7461,8 @@
         
         function loadZookoModel() {
             assetsToLoad++;
+            modelsTotal++;
+            totalBytes += 2000000; // ~2MB for Zooko model
             const loader = new THREE.GLTFLoader();
             loader.load(
                 'people/zooko_a.glb',
@@ -7347,6 +7550,8 @@
         
         function loadCyberAxeModel() {
             assetsToLoad++;
+            modelsTotal++;
+            totalBytes += 1700000; // ~1.7MB for CyberAxe model
             const loader = new THREE.GLTFLoader();
             loader.load(
                 'people/cyberaxe_a.glb',
@@ -7362,7 +7567,7 @@
                     cyberAxeLoaded = true;
                     
                     // Position CyberAxe across from Zooko (diagonal opposite corner)
-                    cyberAxeModel.position.set(25, -8.25, 25);
+                    cyberAxeModel.position.set(25, -9, 25);
                     cyberAxeModel.rotation.y = cyberAxeBaseRotation; // Face toward center
                     cyberAxeModel.scale.set(14, 14, 14);
                     
@@ -7373,13 +7578,10 @@
                             child.receiveShadow = true;
                             child.frustumCulled = false; // Keep in render list when changing views
                             
-                            // Reduce shininess on skin materials
-                            if (child.material && child.material.name) {
-                                const matName = child.material.name.toLowerCase();
-                                if (matName.includes('skin') || matName.includes('face') || matName.includes('head') || matName.includes('body')) {
-                                    child.material.roughness = 0.9; // More matte
-                                    child.material.metalness = 0.0; // Not metallic
-                                }
+                            // Make all materials less shiny
+                            if (child.material) {
+                                child.material.roughness = 1.0; // Fully matte
+                                child.material.metalness = 0.0; // Not metallic
                             }
                         }
                         if (child.isBone || child.type === 'Bone') {
@@ -7439,6 +7641,8 @@
         
         function loadZancasModel() {
             assetsToLoad++;
+            modelsTotal++;
+            totalBytes += 1900000; // ~1.9MB for Zancas model
             const loader = new THREE.GLTFLoader();
             loader.load(
                 'people/zancas_a.glb',
@@ -7811,6 +8015,8 @@
         
         function loadNateModel() {
             assetsToLoad++;
+            modelsTotal++;
+            totalBytes += 1800000; // ~1.8MB for Nate model
             const loader = new THREE.GLTFLoader();
             loader.load(
                 'people/nate_a.glb',
@@ -9150,6 +9356,7 @@
         let currentMusic = null;
         let musicAnimationFrameId = null;
         let currentMusicLevel = -1;
+        let userPausedMusic = false; // Track if user manually paused
         
         const musicTracks = [
             { file: 'music/level_1.webm', minLevel: 1, maxLevel: 19, name: 'Sprout Genesis' },
@@ -9255,6 +9462,9 @@
             
             // When song ends, maybe play a theme, then resume level track
             newMusic.addEventListener('ended', () => {
+                // Don't auto-play next track if user manually paused
+                if (userPausedMusic) return;
+                
                 const shouldPlayTheme = Math.random() < 0.5; // 50% chance
                 
                 if (shouldPlayTheme && themeMusicEnabled) { // Only play theme if enabled
@@ -9306,7 +9516,21 @@
                 }
             });
             
-            newMusic.play().catch(err => console.log('Music autoplay blocked:', err));
+            // Only auto-play if user hasn't manually paused
+            if (!userPausedMusic) {
+                newMusic.play().catch(err => console.log('Music autoplay blocked:', err));
+            }
+            
+            // Update play/pause button based on play state
+            const btn = document.getElementById('musicPlayPauseBtn');
+            const titleBtn = document.getElementById('titleMusicPlayPauseBtn');
+            if (!userPausedMusic) {
+                if (btn) btn.textContent = '⏸';
+                if (titleBtn) titleBtn.textContent = '⏸';
+            } else {
+                if (btn) btn.textContent = '▶';
+                if (titleBtn) titleBtn.textContent = '▶';
+            }
             
             // Crossfade: fade out old, fade in new
             const fadeDuration = 2000; // 2 seconds
@@ -9408,6 +9632,12 @@
                     
                     themeAudio.play().catch(err => console.log('Theme play error:', err));
                     currentMusic = themeAudio;
+                    
+                    // Update play/pause button to show pause icon
+                    const btn = document.getElementById('musicPlayPauseBtn');
+                    const titleBtn = document.getElementById('titleMusicPlayPauseBtn');
+                    if (btn) btn.textContent = '⏸';
+                    if (titleBtn) titleBtn.textContent = '⏸';
                 } else if (levelMusicEnabled) {
                     // If theme music is disabled, start directly with level track
                     const levelTrack = getMusicForLevel(level);
@@ -9449,6 +9679,66 @@
             }
         }
         
+        // Preload particle effect JSON files
+        function preloadParticleEffects() {
+            const effectList = [
+                // Break effects
+                'effect/blue_break_a.json', 'effect/blue_break_b.json', 'effect/blue_break_c.json',
+                'effect/blue_break_d.json', 'effect/blue_break_e.json', 'effect/blue_break_f.json',
+                'effect/green_break_a.json', 'effect/green_break_b.json', 'effect/green_break_c.json',
+                'effect/green_break_d.json', 'effect/green_break_e.json', 'effect/green_break_f.json',
+                'effect/red_break_a.json', 'effect/red_break_b.json', 'effect/red_break_c.json',
+                'effect/red_break_d.json', 'effect/red_break_e.json', 'effect/red_break_f.json',
+                'effect/yellow_break_a.json', 'effect/yellow_break_b.json', 'effect/yellow_break_c.json',
+                'effect/yellow_break_d.json', 'effect/yellow_break_e.json', 'effect/yellow_break_f.json',
+                // Combo effects
+                'effect/combo_a.json', 'effect/combo_b.json', 'effect/combo_c.json', 'effect/combo_d.json',
+                'effect/combo_e.json', 'effect/combo_f.json', 'effect/combo_g.json', 'effect/combo_h.json',
+                'effect/combo_i.json', 'effect/combo_j.json', 'effect/combo_k.json', 'effect/combo_l.json',
+                'effect/combo_m.json', 'effect/combo_n.json', 'effect/combo_o.json', 'effect/combo_p.json',
+                'effect/combo_q.json', 'effect/combo_r.json', 'effect/combo_s.json', 'effect/combo_t.json',
+                'effect/combo_u.json', 'effect/combo_v.json',
+                // Drop effects
+                'effect/drop_effect_a.json', 'effect/drop_effect_blue.json', 'effect/drop_effect_green.json',
+                'effect/drop_effect_red.json', 'effect/drop_effect_yellow.json',
+                // Character special effects
+                'effect/cyberaxe_electric.json', 'effect/cyberaxe_electric_left.json',
+                'effect/cyberaxe_electric_walls.json', 'effect/cyberaxe_electric_walls_blue.json',
+                'effect/cyberaxe_electric_walls_chain.json', 'effect/cyberaxe_electric_walls_red.json',
+                'effect/cyberaxe_electric_walls_spark.json', 'effect/cyberaxe_electric_walls_yellow.json',
+                'effect/cyberaxe_shield.json', 'effect/cyberaxe_special_laser_a.json',
+                'effect/cyberaxe_special_laser_b.json', 'effect/cyberaxe_special_laser_c.json',
+                'effect/nate_special.json', 'effect/nate_special_break.json',
+                'effect/zancas_special.json', 'effect/zancas_special_break.json',
+                'effect/zancas_special_orb.json', 'effect/zancas_special_orb_left.json',
+                'effect/zooko_hat.json', 'effect/zooko_shield.json',
+                'effect/zooko_special.json', 'effect/zooko_special_break.json'
+            ];
+            
+            effectsTotal += effectList.length;
+            assetsToLoad += effectList.length;
+            
+            effectList.forEach(effectPath => {
+                fetch(effectPath)
+                    .then(response => response.json())
+                    .then(data => {
+                        assetsLoaded++;
+                        effectsLoaded++;
+                        loadedBytes += 5000; // Estimate ~5KB per JSON
+                        updateLoadingProgress();
+                    })
+                    .catch(err => {
+                        console.error(`Failed to load effect: ${effectPath}`, err);
+                        assetsLoaded++;
+                        effectsLoaded++;
+                        updateLoadingProgress();
+                    });
+            });
+            
+            // Estimate total size for effects
+            totalBytes += effectList.length * 5000; // ~5KB per JSON
+        }
+        
         // Preload image textures into cache
         function preloadImages() {
             const imageList = [
@@ -9476,43 +9766,93 @@
                 'models/chain_blue.png',
                 'models/chain_green.png',
                 'models/chain_red.png',
-                // Particle atlas textures
+                // Particle atlas textures (ALL atlases)
+                'effect/atlas_a.png',
+                'effect/atlas_b.png',
+                'effect/atlas_c.png',
+                'effect/atlas_d.png',
+                'effect/atlas_e.png',
                 'effect/atlas_f.png',
-                'effect/atlas_g.png'
+                'effect/atlas_g.png',
+                'effect/smoke_effects.png',
+                'effect/misc1_effects.png'
             ];
             
+            artTotal += imageList.length;
             assetsToLoad += imageList.length;
             
             imageList.forEach(imagePath => {
                 const img = new Image();
                 img.src = imagePath;
                 
-                img.addEventListener('load', () => {
+                img.addEventListener('load', (e) => {
                     assetsLoaded++;
-                    imagesLoaded++;
+                    artLoaded++;
+                    // Estimate size (compressed PNG ~50-200KB each)
+                    loadedBytes += 100000; // Rough estimate
                     updateLoadingProgress();
                 }, { once: true });
                 
                 img.addEventListener('error', (e) => {
                     assetsLoaded++;
+                    artLoaded++;
                     console.error(`Failed to load image: ${imagePath}`, e);
                     updateLoadingProgress();
                 }, { once: true });
             });
+            
+            // Estimate total size for images
+            totalBytes += imageList.length * 100000; // Rough estimate
         }
         
         // Update loading progress indicator
         function updateLoadingProgress() {
             const loadingIndicator = document.getElementById('loadingIndicator');
             const loadingBar = document.getElementById('loadingBar');
+            const loadingArt = document.getElementById('loadingArt');
+            const loadingSound = document.getElementById('loadingSound');
+            const loadingEffects = document.getElementById('loadingEffects');
+            const loadingModels = document.getElementById('loadingModels');
+            const loadingStats = document.getElementById('loadingStats');
             
             if (loadingIndicator && assetsToLoad > 0) {
                 const percent = Math.floor((assetsLoaded / assetsToLoad) * 100);
-                loadingIndicator.textContent = `${percent}% Complete (${assetsLoaded}/${assetsToLoad} assets)`;
+                loadingIndicator.textContent = `${percent}%`;
                 
                 if (loadingBar) {
                     loadingBar.style.width = `${percent}%`;
                     loadingBar.textContent = `${percent}%`;
+                }
+                
+                // Update category counts
+                if (loadingArt) {
+                    loadingArt.innerHTML = `🎨 Art: <span style="color: #3498DB; font-weight: bold;">${artLoaded}/${artTotal}</span>`;
+                }
+                if (loadingSound) {
+                    loadingSound.innerHTML = `🔊 Sound: <span style="color: #3498DB; font-weight: bold;">${audioLoaded}/${audioTotal}</span>`;
+                }
+                if (loadingEffects) {
+                    loadingEffects.innerHTML = `✨ Effects: <span style="color: #3498DB; font-weight: bold;">${effectsLoaded}/${effectsTotal}</span>`;
+                }
+                if (loadingModels) {
+                    loadingModels.innerHTML = `🎭 Models: <span style="color: #3498DB; font-weight: bold;">${modelsLoadedCount}/${modelsTotal}</span>`;
+                }
+                
+                // Calculate download speed
+                const now = Date.now();
+                const timeDiff = (now - loadingLastUpdateTime) / 1000; // seconds
+                if (timeDiff > 0.5) { // Update every 500ms
+                    const bytesDiff = loadedBytes - lastLoadedBytes;
+                    const speedKBps = (bytesDiff / 1024) / timeDiff;
+                    const totalMB = (totalBytes / (1024 * 1024)).toFixed(1);
+                    const loadedMB = (loadedBytes / (1024 * 1024)).toFixed(1);
+                    
+                    if (loadingStats) {
+                        loadingStats.textContent = `${loadedMB} MB / ${totalMB} MB • ${speedKBps.toFixed(0)} KB/s`;
+                    }
+                    
+                    loadingLastUpdateTime = now;
+                    lastLoadedBytes = loadedBytes;
                 }
             }
             
@@ -10115,7 +10455,7 @@
             score = startingScore;
             level = startingLevel;
             startLevel = startingLevel;
-            usedAI = false; // Reset AI usage tracking
+            usedAI = settings.aiEnabled; // Track AI usage from start (includes AI enabled at game start)
             combo = 1.0;
             floorClearBonusAwarded = false;
             consensusCleared = 0;
@@ -10242,6 +10582,7 @@
         function startGameAtLevel10000() { startGame(10000); }
         
         function showSettings() {
+            playSound('UI_Menu_Open');
             document.getElementById('overlay').style.display = 'block';
             document.getElementById('settingsPanel').style.display = 'block';
             
@@ -10384,6 +10725,7 @@
         }
         
         function showAchievements() {
+            playSound('UI_Menu_Open');
             document.getElementById('overlay').style.display = 'block';
             document.getElementById('achievementsPanel').style.display = 'block';
             
@@ -10453,6 +10795,7 @@
         }
         
         function showAbout() {
+            playSound('UI_Menu_Open');
             document.getElementById('overlay').style.display = 'block';
             document.getElementById('aboutPanel').style.display = 'block';
         }
@@ -10468,6 +10811,7 @@
         }
         
         function showHighScores() {
+            playSound('UI_Menu_Open');
             document.getElementById('overlay').style.display = 'block';
             document.getElementById('highScoresPanel').style.display = 'block';
             
@@ -10502,15 +10846,15 @@
                     
                     let startIcon = '';
                     const sl = game.startLevel || 1;
-                    if (sl === 1) startIcon = '🟢';
-                    else if (sl === 10) startIcon = '🔵';
-                    else if (sl === 50) startIcon = '🟠';
-                    else if (sl === 100) startIcon = '🔴';
-                    else if (sl === 1000) startIcon = '🟣';
-                    else if (sl === 10000) startIcon = '🟡';
-                    else startIcon = '⚪';
+                    if (sl === 1) startIcon = '<span style="display: inline-block; width: 22px; height: 22px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 22px; font-weight: bold; color: white; font-size: 10px;">1</span>';
+                    else if (sl === 10) startIcon = '<span style="display: inline-block; width: 22px; height: 22px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 22px; font-weight: bold; color: white; font-size: 10px;">10</span>';
+                    else if (sl === 50) startIcon = '<span style="display: inline-block; width: 22px; height: 22px; background: #E67E22; border-radius: 50%; text-align: center; line-height: 22px; font-weight: bold; color: white; font-size: 10px;">50</span>';
+                    else if (sl === 100) startIcon = '<span style="display: inline-block; width: 22px; height: 22px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 22px; font-weight: bold; color: white; font-size: 9px;">100</span>';
+                    else if (sl === 1000) startIcon = '<span style="display: inline-block; width: 22px; height: 22px; background: #9B59B6; border-radius: 50%; text-align: center; line-height: 22px; font-weight: bold; color: white; font-size: 8px;">1K</span>';
+                    else if (sl === 10000) startIcon = '<span style="display: inline-block; width: 22px; height: 22px; background: #F1C40F; border-radius: 50%; text-align: center; line-height: 22px; font-weight: bold; color: #333; font-size: 7px;">10K</span>';
+                    else startIcon = '<span style="display: inline-block; width: 22px; height: 22px; background: #95A5A6; border-radius: 50%; text-align: center; line-height: 22px; font-weight: bold; color: white; font-size: 10px;">' + sl + '</span>';
                     
-                    const aiBadge = game.usedAI ? ' 🤖' : '';
+                    const aiBadge = game.usedAI ? ' <span style="color: #9B59B6; font-weight: 700; font-size: 10px;">AI</span>' : '';
                     
                     item.innerHTML = `
                         <div style="display: flex; justify-content: space-between; color: #D4E3F0; font-size: 13px; margin-bottom: 3px;">
@@ -10562,15 +10906,15 @@
                     
                     let startIcon = '';
                     const sl = game.startLevel || 1;
-                    if (sl === 1) startIcon = '🟢';
-                    else if (sl === 10) startIcon = '🔵';
-                    else if (sl === 50) startIcon = '🟠';
-                    else if (sl === 100) startIcon = '🔴';
-                    else if (sl === 1000) startIcon = '🟣';
-                    else if (sl === 10000) startIcon = '🟡';
-                    else startIcon = '⚪';
+                    if (sl === 1) startIcon = '<span style="display: inline-block; width: 22px; height: 22px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 22px; font-weight: bold; color: white; font-size: 10px;">1</span>';
+                    else if (sl === 10) startIcon = '<span style="display: inline-block; width: 22px; height: 22px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 22px; font-weight: bold; color: white; font-size: 10px;">10</span>';
+                    else if (sl === 50) startIcon = '<span style="display: inline-block; width: 22px; height: 22px; background: #E67E22; border-radius: 50%; text-align: center; line-height: 22px; font-weight: bold; color: white; font-size: 10px;">50</span>';
+                    else if (sl === 100) startIcon = '<span style="display: inline-block; width: 22px; height: 22px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 22px; font-weight: bold; color: white; font-size: 9px;">100</span>';
+                    else if (sl === 1000) startIcon = '<span style="display: inline-block; width: 22px; height: 22px; background: #9B59B6; border-radius: 50%; text-align: center; line-height: 22px; font-weight: bold; color: white; font-size: 8px;">1K</span>';
+                    else if (sl === 10000) startIcon = '<span style="display: inline-block; width: 22px; height: 22px; background: #F1C40F; border-radius: 50%; text-align: center; line-height: 22px; font-weight: bold; color: #333; font-size: 7px;">10K</span>';
+                    else startIcon = '<span style="display: inline-block; width: 22px; height: 22px; background: #95A5A6; border-radius: 50%; text-align: center; line-height: 22px; font-weight: bold; color: white; font-size: 10px;">' + sl + '</span>';
                     
-                    const aiBadge = game.usedAI ? ' 🤖' : '';
+                    const aiBadge = game.usedAI ? ' <span style="color: #9B59B6; font-weight: 700; font-size: 10px;">AI</span>' : '';
                     
                     item.innerHTML = `
                         <div style="display: flex; justify-content: space-between; color: #2D9CDB; font-size: 14px; margin-bottom: 4px; font-weight: 700;">
@@ -10604,6 +10948,7 @@
         }
         
         function closeAllPanels() {
+            playSound('UI_Menu_Close');
             document.getElementById('overlay').style.display = 'none';
             document.getElementById('settingsPanel').style.display = 'none';
             document.getElementById('highScoresPanel').style.display = 'none';
@@ -10631,6 +10976,7 @@
         }
         
         function closeLevel10Notification() {
+            playSound('UI_Button_Click');
             document.getElementById('level10Notification').style.display = 'none';
             
             // Resume game
@@ -10654,6 +11000,7 @@
         }
         
         function closeGlowingLinksGuide() {
+            playSound('UI_Button_Click');
             document.getElementById('glowingLinksGuide').style.display = 'none';
             
             // Resume game
@@ -10677,6 +11024,7 @@
         }
         
         function closeLevel20Notification() {
+            playSound('UI_Button_Click');
             document.getElementById('level20Notification').style.display = 'none';
             
             // Resume game
@@ -10700,6 +11048,7 @@
         }
         
         function closeLevel50Notification() {
+            playSound('UI_Button_Click');
             document.getElementById('level50Notification').style.display = 'none';
             
             // Resume game
@@ -10709,6 +11058,7 @@
         }
         
         function skipAllHints() {
+            playSound('UI_Button_Click');
             // Mark all notifications as shown so they never appear again
             level10NotificationShown = true;
             level20NotificationShown = true;
@@ -10995,6 +11345,7 @@
                     fastDrop = false; // Override normal fast drop
                 } else {
                     // Single tap - fast drop
+                    playSound('Chain_Drop_Fast');
                     fastDrop = true;
                     instantDrop = false;
                 }
@@ -11382,6 +11733,7 @@
                         instantDrop = true;
                         fastDrop = false;
                     } else {
+                        playSound('Chain_Drop_Fast');
                         fastDrop = true;
                         instantDrop = false;
                     }
@@ -12416,6 +12768,7 @@
         }
         
         function spawnNewChain() {
+            playSound('Chain_Drop_Start');
             // Get next chain from queue
             const chainData = chainQueue.shift();
             chainQueue.push(generateChainData());
@@ -12826,7 +13179,9 @@
             
             // Play appropriate hit sound
             if (hitFloor) {
-                playSound('Chain_Hit_Floor');
+                const floorSounds = ['Chain_Hit_Floor', 'Chain_Hit_Floor_1', 'Chain_Hit_Floor_2', 'Chain_Hit_Floor_3'];
+                const randomFloorSound = floorSounds[Math.floor(Math.random() * floorSounds.length)];
+                playSound(randomFloorSound);
             } else if (hitChain) {
                 playSound('Chain_Hit_Block');
             }
@@ -12918,7 +13273,9 @@
             }
             
             // Play chain lock sound
-            playSound('Chain_Lock_In_Place');
+            const lockSounds = ['Chain_Lock_In_Place', 'Chain_Lock_In_Place_1', 'Chain_Lock_In_Place_2'];
+            const randomLockSound = lockSounds[Math.floor(Math.random() * lockSounds.length)];
+            playSound(randomLockSound);
             
             // Check for consensus
             checkConsensus();
@@ -13327,8 +13684,11 @@
                 const oldCombo = combo;
                 combo = Math.min(5.0, combo + 0.5);
                 
-                // Spawn combo particle effect based on combo multiplier
-                if (combo > oldCombo && combo >= 1.0) {
+                // Only spawn particles when combo multiplier level changes (1x->2x, 2x->3x, etc)
+                const oldMultiplier = Math.floor(oldCombo);
+                const newMultiplier = Math.floor(combo);
+                
+                if (newMultiplier > oldMultiplier && combo >= 1.0) {
                     // Play combo sound based on multiplier
                     if (combo >= 5.0) {
                         playSound('Combo_Multiplier_x6_Plus');
@@ -13342,8 +13702,8 @@
                         playSound('Combo_Multiplier_x2');
                     }
                     
-                    // Determine number of particles based on combo (max 3 particles)
-                    const numParticles = Math.min(3, Math.floor(combo * 2)); // 1.0x=2, 1.5x=3, 2.0x=3 (capped)
+                    // Determine number of particles based on new combo multiplier
+                    const numParticles = newMultiplier; // 1x=1, 2x=2, 3x=3, 4x=4, 5x=5 particles
                     
                     // Available combo effects (combo_a through combo_v = 22 effects)
                     const comboEffects = [
