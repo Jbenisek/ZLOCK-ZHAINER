@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.46</title>
+    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.71</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -1663,8 +1663,7 @@
             </div>
             
             <!-- Overall progress -->
-            <div id="loadingIndicator" style="font-size: 18px; color: #2ECC71; margin-bottom: 10px; font-weight: bold;">0%</div>
-            <div id="loadingStats" style="font-size: 11px; color: #89A0B4; margin-bottom: 15px;">0 MB / 0 MB • 0 KB/s</div>
+            <div id="loadingIndicator" style="font-size: 18px; color: #2ECC71; margin-bottom: 20px; font-weight: bold;">0%</div>
             
             <div style="width: 100%; height: 30px; background: rgba(52, 152, 219, 0.2); border-radius: 15px; overflow: hidden; border: 1px solid #3498DB;">
                 <div id="loadingBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #3498DB, #2ECC71); transition: width 0.3s ease; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 14px;"></div>
@@ -1881,7 +1880,7 @@
     <div id="gameContainer">
         <canvas id="renderCanvas"></canvas>
         
-        <div id="versionDisplay">v0.20.51</div>
+        <div id="versionDisplay">v0.20.71</div>
         
         <div id="performanceDisplay">
             <div><span class="perf-label">FPS:</span> <span class="perf-value" id="fpsValue">60</span></div>
@@ -2725,12 +2724,12 @@
             </div>
             
             <div style="margin-top: 40px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #89A0B4;">
-                Version v0.20.65 • 2025-11-23
+                Version v0.20.71 • 2025-11-23
             </div>
         </div>
     </div>
     <div style="position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); color: rgba(255, 255, 255, 0.3); font-size: 12px; font-family: 'JetBrains Mono', monospace; pointer-events: none; z-index: 100;">
-        Version v0.20.65 • 2025-11-23
+        Version v0.20.71 • 2025-11-23
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -2739,7 +2738,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.20.65';
+        const GAME_VERSION = 'v0.20.71';
         
         // ===== AUDIO SYSTEM =====
         const audioCache = {}; // Cache for all audio files
@@ -7302,35 +7301,71 @@
             }
             
             // Load HQ OBJ (chain.obj)
+            assetsToLoad++;
+            modelsTotal++;
+            totalBytes += 500000; // ~500KB for chain OBJ
             objLoader.load('models/chain.obj', function(obj) {
                 baseModelHQ = obj;
+                assetsLoaded++;
+                loadedBytes += 500000;
+                updateLoadingProgress();
                 checkAllLoaded();
             });
             
             // Load LQ OBJ (chain_lq.obj)
+            assetsToLoad++;
+            modelsTotal++;
+            totalBytes += 300000; // ~300KB for chain LQ OBJ
             objLoader.load('models/chain_lq.obj', function(obj) {
                 baseModelLQ = obj;
+                assetsLoaded++;
+                loadedBytes += 300000;
+                updateLoadingProgress();
                 checkAllLoaded();
             });
             
             // Load 4 texture files
+            assetsToLoad++;
+            modelsTotal++;
+            totalBytes += 100000; // ~100KB for texture
             textureLoader.load('models/chain_yellow.png', function(texture) {
                 textures.yellow = texture;
+                assetsLoaded++;
+                loadedBytes += 100000;
+                updateLoadingProgress();
                 checkAllLoaded();
             });
             
+            assetsToLoad++;
+            modelsTotal++;
+            totalBytes += 100000; // ~100KB for texture
             textureLoader.load('models/chain_blue.png', function(texture) {
                 textures.blue = texture;
+                assetsLoaded++;
+                loadedBytes += 100000;
+                updateLoadingProgress();
                 checkAllLoaded();
             });
             
+            assetsToLoad++;
+            modelsTotal++;
+            totalBytes += 100000; // ~100KB for texture
             textureLoader.load('models/chain_green.png', function(texture) {
                 textures.green = texture;
+                assetsLoaded++;
+                loadedBytes += 100000;
+                updateLoadingProgress();
                 checkAllLoaded();
             });
             
+            assetsToLoad++;
+            modelsTotal++;
+            totalBytes += 100000; // ~100KB for texture
             textureLoader.load('models/chain_red.png', function(texture) {
                 textures.red = texture;
+                assetsLoaded++;
+                loadedBytes += 100000;
+                updateLoadingProgress();
                 checkAllLoaded();
             });
         }
@@ -7532,8 +7567,14 @@
                         startZookoHatLoop();
                         
                         // Load the special animation
+                        assetsToLoad++;
+                        modelsTotal++;
+                        totalBytes += 1000000; // ~1MB for special model
                         const specialLoader = new THREE.GLTFLoader();
                         specialLoader.load('people/zooko_a_special.glb', function(specialGltf) {
+                            assetsLoaded++;
+                            loadedBytes += 1000000;
+                            updateLoadingProgress();
                             if (specialGltf.animations && specialGltf.animations.length > 0) {
                                 zookoSpecialClip = specialGltf.animations[0];
                                 zookoSpecialAction = zookoMixer.clipAction(zookoSpecialClip);
@@ -7623,8 +7664,14 @@
                         startCyberAxeShieldLoop();
                         
                         // Load the special animation
+                        assetsToLoad++;
+                        modelsTotal++;
+                        totalBytes += 1000000; // ~1MB for special model
                         const specialLoader = new THREE.GLTFLoader();
                         specialLoader.load('people/cyberaxe_a_special.glb', function(specialGltf) {
+                            assetsLoaded++;
+                            loadedBytes += 1000000;
+                            updateLoadingProgress();
                             if (specialGltf.animations && specialGltf.animations.length > 0) {
                                 cyberAxeSpecialClip = specialGltf.animations[0];
                                 cyberAxeSpecialAction = cyberAxeMixer.clipAction(cyberAxeSpecialClip);
@@ -7711,8 +7758,14 @@
                         zancasIdleAction.play();
                         
                         // Load the special animation
+                        assetsToLoad++;
+                        modelsTotal++;
+                        totalBytes += 1000000; // ~1MB for special model
                         const specialLoader = new THREE.GLTFLoader();
                         specialLoader.load('people/zancas_a_special.glb', function(specialGltf) {
+                            assetsLoaded++;
+                            loadedBytes += 1000000;
+                            updateLoadingProgress();
                             if (specialGltf.animations && specialGltf.animations.length > 0) {
                                 zancasSpecialClip = specialGltf.animations[0];
                                 zancasSpecialAction = zancasMixer.clipAction(zancasSpecialClip);
@@ -8087,8 +8140,14 @@
                         nateIdleAction.play();
                         
                         // Load the special animation
+                        assetsToLoad++;
+                        modelsTotal++;
+                        totalBytes += 1000000; // ~1MB for special model
                         const specialLoader = new THREE.GLTFLoader();
                         specialLoader.load('people/nate_a_special.glb', function(specialGltf) {
+                            assetsLoaded++;
+                            loadedBytes += 1000000;
+                            updateLoadingProgress();
                             if (specialGltf.animations && specialGltf.animations.length > 0) {
                                 nateSpecialClip = specialGltf.animations[0];
                                 nateSpecialAction = nateMixer.clipAction(nateSpecialClip);
@@ -9813,7 +9872,6 @@
             const loadingSound = document.getElementById('loadingSound');
             const loadingEffects = document.getElementById('loadingEffects');
             const loadingModels = document.getElementById('loadingModels');
-            const loadingStats = document.getElementById('loadingStats');
             
             if (loadingIndicator && assetsToLoad > 0) {
                 const percent = Math.floor((assetsLoaded / assetsToLoad) * 100);
@@ -9836,23 +9894,6 @@
                 }
                 if (loadingModels) {
                     loadingModels.innerHTML = `🎭 Models: <span style="color: #3498DB; font-weight: bold;">${modelsLoadedCount}/${modelsTotal}</span>`;
-                }
-                
-                // Calculate download speed
-                const now = Date.now();
-                const timeDiff = (now - loadingLastUpdateTime) / 1000; // seconds
-                if (timeDiff > 0.5) { // Update every 500ms
-                    const bytesDiff = loadedBytes - lastLoadedBytes;
-                    const speedKBps = (bytesDiff / 1024) / timeDiff;
-                    const totalMB = (totalBytes / (1024 * 1024)).toFixed(1);
-                    const loadedMB = (loadedBytes / (1024 * 1024)).toFixed(1);
-                    
-                    if (loadingStats) {
-                        loadingStats.textContent = `${loadedMB} MB / ${totalMB} MB • ${speedKBps.toFixed(0)} KB/s`;
-                    }
-                    
-                    loadingLastUpdateTime = now;
-                    lastLoadedBytes = loadedBytes;
                 }
             }
             

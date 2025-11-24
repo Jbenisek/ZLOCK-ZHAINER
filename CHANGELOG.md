@@ -2,6 +2,39 @@
 
 # Changelog
 
+## v0.20.71 - Loading Screen Cleanup (2025-11-23)
+- **Summary:**
+  - Removed inaccurate MB and download speed tracking
+  - Simplified loading screen to show only percentage and category counts
+
+- **Loading Screen Changes:**
+  - Removed "X MB / Y MB • Z KB/s" stats line
+  - Removed all download speed calculation code
+  - Removed loadedBytes and totalBytes tracking logic
+  - Loading screen now shows only: percentage, category counts (Art/Sound/Effects/Models)
+  - Cleaner, more reliable progress display
+
+## v0.20.70 - Loading Count Accuracy Fix (2025-11-23)
+- **Summary:**
+  - Fixed loading progress to accurately count all 15 model/texture files
+  - Resolved "15/14" count mismatch bug
+
+- **Loading Count Fixes:**
+  - Added proper tracking for 2 chain OBJ models (chain.obj, chain_lq.obj)
+  - Added proper tracking for 4 chain texture files (yellow, blue, green, red)
+  - Added proper tracking for 4 character special GLB models
+  - All 15 model files now increment assetsToLoad and assetsLoaded
+  - Added loadedBytes tracking for all model/texture loads
+  - Loading screen now shows accurate 15/15 when models complete
+
+- **Technical Details:**
+  - Chain models: 2 OBJ files (~800KB total)
+  - Chain textures: 4 PNG files (~400KB total)
+  - Character base models: 4 GLB files (~6MB total)
+  - Character special models: 4 GLB files (~4MB total)
+  - Table model: 1 GLB file (~1.5MB total)
+  - Total: 15 model/texture assets (~12.7MB)
+
 ## v0.20.69 - Enhanced Loading Screen & Asset Preloading (2025-11-23)
 - **Summary:**
   - Completely redesigned loading screen with detailed progress tracking
