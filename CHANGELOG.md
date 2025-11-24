@@ -2,6 +2,23 @@
 
 # Changelog
 
+## v0.20.90 - Controller Input Fix (2025-11-24)
+- **Summary:**
+  - Fixed controller A button carrying over from loading screen to title menu
+  - Prevented immediate game start when dismissing loading screen with controller
+
+- **Input System Fix:**
+  - **Loading Screen Isolation**: updateGamepad() now skips all processing while loading modal is visible
+  - **Screen Separation**: pollGamepadForClickToPlay() handles A button exclusively during loading screen
+  - **Menu Screen**: updateGamepad() handles A button exclusively after loading screen closes
+  - **No Overlap**: Ensures only one gamepad polling system is active per screen
+
+- **Technical Implementation:**
+  - Added loading modal display check at start of updateGamepad() function
+  - Returns early if loading modal is visible, preventing dual input processing
+  - Clean handoff between pollGamepadForClickToPlay() and updateGamepad()
+  - Eliminated race condition where both functions were listening simultaneously
+
 ## v0.20.89 - Model Placement Adjustments (2025-11-24)
 - **Summary:**
   - Repositioned character models for improved scene composition

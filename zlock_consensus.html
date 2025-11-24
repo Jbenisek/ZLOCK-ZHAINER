@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.86</title>
+    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.90</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -1491,6 +1491,11 @@
             100% { transform: translate(-50%, -50%) scale(1); }
         }
         
+        @keyframes slowBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
         #versionDisplay {
             position: fixed;
             bottom: 10px;
@@ -1684,13 +1689,21 @@
             </div>
             
             <!-- Click to Play prompt (hidden until ready) -->
-            <div id="clickToPlayPrompt" style="display: none; margin-top: 30px; font-size: 24px; color: #2ECC71; font-weight: bold; animation: pulse 1.5s ease-in-out infinite; cursor: pointer;">
+            <div id="clickToPlayPrompt" style="display: none; margin-top: 30px; font-size: 24px; color: #2ECC71; font-weight: bold; animation: slowBlink 2s ease-in-out infinite; cursor: pointer;">
                 <div style="margin-bottom: 10px;">🎮 CLICK TO PLAY 🎮</div>
                 <div style="font-size: 14px; color: #89A0B4;">
                     <span style="display: inline-block; padding: 5px 10px; background: rgba(52, 152, 219, 0.3); border-radius: 5px; margin-right: 5px;">MOUSE</span>
                     or
                     <span style="display: inline-block; padding: 5px 10px; background: rgba(46, 204, 113, 0.3); border-radius: 5px; margin-left: 5px;">🎮 A</span>
                 </div>
+            </div>
+        </div>
+        
+        <!-- Loading Screen Ticker -->
+        <div id="loadingTickerWrapper" style="position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); width: 80%; max-width: 800px; height: 30px; overflow: hidden; background: rgba(26, 35, 50, 0.95); border: 1px solid #3498DB; border-radius: 15px; box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);">
+            <div style="display: flex; align-items: center; height: 100%; animation: scrollTicker 30s linear infinite; white-space: nowrap;">
+                <span class="loadingTickerText" style="font-size: 14px; color: #89A0B4; padding: 0 20px; display: inline-block;">Loading...</span>
+                <span class="loadingTickerText" style="font-size: 14px; color: #89A0B4; padding: 0 20px; display: inline-block;">Loading...</span>
             </div>
         </div>
     </div>
@@ -2897,7 +2910,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.20.89';
+        const GAME_VERSION = 'v0.20.90';
         
         // ===== AUDIO SYSTEM =====
         const audioCache = {}; // Cache for all audio files
@@ -7019,6 +7032,27 @@
         function init() {
             // Set version display
             document.getElementById('versionDisplay').textContent = `Version ${GAME_VERSION} • 2025-11-24`;
+            
+            // Initialize loading screen ticker with random fact
+            const loadingTickerWrapper = document.getElementById('loadingTickerWrapper');
+            if (loadingTickerWrapper && tickerFacts.length > 0) {
+                const randomFact = tickerFacts[Math.floor(Math.random() * tickerFacts.length)];
+                const tickerTexts = loadingTickerWrapper.querySelectorAll('.loadingTickerText');
+                tickerTexts.forEach(span => {
+                    span.textContent = randomFact;
+                });
+                
+                // Add animation listener to rotate facts on each loop
+                loadingTickerWrapper.addEventListener('animationiteration', () => {
+                    if (tickerFacts.length > 0) {
+                        const newFact = tickerFacts[Math.floor(Math.random() * tickerFacts.length)];
+                        const spans = loadingTickerWrapper.querySelectorAll('.loadingTickerText');
+                        spans.forEach(span => {
+                            span.textContent = newFact;
+                        });
+                    }
+                });
+            }
             
             // Start story intro background animation
             startStoryIntroAnimation();
@@ -12120,6 +12154,11 @@
         
         function updateGamepad() {
             if (!gamepadConnected || gamepadIndex === null) return;
+            
+            // CRITICAL: Don't process gamepad input while loading modal is visible
+            // pollGamepadForClickToPlay() handles A button during loading screen
+            const loadingModal = document.getElementById('loadingModal');
+            if (loadingModal && loadingModal.style.display !== 'none') return;
             
             const now = Date.now();
             if (now - lastGamepadUpdate < gamepadUpdateInterval) return;
