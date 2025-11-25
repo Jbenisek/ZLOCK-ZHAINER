@@ -2101,6 +2101,7 @@
             <div><span class="perf-label">Memory:</span> <span class="perf-value" id="memoryValue">0 MB</span></div>
             <div><span class="perf-label">Particles:</span> <span class="perf-value" id="particleCount">0</span></div>
             <div><span class="perf-label">Combo FX:</span> <span class="perf-value" id="comboEffectCount">0</span></div>
+            <div><span class="perf-label">Sound FX:</span> <span class="perf-value" id="sfxCount">0</span></div>
         </div>
         
         <!-- Special Abilities Panel -->
@@ -3129,7 +3130,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.20.99';
+        const GAME_VERSION = 'v0.20.101';
         
         // ===== AUDIO SYSTEM =====
         const audioCache = {}; // Cache for all audio files
@@ -3280,6 +3281,16 @@
             // Convert sfxVolume (1-150) to multiplier (0.01-1.5)
             const volumeScale = sfxVolume / 100;
             
+            // Increment SFX counter and update display
+            sfxCounter++;
+            document.getElementById('sfxCount').textContent = sfxCounter;
+            
+            // Remove from counter after 1 second
+            setTimeout(() => {
+                sfxCounter--;
+                document.getElementById('sfxCount').textContent = sfxCounter;
+            }, 1000);
+            
             // If already playing, clone it for overlap (important for rapid-fire sounds)
             if (!cached.paused && !cached.ended) {
                 const clone = cached.cloneNode();
@@ -3379,6 +3390,7 @@
         let lastClearTime = 0;
         let lastComboParticleTime = 0; // Rate limit combo particles to 1 per second
         let comboEffectCounter = 0; // Track combo effects for diagnostics
+        let sfxCounter = 0; // Track active sound effects
         let floorClearBonusAwarded = false;
         let consensusCleared = 0;
         let level10NotificationShown = false; // Track if we've shown the level 10 popup
@@ -4475,6 +4487,7 @@
         // ===== END STORY INTRO BACKGROUND ANIMATION =====
         
         let achievements = [];
+        let highScores = [];
         
         // Achievement notification queue
         let achievementQueue = [];
@@ -4856,13 +4869,14 @@
             `;
             document.body.appendChild(notif);
             
-            trackedSetTimeout(() => {
+            // Use regular setTimeout (not tracked) so notifications aren't cleared on game restart
+            setTimeout(() => {
                 notif.style.animation = 'slideOut 0.3s ease-in';
-                trackedSetTimeout(() => {
-                    document.body.removeChild(notif);
+                setTimeout(() => {
+                    if (notif.parentNode) document.body.removeChild(notif);
                     isShowingAchievement = false;
                     // Process next achievement in queue after a 500ms delay
-                    trackedSetTimeout(() => processAchievementQueue(), 500);
+                    setTimeout(() => processAchievementQueue(), 500);
                 }, 300);
             }, 3000);
         }
@@ -11588,6 +11602,8 @@
             // Reset combo effect counter
             comboEffectCounter = 0;
             document.getElementById('comboEffectCount').textContent = '0';
+            sfxCounter = 0;
+            document.getElementById('sfxCount').textContent = '0';
             
             // Clear saved game if starting fresh (not resuming)
             if (!savedGameState) {
@@ -13770,8 +13786,18 @@
         // Helper function to spawn a particle effect
         // Use spawnMode: 'world' for absolute position, 'camera' for relative to camera view (DEFAULT)
         function spawnParticleEffect(jsonPath, x, y, z, options = {}) {
-                    if (!particlesEnabled) return; // Don't spawn particles if disabled
-                    loadParticleEffectFromJSON(jsonPath, (config) => {
+            if (!particlesEnabled) return; // Don't spawn particles if disabled
+            
+            // Count total active particles across all effects
+            let totalParticles = 0;
+            particleEffects.forEach(effect => {
+                totalParticles += effect.particles.length;
+            });
+            
+            // Skip spawning if we already have more than 50 particles
+            if (totalParticles > 50) return;
+            
+            loadParticleEffectFromJSON(jsonPath, (config) => {
                 let finalX = x, finalY = y, finalZ = z;
                 
                 // Default to camera positioning

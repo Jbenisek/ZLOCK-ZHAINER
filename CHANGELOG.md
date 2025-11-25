@@ -2,6 +2,48 @@
 
 # Changelog
 
+## v0.20.101 - Performance Optimization & Sound FX Counter (2025-11-24)
+- **Summary:**
+  - Added Sound FX counter to performance stats panel
+  - Added particle count limiter to prevent performance degradation
+  - Improved frame rate stability during intense gameplay
+
+- **Features:**
+  - **Sound FX Counter**: New performance stat showing active sound effects
+    - Displays in HUD below Combo FX counter
+    - Increments when sound plays, auto-decrements after 1 second
+    - Helps monitor audio activity during gameplay
+  
+  - **Particle Limiter**: Performance optimization for particle system
+    - Counts total active particles across all effects
+    - Skips spawning new particles when count exceeds 50
+    - Prevents frame drops during intense action (combos, specials, chain reactions)
+    - Implementation: Early return in `spawnParticleEffect()` at line 13773
+
+- **Technical Details:**
+  - Added `sfxCounter` variable to track active sound effects (line 3384)
+  - Modified `playSound()` function to increment/decrement counter (lines 3284-3292)
+  - Added particle counting logic in `spawnParticleEffect()` (lines 13779-13787)
+  - Threshold: 50 particles maximum (tuned for performance)
+  - Counter reset in `startGame()` function for clean state
+
+## v0.20.100 - Critical Bug Fixes (2025-11-24)
+- **Summary:**
+  - Fixed missing highScores variable causing game startup crash
+  - Fixed achievement notifications getting stuck on screen
+
+- **Bug Fixes:**
+  - **highScores Undefined**: Added missing `let highScores = [];` declaration at line 4478
+    - Error: "Uncaught ReferenceError: highScores is not defined"
+    - Impact: Game crashed when loading high scores after clearing localStorage
+    - Fix: Initialize highScores array before use
+  
+  - **Achievement Notifications Stuck**: Changed achievement notification timers from `trackedSetTimeout` to regular `setTimeout`
+    - Root Cause: `trackedSetTimeout` timeouts were cleared when game restarted, preventing notification removal
+    - Impact: Achievement popups remained on screen indefinitely
+    - Fix: Use untracked `setTimeout` for achievement UI (lines 4861-4868)
+    - Added safety check: `if (notif.parentNode)` before removing element
+
 ## v0.20.99 - Save System Validation Fix (2025-11-24)
 - **Summary:**
   - Fixed critical bug preventing saved games from loading
