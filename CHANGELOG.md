@@ -2,6 +2,63 @@
 
 # Changelog
 
+## v0.20.97 - TV Toggle Controls Character Sheets (2025-11-24)
+- **Summary:**
+  - TV toggle button now controls visibility of character stat cards
+  - Unified control for all TV/display elements
+
+- **Feature Changes:**
+  - **TV Toggle Integration**: TV button (📺/🚫) now toggles both TV/story screen and character stat cards
+  - **Initial State**: Character stat cards now respect `tvEnabled` setting on creation
+  - **Synchronized Visibility**: All four character cards (Zancas, CyberAxe, Zooko, Nate) hide/show together with TV system
+
+- **Technical Implementation:**
+  - Modified `toggleTV()` function to iterate through `heroStatCards` and set `plane.visible` property
+  - Updated `createHeroStatCards()` to initialize plane visibility based on `tvEnabled` state
+  - Character cards match TV system state on both initial load and toggle
+
+- **User Experience:**
+  - Single button controls all display overlays for cleaner workspace
+  - Character sheets visible when TV is enabled, hidden when TV is disabled
+  - Consistent behavior across game sessions (saved in settings)
+
+## v0.20.96 - Character Stat Card UI Redesign (2025-11-24)
+- **Summary:**
+  - Complete visual overhaul of character stat cards to match special abilities panel aesthetic
+  - Enhanced card layout with professional borders, backgrounds, and rounded corners
+  - Optimized character positioning for better visual hierarchy
+
+- **Visual Enhancements:**
+  - **Dark Blurred Background**: Gradient background (rgba(10,14,18,0.95) to rgba(20,27,34,0.9)) matching special abilities panel
+  - **Colored Borders**: 8px character-themed borders (Zancas: green, CyberAxe: blue, Zooko: red, Nate: yellow)
+  - **Glowing Effect**: 20px shadow blur on borders for prominent glow effect
+  - **Rounded Corners**: 24px border radius matching special abilities panel style (12px CSS equivalent)
+  - **Inner Border**: Subtle white semi-transparent border for added depth
+
+- **Layout Improvements:**
+  - **Card Positioning**: Moved bottom cards (CyberAxe, Nate) from y:5 to y:3.5 to prevent overlap with top cards
+  - **Aspect Ratio**: 9:16 portrait orientation (512×910px canvas, 8×14.2 3D units)
+  - **Stat Hierarchy**: HP/AC stats appear first (y:490) with 48px font and colored glows
+  - **Attribute Stats**: STR/INT, DEX/WIS, CON/CHA below HP/AC (starting y:580) with 42px font
+
+- **Character-Specific Colors:**
+  - Zancas (Monk/Cleric): Green #27AE60 - Left top position (x:-21.5, y:18)
+  - CyberAxe (Fighter): Blue #2E86DE - Left bottom position (x:-21.5, y:3.5)
+  - Zooko (Wizard): Red #EB5757 - Right top position (x:27.5, y:18)
+  - Nate (Ranger/Thief): Yellow #F2C94C - Right bottom position (x:27.5, y:3.5)
+
+- **Technical Implementation:**
+  - **drawRoundedRect() Helper**: Canvas function using quadratic curves for smooth rounded corners
+  - **Gradient Fills**: Linear gradients for professional dark backgrounds
+  - **Shadow Effects**: Multiple shadow layers for depth (text shadows, border glows)
+  - **Portrait Enhancement**: 140px radius circles with 280×280 character images and colored borders
+
+- **Design Philosophy:**
+  - Consistent styling across all UI panels (special abilities, stat cards)
+  - Character color theming for quick visual identification
+  - Information hierarchy optimized for gameplay (critical stats most prominent)
+  - Professional polish matching modern game UI standards
+
 ## v0.20.95 - Camera Control UI Enhancements (2025-11-24)
 - **Summary:**
   - Added interactive zoom slider with visual feedback

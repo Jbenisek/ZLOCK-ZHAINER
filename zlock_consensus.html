@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.93</title>
+    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.97</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -3120,7 +3120,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.20.95';
+        const GAME_VERSION = 'v0.20.97';
         
         // ===== AUDIO SYSTEM =====
         const audioCache = {}; // Cache for all audio files
@@ -5290,6 +5290,13 @@
                 btn.title = 'Toggle TV/Story Screen';
                 stopTVSystem();
             }
+            
+            // Toggle character stat card visibility
+            Object.values(heroStatCards).forEach(card => {
+                if (card.plane) {
+                    card.plane.visible = tvEnabled;
+                }
+            });
             
             // Save settings
             saveSettings();
@@ -8285,7 +8292,7 @@
                     cyberAxeLoaded = true;
                     
                     // Position CyberAxe across from Zooko (diagonal opposite corner)
-                    cyberAxeModel.position.set(33, -8.5, 30);
+                    cyberAxeModel.position.set(33, -8.75, 30);
                     cyberAxeModel.rotation.y = cyberAxeBaseRotation; // Face toward center
                     cyberAxeModel.scale.set(14, 14, 14);
                     
@@ -10894,14 +10901,14 @@
         
         function createHeroStatCards() {
             const cardWidth = 512;
-            const cardHeight = 512;
+            const cardHeight = 910; // 9:16 ratio (512 * 16/9 = 910)
             
             // Define heroes with their card positions and colors
             const heroes = [
                 { name: 'Zancas', class: 'Monk/Cleric', key: 'zancas', color: '#27AE60', position: { x: -21.5, y: 18, z: 38.5 }, image: 'people/Zancas_a_head_compressed.png' },
-                { name: 'Nate', class: 'Ranger/Thief', key: 'nate', color: '#F2C94C', position: { x: -21.5, y: 8, z: 38.5 }, image: 'people/Nate_a_head_compressed.png' },
+                { name: 'CyberAxe', class: 'Fighter', key: 'cyberaxe', color: '#2E86DE', position: { x: -21.5, y: 3.5, z: 38.5 }, image: 'people/cyberaxe_a_head_compressed.png' },
                 { name: 'Zooko', class: 'Wizard', key: 'zooko', color: '#EB5757', position: { x: 27.5, y: 18, z: 38.5 }, image: 'people/zooko_a_head_compressed.png' },
-                { name: 'CyberAxe', class: 'Fighter', key: 'cyberaxe', color: '#2E86DE', position: { x: 27.5, y: 8, z: 38.5 }, image: 'people/cyberaxe_a_head_compressed.png' }
+                { name: 'Nate', class: 'Ranger/Thief', key: 'nate', color: '#F2C94C', position: { x: 27.5, y: 3.5, z: 38.5 }, image: 'people/Nate_a_head_compressed.png' }
             ];
             
             heroes.forEach(hero => {
@@ -10921,12 +10928,13 @@
                 // Draw initial card (now texture is available)
                 drawHeroStatCard(hero.key);
                 
-                // Create plane with texture
-                const geometry = new THREE.PlaneGeometry(8, 8);
+                // Create plane with texture (9:16 ratio)
+                const geometry = new THREE.PlaneGeometry(8, 14.2); // 8 * 16/9 = 14.2
                 const material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide, transparent: true });
                 const plane = new THREE.Mesh(geometry, material);
                 plane.position.set(hero.position.x, hero.position.y, hero.position.z);
                 plane.rotation.set(0, Math.PI, 0);
+                plane.visible = tvEnabled; // Match TV visibility state
                 scene.add(plane);
                 
                 // Store plane reference
@@ -10944,57 +10952,105 @@
             // Clear canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Background with hero color
-            ctx.fillStyle = hero.color;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // Helper function to draw rounded rectangle
+            const drawRoundedRect = (x, y, width, height, radius) => {
+                ctx.beginPath();
+                ctx.moveTo(x + radius, y);
+                ctx.lineTo(x + width - radius, y);
+                ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+                ctx.lineTo(x + width, y + height - radius);
+                ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+                ctx.lineTo(x + radius, y + height);
+                ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+                ctx.lineTo(x, y + radius);
+                ctx.quadraticCurveTo(x, y, x + radius, y);
+                ctx.closePath();
+            };
             
-            // Dark overlay for better text contrast
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // Dark blurred background (matching special abilities panel) with rounded corners
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, 'rgba(10, 14, 18, 0.95)');
+            gradient.addColorStop(1, 'rgba(20, 27, 34, 0.9)');
+            ctx.fillStyle = gradient;
+            drawRoundedRect(0, 0, canvas.width, canvas.height, 24); // 24px radius for 512px canvas (matches 12px for 256px UI)
+            ctx.fill();
             
-            // Load and draw portrait
+            // Colored border matching character theme with rounded corners
+            ctx.strokeStyle = hero.color;
+            ctx.lineWidth = 8;
+            ctx.shadowColor = hero.color;
+            ctx.shadowBlur = 20;
+            drawRoundedRect(4, 4, canvas.width - 8, canvas.height - 8, 24);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+            
+            // Inner border for depth with rounded corners
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.lineWidth = 2;
+            drawRoundedRect(14, 14, canvas.width - 28, canvas.height - 28, 20);
+            ctx.stroke();
+            
+            // Load and draw portrait - MUCH LARGER
             const img = new Image();
             img.crossOrigin = 'anonymous';
             img.onload = () => {
-                // Draw portrait circle at top
+                // Draw large portrait circle at top
                 ctx.save();
                 ctx.beginPath();
-                ctx.arc(256, 120, 80, 0, Math.PI * 2);
+                ctx.arc(256, 180, 140, 0, Math.PI * 2); // Larger radius: 140 (was 80)
                 ctx.clip();
-                ctx.drawImage(img, 176, 40, 160, 160);
+                ctx.drawImage(img, 116, 40, 280, 280); // Larger image: 280x280 (was 160x160)
                 ctx.restore();
                 
-                // Portrait border
-                ctx.strokeStyle = '#ffffff';
-                ctx.lineWidth = 4;
+                // Portrait border with gradient glow effect
+                ctx.strokeStyle = hero.color;
+                ctx.lineWidth = 6;
+                ctx.shadowColor = hero.color;
+                ctx.shadowBlur = 15;
                 ctx.beginPath();
-                ctx.arc(256, 120, 80, 0, Math.PI * 2);
+                ctx.arc(256, 180, 140, 0, Math.PI * 2);
                 ctx.stroke();
+                ctx.shadowBlur = 0;
                 
                 card.texture.needsUpdate = true;
             };
             img.src = hero.image;
             
-            // Hero name
+            // Hero name - LARGER with gradient-like effect
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 36px Arial';
+            ctx.font = 'bold 56px Arial'; // Much larger: 56px (was 36px)
             ctx.textAlign = 'center';
-            ctx.fillText(hero.name, 256, 230);
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+            ctx.shadowBlur = 8;
+            ctx.fillText(hero.name, 256, 370);
+            ctx.shadowBlur = 0;
             
-            // Class name
-            ctx.font = '24px Arial';
+            // Class name - LARGER
+            ctx.font = 'bold 32px Arial'; // Larger: 32px (was 24px)
             ctx.fillStyle = '#cccccc';
-            ctx.fillText(`(${hero.class})`, 256, 260);
+            ctx.fillText(`(${hero.class})`, 256, 415);
             
-            // Stats - two columns
-            ctx.font = 'bold 28px monospace';
+            // HP and AC with emphasis - LARGER (moved above other stats)
+            let y = 490;
+            ctx.font = 'bold 48px monospace'; // Even larger for HP/AC: 48px
             ctx.textAlign = 'left';
-            const leftX = 80;
-            const rightX = 300;
-            let y = 320;
-            const lineHeight = 35;
+            const leftX = 60;
+            const rightX = 290;
+            ctx.shadowBlur = 6;
+            ctx.fillStyle = '#ff6b6b';
+            ctx.shadowColor = '#ff6b6b';
+            ctx.fillText(`HP:  ${stats.hp}`, leftX, y);
+            ctx.fillStyle = '#4dabf7';
+            ctx.shadowColor = '#4dabf7';
+            ctx.fillText(`AC:  ${stats.ac}`, rightX, y);
+            ctx.shadowBlur = 0;
             
-            // Left column: STR, DEX, CON, HP
+            // Stats - two columns - MUCH LARGER text
+            y = 580; // Start below HP/AC
+            const lineHeight = 60; // Increased spacing: 60 (was 35)
+            ctx.font = 'bold 42px monospace'; // Much larger: 42px (was 28px)
+            
+            // Left column: STR, DEX, CON
             ctx.fillStyle = '#ffffff';
             ctx.fillText(`STR: ${stats.str}`, leftX, y);
             ctx.fillText(`INT: ${stats.int}`, rightX, y);
@@ -11006,14 +11062,6 @@
             
             ctx.fillText(`CON: ${stats.con}`, leftX, y);
             ctx.fillText(`CHA: ${stats.cha}`, rightX, y);
-            y += lineHeight;
-            
-            // HP and AC with emphasis
-            y += 10;
-            ctx.fillStyle = '#ff6b6b';
-            ctx.fillText(`HP:  ${stats.hp}`, leftX, y);
-            ctx.fillStyle = '#4dabf7';
-            ctx.fillText(`AC:  ${stats.ac}`, rightX, y);
             
             // Update texture
             card.texture.needsUpdate = true;
