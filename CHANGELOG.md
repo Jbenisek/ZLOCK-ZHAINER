@@ -2,6 +2,61 @@
 
 # Changelog
 
+## v0.20.99 - Save System Validation Fix (2025-11-24)
+- **Summary:**
+  - Fixed critical bug preventing saved games from loading
+  - Resume button was visible but clicking showed "No saved game found!" error
+
+- **Bug Fix:**
+  - **Root Cause**: `loadGameState()` validation checked for `gameState.grid` property, but save data uses `gameState.occupiedCells`
+  - **Symptom**: Save existed (Resume button visible) but load validation failed (alert shown)
+  - **Fix**: Changed validation at line 4692 from `gameState.grid` to `gameState.occupiedCells`
+  - **Impact**: Saved games now load correctly without false "No saved game found!" errors
+
+- **Technical Details:**
+  - Line 4692: `if (!gameState.version || !gameState.occupiedCells) return null;` (was checking `.grid`)
+  - Save format uses `occupiedCells` array, never had `grid` property
+  - Validation mismatch caused all loads to fail even with valid save data
+
+## v0.20.98 - Save/Resume Game System (2025-11-24)
+- **Summary:**
+  - Added localStorage-based save/resume functionality
+  - Save game from pause menu, resume from title screen
+  - Preserves complete game state including grid, scores, and character charges
+
+- **Feature Changes:**
+  - **Save Game**: New "SAVE GAME" button in pause menu (💾 icon)
+  - **Resume Game**: New "RESUME GAME" button on title screen (↻ icon, only visible when save exists)
+  - **Auto-Clear**: Save is automatically cleared after successful resume to prevent stale data
+  - **Visual Feedback**: Animated "Game Saved!" notification with blue gradient and gold text
+
+- **Saved State Includes:**
+  - Game version, timestamp, level, score, combo, startLevel, usedAI
+  - Complete 3D grid state (all blocks and their types)
+  - Character charges: Zooko, Nate, Zancas, CyberAxe
+  - Game timing: gameStartTime, totalPausedTime
+  - Falling chain state: position, type, length, properties, encrypted/glowing status
+  - Chain queue
+
+- **Technical Implementation:**
+  - `saveGameState()`: Serializes game state to localStorage (key: 'zlock_savedgame')
+  - `loadGameState()`: Deserializes and validates saved data
+  - `resumeSavedGame()`: Loads save and starts game with restored state
+  - `hasSavedGame()`: Checks for save existence
+  - `updateResumeButton()`: Shows/hides resume button based on save state
+  - `clearSavedGame()`: Removes save from storage
+  - Modified `startGame()` to accept optional `savedGameState` parameter
+  - Grid recreation: Rebuilds all block meshes from saved grid array
+  - Falling chain restoration: Recreates active falling chain if one was saved
+
+- **User Experience:**
+  - Save during gameplay via pause menu
+  - Resume button appears automatically when save exists
+  - Seamless restoration of exact game state
+  - Play sound effect (Complete_A) on successful save
+  - 2-second auto-dismiss notification
+  - Resume button hidden when no save present
+
 ## v0.20.97 - TV Toggle Controls Character Sheets (2025-11-24)
 - **Summary:**
   - TV toggle button now controls visibility of character stat cards

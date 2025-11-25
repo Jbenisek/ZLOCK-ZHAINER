@@ -1496,6 +1496,13 @@
             50% { opacity: 0.3; }
         }
         
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            15% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+            85% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+        }
+        
         #versionDisplay {
             position: fixed;
             bottom: 10px;
@@ -2001,6 +2008,7 @@
     <div id="pauseScreen">
         <div id="pauseTitle">PAUSED</div>
         <button class="menuButton" onclick="resumeGame()">RESUME<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
+        <button class="menuButton" onclick="saveGameFromPause()" style="background: linear-gradient(135deg, rgba(46, 134, 222, 0.4), rgba(46, 134, 222, 0.3)); border-color: #3498DB;">SAVE GAME<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">💾</span></button>
         <button class="menuButton" onclick="restartFromPause()">RESTART<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">X</span></button>
         <button class="menuButton" onclick="showSettingsFromPause()">SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">Y</span></button>
         <button class="menuButton" onclick="quitToMenu()">QUIT TO MENU<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 10px; font-weight: bold; color: white; font-size: 12px;">◀</span></button>
@@ -2934,6 +2942,7 @@
                 <input type="file" id="customParticleImport" accept=".json" style="display: none;" onchange="handleCustomParticleFileSelect(event)">
             </div>
             
+            <button id="resumeGameBtn" class="menuButton" onclick="resumeSavedGame()" style="display: none; background: linear-gradient(135deg, rgba(46, 134, 222, 0.4), rgba(46, 134, 222, 0.3)); border-color: #3498DB;">RESUME GAME<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">↻</span></button>
             <button class="menuButton" onclick="startGame()" disabled style="opacity: 0.5; cursor: not-allowed;">START GAME<span style="display: inline-block; width: 26px; height: 26px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">A</span></button>
             <button class="menuButton" onclick="showSettings()">SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">▶</span></button>
             <button class="menuButton" onclick="showHighScores()">HIGH SCORES<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">X</span></button>
@@ -3120,7 +3129,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.20.97';
+        const GAME_VERSION = 'v0.20.99';
         
         // ===== AUDIO SYSTEM =====
         const audioCache = {}; // Cache for all audio files
@@ -3772,7 +3781,8 @@
             SETTINGS: 'zlock_settings',
             HIGH_SCORES: 'zlock_highscores',
             GAME_HISTORY: 'zlock_gamehistory',
-            ACHIEVEMENTS: 'zlock_achievements'
+            ACHIEVEMENTS: 'zlock_achievements',
+            SAVED_GAME: 'zlock_savedgame'
         };
         
         let settings = {
@@ -4589,6 +4599,137 @@
             gameHistory = gameHistory.slice(0, 5);
             localStorage.setItem(STORAGE_KEYS.GAME_HISTORY, JSON.stringify(gameHistory));
         }
+        
+        // ===== SAVE/RESUME SYSTEM =====
+        function saveGameState() {
+            console.log('saveGameState called. Current state:', currentState);
+            console.log('Game variables - Level:', level, 'Score:', score);
+            
+            try {
+                // Save only occupied grid cells as compact array
+                const occupiedCells = [];
+                for (let x = 0; x < GRID_WIDTH; x++) {
+                    for (let y = 0; y < GRID_HEIGHT; y++) {
+                        for (let z = 0; z < GRID_DEPTH; z++) {
+                            if (grid[x][y][z]) {
+                                occupiedCells.push({
+                                    x: x,
+                                    y: y,
+                                    z: z,
+                                    type: grid[x][y][z].type.name
+                                });
+                            }
+                        }
+                    }
+                }
+                
+                console.log('Occupied cells found:', occupiedCells.length);
+                
+                // Create clean chain queue without complex objects
+                const cleanChainQueue = chainQueue.map(chain => ({
+                    type: chain.type,
+                    linkTypes: Array.isArray(chain.linkTypes) ? [...chain.linkTypes] : [],
+                    length: chain.length || 2,
+                    isGlowing: chain.isGlowing || false,
+                    isEncrypted: chain.isEncrypted || false
+                }));
+                
+                const gameState = {
+                    version: GAME_VERSION,
+                    timestamp: Date.now(),
+                    level: level,
+                    score: score,
+                    combo: combo,
+                    startLevel: startLevel,
+                    usedAI: usedAI,
+                    // Grid state (compact - only occupied cells)
+                    occupiedCells: occupiedCells,
+                    // Character charges
+                    zookoCharge: zookoCharge,
+                    nateCharge: nateCharge,
+                    zancasCharge: zancasCharge,
+                    cyberaxeCharge: cyberaxeCharge,
+                    // Timing
+                    gameStartTime: gameStartTime,
+                    totalPausedTime: totalPausedTime,
+                    // Chain state (simplified)
+                    fallingChain: fallingChain ? {
+                        x: fallingChain.x,
+                        y: fallingChain.y,
+                        type: fallingChain.type,
+                        linkTypes: Array.isArray(fallingChain.linkTypes) ? [...fallingChain.linkTypes] : [],
+                        length: fallingChain.links ? fallingChain.links.length : 2,
+                        isGlowing: fallingChain.isGlowing || false,
+                        isEncrypted: fallingChain.isEncrypted || false
+                    } : null,
+                    chainQueue: cleanChainQueue
+                };
+                
+                const jsonString = JSON.stringify(gameState);
+                console.log('Save data created. Size:', jsonString.length, 'bytes');
+                
+                localStorage.setItem(STORAGE_KEYS.SAVED_GAME, jsonString);
+                console.log('Save written to localStorage!');
+                
+                // Verify it was saved
+                const verification = localStorage.getItem(STORAGE_KEYS.SAVED_GAME);
+                console.log('Verification - exists:', verification !== null);
+                
+                return true;
+            } catch (e) {
+                console.error('Save FAILED:', e);
+                console.error('Stack:', e.stack);
+                return false;
+            }
+        }
+        
+        function loadGameState() {
+            const saved = localStorage.getItem(STORAGE_KEYS.SAVED_GAME);
+            if (!saved) return null;
+            
+            try {
+                const gameState = JSON.parse(saved);
+                // Basic validation
+                if (!gameState.version || !gameState.occupiedCells) return null;
+                return gameState;
+            } catch (e) {
+                console.error('Failed to load saved game:', e);
+                return null;
+            }
+        }
+        
+        function clearSavedGame() {
+            localStorage.removeItem(STORAGE_KEYS.SAVED_GAME);
+            updateResumeButton();
+        }
+        
+        function hasSavedGame() {
+            return localStorage.getItem(STORAGE_KEYS.SAVED_GAME) !== null;
+        }
+        
+        function updateResumeButton() {
+            const resumeBtn = document.getElementById('resumeGameBtn');
+            const saveExists = hasSavedGame();
+            console.log('updateResumeButton called. Save exists:', saveExists, 'Button found:', !!resumeBtn);
+            if (resumeBtn) {
+                resumeBtn.style.display = saveExists ? 'block' : 'none';
+                console.log('Resume button display set to:', resumeBtn.style.display);
+            } else {
+                console.error('Resume button element not found!');
+            }
+        }
+        
+        function resumeSavedGame() {
+            const gameState = loadGameState();
+            if (!gameState) {
+                alert('No saved game found!');
+                return;
+            }
+            
+            // Start game with saved state
+            startGame(gameState.level, false, gameState);
+        }
+        // ===== END SAVE/RESUME SYSTEM =====
         
         // Achievement System - 50 achievements (10 easier, 10 easy, 10 mid, 10 mid-hard, 10 very hard)
         function initializeAchievements() {
@@ -7647,6 +7788,9 @@
             
             // Initialize compass
             updateCompass();
+            
+            // Update resume button visibility
+            updateResumeButton();
             
             // Start render loop
             animate();
@@ -11323,7 +11467,9 @@
             updateCameraPosition();
         }
         
-        function startGame(startingLevel = 1, preFillGrid = false) {
+        function startGame(startingLevel = 1, preFillGrid = false, savedGameState = null) {
+            console.log('startGame called with level:', startingLevel, 'preFill:', preFillGrid, 'hasSavedState:', !!savedGameState);
+            
             if (!allAssetsReady) {
                 console.warn('Models still loading... Please wait.');
                 // Show visual feedback
@@ -11443,6 +11589,14 @@
             comboEffectCounter = 0;
             document.getElementById('comboEffectCount').textContent = '0';
             
+            // Clear saved game if starting fresh (not resuming)
+            if (!savedGameState) {
+                console.log('No saved state - clearing any existing save');
+                clearSavedGame();
+            } else {
+                console.log('Saved state provided - resuming game');
+            }
+            
             // Calculate starting score based on level (level - 1) * 1000
             const startingScore = (startingLevel - 1) * 1000;
             
@@ -11451,23 +11605,23 @@
             stopStoryIntroAnimation(); // Stop background animation when game starts
             currentState = GameState.PLAYING;
             chainReadyToGlow = false;
-            score = startingScore;
-            level = startingLevel;
-            startLevel = startingLevel;
-            usedAI = settings.aiEnabled; // Track AI usage from start (includes AI enabled at game start)
-            combo = 1.0;
+            score = savedGameState ? savedGameState.score : startingScore;
+            level = savedGameState ? savedGameState.level : startingLevel;
+            startLevel = savedGameState ? savedGameState.startLevel : startingLevel;
+            usedAI = savedGameState ? savedGameState.usedAI : settings.aiEnabled; // Track AI usage from start (includes AI enabled at game start)
+            combo = savedGameState ? savedGameState.combo : 1.0;
             floorClearBonusAwarded = false;
             consensusCleared = 0;
             chainVelocity = 0;
             spawnScheduled = false;
-            gameStartTime = Date.now(); // Start SPM tracking
+            gameStartTime = savedGameState ? savedGameState.gameStartTime : Date.now(); // Start SPM tracking
             pauseStartTime = null; // Reset pause tracking
-            totalPausedTime = 0; // Reset total paused time
+            totalPausedTime = savedGameState ? savedGameState.totalPausedTime : 0; // Reset total paused time
             scorePerMinute = 0;
             hyperModeLevel = 0;
             hyperModeEndTime = 0;
-            zookoCharge = 0; // Reset special charges
-            nateCharge = 0;
+            zookoCharge = savedGameState ? savedGameState.zookoCharge : 0; // Reset special charges
+            nateCharge = savedGameState ? savedGameState.nateCharge : 0;
             
             // Show controls button hint for level 1 normal start
             if (startingLevel === 1) {
@@ -11482,8 +11636,8 @@
                     trackedSetTimeout(() => { tooltip.style.display = 'none'; }, 500);
                 }, 10000); // Stop blinking after 10 seconds
             }
-            zancasCharge = 0;
-            cyberaxeCharge = 0;
+            zancasCharge = savedGameState ? savedGameState.zancasCharge : 0;
+            cyberaxeCharge = savedGameState ? savedGameState.cyberaxeCharge : 0;
             sandblastingCharge = 0; // Reset sandblasting charge
             sandblastingActive = false;
             if (window.sandblastingLinks) {
@@ -11521,15 +11675,42 @@
                 veilMoves: 0
             };
             
-            // Pre-fill grid if requested
-            if (preFillGrid) {
+            // Restore grid from saved game or pre-fill if requested
+            if (savedGameState && savedGameState.occupiedCells) {
+                // Restore grid from saved state
+                savedGameState.occupiedCells.forEach(cell => {
+                    const linkType = LinkType[cell.type.replace('-', '_')]; // Convert "ZEC-A" to LinkType.ZEC_A
+                    if (linkType) {
+                        const mesh = createLinkMesh(linkType);
+                        mesh.position.set(cell.x + 0.5, cell.y + 0.5, cell.z + 0.5);
+                        const rotation = (cell.y % 2 === 1) ? Math.PI / 2 : 0;
+                        mesh.rotation.y = rotation;
+                        scene.add(mesh);
+                        grid[cell.x][cell.y][cell.z] = {
+                            type: linkType,
+                            mesh: mesh,
+                            rotation: rotation
+                        };
+                    }
+                });
+            } else if (preFillGrid) {
+                // Pre-fill grid if requested
                 fillGridWithRandomLinks();
             }
             
+            // Restore chain queue from saved game or initialize new queue
+            if (savedGameState && savedGameState.chainQueue) {
+                chainQueue = savedGameState.chainQueue.map(chain => ({
+                    type: chain.type,
+                    linkTypes: chain.linkTypes,
+                    length: chain.length,
+                    isGlowing: chain.isGlowing,
+                    isEncrypted: chain.isEncrypted
+                }));
+        } else {
             // Initialize chain preview queue
             initializeChainQueue();
-            
-            updateHUD();
+        }            updateHUD();
             
             // Play game start sound
             playSound('Game_Start_Begin');
@@ -12154,6 +12335,43 @@
             startGame();
         }
         
+        function saveGameFromPause() {
+            console.log('Save button clicked! Current state:', currentState);
+            const saveResult = saveGameState();
+            console.log('Save result:', saveResult);
+            
+            if (saveResult) {
+                // Show notification
+                const notif = document.createElement('div');
+                notif.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: linear-gradient(135deg, rgba(46, 134, 222, 0.95), rgba(27, 94, 143, 0.95));
+                    border: 3px solid #3498DB;
+                    border-radius: 12px;
+                    padding: 20px 40px;
+                    font-size: 24px;
+                    font-weight: bold;
+                    color: #F2C94C;
+                    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+                    z-index: 10000;
+                    animation: fadeInOut 2s ease-out forwards;
+                `;
+                notif.textContent = 'Game Saved!';
+                document.body.appendChild(notif);
+                
+                setTimeout(() => notif.remove(), 2000);
+                playSound('UI_Button_Click');
+                updateResumeButton();
+                console.log('Save successful! Resume button updated.');
+            } else {
+                console.error('Save failed! Current state:', currentState, 'Grid:', grid);
+                alert('Failed to save game. Check console for details.');
+            }
+        }
+        
         function quitToMenu() {
             saveHighScore(score, level);
             checkAchievements();
@@ -12162,6 +12380,7 @@
             document.getElementById('titleScreen').style.display = 'flex';
             startStoryIntroAnimation(); // Restart background animation on menu
             currentState = GameState.MENU;
+            updateResumeButton(); // Update resume button visibility
             
             // Play main theme (same as Click to Play)
             if (musicEnabled && themeMusicEnabled) {
