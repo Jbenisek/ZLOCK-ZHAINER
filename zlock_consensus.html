@@ -1628,6 +1628,171 @@
             filter: drop-shadow(0 0 5px rgba(45, 156, 219, 0.6));
         }
         
+        .cameraHint {
+            position: absolute;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            color: #89A0B4;
+            background: rgba(10, 14, 18, 0.85);
+            padding: 3px 6px;
+            border-radius: 4px;
+            border: 1px solid #26313B;
+            white-space: nowrap;
+            pointer-events: none;
+            text-align: center;
+            line-height: 1.3;
+        }
+        
+        .cameraHint kbd {
+            background: #1A2229;
+            padding: 1px 4px;
+            border-radius: 2px;
+            font-size: 8px;
+            font-weight: 600;
+            color: #F2C94C;
+            border: 1px solid #2D3E4F;
+            margin: 0 1px;
+            display: inline-block;
+        }
+        
+        .cameraHint .hintLabel {
+            display: block;
+            font-size: 7px;
+            color: #5A6F7F;
+            margin-bottom: 1px;
+            text-transform: uppercase;
+        }
+        
+        .hintRotate {
+            top: -42px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .hintZoom {
+            bottom: -42px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .hintReset {
+            right: -85px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        #zoomSlider {
+            position: fixed;
+            bottom: 40px;
+            left: 15px;
+            width: 30px;
+            height: 120px;
+            z-index: 15;
+        }
+        
+        .zoomSliderContainer {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .zoomTrack {
+            position: absolute;
+            left: 50%;
+            top: 20px;
+            bottom: 20px;
+            width: 4px;
+            background: linear-gradient(to bottom, #2D9CDB, #1A5A7A);
+            border-radius: 2px;
+            transform: translateX(-50%);
+            box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5);
+        }
+        
+        .zoomThumb {
+            position: absolute;
+            left: 50%;
+            width: 16px;
+            height: 16px;
+            background: #F2C94C;
+            border: 2px solid #26313B;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(242, 201, 76, 0.6), 0 2px 4px rgba(0, 0, 0, 0.3);
+            transition: all 0.1s ease;
+        }
+        
+        .zoomThumb:hover {
+            background: #FFD966;
+            box-shadow: 0 0 12px rgba(242, 201, 76, 0.8), 0 2px 6px rgba(0, 0, 0, 0.4);
+            transform: translate(-50%, -50%) scale(1.15);
+        }
+        
+        .zoomLabel {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            font-weight: 700;
+            color: #89A0B4;
+            text-align: center;
+        }
+        
+        .zoomLabelTop {
+            top: 2px;
+        }
+        
+        .zoomLabelBottom {
+            bottom: 2px;
+        }
+        
+        .zoomSliderHint {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            color: #89A0B4;
+            background: rgba(10, 14, 18, 0.85);
+            padding: 3px 6px;
+            border-radius: 4px;
+            border: 1px solid #26313B;
+            white-space: nowrap;
+            pointer-events: none;
+            text-align: center;
+            line-height: 1.3;
+            width: 65px;
+        }
+        
+        .zoomSliderHint kbd {
+            background: #1A2229;
+            padding: 1px 4px;
+            border-radius: 2px;
+            font-size: 8px;
+            font-weight: 600;
+            color: #F2C94C;
+            border: 1px solid #2D3E4F;
+            margin: 0 1px;
+            display: inline-block;
+        }
+        
+        .zoomSliderHint .hintLabel {
+            display: block;
+            font-size: 7px;
+            color: #5A6F7F;
+            margin-bottom: 1px;
+            text-transform: uppercase;
+        }
+        
+        .zoomHintTop {
+            top: -38px;
+        }
+        
+        .zoomHintBottom {
+            bottom: -38px;
+        }
+        
         #topDownButton {
             position: fixed;
             bottom: 15px;
@@ -2083,80 +2248,87 @@
         <!-- How to Play Modal -->
         <div id="howToPlayPanel" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 900px; max-height: 90vh; overflow-y: auto; background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); border: 2px solid #2A9D8F; border-radius: 12px; padding: 25px; z-index: 200; box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); pointer-events: all;">
             
-            <h2 style="color: #2A9D8F; font-size: 32px; margin-bottom: 25px; text-align: center; font-weight: 900;">📖 HOW TO PLAY</h2>
+            <h2 style="color: #2A9D8F; font-size: 32px; margin-bottom: 20px; text-align: center; font-weight: 900;">📖 HOW TO PLAY</h2>
             
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                 <!-- Left Column -->
                 <div>
                     <div style="background: rgba(42, 157, 143, 0.1); border: 2px solid #2A9D8F; border-radius: 10px; padding: 15px; margin-bottom: 15px;">
                         <h3 style="color: #2A9D8F; font-size: 18px; margin-bottom: 10px; font-weight: 700;">🎯 OBJECTIVE</h3>
-                        <p style="color: #D4E3F0; font-size: 14px; line-height: 1.6;">Match <strong>6 connected blocks</strong> of the same color in a <strong>6×25×6 3D grid</strong>. Clear blocks to score points and survive as chains fall faster each level!</p>
+                        <p style="color: #D4E3F0; font-size: 13px; line-height: 1.6;">Match <strong>6 connected blocks</strong> of the same color in a <strong>6×25×6 3D grid</strong>. Clear blocks to score points and survive as chains fall faster each level!</p>
                     </div>
                     
-                    <div style="background: rgba(42, 157, 143, 0.1); border: 2px solid #2A9D8F; border-radius: 10px; padding: 15px; margin-bottom: 15px;">
-                        <h3 style="color: #2A9D8F; font-size: 18px; margin-bottom: 10px; font-weight: 700;">⌨️ CONTROLS</h3>
-                        <div style="color: #D4E3F0; font-size: 13px; line-height: 1.8;">
-                            <div style="margin-bottom: 8px;"><span style="background: #1a2332; padding: 3px 8px; border-radius: 4px; font-family: monospace;">WASD</span> Move chain (X/Z)</div>
-                            <div style="margin-bottom: 8px;"><span style="background: #1a2332; padding: 3px 8px; border-radius: 4px; font-family: monospace;">←→</span> Rotate chain 90°</div>
-                            <div style="margin-bottom: 8px;"><span style="background: #1a2332; padding: 3px 8px; border-radius: 4px; font-family: monospace;">SHIFT</span> Flip chain</div>
-                            <div style="margin-bottom: 8px;"><span style="background: #1a2332; padding: 3px 8px; border-radius: 4px; font-family: monospace;">SPACE</span> Fast drop (2x for instant)</div>
-                            <div style="margin-bottom: 8px;"><span style="background: #1a2332; padding: 3px 8px; border-radius: 4px; font-family: monospace;">Q/E</span> Rotate camera</div>
-                            <div style="margin-bottom: 8px;"><span style="background: #1a2332; padding: 3px 8px; border-radius: 4px; font-family: monospace;">T</span> Top-down view</div>
-                            <div><span style="background: #1a2332; padding: 3px 8px; border-radius: 4px; font-family: monospace;">1-4</span> Character specials</div>
+                    <div style="background: rgba(42, 157, 143, 0.1); border: 2px solid #2A9D8F; border-radius: 10px; padding: 12px; margin-bottom: 15px;">
+                        <h3 style="color: #2A9D8F; font-size: 18px; margin-bottom: 10px; font-weight: 700;">⌨️ KEYBOARD</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; color: #D4E3F0; font-size: 12px; line-height: 1.5;">
+                            <div><span style="background: #1a2332; padding: 2px 6px; border-radius: 3px; font-family: monospace; font-size: 11px;">WASD/↑↓←→</span> Move</div>
+                            <div><span style="background: #1a2332; padding: 2px 6px; border-radius: 3px; font-family: monospace; font-size: 11px;">R</span> Rotate 90°</div>
+                            <div><span style="background: #1a2332; padding: 2px 6px; border-radius: 3px; font-family: monospace; font-size: 11px;">SHIFT</span> Flip chain</div>
+                            <div><span style="background: #1a2332; padding: 2px 6px; border-radius: 3px; font-family: monospace; font-size: 11px;">SPACE</span> Fast drop</div>
+                            <div><span style="background: #1a2332; padding: 2px 6px; border-radius: 3px; font-family: monospace; font-size: 11px;">Q/E</span> Rotate cam</div>
+                            <div><span style="background: #1a2332; padding: 2px 6px; border-radius: 3px; font-family: monospace; font-size: 11px;">T</span> Top-down</div>
+                            <div><span style="background: #1a2332; padding: 2px 6px; border-radius: 3px; font-family: monospace; font-size: 11px;">Z/C</span> Zoom</div>
+                            <div><span style="background: #1a2332; padding: 2px 6px; border-radius: 3px; font-family: monospace; font-size: 11px;">X</span> Reset cam</div>
+                            <div style="grid-column: 1 / -1;"><span style="background: #1a2332; padding: 2px 6px; border-radius: 3px; font-family: monospace; font-size: 11px;">1-4</span> Character specials</div>
                         </div>
                     </div>
                     
-                    <div style="background: rgba(42, 157, 143, 0.1); border: 2px solid #2A9D8F; border-radius: 10px; padding: 15px;">
+                    <div style="background: rgba(42, 157, 143, 0.1); border: 2px solid #2A9D8F; border-radius: 10px; padding: 12px;">
                         <h3 style="color: #2A9D8F; font-size: 18px; margin-bottom: 10px; font-weight: 700;">🎮 GAMEPAD</h3>
-                        <div style="color: #D4E3F0; font-size: 13px; line-height: 1.8;">
-                            <div style="margin-bottom: 6px;"><span style="background: #27AE60; color: white; padding: 2px 6px; border-radius: 50%; font-weight: bold; width: 20px; display: inline-block; text-align: center;">A</span> Fast/Instant drop</div>
-                            <div style="margin-bottom: 6px;"><span style="background: #E74C3C; color: white; padding: 2px 6px; border-radius: 50%; font-weight: bold; width: 20px; display: inline-block; text-align: center;">B</span> Flip</div>
-                            <div style="margin-bottom: 6px;"><span style="background: #F39C12; color: white; padding: 2px 6px; border-radius: 50%; font-weight: bold; width: 20px; display: inline-block; text-align: center;">Y</span> Rotate</div>
-                            <div style="margin-bottom: 6px;"><span style="background: #555; color: white; padding: 2px 6px; border-radius: 3px; font-weight: bold; font-size: 10px;">D-PAD</span> Character specials</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; color: #D4E3F0; font-size: 12px; line-height: 1.5;">
+                            <div style="grid-column: 1 / -1;"><span style="background: #555; color: white; padding: 2px 6px; border-radius: 3px; font-weight: bold; font-size: 10px;">L-STICK</span> Move chain</div>
+                            <div><span style="background: #27AE60; color: white; padding: 2px 5px; border-radius: 50%; font-weight: bold; font-size: 10px;">A</span> Fast drop</div>
+                            <div><span style="background: #E74C3C; color: white; padding: 2px 5px; border-radius: 50%; font-weight: bold; font-size: 10px;">B</span> Flip chain</div>
+                            <div><span style="background: #F39C12; color: white; padding: 2px 5px; border-radius: 50%; font-weight: bold; font-size: 10px;">Y</span> Rotate 90°</div>
+                            <div><span style="background: #555; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold; font-size: 9px;">LB/RB</span> Rotate cam</div>
+                            <div style="grid-column: 1 / -1;"><span style="background: #555; color: white; padding: 2px 6px; border-radius: 3px; font-weight: bold; font-size: 10px;">R-STICK</span> Zoom <span style="background: #555; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold; font-size: 9px; margin-left: 6px;">R3</span> Reset cam</div>
+                            <div><span style="background: #555; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold; font-size: 9px;">SELECT</span> Top-down</div>
+                            <div><span style="background: #555; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold; font-size: 9px;">START</span> Pause</div>
+                            <div style="grid-column: 1 / -1;"><span style="background: #555; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold; font-size: 9px;">D-PAD</span> Character specials (↑↓←→)</div>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Right Column -->
                 <div>
-                    <div style="background: rgba(255, 107, 53, 0.1); border: 2px solid #FF6B35; border-radius: 10px; padding: 15px; margin-bottom: 15px;">
-                        <h3 style="color: #FF6B35; font-size: 18px; margin-bottom: 10px; font-weight: 700;">🌪️ SANDBLASTING</h3>
-                        <p style="color: #D4E3F0; font-size: 13px; line-height: 1.6;">Charges <strong>+25%</strong> each time you use a character special. At <strong>100%</strong>, unleashes random links from the sky over 7 seconds!<br><strong>Link Count by Level:</strong> &lt;50: 50 links | 50-99: 75 | 100-249: 100 | 250-499: 125 | 500-999: 150 | 1000+: 200</p>
+                    <div style="background: rgba(42, 157, 143, 0.15); border: 2px solid #2A9D8F; border-radius: 10px; padding: 12px; margin-bottom: 15px;">
+                        <h3 style="color: #2A9D8F; font-size: 16px; margin-bottom: 8px; font-weight: 700;">💡 PRO TIP</h3>
+                        <p style="color: #D4E3F0; font-size: 12px; line-height: 1.5; margin: 0;">Drop speed increases each level! Use <strong>Q/E</strong> to rotate your view, <strong>T</strong> for top-down perspective, and <strong>Z/C</strong> to zoom. Press <strong>X</strong> to reset the camera. Match colors strategically to charge character specials!</p>
                     </div>
                     
-                    <div style="background: rgba(139, 92, 246, 0.1); border: 2px solid #8B5CF6; border-radius: 10px; padding: 15px; margin-bottom: 15px;">
-                        <h3 style="color: #8B5CF6; font-size: 18px; margin-bottom: 10px; font-weight: 700;">🔓 CHAIN TYPES UNLOCK</h3>
-                        <div style="color: #D4E3F0; font-size: 13px; line-height: 1.7;">
-                            <div style="margin-bottom: 10px;">
+                    <div style="background: rgba(255, 107, 53, 0.1); border: 2px solid #FF6B35; border-radius: 10px; padding: 12px; margin-bottom: 15px;">
+                        <h3 style="color: #FF6B35; font-size: 16px; margin-bottom: 8px; font-weight: 700;">🌪️ SANDBLASTING</h3>
+                        <p style="color: #D4E3F0; font-size: 12px; line-height: 1.5;">Charges <strong>+25%</strong> each time you use a character special. At <strong>100%</strong>, unleashes random links from the sky over 7 seconds!<br><strong>Link Count by Level:</strong> &lt;50: 50 | 50-99: 75 | 100-249: 100 | 250-499: 125 | 500-999: 150 | 1000+: 200</p>
+                    </div>
+                    
+                    <div style="background: rgba(139, 92, 246, 0.1); border: 2px solid #8B5CF6; border-radius: 10px; padding: 12px; margin-bottom: 15px;">
+                        <h3 style="color: #8B5CF6; font-size: 16px; margin-bottom: 8px; font-weight: 700;">🔓 CHAIN TYPES UNLOCK</h3>
+                        <div style="color: #D4E3F0; font-size: 12px; line-height: 1.5;">
+                            <div style="margin-bottom: 8px;">
                                 <div style="font-weight: 700; color: #2A9D8F;">Level 10: Multi-Color Chains</div>
-                                <div style="font-size: 12px; opacity: 0.9;">Each link can be different colors (30% spawn)</div>
+                                <div style="font-size: 11px; opacity: 0.9;">Each link can be different colors (30% spawn)</div>
                             </div>
-                            <div style="margin-bottom: 10px;">
+                            <div style="margin-bottom: 8px;">
                                 <div style="font-weight: 700; color: #8B5CF6;">Level 20: Encrypted Chains</div>
-                                <div style="font-size: 12px; opacity: 0.9;">Colors hidden until landing (20% spawn)</div>
+                                <div style="font-size: 11px; opacity: 0.9;">Colors hidden until landing (20% spawn)</div>
                             </div>
                             <div>
                                 <div style="font-weight: 700; color: #FFD700;">Level 50: Glowing Chains</div>
-                                <div style="font-size: 12px; opacity: 0.9;">Pre-glowing, 2-5 links, bonus points (15% spawn)</div>
+                                <div style="font-size: 11px; opacity: 0.9;">Pre-glowing, 2-5 links, bonus points (15% spawn)</div>
                             </div>
                         </div>
                     </div>
                     
-                    <div style="background: rgba(242, 201, 76, 0.1); border: 2px solid #F2C94C; border-radius: 10px; padding: 15px;">
-                        <h3 style="color: #F2C94C; font-size: 18px; margin-bottom: 10px; font-weight: 700;">⚡ CHARACTER SPECIALS</h3>
-                        <div style="color: #D4E3F0; font-size: 12px; line-height: 1.6;">
-                            <div style="margin-bottom: 8px;"><span style="color: #EB5757; font-weight: 700;">🔴 Zooko (1)</span> - Destroys most common block type</div>
-                            <div style="margin-bottom: 8px;"><span style="color: #F2C94C; font-weight: 700;">🟡 Nate (2)</span> - Breaks glowing blocks + tornado shuffle</div>
-                            <div style="margin-bottom: 8px;"><span style="color: #27AE60; font-weight: 700;">🟢 Zancas (3)</span> - Transforms 2 common types to gold</div>
+                    <div style="background: rgba(242, 201, 76, 0.1); border: 2px solid #F2C94C; border-radius: 10px; padding: 12px;">
+                        <h3 style="color: #F2C94C; font-size: 16px; margin-bottom: 8px; font-weight: 700;">⚡ CHARACTER SPECIALS</h3>
+                        <div style="color: #D4E3F0; font-size: 11px; line-height: 1.5;">
+                            <div style="margin-bottom: 6px;"><span style="color: #EB5757; font-weight: 700;">🔴 Zooko (1)</span> - Destroys most common block type</div>
+                            <div style="margin-bottom: 6px;"><span style="color: #F2C94C; font-weight: 700;">🟡 Nate (2)</span> - Breaks glowing blocks + tornado shuffle</div>
+                            <div style="margin-bottom: 6px;"><span style="color: #27AE60; font-weight: 700;">🟢 Zancas (3)</span> - Transforms 2 common types to gold</div>
                             <div><span style="color: #2D9CDB; font-weight: 700;">🔵 CyberAxe (4)</span> - Laser destroys entire column</div>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <div style="background: rgba(42, 157, 143, 0.15); border: 2px solid #2A9D8F; border-radius: 10px; padding: 15px; margin-top: 20px; text-align: center;">
-                <h3 style="color: #2A9D8F; font-size: 16px; margin-bottom: 8px; font-weight: 700;">💡 PRO TIP</h3>
-                <p style="color: #D4E3F0; font-size: 14px; line-height: 1.6; margin: 0;">Drop speed increases each level! Use <strong>Q/E</strong> to rotate your view and <strong>T</strong> for top-down perspective to plan your moves better. Match colors strategically to charge character specials!</p>
             </div>
             <button class="button closeButton" onclick="closeHowToPlay()" style="width: 100%; margin-top: 20px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         </div>
@@ -2180,6 +2352,25 @@
             <div style="font-size: 11px; color: #89A0B4;">Support Development</div>
         </div>
         
+        <div id="zoomSlider">
+            <div class="zoomSliderContainer">
+                <div class="zoomLabel zoomLabelTop">IN</div>
+                <div class="zoomTrack"></div>
+                <div class="zoomThumb" id="zoomThumb"></div>
+                <div class="zoomLabel zoomLabelBottom">OUT</div>
+                
+                <!-- Zoom Slider Hints -->
+                <div class="zoomSliderHint zoomHintTop">
+                    <span class="hintLabel">Zoom</span>
+                    <kbd>Z</kbd><kbd>C</kbd>
+                </div>
+                <div class="zoomSliderHint zoomHintBottom">
+                    <span class="hintLabel">Reset</span>
+                    <kbd>X</kbd> / <kbd>R3</kbd>
+                </div>
+            </div>
+        </div>
+        
         <div id="compassDisplay">
             <div class="compassRing"></div>
             <div class="compassDirection compassN active" onclick="switchToView(0)">N</div>
@@ -2188,6 +2379,16 @@
             <div class="compassDirection compassW" onclick="switchToView(3)">W</div>
             <div class="compassCenter"></div>
             <div class="compassNeedle"></div>
+            
+            <!-- Camera Control Hints -->
+            <div class="cameraHint hintRotate">
+                <span class="hintLabel">Rotate</span>
+                <kbd>Q</kbd><kbd>E</kbd> / <kbd>LB</kbd><kbd>RB</kbd>
+            </div>
+            <div class="cameraHint hintZoom">
+                <span class="hintLabel">Zoom</span>
+                <kbd>Z</kbd><kbd>C</kbd> / <kbd>R-STICK</kbd>
+            </div>
         </div>
         
         <div id="topDownButton" onclick="switchToTopDown()">TOP DOWN</div>
@@ -2245,29 +2446,38 @@
             </div>
             
             <div id="instructions">
-                <div class="controlTitle">⌨️ KEYBOARD</div>
-                <div><span class="key">WASD</span> Move</div>
-                <div><span class="key">SPACE</span> Fast Drop (2x Instant)</div>
-                <div><span class="key">SHIFT</span> Flip Chain</div>
-                <div><span class="key">↑</span><span class="key">↓</span><span class="key">←</span><span class="key">→</span> Rotate Piece</div>
-                <div><span class="key">Q</span> <span class="key">E</span> Rotate View</div>
-                <div><span class="key">T</span> Top-Down <span class="key">ESC</span> Pause</div>
-                <div><span class="key">1-4</span> Character Specials</div>
-                
-                <div class="controlTitle">🎮 CONTROLLER</div>
-                <div class="controllerGrid">
-                    <div class="fullWidth"><span class="controllerBtn green">A</span> Fast Drop (2x Instant)</div>
-                    <div><span class="controllerBtn red">B</span> Flip</div>
-                    <div><span class="controllerBtn yellow">Y</span> Rotate R</div>
-                    <div><span class="controllerBtn blue">X</span> Rotate L</div>
-                    <div><span class="controllerBtn gray">LB</span> Cam</div>
-                    <div><span class="controllerBtn gray">RB</span> Cam</div>
-                    <div><span class="controllerBtn gray">START</span> Pause</div>
-                    <div class="fullWidth"><span class="controllerBtn gray">SELECT</span> Top-Down</div>
-                    <div><span class="controllerBtn gray">▲</span> Zooko</div>
-                    <div><span class="controllerBtn gray">◀</span> Zancas</div>
-                    <div><span class="controllerBtn gray">▼</span> Nate</div>
-                    <div><span class="controllerBtn gray">▶</span> CyberAxe</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <!-- Keyboard Column -->
+                    <div>
+                        <div class="controlTitle">⌨️ KEYBOARD</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 10px;">
+                            <div><span class="key" style="font-size: 9px; padding: 1px 4px;">WASD/↑↓←→</span> Move</div>
+                            <div><span class="key" style="font-size: 9px; padding: 1px 4px;">R</span> Rotate</div>
+                            <div><span class="key" style="font-size: 9px; padding: 1px 4px;">SHIFT</span> Flip</div>
+                            <div><span class="key" style="font-size: 9px; padding: 1px 4px;">SPACE</span> Drop</div>
+                            <div><span class="key" style="font-size: 9px; padding: 1px 4px;">Q/E</span> Cam</div>
+                            <div><span class="key" style="font-size: 9px; padding: 1px 4px;">T</span> Top-Down</div>
+                            <div><span class="key" style="font-size: 9px; padding: 1px 4px;">Z/C</span> Zoom</div>
+                            <div><span class="key" style="font-size: 9px; padding: 1px 4px;">X</span> Reset</div>
+                            <div style="grid-column: 1 / -1;"><span class="key" style="font-size: 9px; padding: 1px 4px;">1-4</span> Specials</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Controller Column -->
+                    <div>
+                        <div class="controlTitle">🎮 CONTROLLER</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 10px;">
+                            <div style="grid-column: 1 / -1;"><span class="controllerBtn gray" style="font-size: 8px; padding: 1px 4px;">L-STICK</span> Move</div>
+                            <div><span class="controllerBtn green" style="font-size: 8px; padding: 1px 4px;">A</span> Drop</div>
+                            <div><span class="controllerBtn red" style="font-size: 8px; padding: 1px 4px;">B</span> Flip</div>
+                            <div><span class="controllerBtn yellow" style="font-size: 8px; padding: 1px 4px;">Y</span> Rotate</div>
+                            <div><span class="controllerBtn gray" style="font-size: 8px; padding: 1px 4px;">LB/RB</span> Cam</div>
+                            <div style="grid-column: 1 / -1;"><span class="controllerBtn gray" style="font-size: 8px; padding: 1px 4px;">R-STICK</span> Zoom <span class="controllerBtn gray" style="font-size: 8px; padding: 1px 4px;">R3</span> Reset</div>
+                            <div><span class="controllerBtn gray" style="font-size: 8px; padding: 1px 4px;">SELECT</span> Top</div>
+                            <div><span class="controllerBtn gray" style="font-size: 8px; padding: 1px 4px;">START</span> Pause</div>
+                            <div style="grid-column: 1 / -1;"><span class="controllerBtn gray" style="font-size: 8px; padding: 1px 4px;">D-PAD</span> Specials (↑↓←→)</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -2910,7 +3120,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.20.93';
+        const GAME_VERSION = 'v0.20.95';
         
         // ===== AUDIO SYSTEM =====
         const audioCache = {}; // Cache for all audio files
@@ -7039,6 +7249,7 @@
             cameraDistance += event.deltaY > 0 ? zoomSpeed : -zoomSpeed;
             cameraDistance = Math.max(minCameraDistance, Math.min(maxCameraDistance, cameraDistance));
             updateCameraPosition();
+            updateZoomSlider();
         }, { passive: false });
         
         // Middle mouse button to reset camera zoom
@@ -7047,7 +7258,74 @@
                 event.preventDefault();
                 cameraDistance = baseCameraDistance;
                 updateCameraPosition();
+                updateZoomSlider();
             }
+        });
+        
+        // Zoom slider functionality
+        let zoomSliderDragging = false;
+        
+        function updateZoomSlider() {
+            const thumb = document.getElementById('zoomThumb');
+            if (!thumb) return;
+            
+            // Calculate thumb position (inverted: top = zoomed in, bottom = zoomed out)
+            const sliderHeight = 80; // Height between labels (120 - 40 for labels)
+            const normalizedZoom = (cameraDistance - minCameraDistance) / (maxCameraDistance - minCameraDistance);
+            const thumbPosition = 20 + (sliderHeight * normalizedZoom); // 20px offset for top label
+            thumb.style.top = thumbPosition + 'px';
+        }
+        
+        function setZoomFromSlider(clientY) {
+            const slider = document.getElementById('zoomSlider');
+            if (!slider) return;
+            
+            const rect = slider.getBoundingClientRect();
+            const sliderHeight = 80; // Height between labels
+            const offsetY = Math.max(20, Math.min(100, clientY - rect.top)); // Clamp to slider area
+            const normalizedPosition = (offsetY - 20) / sliderHeight; // Normalize to 0-1
+            
+            // Calculate zoom distance (inverted: top = min distance, bottom = max distance)
+            cameraDistance = minCameraDistance + (normalizedPosition * (maxCameraDistance - minCameraDistance));
+            cameraDistance = Math.max(minCameraDistance, Math.min(maxCameraDistance, cameraDistance));
+            
+            updateCameraPosition();
+            updateZoomSlider();
+        }
+        
+        // Zoom slider mouse events
+        document.addEventListener('DOMContentLoaded', function() {
+            const zoomThumb = document.getElementById('zoomThumb');
+            const zoomTrack = document.querySelector('.zoomTrack');
+            
+            if (zoomThumb) {
+                zoomThumb.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    zoomSliderDragging = true;
+                });
+                
+                // Also allow clicking on the track
+                if (zoomTrack) {
+                    zoomTrack.addEventListener('mousedown', (e) => {
+                        e.preventDefault();
+                        setZoomFromSlider(e.clientY);
+                        zoomSliderDragging = true;
+                    });
+                }
+            }
+            
+            document.addEventListener('mousemove', (e) => {
+                if (zoomSliderDragging) {
+                    setZoomFromSlider(e.clientY);
+                }
+            });
+            
+            document.addEventListener('mouseup', () => {
+                zoomSliderDragging = false;
+            });
+            
+            // Initialize slider position
+            updateZoomSlider();
         });
         
         function init() {
@@ -12052,23 +12330,55 @@
                 e.preventDefault();
             }
             
-            // Reset camera zoom to default with R key
-            if (e.key.toLowerCase() === 'r') {
-                cameraDistance = baseCameraDistance;
+            // Zoom in with C key
+            if (e.key.toLowerCase() === 'c') {
+                const zoomSpeed = 0.5;
+                cameraDistance -= zoomSpeed;
+                cameraDistance = Math.max(minCameraDistance, Math.min(maxCameraDistance, cameraDistance));
                 updateCameraPosition();
+                updateZoomSlider();
                 e.preventDefault();
             }
             
-            // Reset camera zoom to default with R key
-            if (e.key.toLowerCase() === 'r') {
-                cameraDistance = baseCameraDistance;
+            // Zoom out with Z key
+            if (e.key.toLowerCase() === 'z') {
+                const zoomSpeed = 0.5;
+                cameraDistance += zoomSpeed;
+                cameraDistance = Math.max(minCameraDistance, Math.min(maxCameraDistance, cameraDistance));
                 updateCameraPosition();
+                updateZoomSlider();
                 e.preventDefault();
             }
             
-            // Piece rotation with arrow keys
-            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-                rotatePiece(e.key);
+            // Reset camera zoom to default with X key
+            if (e.key.toLowerCase() === 'x') {
+                cameraDistance = baseCameraDistance;
+                updateCameraPosition();
+                updateZoomSlider();
+                e.preventDefault();
+            }
+            
+            // Arrow keys also control movement (alternative to WASD)
+            if (e.key === 'ArrowUp') {
+                keys['w'] = true;
+                e.preventDefault();
+            }
+            if (e.key === 'ArrowDown') {
+                keys['s'] = true;
+                e.preventDefault();
+            }
+            if (e.key === 'ArrowLeft') {
+                keys['a'] = true;
+                e.preventDefault();
+            }
+            if (e.key === 'ArrowRight') {
+                keys['d'] = true;
+                e.preventDefault();
+            }
+            
+            // R key to rotate piece clockwise
+            if (e.key.toLowerCase() === 'r') {
+                rotatePiece('r');
                 e.preventDefault();
             }
             
@@ -12148,6 +12458,12 @@
         function onKeyUp(e) {
             keys[e.key.toLowerCase()] = false;
             
+            // Arrow keys also control movement (release)
+            if (e.key === 'ArrowUp') keys['w'] = false;
+            if (e.key === 'ArrowDown') keys['s'] = false;
+            if (e.key === 'ArrowLeft') keys['a'] = false;
+            if (e.key === 'ArrowRight') keys['d'] = false;
+            
             if (e.key === ' ') {
                 fastDrop = false;
                 instantDrop = false;
@@ -12225,6 +12541,7 @@
                     cameraDistance += rightY * zoomSpeed;
                     cameraDistance = Math.max(minCameraDistance, Math.min(maxCameraDistance, cameraDistance));
                     updateCameraPosition();
+                    updateZoomSlider();
                 }
                 
                 // Determine current analog stick state
@@ -12555,6 +12872,7 @@
             else if (buttonIndex === GamepadButtons.R3 && currentState === GameState.PLAYING) {
                 cameraDistance = baseCameraDistance;
                 updateCameraPosition();
+                updateZoomSlider();
             }
             
             // X button - unused (reserved for future feature)
@@ -12873,6 +13191,11 @@
                     playSound('Chain_Rotate_90');
                     break;
                 case 'ArrowRight':
+                    fallingChain.rotation = (rotation + 90) % 360;
+                    playSound('Chain_Rotate_90');
+                    break;
+                case 'r':
+                case 'R':
                     fallingChain.rotation = (rotation + 90) % 360;
                     playSound('Chain_Rotate_90');
                     break;

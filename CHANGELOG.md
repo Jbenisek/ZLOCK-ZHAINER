@@ -2,6 +2,82 @@
 
 # Changelog
 
+## v0.20.95 - Camera Control UI Enhancements (2025-11-24)
+- **Summary:**
+  - Added interactive zoom slider with visual feedback
+  - Implemented contextual camera control hints around compass and slider
+  - Full synchronization across all zoom input methods (keyboard, gamepad, mouse)
+
+- **Interactive Zoom Slider:**
+  - **Vertical Slider**: Positioned bottom-left corner of screen (left of compass)
+  - **Visual Design**: Yellow glowing thumb (#F2C94C), blue gradient track (#2D9CDB)
+  - **Labels**: "IN" at top, "OUT" at bottom for intuitive direction
+  - **Drag Functionality**: Click and drag thumb for precise zoom control
+  - **Click-to-Jump**: Click anywhere on track to jump to that zoom level
+  - **Real-Time Feedback**: Thumb position updates to show current zoom level
+  - **Inverted Mapping**: Top = zoomed in (min distance), bottom = zoomed out (max distance)
+
+- **Zoom Synchronization:**
+  - **Keyboard**: Z/C keys for zoom in/out, X for reset → updates slider
+  - **Gamepad**: Right stick for zoom, R3 button for reset → updates slider
+  - **Mouse Wheel**: Scroll to zoom → updates slider
+  - **Middle Mouse**: Click to reset zoom → updates slider
+  - **Slider**: Drag or click → updates camera
+  - **Implementation**: All zoom controls call `updateZoomSlider()` to maintain visual consistency
+
+- **Contextual Hint System:**
+  - **Compass Hints** (around compass, general navigation):
+    - Top: "Rotate" - Q/E / LB/RB
+    - Bottom: "Zoom" - Z/C / R-STICK
+  - **Zoom Slider Hints** (positioned on slider, specific controls):
+    - Above Slider: "Zoom" - Z/C keys
+    - Below Slider: "Reset" - X / R3 controls
+  - **Design Philosophy**: Hints appear where users need them (generic on compass, specific on slider)
+  - **Styling**: Dark backgrounds (rgba(10,14,18,0.85)), yellow kbd elements, small uppercase labels
+
+- **Technical Implementation:**
+  - **updateZoomSlider()**: Calculates thumb position based on `cameraDistance`
+  - **setZoomFromSlider()**: Converts mouse Y position to camera distance
+  - **Event Handlers**: mousedown (thumb/track), mousemove (drag), mouseup (release)
+  - **Camera Range**: 8 (zoomed in) to 28 (zoomed out), base 20
+  - **FOV Adjustment**: Dynamically adjusts between 75° (in) and 35° (out)
+
+- **Visual Polish:**
+  - Slider thumb has yellow glow effect for visibility
+  - Track uses blue gradient matching game aesthetic
+  - Hints use consistent styling with existing UI elements
+  - All elements properly positioned to avoid overlapping with game elements
+
+## v0.20.94 - Control Documentation UI Overhaul (2025-11-24)
+- **Summary:**
+  - Reorganized both title screen and in-game control help displays
+  - Implemented professional 2-column layouts for maximum space efficiency
+  - Eliminated scrolling and improved information density
+
+- **Title Screen How to Play Panel:**
+  - **2-Column Grid Layout**: Main panel now has controls (left) and game info (right) columns
+  - **Compact Control Sections**: Keyboard and gamepad controls use internal 2-column grids
+  - **PRO TIP Repositioned**: Moved from bottom to top of right column for better visibility
+  - **Complete Gamepad Documentation**: Added LEFT STICK, RIGHT STICK, R3, LB/RB, SELECT, START controls
+  - **Font Scaling**: Progressive reduction (18px→16px headers, 14px→13px→12px→11px body)
+  - **Padding Optimization**: Reduced from 15px to 12px throughout
+  - **Result**: No scrolling required, professional compact appearance
+
+- **In-Game Controls Panel:**
+  - **Side-by-Side Layout**: Keyboard controls (left) | Controller controls (right)
+  - **Nested 2-Column Grids**: Each section uses internal 2-column grid for maximum density
+  - **Condensed Labels**: "Fast Drop (2x Instant)" → "Drop", "Rotate View" → "Cam", etc.
+  - **Micro Font Sizes**: 10px base, 9px keyboard keys, 8px controller buttons
+  - **Tight Spacing**: 1px 4px padding on all keys/buttons, 4px gap between grid items
+  - **Smart Spanning**: L-STICK, R-STICK, D-PAD span full width where appropriate
+  - **Result**: Clean, organized display matching title screen aesthetic
+
+- **Consistency Improvements:**
+  - Both help screens now use same 2-column optimization strategy
+  - Complete control coverage across both displays (excluding diagnostic cheats as intended)
+  - Unified compact styling with appropriate font hierarchy
+  - Professional appearance maintained while increasing information density
+
 ## v0.20.93 - AI Scoring Refinements (2025-11-24)
 - **Summary:**
   - Refined AI scoring to prioritize horizontal matches over vertical
