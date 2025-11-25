@@ -2,6 +2,144 @@
 
 # Changelog
 
+## v0.21.1 - Save File Management & Portal Refinements (2025-11-25)
+- **Summary:**
+  - Added save file download/upload system for local backups
+  - Improved portal system with better user feedback
+  - Enhanced cache clearing to include saved games
+  - UI improvements for better save management workflow
+
+- **Save File System:**
+  - **Save Game File**: Download current save as JSON file to computer
+    - Filename format: `zlock-save-level{X}-{date}-{time}.json`
+    - Example: `zlock-save-level28-2025-11-25-2_51_pm.json`
+    - Human-readable timestamps (12-hour format with AM/PM)
+    - Includes level number for easy identification
+  
+  - **Load Game File**: Upload save file from computer
+    - Moved to title screen (was in pause menu)
+    - Validates save data before loading
+    - Shows confirmation notification
+    - Returns to title screen to use Resume Game button
+    - Prevents corrupted saves with error messages
+  
+  - **Benefits:**
+    - Backup saves outside browser storage
+    - Share saves between computers/browsers
+    - Keep multiple save files at different progress points
+    - Permanent storage independent of localStorage
+
+- **Portal System Improvements:**
+  - **Save Notification on Portal Entry**:
+    - Purple notification: "Game Saved! Entering Portal..."
+    - 1.5 second display before navigation
+    - Matches portal theme colors
+    - Confirms save before leaving arcade
+  
+  - **Error Handling**:
+    - Replaced console logs with user-friendly popups
+    - Clear error messages for save/load failures
+    - Validation errors show specific issues
+    - No more silent failures
+
+- **Cache Management:**
+  - **Enhanced Clear Cache**:
+    - Now clears saved games (arcade + portal)
+    - Clears browser asset cache
+    - Updated confirmation dialog with full details
+    - Nuclear option for complete reset
+
+- **UI Changes:**
+  - Renamed "START GAME" to "START NEW GAME" for clarity
+  - Load Game File button moved from pause to title screen
+  - Better button organization on main menu
+  - Orange color scheme for Load Game File button
+
+- **Technical Details:**
+  - New functions:
+    - `downloadSaveFile()`: Creates and downloads JSON save
+    - `triggerLoadSaveFile()`: Opens file picker
+    - `loadSaveFile(event)`: Validates and imports save
+  - Save validation checks: version, level, occupiedCells
+  - FileReader API for client-side file upload
+  - Blob API for client-side file download
+  - Updated `clearGameCache()` to include localStorage saves
+
+## v0.21.0 - Portal System: Two-Game Integration (2025-11-24)
+- **Summary:**
+  - Implemented portal system connecting ZLOCK CHAINER with new dungeon crawler game
+  - Created Tunnels of Privacy as standalone companion game
+  - Added seamless save/load bridge between arcade and dungeon gameplay
+  - Established shared hero progression system
+
+- **New Files:**
+  - **tunnels_of_privacy.html**: Standalone dungeon crawler game (initial framework)
+  - **TUNNELS_OF_PRIVACY_DESIGN.md**: Complete design document for two-game system
+
+- **Portal System Features:**
+  - **Enter Portal Button**: Added to pause menu in arcade game
+    - Purple-themed button with portal emoji (🌀)
+    - Saves arcade state and launches Tunnels of Privacy
+    - Creates shared save with hero stats on first use
+  
+  - **Exit Portal Button**: Added to Tunnels of Privacy main menu
+    - Returns player to arcade game with state restoration
+    - Preserves hero stats and progression
+  
+  - **Shared Save System**:
+    - New localStorage key: `top_shared_save`
+    - Contains arcade state, dungeon state, and hero stats
+    - Version system (v1) for future save migrations
+    - Seamless bidirectional navigation between games
+  
+  - **Hero Stats Transfer**:
+    - Four heroes: Zooko, Nate, Zancas, CyberAxe
+    - D&D-style attributes: STR, DEX, CON, INT, WIS, CHA
+    - Combat stats: HP, maxHP, AC, XP, level
+    - Stats persist across both games
+
+- **Tunnels of Privacy (v0.1.0)**:
+  - Start menu with hero party display
+  - Shows real-time hero stats from shared save
+  - Portal exit functionality to return to arcade
+  - Coming soon: Dungeon crawler gameplay
+
+- **Technical Implementation:**
+  - Added `SHARED_SAVE` to STORAGE_KEYS (line 3797)
+  - New functions in zlock_consensus.html:
+    - `enterPortal()`: Save arcade and navigate to dungeon
+    - `exitPortal()`: Return from dungeon to arcade (in ToP)
+    - `createDefaultSharedSave()`: Initialize hero stats
+    - `loadSharedSave()`: Load cross-game save data
+    - `saveSharedSave()`: Write cross-game save data
+    - `migrateSharedSave()`: Version migration support
+    - `loadFromPortal()`: Restore arcade state on return
+  - Portal return notification on arcade load
+  - Auto-restore saved arcade game when returning from dungeon
+
+- **Save Structure:**
+  ```javascript
+  {
+    saveVersion: 1,
+    lastPlayed: timestamp,
+    arcadeState: { level, score, occupiedCells, ... },
+    dungeonState: { currentLevel, inventory, gold, questProgress },
+    heroes: {
+      zooko: { str, dex, con, int, wis, cha, hp, maxHp, ac, xp, level },
+      nate: { ... },
+      zancas: { ... },
+      cyberaxe: { ... }
+    }
+  }
+  ```
+
+- **Future Development:**
+  - Phase 2: Dungeon crawler gameplay implementation
+  - Dungeon level generation
+  - Combat system
+  - Inventory and equipment
+  - Quest progression (find king's scepter)
+
 ## v0.20.101 - Performance Optimization & Sound FX Counter (2025-11-24)
 - **Summary:**
   - Added Sound FX counter to performance stats panel

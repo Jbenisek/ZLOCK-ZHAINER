@@ -2009,6 +2009,8 @@
         <div id="pauseTitle">PAUSED</div>
         <button class="menuButton" onclick="resumeGame()">RESUME<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         <button class="menuButton" onclick="saveGameFromPause()" style="background: linear-gradient(135deg, rgba(46, 134, 222, 0.4), rgba(46, 134, 222, 0.3)); border-color: #3498DB;">SAVE GAME<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">💾</span></button>
+        <button class="menuButton" onclick="downloadSaveFile()" style="background: linear-gradient(135deg, rgba(39, 174, 96, 0.4), rgba(39, 174, 96, 0.3)); border-color: #27AE60;">SAVE GAME FILE<span style="display: inline-block; width: 26px; height: 26px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">⬇</span></button>
+        <button class="menuButton" onclick="enterPortal()" style="background: linear-gradient(135deg, rgba(139, 69, 255, 0.4), rgba(139, 69, 255, 0.3)); border-color: #8B45FF;">ENTER PORTAL<span style="display: inline-block; width: 26px; height: 26px; background: #8B45FF; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">🌀</span></button>
         <button class="menuButton" onclick="restartFromPause()">RESTART<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">X</span></button>
         <button class="menuButton" onclick="showSettingsFromPause()">SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">Y</span></button>
         <button class="menuButton" onclick="quitToMenu()">QUIT TO MENU<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 10px; font-weight: bold; color: white; font-size: 12px;">◀</span></button>
@@ -2944,7 +2946,10 @@
             </div>
             
             <button id="resumeGameBtn" class="menuButton" onclick="resumeSavedGame()" style="display: none; background: linear-gradient(135deg, rgba(46, 134, 222, 0.4), rgba(46, 134, 222, 0.3)); border-color: #3498DB;">RESUME GAME<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">↻</span></button>
-            <button class="menuButton" onclick="startGame()" disabled style="opacity: 0.5; cursor: not-allowed;">START GAME<span style="display: inline-block; width: 26px; height: 26px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">A</span></button>
+            <button class="menuButton" onclick="triggerLoadSaveFile()" style="background: linear-gradient(135deg, rgba(230, 126, 34, 0.4), rgba(230, 126, 34, 0.3)); border-color: #E67E22;">LOAD GAME FILE<span style="display: inline-block; width: 26px; height: 26px; background: #E67E22; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">⬆</span></button>
+            <input type="file" id="loadSaveFileInput" accept=".json" style="display: none;" onchange="loadSaveFile(event)">
+            <button class="menuButton" onclick="startGame()" disabled style="opacity: 0.5; cursor: not-allowed;">START NEW GAME<span style="display: inline-block; width: 26px; height: 26px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">A</span></button>
+            <button class="menuButton" onclick="enterPortalFromMenu()" style="background: linear-gradient(135deg, rgba(139, 69, 255, 0.4), rgba(139, 69, 255, 0.3)); border-color: #8B45FF;">ENTER PORTAL<span style="display: inline-block; width: 26px; height: 26px; background: #8B45FF; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">🌀</span></button>
             <button class="menuButton" onclick="showSettings()">SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">▶</span></button>
             <button class="menuButton" onclick="showHighScores()">HIGH SCORES<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">X</span></button>
             <button class="menuButton" onclick="showAchievements()">ACHIEVEMENTS<span style="display: inline-block; width: 26px; height: 26px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">Y</span></button>
@@ -3130,7 +3135,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.20.101';
+        const GAME_VERSION = 'v0.21.1';
         
         // ===== AUDIO SYSTEM =====
         const audioCache = {}; // Cache for all audio files
@@ -3794,7 +3799,8 @@
             HIGH_SCORES: 'zlock_highscores',
             GAME_HISTORY: 'zlock_gamehistory',
             ACHIEVEMENTS: 'zlock_achievements',
-            SAVED_GAME: 'zlock_savedgame'
+            SAVED_GAME: 'zlock_savedgame',
+            SHARED_SAVE: 'top_shared_save'  // Portal system shared save
         };
         
         let settings = {
@@ -4734,6 +4740,7 @@
         
         function resumeSavedGame() {
             const gameState = loadGameState();
+            
             if (!gameState) {
                 alert('No saved game found!');
                 return;
@@ -4743,6 +4750,247 @@
             startGame(gameState.level, false, gameState);
         }
         // ===== END SAVE/RESUME SYSTEM =====
+        
+        // ===== PORTAL SYSTEM =====
+        // Saves arcade state and dungeon state to shared save, then navigates to Tunnels of Privacy
+        function enterPortal() {
+            try {
+                // Only save if there's an active game (not on title screen)
+                if (currentState === GameState.PLAYING || currentState === GameState.PAUSED) {
+                    // Save current arcade game state first
+                    if (!saveGameState()) {
+                        alert('Failed to save arcade game state! Cannot enter portal.');
+                        return;
+                    }
+                    
+                    // Show save notification
+                    const notif = document.createElement('div');
+                    notif.style.cssText = `
+                        position: fixed;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        background: linear-gradient(135deg, rgba(139, 69, 255, 0.95), rgba(75, 0, 130, 0.95));
+                        border: 3px solid #8B45FF;
+                        border-radius: 12px;
+                        padding: 20px 40px;
+                        font-size: 24px;
+                        font-weight: bold;
+                        color: #F2C94C;
+                        text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+                        z-index: 10001;
+                    `;
+                    notif.textContent = 'Game Saved! Entering Portal...';
+                    document.body.appendChild(notif);
+                    
+                    // Wait for notification to be visible before navigating
+                    setTimeout(() => {
+                        notif.remove();
+                        proceedToPortal();
+                    }, 1500);
+                } else {
+                    // No game to save, proceed directly
+                    proceedToPortal();
+                }
+                
+                function proceedToPortal() {
+                    // Load existing shared save or create new one
+                    let sharedSave = loadSharedSave();
+                    if (!sharedSave) {
+                        // Initialize new shared save with default hero stats
+                        sharedSave = createDefaultSharedSave();
+                    }
+                    
+                    // Update arcade state from current game
+                    const arcadeState = loadGameState();
+                    if (arcadeState) {
+                        sharedSave.arcadeState = arcadeState;
+                        sharedSave.lastPlayed = Date.now();
+                    }
+                    
+                    // Save shared state
+                    if (!saveSharedSave(sharedSave)) {
+                        alert('Failed to save portal data! Cannot enter portal.');
+                        return;
+                    }
+                    
+                    // Navigate to dungeon crawler
+                    window.location.href = 'tunnels_of_privacy.html';
+                }
+            } catch (e) {
+                alert('Portal entrance failed: ' + e.message);
+            }
+        }
+        
+        // Enter portal from title screen menu (doesn't require active game)
+        function enterPortalFromMenu() {
+            try {
+                // Load existing shared save or create new one
+                let sharedSave = loadSharedSave();
+                if (!sharedSave) {
+                    // Initialize new shared save with default hero stats
+                    sharedSave = createDefaultSharedSave();
+                }
+                
+                // Update arcade state from current game (if exists)
+                const arcadeState = loadGameState();
+                if (arcadeState) {
+                    sharedSave.arcadeState = arcadeState;
+                    sharedSave.lastPlayed = Date.now();
+                }
+                
+                // Save shared state
+                if (!saveSharedSave(sharedSave)) {
+                    alert('Failed to save portal data! Cannot enter portal.');
+                    return;
+                }
+                
+                // Navigate to dungeon crawler
+                window.location.href = 'tunnels_of_privacy.html';
+            } catch (e) {
+                alert('Portal entrance failed: ' + e.message);
+            }
+        }
+        
+        // Creates default shared save with initial hero stats
+        function createDefaultSharedSave() {
+            return {
+                saveVersion: 1,
+                lastPlayed: Date.now(),
+                arcadeState: null,
+                dungeonState: {
+                    currentLevel: 1,
+                    inventory: [],
+                    gold: 0,
+                    questProgress: {
+                        hasScepter: false,
+                        hasReturned: false,
+                        bossesDefeated: []
+                    }
+                },
+                heroes: {
+                    zooko: {
+                        name: 'Zooko',
+                        str: 8, dex: 11, con: 10, int: 15, wis: 13, cha: 9,
+                        hp: 22, maxHp: 25, ac: 12, xp: 0, level: 1
+                    },
+                    nate: {
+                        name: 'Nate',
+                        str: 14, dex: 12, con: 13, int: 10, wis: 9, cha: 11,
+                        hp: 28, maxHp: 30, ac: 14, xp: 0, level: 1
+                    },
+                    zancas: {
+                        name: 'Zancas',
+                        str: 10, dex: 15, con: 11, int: 12, wis: 14, cha: 8,
+                        hp: 24, maxHp: 26, ac: 13, xp: 0, level: 1
+                    },
+                    cyberaxe: {
+                        name: 'CyberAxe',
+                        str: 16, dex: 10, con: 14, int: 8, wis: 11, cha: 10,
+                        hp: 32, maxHp: 35, ac: 15, xp: 0, level: 1
+                    }
+                }
+            };
+        }
+        
+        // Load shared save from localStorage
+        function loadSharedSave() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEYS.SHARED_SAVE);
+                if (!saved) return null;
+                
+                const sharedSave = JSON.parse(saved);
+                
+                // Apply version migrations if needed
+                return migrateSharedSave(sharedSave);
+            } catch (e) {
+                console.error('Failed to load shared save:', e);
+                return null;
+            }
+        }
+        
+        // Save shared save to localStorage
+        function saveSharedSave(sharedSave) {
+            try {
+                const jsonString = JSON.stringify(sharedSave);
+                localStorage.setItem(STORAGE_KEYS.SHARED_SAVE, jsonString);
+                console.log('Shared save written. Size:', jsonString.length, 'bytes');
+                return true;
+            } catch (e) {
+                console.error('Failed to save shared save:', e);
+                return false;
+            }
+        }
+        
+        // Migrate shared save between versions
+        function migrateSharedSave(sharedSave) {
+            // Currently at version 1, no migrations needed yet
+            // Future migrations:
+            // if (sharedSave.saveVersion < 2) {
+            //     // Apply v1 -> v2 migration
+            //     sharedSave.saveVersion = 2;
+            // }
+            return sharedSave;
+        }
+        
+        // Load arcade state from portal on return from dungeon
+        function loadFromPortal() {
+            try {
+                const sharedSave = loadSharedSave();
+                
+                if (sharedSave && sharedSave.arcadeState) {
+                    // Validate arcade state has required fields
+                    if (!sharedSave.arcadeState.version || !sharedSave.arcadeState.level) {
+                        alert('Portal Error: Saved game data is corrupted. Cannot restore arcade game.');
+                        return;
+                    }
+                    
+                    // Restore arcade game state to localStorage
+                    const arcadeStateJson = JSON.stringify(sharedSave.arcadeState);
+                    localStorage.setItem(STORAGE_KEYS.SAVED_GAME, arcadeStateJson);
+                    
+                    // Verify it was saved correctly
+                    const verification = localStorage.getItem(STORAGE_KEYS.SAVED_GAME);
+                    if (!verification) {
+                        alert('Portal Error: Failed to restore arcade game. Please try again.');
+                        return;
+                    }
+                    
+                    // Update resume button
+                    updateResumeButton();
+                    
+                    // Show notification
+                    const notification = document.createElement('div');
+                    notification.style.cssText = `
+                        position: fixed;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        background: linear-gradient(135deg, rgba(139, 69, 255, 0.95), rgba(75, 0, 130, 0.95));
+                        color: white;
+                        padding: 30px 40px;
+                        border-radius: 15px;
+                        font-size: 18px;
+                        font-weight: bold;
+                        z-index: 10000;
+                        border: 3px solid #8B45FF;
+                        box-shadow: 0 0 30px rgba(139, 69, 255, 0.6);
+                        text-align: center;
+                    `;
+                    notification.textContent = 'Returned from dungeon! Game restored.';
+                    document.body.appendChild(notification);
+                    
+                    setTimeout(() => {
+                        notification.style.transition = 'opacity 0.5s';
+                        notification.style.opacity = '0';
+                        setTimeout(() => notification.remove(), 500);
+                    }, 2000);
+                }
+            } catch (e) {
+                alert('Portal Error: Failed to restore game from dungeon. ' + e.message);
+            }
+        }
+        // ===== END PORTAL SYSTEM =====
         
         // Achievement System - 50 achievements (10 easier, 10 easy, 10 mid, 10 mid-hard, 10 very hard)
         function initializeAchievements() {
@@ -7802,6 +8050,9 @@
             
             // Initialize compass
             updateCompass();
+            
+            // Check for portal return and restore arcade state
+            loadFromPortal();
             
             // Update resume button visibility
             updateResumeButton();
@@ -11723,10 +11974,36 @@
                     isGlowing: chain.isGlowing,
                     isEncrypted: chain.isEncrypted
                 }));
-        } else {
-            // Initialize chain preview queue
-            initializeChainQueue();
-        }            updateHUD();
+                
+                // Restore falling chain if it was in mid-fall
+                if (savedGameState.fallingChain) {
+                    const savedChain = savedGameState.fallingChain;
+                    // Spawn new chain at saved position
+                    spawnNewChain();
+                    if (fallingChain) {
+                        fallingChain.x = savedChain.x;
+                        fallingChain.y = savedChain.y;
+                        fallingChain.type = savedChain.type;
+                        fallingChain.linkTypes = savedChain.linkTypes || [];
+                        fallingChain.isGlowing = savedChain.isGlowing || false;
+                        fallingChain.isEncrypted = savedChain.isEncrypted || false;
+                        // Update visual position - links array contains mesh objects directly
+                        fallingChain.links.forEach((link, i) => {
+                            link.position.y = savedChain.y - i + 0.5;
+                        });
+                    }
+                } else {
+                    // No falling chain saved, spawn a new one
+                    spawnNewChain();
+                }
+            } else {
+                // Initialize chain preview queue
+                initializeChainQueue();
+                // Spawn first chain for new game
+                spawnNewChain();
+            }
+            
+            updateHUD();
             
             // Play game start sound
             playSound('Game_Start_Begin');
@@ -11885,7 +12162,11 @@
         }
         
         function clearGameCache() {
-            if (confirm('Clear all cached game assets and reload the page?\n\nThis will fix loading issues but requires re-downloading all assets (videos, audio, models).')) {
+            if (confirm('Clear all cached game assets, local saves, and reload the page?\n\nThis will:\n- Delete saved games\n- Clear cached assets (videos, audio, models)\n- Require re-downloading all assets\n\nAre you sure?')) {
+                // Clear localStorage saves
+                localStorage.removeItem(STORAGE_KEYS.SAVED_GAME);
+                localStorage.removeItem(STORAGE_KEYS.SHARED_SAVE);
+                
                 // Clear browser cache for this page using Cache API
                 if ('caches' in window) {
                     caches.keys().then(function(names) {
@@ -12386,6 +12667,136 @@
                 console.error('Save failed! Current state:', currentState, 'Grid:', grid);
                 alert('Failed to save game. Check console for details.');
             }
+        }
+        
+        // Download save game as file
+        function downloadSaveFile() {
+            // First save to localStorage
+            if (!saveGameState()) {
+                alert('Failed to create save data!');
+                return;
+            }
+            
+            // Get the save data
+            const gameState = loadGameState();
+            if (!gameState) {
+                alert('No save data found!');
+                return;
+            }
+            
+            // Create filename with level and readable timestamp
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = now.getMinutes();
+            const ampm = hours >= 12 ? 'pm' : 'am';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // Convert 0 to 12
+            const timeStr = `${hours}_${minutes.toString().padStart(2, '0')}_${ampm}`;
+            const dateStr = now.toISOString().slice(0, 10); // YYYY-MM-DD
+            const filename = `zlock-save-level${gameState.level}-${dateStr}-${timeStr}.json`;
+            
+            // Convert to JSON and create blob
+            const jsonString = JSON.stringify(gameState, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            
+            // Create download link and trigger
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            // Show notification
+            const notif = document.createElement('div');
+            notif.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: linear-gradient(135deg, rgba(39, 174, 96, 0.95), rgba(27, 143, 76, 0.95));
+                border: 3px solid #27AE60;
+                border-radius: 12px;
+                padding: 20px 40px;
+                font-size: 24px;
+                font-weight: bold;
+                color: #F2C94C;
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+                z-index: 10000;
+                animation: fadeInOut 2s ease-out forwards;
+            `;
+            notif.textContent = 'Save File Downloaded!';
+            document.body.appendChild(notif);
+            
+            setTimeout(() => notif.remove(), 2000);
+            playSound('UI_Button_Click');
+        }
+        
+        // Trigger file input click
+        function triggerLoadSaveFile() {
+            document.getElementById('loadSaveFileInput').click();
+        }
+        
+        // Load save game from file
+        function loadSaveFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const gameState = JSON.parse(e.target.result);
+                    
+                    // Validate save data has required fields
+                    if (!gameState.version || !gameState.level || !gameState.occupiedCells) {
+                        alert('Invalid save file! Missing required data.');
+                        return;
+                    }
+                    
+                    // Save to localStorage
+                    localStorage.setItem(STORAGE_KEYS.SAVED_GAME, JSON.stringify(gameState));
+                    
+                    // Show notification
+                    const notif = document.createElement('div');
+                    notif.style.cssText = `
+                        position: fixed;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        background: linear-gradient(135deg, rgba(230, 126, 34, 0.95), rgba(175, 96, 26, 0.95));
+                        border: 3px solid #E67E22;
+                        border-radius: 12px;
+                        padding: 20px 40px;
+                        font-size: 24px;
+                        font-weight: bold;
+                        color: #F2C94C;
+                        text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+                        z-index: 10000;
+                    `;
+                    notif.textContent = 'Save File Loaded! Resume to play.';
+                    document.body.appendChild(notif);
+                    
+                    playSound('UI_Button_Click');
+                    
+                    setTimeout(() => {
+                        notif.remove();
+                        // Update resume button
+                        updateResumeButton();
+                        // Close pause menu and return to title
+                        document.getElementById('pauseScreen').style.display = 'none';
+                        showTitleScreen();
+                    }, 2000);
+                    
+                } catch (error) {
+                    alert('Failed to load save file: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+            
+            // Reset file input so same file can be loaded again
+            event.target.value = '';
         }
         
         function quitToMenu() {
@@ -14329,8 +14740,16 @@
         
         function spawnNewChain() {
             playSound('Chain_Drop_Start');
-            // Get next chain from queue
-            const chainData = chainQueue.shift();
+            
+            // Get next chain from queue - with safety check
+            let chainData = chainQueue.shift();
+            
+            // Safety: If queue is empty or corrupted, generate new chain data
+            if (!chainData) {
+                chainData = generateChainData();
+            }
+            
+            // Add new chain to queue and update preview
             chainQueue.push(generateChainData());
             updateChainPreview();
             
@@ -14766,6 +15185,13 @@
                 if (gridY >= 0 && gridY < GRID_HEIGHT) {
                     // Link is within grid bounds - place it
                     if (grid[fallingChain.x][gridY][fallingChain.z] === null) {
+                        // Safety check - ensure links array exists
+                        if (!fallingChain.links || !Array.isArray(fallingChain.links)) {
+                            alert('Game Error: Chain data corrupted. Game Over.');
+                            gameOver();
+                            return;
+                        }
+                        
                         // Safety check - ensure link exists and has rotation
                         if (fallingChain.links[i] && fallingChain.links[i].rotation) {
                             const linkRotation = fallingChain.links[i].rotation.y;
