@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.20.97</title>
+    <title>ZLOCK ZHAINER - 3D Blockchain Puzzle v0.21.2</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -3135,7 +3135,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.21.1';
+        const GAME_VERSION = 'v0.21.2';
         
         // ===== AUDIO SYSTEM =====
         const audioCache = {}; // Cache for all audio files
@@ -12671,18 +12671,27 @@
         
         // Download save game as file
         function downloadSaveFile() {
-            // First save to localStorage
+            // First save arcade game state to localStorage
             if (!saveGameState()) {
                 alert('Failed to create save data!');
                 return;
             }
             
-            // Get the save data
-            const gameState = loadGameState();
-            if (!gameState) {
-                alert('No save data found!');
-                return;
+            // Load or create shared save (with heroes and arcade state)
+            let sharedSave = loadSharedSave();
+            if (!sharedSave) {
+                sharedSave = createDefaultSharedSave();
             }
+            
+            // Update arcade state in shared save
+            const arcadeState = loadGameState();
+            if (arcadeState) {
+                sharedSave.arcadeState = arcadeState;
+                sharedSave.lastPlayed = Date.now();
+            }
+            
+            // Save updated shared save to localStorage
+            saveSharedSave(sharedSave);
             
             // Create filename with level and readable timestamp
             const now = new Date();
@@ -12693,10 +12702,11 @@
             hours = hours ? hours : 12; // Convert 0 to 12
             const timeStr = `${hours}_${minutes.toString().padStart(2, '0')}_${ampm}`;
             const dateStr = now.toISOString().slice(0, 10); // YYYY-MM-DD
-            const filename = `zlock-save-level${gameState.level}-${dateStr}-${timeStr}.json`;
+            const level = arcadeState ? arcadeState.level : 1;
+            const filename = `zlock-save-level${level}-${dateStr}-${timeStr}.json`;
             
-            // Convert to JSON and create blob
-            const jsonString = JSON.stringify(gameState, null, 2);
+            // Convert shared save (with heroes) to JSON and create blob
+            const jsonString = JSON.stringify(sharedSave, null, 2);
             const blob = new Blob([jsonString], { type: 'application/json' });
             
             // Create download link and trigger

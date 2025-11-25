@@ -244,20 +244,111 @@ ARCADE                          DUNGEON
 
 ## Story Integration
 
-### Levels 1-10 (Descent)
-- Each arcade level corresponds to dungeon depth
-- TV shows heroes descending into tunnels
-- Dungeon difficulty scales with arcade level
+### THE 1,000-LEVEL ZCASH DUNGEON (FINAL STRUCTURE)
 
-### Level 10 (Boss & Treasure)
-- Major boss encounter in dungeon
-- Find king's scepter
-- TV shows victory celebration
+#### DESCENT ARC (Levels 1–100)
+Going down into the deep cryptographic underworld, culminating in the ultimate boss and the Sceptre of Privacy.
 
-### Levels 11+ (Ascent)
-- Return journey begins
-- TV shows heroes returning to surface
-- Dungeon shifts to "escape" mode
+**Levels 1–10 — The Unshielded Approach**
+- Tutorial surface tunnels
+- Weak monsters: Leak Imps, Dustlings, Metadata Wisps
+
+**Levels 11–20 — The Broken Ledger Halls**
+- Enemies representing surveillance and transparency decay
+- Monsters: Auditor Fragments, Watcher Golems
+
+**Levels 21–30 — The Trusted Setup Catacombs**
+- Crypts full of failed parameters and ceremony relics
+- Miniboss: The Parameter Shade
+
+**Levels 31–40 — The Forked Maze**
+- Shifting corridors, unstable consensus, block ghost illusions
+
+**Levels 41–50 — The Fungibility Labyrinth**
+- Hydra-tainted coins, shifting purity, value illusions
+
+**Levels 51–60 — The Counterfeit Vaults**
+- Nullifier Shades, Supply Phantoms, Issuance Oozes
+
+**Levels 61–70 — The Orchard Sanctum**
+- Shielded temples, proof angels, unified-address spirits
+
+**Levels 71–80 — The Halo Spiral**
+- Recursive paradox rooms, proof-clones, anti-entropy storms
+
+**Levels 81–90 — The Identity Depths**
+- Sybil illusions, multiplicity monsters, identity storms
+
+**Levels 91–99 — Descent to the Core**
+- Total darkness, decentralization pressure, proto-boss entities
+
+**LEVEL 100 — THE MAIN BOSS: THE CENTRALIZER**
+- The one true final boss of the entire storyline
+- A world-eating machine-god that thrives on concentration of power, surveillance, single points of failure, and economic oppression
+- Defeating it grants **The Sceptre of Privacy**:
+  - Mythical artifact forged from shielded proof light, distributed consensus fire, entropy crystals, and the last purified nullifier seal
+  - Protects identity, value, and autonomy
+  - Enables the heroes to ascend back to the surface
+
+#### ASCENT ARC (LEVELS 101–1000)
+The story flips: You climb up, escaping the depths, bringing privacy back to the surface world.
+
+**Levels 101–300 — The Rising Tunnels**
+- Fight upward against collapsing caverns and corrupted constructs
+- "Echo" monsters from Descent Arc (weaker versions of previous threats)
+
+**Levels 301–600 — The Breaking Shadows**
+- Mid-ascent enemies attempt to reclaim the Sceptre
+- Enemies: Chain Reorg Worms, Entropy Thieves, Proof Leeches
+- Light of the surface grows brighter as you climb
+
+**Levels 601–800 — The Great Uprising**
+- Begin meeting villages, towns, and resistance factions who cheer you on
+- Light replaces darkness, monsters become rare
+- Traps and environmental puzzles dominate
+
+**Levels 801–899 — The Air of Freedom**
+- Open caverns resemble the surface world
+- Wildlife returns
+- Shops, shrines, and resting spots appear
+- Occasional minibosses tied to "unfinished business"
+
+**LEVELS 900–990 — THE FINAL BOSS RUSH (ASCENT GAUNTLET)**
+- Not story bosses - remaining echoes of the Centralizer's power
+- Final remnants of corruption trying to stop your return
+- Bosses include:
+  - The Auditor Titan Shade
+  - The Last Forking Wyrm
+  - The Fungibility Hydra Remnant
+  - The Halo Paradox Echo
+  - The Sybil King's Final Form
+  - The Inflation Demon's Shell
+  - The Ledger Colossus Fragment
+- Each weaker than original form, appearing back-to-back
+- Tone: Not grim - this is cleanup, a heroic march
+
+**LEVELS 991–1000 — THE VICTORY CLIMB**
+- No combat - only beauty, story, nostalgia
+
+**Level 991–995 — The Golden Caverns**
+- Gentle crystalline halls that glow with shielded light
+- Peaceful NPCs, memory echoes of your journey, merchants, music
+
+**Level 996–998 — The Echo of Good Times**
+- Snapshots of major victories
+- Old friends, small puzzles, optional lore
+
+**Level 999 — The Final Sunwell**
+- The end of the tunnel
+- You see daylight, soft music
+- NPCs begin gathering at the exit
+
+**LEVEL 1000 — SURFACE RETURN: THE CELEBRATION**
+- You emerge to cheering crowds
+- The world celebrates the return of freedom, privacy, and autonomy
+- The Sceptre of Privacy illuminates the sky
+- No battle - only victory
+- **This is the true ending**
 
 ## Design Philosophy
 - Keep it simple and fun

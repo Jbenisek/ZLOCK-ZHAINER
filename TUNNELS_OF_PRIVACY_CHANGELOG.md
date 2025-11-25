@@ -2,6 +2,82 @@
 
 # Changelog
 
+## v0.2.8 - Unified Save System (2025-11-25)
+- **Summary:**
+  - Load Save File now accepts shared save format from arcade
+  - Complete compatibility with arcade save file downloads
+  - Added `createDefaultSharedSave()` function for fallback initialization
+  - Single unified save format across both games
+
+- **Save File System:**
+  - **Load Save File** validates for heroes property (shared save format)
+  - Works with save files downloaded from arcade game
+  - Supports complete save data: heroes, arcade state, dungeon state
+  - Updates hero displays from loaded data
+  - Updates dungeon level from arcade state
+
+- **Technical Details:**
+  - Added `createDefaultSharedSave()` with default hero stats
+  - Matches arcade's hero initialization (str, dex, con, int, wis, cha, hp, maxHp, ac, xp, level)
+  - Default heroes: Zooko, Nate, Zancas, CyberAxe
+  - Save format includes saveVersion, lastPlayed, arcadeState, dungeonState, heroes
+
+## v0.2.7 - Load Save File Feature (2025-11-25)
+- **Summary:**
+  - Added Load Save File option to main menu
+  - File input panel for uploading save files
+  - Validates and imports save data to localStorage
+
+## v0.2.6 - Animated Background & UI Polish (2025-11-25)
+- **Summary:**
+  - Added animated background matching arcade game
+  - Improved menu button layout
+  - Enhanced Exit Portal button formatting
+  - Complete visual consistency with arcade game
+
+- **Visual Enhancements:**
+  - **Animated Background**:
+    - Added story intro background animation system
+    - Uses same `story/intro/intro_a.png` sprite sheet as arcade (8x16 atlas, 128 frames)
+    - 16fps ping-pong animation (forward then backward loop)
+    - 30% opacity for subtle atmospheric effect
+    - Positioned behind all UI elements (z-index: -1)
+    - Starts automatically on page load
+  
+  - **Menu Button Improvements**:
+    - Changed button text alignment from `space-between` to `center`
+    - Button labels now properly centered
+    - Icons positioned correctly with margins
+    - Improved visual balance
+  
+  - **Exit Portal Button**:
+    - Split text into two lines: "EXIT PORTAL" and "(Return to Arcade)"
+    - Second line uses smaller font (10px) and lighter weight
+    - Better readability and visual hierarchy
+    - Maintains centered alignment
+
+- **Technical Implementation:**
+  - **Background Animation Functions**:
+    - `startStoryIntroAnimation()` - Initializes and runs sprite sheet animation
+    - `stopStoryIntroAnimation()` - Cleans up animation interval
+    - Calculates frame position in 8-column x 16-row atlas
+    - Updates background position every ~62.5ms
+    - Ping-pong direction reversal at boundaries (0 and 127)
+  
+  - **CSS Additions**:
+    - `#storyIntroBackground` div with full-screen positioning
+    - Background-size calculated from atlas dimensions
+    - Smooth 2s opacity transition
+    - Proper layering behind title screen
+
+- **Integration:**
+  - Animation starts in `init()` function after settings load
+  - Shares same sprite sheet asset with arcade game
+  - Consistent visual theming across both games
+  - Adds atmospheric depth to title screen
+
+---
+
 ## v0.2.5 - Music Player UI Enhancement (2025-11-25)
 - **Summary:**
   - Updated music player to match arcade game styling exactly

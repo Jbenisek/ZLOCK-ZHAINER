@@ -2,6 +2,25 @@
 
 # Changelog
 
+## v0.21.2 - Unified Save System (2025-11-25)
+- **Summary:**
+  - Fixed save file download to export complete shared save with hero data
+  - Ensures compatibility between arcade and tunnels games
+  - Single unified save format across both games
+
+- **Save File Changes:**
+  - **Download Save File** now exports shared save format (not just arcade gameState)
+  - Includes full hero stats (Zooko, Nate, Zancas, CyberAxe)
+  - Includes arcade game state (level, score, grid, charges)
+  - Includes dungeon state (for future tunnels gameplay)
+  - Save files work in both arcade and tunnels games
+
+- **Technical Details:**
+  - `downloadSaveFile()` now creates/updates shared save before exporting
+  - Shared save stored in localStorage as `top_shared_save`
+  - Compatible with portal system (arcade ↔ tunnels)
+  - Single source of truth for all game progress
+
 ## v0.21.1 - Save File Management & Portal Refinements (2025-11-25)
 - **Summary:**
   - Added save file download/upload system for local backups

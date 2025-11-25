@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUNNELS OF PRIVACY - Dungeon Crawler</title>
+    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.2.8</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -42,6 +42,20 @@
             background: rgba(10, 14, 18, 0.95);
             z-index: 100;
             pointer-events: none;
+        }
+        
+        #storyIntroBackground {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: opacity 2s ease-in-out;
         }
         
         #title {
@@ -99,7 +113,7 @@
             width: 380px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             pointer-events: all;
             backdrop-filter: blur(10px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
@@ -419,6 +433,8 @@
 <body>
     <div id="gameContainer">
         <div id="titleScreen">
+            <!-- Story Intro Background Animation -->
+            <div id="storyIntroBackground"></div>
             
             <div id="title">TUNNELS OF PRIVACY</div>
             <div id="subtitle">A Dungeon Crawler Adventure</div>
@@ -474,8 +490,9 @@
                 
                 <button class="menuButton comingSoon" disabled>START ADVENTURE<span style="display: inline-block; width: 26px; height: 26px; background: #EB5757; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">A</span></button>
                 <button class="menuButton comingSoon" disabled>CONTINUE<span style="display: inline-block; width: 26px; height: 26px; background: #EB5757; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">↻</span></button>
+                <button class="menuButton" onclick="showLoadSave()">LOAD SAVE FILE<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">📁</span></button>
                 <button class="menuButton" onclick="showSettings()">SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #2A9D8F; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">⚙</span></button>
-                <button class="menuButton portalButton" onclick="exitPortal()">EXIT PORTAL (Return to Arcade)<span style="display: inline-block; width: 26px; height: 26px; background: #8B45FF; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">🌀</span></button>
+                <button class="menuButton portalButton" onclick="exitPortal()">EXIT PORTAL<br><span style="font-size: 10px; font-weight: 400;">(Return to Arcade)</span><span style="display: inline-block; width: 26px; height: 26px; background: #8B45FF; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">🌀</span></button>
             </div>
             
             <!-- Music Control Panel - Bottom Above Ticker -->
@@ -500,7 +517,7 @@
             </div>
             
             
-            <div id="versionDisplay">Tunnels of Privacy v0.2.5 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.2.6 • Portal System Active</div>
             
             <!-- Music Ticker -->
             <div id="musicTickerWrapper">
@@ -538,8 +555,27 @@
         <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">✕</span></button>
         
         <div style="display: block; width: 100%; margin-top: 15px; padding: 10px 0; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A7A8F; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-            Tunnels of Privacy v0.2.5
+            Tunnels of Privacy v0.2.6
         </div>
+    </div>
+    
+    <!-- Load Save Panel -->
+    <div id="loadSavePanel" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); border: 2px solid #3498DB; border-radius: 12px; padding: 25px; max-width: 600px; width: 85vw; z-index: 200; pointer-events: all; box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px);">
+        <div class="panelTitle" style="color: #3498DB;">LOAD SAVE FILE</div>
+        
+        <div style="margin: 15px 0; padding: 15px; background: rgba(52, 152, 219, 0.1); border-radius: 8px; border: 1px solid rgba(52, 152, 219, 0.3);">
+            <div style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 12px; margin-bottom: 10px;">
+                📥 Import save file from arcade game or previous dungeon run
+            </div>
+            <input type="file" id="saveFileInput" accept=".json" style="display: block; width: 100%; padding: 10px; background: rgba(10, 14, 18, 0.8); border: 2px solid #3498DB; border-radius: 6px; color: #E9F0F7; font-family: 'JetBrains Mono', monospace; font-size: 12px; cursor: pointer; margin-bottom: 10px;">
+            <button class="menuButton" onclick="loadSaveFile()" style="width: 100%; margin: 0;">LOAD FILE<span style="display: inline-block; width: 26px; height: 26px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">✓</span></button>
+        </div>
+        
+        <div style="margin: 15px 0; padding: 10px; background: rgba(241, 196, 15, 0.1); border-radius: 5px; font-size: 11px; color: #89A0B4;">
+            💡 You can export save files from the arcade game's settings menu. This allows you to continue your adventure with the same hero stats and progress.
+        </div>
+        
+        <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">✕</span></button>
     </div>
 
     <script>
@@ -549,7 +585,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.2.5';
+        const GAME_VERSION = 'v0.2.6';
         
         // Music System
         let currentMusic = null;
@@ -557,6 +593,62 @@
         let musicVolume = 75; // Music volume (1-150)
         let musicStarted = false;
         let currentTrackIndex = 0;
+        
+        // ===== STORY INTRO BACKGROUND ANIMATION =====
+        // intro_a.png is 8x16 atlas (128 frames) at 16fps
+        let storyIntroCurrentFrame = 0;
+        let storyIntroDirection = 1; // 1 = forward, -1 = backward (ping-pong)
+        let storyIntroIntervalId = null;
+        const INTRO_COLS = 8;
+        const INTRO_ROWS = 16;
+        const INTRO_TOTAL_FRAMES = 128;
+        const INTRO_FPS = 16;
+        
+        function startStoryIntroAnimation() {
+            const bgElement = document.getElementById('storyIntroBackground');
+            if (!bgElement) return;
+            
+            // Use dungeon intro animation
+            const imageFile = 'story/intro/intro_a.png';
+            
+            // Set intro_a atlas as background
+            bgElement.style.backgroundImage = `url('${imageFile}')`;
+            bgElement.style.backgroundSize = `${INTRO_COLS * 100}% ${INTRO_ROWS * 100}%`;
+            bgElement.style.opacity = '1';
+            
+            // Start frame animation at 16fps
+            const frameInterval = 1000 / INTRO_FPS; // ~62.5ms per frame
+            storyIntroIntervalId = window.setInterval(() => {
+                // Calculate current frame position in atlas
+                const col = storyIntroCurrentFrame % INTRO_COLS;
+                const row = Math.floor(storyIntroCurrentFrame / INTRO_COLS);
+                
+                // Set background position to show current frame
+                const xPercent = (col / (INTRO_COLS - 1)) * 100;
+                const yPercent = (row / (INTRO_ROWS - 1)) * 100;
+                bgElement.style.backgroundPosition = `${xPercent}% ${yPercent}%`;
+                
+                // Advance frame with ping-pong
+                storyIntroCurrentFrame += storyIntroDirection;
+                
+                // Reverse at boundaries (ping-pong mode)
+                if (storyIntroCurrentFrame >= INTRO_TOTAL_FRAMES - 1) {
+                    storyIntroCurrentFrame = INTRO_TOTAL_FRAMES - 1;
+                    storyIntroDirection = -1;
+                } else if (storyIntroCurrentFrame <= 0) {
+                    storyIntroCurrentFrame = 0;
+                    storyIntroDirection = 1;
+                }
+            }, frameInterval);
+        }
+        
+        function stopStoryIntroAnimation() {
+            if (storyIntroIntervalId) {
+                window.clearInterval(storyIntroIntervalId);
+                storyIntroIntervalId = null;
+            }
+        }
+        // ===== END STORY INTRO BACKGROUND ANIMATION =====
         
         const dungeonMusicTracks = [
             { file: 'music/theme_a.webm', name: 'Electric Coin Company' },
@@ -800,6 +892,74 @@
         function closeAllPanels() {
             document.getElementById('overlay').style.display = 'none';
             document.getElementById('settingsPanel').style.display = 'none';
+            const loadSavePanel = document.getElementById('loadSavePanel');
+            if (loadSavePanel) {
+                loadSavePanel.style.display = 'none';
+            }
+        }
+        
+        function showLoadSave() {
+            document.getElementById('overlay').style.display = 'block';
+            const loadSavePanel = document.getElementById('loadSavePanel');
+            if (loadSavePanel) {
+                loadSavePanel.style.display = 'block';
+            }
+        }
+        
+        function loadSaveFile() {
+            const fileInput = document.getElementById('saveFileInput');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select a save file first!');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const saveData = JSON.parse(e.target.result);
+                    
+                    // Validate save data structure
+                    if (!saveData || !saveData.heroes) {
+                        alert('Invalid save file format! Missing hero data.');
+                        return;
+                    }
+                    
+                    // Save to localStorage
+                    if (saveSharedSave(saveData)) {
+                        alert('Save file loaded successfully!');
+                        
+                        // Refresh hero displays
+                        if (saveData.heroes.zooko) updateHeroDisplay('zooko', saveData.heroes.zooko);
+                        if (saveData.heroes.nate) updateHeroDisplay('nate', saveData.heroes.nate);
+                        if (saveData.heroes.zancas) updateHeroDisplay('zancas', saveData.heroes.zancas);
+                        if (saveData.heroes.cyberaxe) updateHeroDisplay('cyberaxe', saveData.heroes.cyberaxe);
+                        
+                        // Update dungeon level if arcade state exists
+                        if (saveData.arcadeState && saveData.arcadeState.level) {
+                            document.getElementById('dungeonLevel').textContent = saveData.arcadeState.level;
+                        }
+                        
+                        // Close panel
+                        closeAllPanels();
+                        
+                        // Clear file input
+                        fileInput.value = '';
+                    } else {
+                        alert('Failed to save the loaded data to localStorage.');
+                    }
+                } catch (error) {
+                    alert('Error reading save file: ' + error.message);
+                    console.error('Save file load error:', error);
+                }
+            };
+            
+            reader.onerror = function() {
+                alert('Error reading file!');
+            };
+            
+            reader.readAsText(file);
         }
         
         function saveSettings() {
@@ -869,6 +1029,47 @@
             return sharedSave;
         }
         
+        // Creates default shared save with initial hero stats
+        function createDefaultSharedSave() {
+            return {
+                saveVersion: 1,
+                lastPlayed: Date.now(),
+                arcadeState: null,
+                dungeonState: {
+                    currentLevel: 1,
+                    inventory: [],
+                    gold: 0,
+                    questProgress: {
+                        hasScepter: false,
+                        hasReturned: false,
+                        bossesDefeated: []
+                    }
+                },
+                heroes: {
+                    zooko: {
+                        name: 'Zooko',
+                        str: 8, dex: 11, con: 10, int: 15, wis: 13, cha: 9,
+                        hp: 22, maxHp: 25, ac: 12, xp: 0, level: 1
+                    },
+                    nate: {
+                        name: 'Nate',
+                        str: 14, dex: 12, con: 13, int: 10, wis: 9, cha: 11,
+                        hp: 28, maxHp: 30, ac: 14, xp: 0, level: 1
+                    },
+                    zancas: {
+                        name: 'Zancas',
+                        str: 10, dex: 15, con: 11, int: 12, wis: 14, cha: 8,
+                        hp: 24, maxHp: 26, ac: 13, xp: 0, level: 1
+                    },
+                    cyberaxe: {
+                        name: 'CyberAxe',
+                        str: 16, dex: 10, con: 14, int: 8, wis: 11, cha: 10,
+                        hp: 32, maxHp: 35, ac: 15, xp: 0, level: 1
+                    }
+                }
+            };
+        }
+        
         // Exit portal and return to arcade game
         function exitPortal() {
             try {
@@ -934,6 +1135,9 @@
             // Load settings
             loadSettings();
             console.log('Settings loaded:', settings);
+            
+            // Start background animation
+            startStoryIntroAnimation();
             
             // Load shared save and display hero stats
             const sharedSave = loadSharedSave();
