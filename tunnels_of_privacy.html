@@ -436,7 +436,7 @@
             padding: 25px;
             max-width: 450px;
             width: auto;
-            z-index: 200;
+            z-index: 1100;
             pointer-events: all;
             box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(10px);
@@ -505,6 +505,11 @@
             <!-- Click to Play prompt (hidden until ready) -->
             <div id="clickToPlayPrompt" style="display: none; margin-top: 30px; font-size: 24px; color: #2ECC71; font-weight: bold; animation: slowBlink 2s ease-in-out infinite; cursor: pointer;">
                 <div style="margin-bottom: 10px;">🎮 CLICK TO ENTER 🎮</div>
+                <div style="font-size: 14px; color: #89A0B4;">
+                    <span style="display: inline-block; padding: 5px 10px; background: rgba(52, 152, 219, 0.3); border-radius: 5px; margin-right: 5px;">MOUSE</span>
+                    or
+                    <span style="display: inline-block; padding: 5px 10px; background: rgba(46, 204, 113, 0.3); border-radius: 5px; margin-left: 5px;">🎮 A</span>
+                </div>
             </div>
         </div>
     </div>
@@ -556,10 +561,10 @@
                     <div style="color: #F2C94C; font-size: 28px; font-weight: 900; text-shadow: 0 0 20px rgba(242, 201, 76, 0.5);">LEVEL <span id="dungeonMenuLevel">1</span></div>
                 </div>
                 
-                <button class="menuButton">EXPLORER LEVEL<span style="display: inline-block; width: 26px; height: 26px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">⚔</span></button>
-                <button class="menuButton comingSoon" disabled>ENTER LEVEL STORE<br><span style="font-size: 12px; font-weight: 400;">(If Found)</span><span style="display: inline-block; width: 26px; height: 26px; background: #EB5757; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">🛒</span></button>
-                <button class="menuButton">INVENTORY<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">🎒</span></button>
-                <button class="menuButton">REST / SLEEP<span style="display: inline-block; width: 26px; height: 26px; background: #9B59B6; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">💤</span></button>
+                <button class="menuButton">EXPLORER LEVEL</button>
+                <button class="menuButton comingSoon" disabled>ENTER LEVEL STORE<br><span style="font-size: 12px; font-weight: 400;">(If Found)</span></button>
+                <button class="menuButton">INVENTORY</button>
+                <button class="menuButton">REST / SLEEP</button>
             </div>
         </div>
         
@@ -619,14 +624,14 @@
                     <div style="color: #F2C94C; font-size: 36px; font-weight: 900; text-shadow: 0 0 20px rgba(242, 201, 76, 0.5);">LEVEL <span id="dungeonLevel">1</span></div>
                 </div>
                 
-                <button class="menuButton" onclick="startAdventure()">START ADVENTURE<span style="display: inline-block; width: 26px; height: 26px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">▶</span></button>
-                <button class="menuButton comingSoon" disabled>CONTINUE<span style="display: inline-block; width: 26px; height: 26px; background: #EB5757; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">↻</span></button>
-                <button class="menuButton" onclick="showLoadSave()">LOAD SAVE FILE<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">📁</span></button>
-                <button class="menuButton" onclick="showSettings()">SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #2A9D8F; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">⚙</span></button>
-                <button class="menuButton portalButton" onclick="exitPortal()">EXIT PORTAL<br><span style="font-size: 10px; font-weight: 400;">(Return to Arcade)</span><span style="display: inline-block; width: 26px; height: 26px; background: #8B45FF; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">🌀</span></button>
+                <button id="startAdventureBtn" class="menuButton" onclick="startAdventure()">START ADVENTURE<span style="display: inline-block; width: 26px; height: 26px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">A</span></button>
+                <button id="continueBtn" class="menuButton comingSoon" disabled onclick="continueGame()">CONTINUE<span style="display: inline-block; width: 26px; height: 26px; background: #EB5757; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">A</span></button>
+                <button class="menuButton" onclick="showLoadSave()">LOAD SAVE FILE<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
+                <button class="menuButton" onclick="showSettings()">SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #2A9D8F; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">Y</span></button>
+                <button class="menuButton portalButton" onclick="exitPortal()">EXIT PORTAL<br><span style="font-size: 10px; font-weight: 400;">(Return to Arcade)</span><span style="display: inline-block; padding: 4px 10px; background: #8B45FF; border-radius: 5px; margin-left: 10px; font-weight: bold; color: white; font-size: 12px;">BACK</span></button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.2.11 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.2.13 • Portal System Active</div>
         </div>
         
         <!-- Music Control Panel - Bottom Above Ticker (OUTSIDE titleScreen so always visible) -->
@@ -662,10 +667,10 @@
     <!-- Pause Screen -->
     <div id="pauseScreen">
         <div id="pauseTitle">PAUSED</div>
-        <button class="menuButton" onclick="resumeGame()">RESUME<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">ESC</span></button>
+        <button class="menuButton" onclick="resumeGame()">RESUME<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         <button class="menuButton" onclick="saveGameFromPause()" style="background: linear-gradient(135deg, rgba(46, 134, 222, 0.4), rgba(46, 134, 222, 0.3)); border-color: #3498DB;">SAVE GAME<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">💾</span></button>
         <button class="menuButton" onclick="downloadSaveFile()" style="background: linear-gradient(135deg, rgba(39, 174, 96, 0.4), rgba(39, 174, 96, 0.3)); border-color: #27AE60;">SAVE GAME FILE<span style="display: inline-block; width: 26px; height: 26px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">⬇</span></button>
-        <button class="menuButton" onclick="showSettingsFromPause()">SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">⚙</span></button>
+        <button class="menuButton" onclick="showSettingsFromPause()">SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">Y</span></button>
         <button class="menuButton" onclick="quitToMenu()">QUIT TO MENU<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 10px; font-weight: bold; color: white; font-size: 12px;">◀</span></button>
     </div>
     
@@ -692,10 +697,11 @@
             💡 Settings are saved independently for Tunnels of Privacy
         </div>
         
-        <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">✕</span></button>
+        <button class="menuButton" onclick="clearCache()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px; background: linear-gradient(135deg, rgba(235, 87, 87, 0.4), rgba(235, 87, 87, 0.3)); border-color: #EB5757;">CLEAR CACHE<span style="display: inline-block; width: 26px; height: 26px; background: #EB5757; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">X</span></button>
+        <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         
         <div style="display: block; width: 100%; margin-top: 15px; padding: 10px 0; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A7A8F; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-            Tunnels of Privacy v0.2.11
+            Tunnels of Privacy v0.2.13
         </div>
     </div>
     
@@ -708,14 +714,14 @@
                 📥 Import save file from arcade game or previous dungeon run
             </div>
             <input type="file" id="saveFileInput" accept=".json" style="display: block; width: 100%; padding: 10px; background: rgba(10, 14, 18, 0.8); border: 2px solid #3498DB; border-radius: 6px; color: #E9F0F7; font-family: 'JetBrains Mono', monospace; font-size: 12px; cursor: pointer; margin-bottom: 10px;">
-            <button class="menuButton" onclick="loadSaveFile()" style="width: 100%; margin: 0;">LOAD FILE<span style="display: inline-block; width: 26px; height: 26px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">✓</span></button>
+            <button class="menuButton" onclick="loadSaveFile()" style="width: 100%; margin: 0;">LOAD FILE<span style="display: inline-block; width: 26px; height: 26px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">A</span></button>
         </div>
         
         <div style="margin: 15px 0; padding: 10px; background: rgba(241, 196, 15, 0.1); border-radius: 5px; font-size: 11px; color: #89A0B4;">
             💡 You can export save files from the arcade game's settings menu. This allows you to continue your adventure with the same hero stats and progress.
         </div>
         
-        <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">✕</span></button>
+        <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
     </div>
 
     <script>
@@ -726,6 +732,43 @@
         };
         
         const GAME_VERSION = 'v0.2.11';
+        
+        // ===== GAMEPAD SUPPORT =====
+        let gamepadConnected = false;
+        let gamepadIndex = null;
+        let gamepadButtonStates = {};
+        let gamepadAxisDeadzone = 0.25;
+        let lastGamepadUpdate = 0;
+        const gamepadUpdateInterval = 16; // ~60Hz polling
+        
+        // Button mapping (standard gamepad layout)
+        const GamepadButtons = {
+            A: 0,           // Bottom face button (A on Xbox, X on PlayStation)
+            B: 1,           // Right face button (B on Xbox, Circle on PlayStation)
+            X: 2,           // Left face button (X on Xbox, Square on PlayStation)
+            Y: 3,           // Top face button (Y on Xbox, Triangle on PlayStation)
+            LB: 4,          // Left bumper
+            RB: 5,          // Right bumper
+            LT: 6,          // Left trigger
+            RT: 7,          // Right trigger
+            SELECT: 8,      // Select/Back/Share
+            START: 9,       // Start/Menu/Options
+            L3: 10,         // Left stick button
+            R3: 11,         // Right stick button
+            DPAD_UP: 12,
+            DPAD_DOWN: 13,
+            DPAD_LEFT: 14,
+            DPAD_RIGHT: 15
+        };
+        
+        // Axis mapping
+        const GamepadAxes = {
+            LEFT_X: 0,
+            LEFT_Y: 1,
+            RIGHT_X: 2,
+            RIGHT_Y: 3
+        };
+        // ===== END GAMEPAD SUPPORT =====
         
         // Music System
         let currentMusic = null;
@@ -1114,6 +1157,9 @@
                             document.getElementById('dungeonLevel').textContent = saveData.arcadeState.level;
                         }
                         
+                        // Update title screen buttons
+                        updateTitleScreenButtons();
+                        
                         // Close panel
                         closeAllPanels();
                         
@@ -1241,6 +1287,49 @@
                     }
                 }
             };
+        }
+        
+        // Clear cache - deletes all localStorage data
+        function clearCache() {
+            if (confirm('This will delete ALL saved data including your progress. Are you sure?')) {
+                try {
+                    localStorage.removeItem(STORAGE_KEYS.SETTINGS);
+                    localStorage.removeItem(STORAGE_KEYS.SHARED_SAVE);
+                    alert('Cache cleared! The page will reload.');
+                    location.reload();
+                } catch (e) {
+                    console.error('Clear cache error:', e);
+                    alert('Error clearing cache: ' + e.message);
+                }
+            }
+        }
+        
+        // Update title screen button states based on save existence
+        function updateTitleScreenButtons() {
+            const sharedSave = loadSharedSave();
+            const startBtn = document.getElementById('startAdventureBtn');
+            const continueBtn = document.getElementById('continueBtn');
+            
+            if (sharedSave && (sharedSave.arcadeState || sharedSave.dungeonState)) {
+                // Has save - enable CONTINUE, disable START ADVENTURE
+                continueBtn.disabled = false;
+                continueBtn.classList.remove('comingSoon');
+                startBtn.disabled = true;
+                startBtn.style.opacity = '0.5';
+                startBtn.style.cursor = 'not-allowed';
+            } else {
+                // No save - enable START ADVENTURE, disable CONTINUE
+                startBtn.disabled = false;
+                startBtn.style.opacity = '1';
+                startBtn.style.cursor = 'pointer';
+                continueBtn.disabled = true;
+                continueBtn.classList.add('comingSoon');
+            }
+        }
+        
+        // Continue game - same as start adventure for now
+        function continueGame() {
+            startAdventure();
         }
         
         // Exit portal and return to arcade game
@@ -1471,6 +1560,168 @@
             }
         });
         
+        // ===== GAMEPAD FUNCTIONS =====
+        function onGamepadConnected(e) {
+            gamepadConnected = true;
+            gamepadIndex = e.gamepad.index;
+            console.log(`🎮 Controller Connected: ${e.gamepad.id}`);
+        }
+        
+        function onGamepadDisconnected(e) {
+            if (e.gamepad.index === gamepadIndex) {
+                gamepadConnected = false;
+                gamepadIndex = null;
+                gamepadButtonStates = {};
+                console.log('🎮 Controller Disconnected');
+            }
+        }
+        
+        function updateGamepad() {
+            if (!gamepadConnected || gamepadIndex === null) return;
+            
+            // Don't process gamepad input while loading modal is visible
+            const loadingModal = document.getElementById('loadingModal');
+            if (loadingModal && loadingModal.style.display !== 'none') return;
+            
+            const now = Date.now();
+            if (now - lastGamepadUpdate < gamepadUpdateInterval) return;
+            lastGamepadUpdate = now;
+            
+            const gamepads = navigator.getGamepads();
+            const gamepad = gamepads[gamepadIndex];
+            
+            if (!gamepad) return;
+            
+            // Process buttons
+            gamepad.buttons.forEach((button, index) => {
+                const wasPressed = gamepadButtonStates[index] || false;
+                const isPressed = button.pressed;
+                
+                // Button just pressed (rising edge)
+                if (isPressed && !wasPressed) {
+                    handleGamepadButtonPress(index);
+                }
+                
+                gamepadButtonStates[index] = isPressed;
+            });
+        }
+        
+        function handleGamepadButtonPress(buttonIndex) {
+            // ===== SETTINGS PANEL NAVIGATION =====
+            const settingsPanel = document.getElementById('settingsPanel');
+            if (settingsPanel && settingsPanel.style.display === 'block') {
+                // B button - Close
+                if (buttonIndex === GamepadButtons.B) {
+                    closeAllPanels();
+                    return;
+                }
+                return; // Block all other inputs when settings is open
+            }
+            // ===== END SETTINGS PANEL NAVIGATION =====
+            
+            // ===== LOAD SAVE PANEL NAVIGATION =====
+            const loadSavePanel = document.getElementById('loadSavePanel');
+            if (loadSavePanel && loadSavePanel.style.display === 'block') {
+                // B button - Close
+                if (buttonIndex === GamepadButtons.B) {
+                    closeAllPanels();
+                    return;
+                }
+                return; // Block all other inputs when load save panel is open
+            }
+            // ===== END LOAD SAVE PANEL NAVIGATION =====
+            
+            // ===== TITLE SCREEN NAVIGATION =====
+            if (currentScreen === 'title') {
+                // A button - Start Adventure
+                if (buttonIndex === GamepadButtons.A) {
+                    startAdventure();
+                    return;
+                }
+                // Y button - Settings
+                else if (buttonIndex === GamepadButtons.Y) {
+                    showSettings();
+                    return;
+                }
+                // B button - Load Save File
+                else if (buttonIndex === GamepadButtons.B) {
+                    showLoadSave();
+                    return;
+                }
+                // BACK button (SELECT) - Exit Portal
+                else if (buttonIndex === GamepadButtons.SELECT) {
+                    exitPortal();
+                    return;
+                }
+            }
+            // ===== END TITLE SCREEN NAVIGATION =====
+            
+            // ===== PAUSE MENU NAVIGATION =====
+            if (isPaused) {
+                // A button - Resume
+                if (buttonIndex === GamepadButtons.A) {
+                    resumeGame();
+                    return;
+                }
+                // B button - Resume (also works)
+                else if (buttonIndex === GamepadButtons.B) {
+                    resumeGame();
+                    return;
+                }
+                // Y button - Settings
+                else if (buttonIndex === GamepadButtons.Y) {
+                    showSettingsFromPause();
+                    return;
+                }
+                // SELECT button - Quit to Menu
+                else if (buttonIndex === GamepadButtons.SELECT) {
+                    quitToMenu();
+                    return;
+                }
+            }
+            // ===== END PAUSE MENU NAVIGATION =====
+            
+            // START button - Pause/Resume
+            if (buttonIndex === GamepadButtons.START) {
+                if (currentScreen === 'title') return; // Can't pause on title screen
+                
+                if (isPaused) {
+                    resumeGame();
+                } else {
+                    pauseGame();
+                }
+                return;
+            }
+        }
+        
+        // Poll gamepad in animation loop
+        function gamepadLoop() {
+            updateGamepad();
+            requestAnimationFrame(gamepadLoop);
+        }
+        
+        // Gamepad polling for Click to Enter
+        function pollGamepadForClickToPlay() {
+            const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+            for (let i = 0; i < gamepads.length; i++) {
+                const gp = gamepads[i];
+                if (gp && gp.buttons[0] && gp.buttons[0].pressed) { // A button
+                    const clickToPlayPrompt = document.getElementById('clickToPlayPrompt');
+                    if (clickToPlayPrompt && clickToPlayPrompt.style.display !== 'none') {
+                        clickToPlayPrompt.click();
+                        return;
+                    }
+                }
+            }
+            
+            // Continue polling if loading modal is visible
+            const loadingModal = document.getElementById('loadingModal');
+            if (loadingModal && loadingModal.style.display !== 'none') {
+                requestAnimationFrame(pollGamepadForClickToPlay);
+            }
+        }
+        // ===== END GAMEPAD FUNCTIONS =====
+        
         // Initialize on page load
         // Preload images and audio into browser cache
         function preloadAssets() {
@@ -1607,6 +1858,9 @@
                 if (clickToPlayPrompt) {
                     clickToPlayPrompt.style.display = 'block';
                     
+                    // Start gamepad polling for A button
+                    pollGamepadForClickToPlay();
+                    
                     const handleClick = () => {
                         // Start music when user clicks
                         if (musicEnabled && musicVolume > 0 && !musicStarted) {
@@ -1647,6 +1901,14 @@
             loadSettings();
             console.log('Settings loaded:', settings);
             
+            // ===== GAMEPAD SUPPORT =====
+            // Handle gamepad connections
+            window.addEventListener('gamepadconnected', onGamepadConnected);
+            window.addEventListener('gamepaddisconnected', onGamepadDisconnected);
+            // Start gamepad polling loop
+            gamepadLoop();
+            // ===== END GAMEPAD SUPPORT =====
+            
             // Preload assets
             preloadAssets();
             
@@ -1675,6 +1937,9 @@
             } else {
                 console.log('No shared save found - using default hero stats');
             }
+            
+            // Update title screen button states
+            updateTitleScreenButtons();
             
             console.log('Initialization complete. Portal system ready.');
         }

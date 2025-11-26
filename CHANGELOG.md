@@ -2,6 +2,68 @@
 
 # Changelog
 
+## Tunnels of Privacy v0.2.13 - Save System & Cache Management (2025-11-25)
+- **Summary:**
+  - Added CONTINUE button that enables when save file exists
+  - Added Clear Cache button to settings panel
+  - Improved save system with automatic button state management
+
+- **Save System Improvements:**
+  - **CONTINUE Button:**
+    - Automatically enables when save data exists in localStorage
+    - START ADVENTURE automatically disables when save exists
+    - Button states update after loading save files
+    - Uses same A button as START ADVENTURE
+  - **Button State Logic:**
+    - Checks for both arcade and dungeon save data
+    - Updates on page load via `updateTitleScreenButtons()`
+    - Updates after file load via `loadSaveFile()`
+
+- **Settings Panel:**
+  - **Clear Cache Button:**
+    - Deletes all localStorage data (settings + shared save)
+    - Confirmation prompt before deletion
+    - Automatically reloads page after clearing
+    - Uses X button (gamepad control)
+    - Red styling to indicate destructive action
+
+- **Technical Changes:**
+  - Added `updateTitleScreenButtons()` function for button state management
+  - Added `continueGame()` function (currently calls `startAdventure()`)
+  - Added `clearCache()` function for localStorage cleanup
+  - Button IDs added: `startAdventureBtn`, `continueBtn`
+  - CONTINUE button icon changed from ↻ to A to match controller
+
+## Tunnels of Privacy v0.2.12 - Gamepad Control Fixes (2025-11-25)
+- **Summary:**
+  - Fixed all button icons to show actual gamepad controls instead of visual symbols
+  - Fixed settings panel z-index so it appears above pause menu
+  - Added BACK button support for EXIT PORTAL on title screen
+
+- **Button Icon Corrections:**
+  - **Title Screen:**
+    - START ADVENTURE: Changed ▶ to A
+    - LOAD SAVE FILE: Changed 📁 to B
+    - SETTINGS: Changed ⚙ to Y
+    - EXIT PORTAL: Changed 🌀 to BACK
+  - **Settings Panel:**
+    - CLOSE: Changed ✕ to B
+  - **Load Save Panel:**
+    - LOAD FILE: Changed ✓ to A
+    - CLOSE: Changed ✕ to B
+  - **Dungeon Menu:**
+    - Removed all non-functional visual icons (⚔🛒🎒💤)
+    - Buttons show no icons until gamepad controls are implemented
+
+- **Gamepad Controls:**
+  - BACK button (SELECT) now exits portal from title screen
+  - All button icons now accurately reflect actual controller mappings
+
+- **Bug Fixes:**
+  - Settings panel z-index increased from 200 to 1100
+  - Settings now appear above pause screen (pause z-index: 1000)
+  - Settings accessible from pause menu again
+
 ## v0.21.2 - Unified Save System (2025-11-25)
 - **Summary:**
   - Fixed save file download to export complete shared save with hero data
