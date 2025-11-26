@@ -76,6 +76,129 @@
             image-rendering: crisp-edges;
         }
         
+        #battleNotification {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.95), rgba(39, 174, 96, 0.95));
+            border: 4px solid #27AE60;
+            border-radius: 12px;
+            padding: 40px 60px;
+            font-family: 'Inter', sans-serif;
+            font-size: 48px;
+            font-weight: 900;
+            color: #FFFFFF;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            display: none;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            animation: notificationPulse 0.5s ease-out;
+        }
+        
+        @keyframes notificationPulse {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        
+        #battleEnemyCards {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            max-width: 160px;
+            z-index: 10;
+        }
+        
+        #battleEnemyCards.twoColumns {
+            grid-template-columns: 1fr 1fr;
+            max-width: 330px;
+        }
+        
+        .battleEnemyCard {
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
+            border: 2px solid #E74C3C;
+            border-radius: 8px;
+            padding: 8px;
+            width: 140px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .battleEnemyCard.boss {
+            border-color: #8B45FF;
+            box-shadow: 0 0 15px rgba(139, 69, 255, 0.4);
+        }
+        
+        .battleEnemyCard.targetable {
+            border-color: #FFD700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+            animation: cardPulse 1s infinite;
+        }
+        
+        .battleEnemyCard:hover.targetable {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.8);
+        }
+        
+        @keyframes cardPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); }
+            50% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.9); }
+        }
+        
+        .battleEnemyCard.dead {
+            opacity: 0.4;
+            cursor: not-allowed;
+            filter: grayscale(100%);
+        }
+        
+        .battleEnemyPortrait {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            border: 2px solid #E74C3C;
+            margin: 0 auto 6px auto;
+            box-shadow: 0 0 10px rgba(231, 76, 60, 0.4);
+        }
+        
+        .battleEnemyCard.boss .battleEnemyPortrait {
+            border-color: #8B45FF;
+            box-shadow: 0 0 10px rgba(139, 69, 255, 0.4);
+        }
+        
+        .battleEnemyName {
+            font-family: 'Inter', sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #E74C3C;
+        }
+        
+        .battleEnemyCard.boss .battleEnemyName {
+            color: #8B45FF;
+        }
+        
+        .battleEnemyStat {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: #BFD1E0;
+            text-align: center;
+            margin: 2px 0;
+        }
+        
         #battleUI {
             position: absolute;
             bottom: 0;
@@ -167,8 +290,8 @@
         
         #battleActions {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
             width: 100%;
             max-width: 700px;
         }
@@ -178,16 +301,16 @@
             border: 2px solid #2A9D8F;
             color: #E9F0F7;
             font-family: 'Inter', sans-serif;
-            font-size: 13px;
+            font-size: 10px;
             font-weight: 600;
-            padding: 12px 8px;
-            border-radius: 8px;
+            padding: 6px 4px;
+            border-radius: 6px;
             cursor: pointer;
             pointer-events: all;
             transition: all 0.2s ease;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            letter-spacing: 0.3px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
         
         .battleButton:hover:not(:disabled) {
@@ -195,6 +318,11 @@
             border-color: #3DBAA3;
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(42, 157, 143, 0.4);
+        }
+        
+        .battleButton:active:not(:disabled) {
+            transform: translateY(0px) scale(0.95);
+            box-shadow: 0 2px 8px rgba(42, 157, 143, 0.6);
         }
         
         .battleButton:disabled {
@@ -235,6 +363,20 @@
             background: linear-gradient(135deg, rgba(155, 89, 182, 0.3), rgba(155, 89, 182, 0.2));
             border-color: #AF7AC5;
             box-shadow: 0 6px 20px rgba(155, 89, 182, 0.4);
+        }
+        
+        .battleButton.swap { border-color: #3498DB; }
+        .battleButton.swap:hover:not(:disabled) { 
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.3), rgba(52, 152, 219, 0.2));
+            border-color: #5DADE2;
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+        
+        .battleButton.taunt { border-color: #E67E22; }
+        .battleButton.taunt:hover:not(:disabled) { 
+            background: linear-gradient(135deg, rgba(230, 126, 34, 0.3), rgba(230, 126, 34, 0.2));
+            border-color: #F39C12;
+            box-shadow: 0 6px 20px rgba(230, 126, 34, 0.4);
         }
         
         .battleButton.retreat { border-color: #95A5A6; }
@@ -759,6 +901,15 @@
         <!-- Battle Screen -->
         <div id="battleScreen">
             <canvas id="battleCanvas"></canvas>
+            
+            <!-- Battle Notification Banner -->
+            <div id="battleNotification">ROOM CLEARED!</div>
+            
+            <!-- Enemy Cards (Left Side) -->
+            <div id="battleEnemyCards">
+                <!-- Populated dynamically by updateBattleEnemyCards() -->
+            </div>
+            
             <div id="battleUI">
                 <!-- Left Hero Cards: Zooko & Nate -->
                 <div id="battleUILeft">
@@ -767,25 +918,32 @@
                         <div class="battleHeroName" style="color: #F2C94C;">ZOOKO</div>
                         <div class="battleHeroStat" style="color: #ff6b6b;">HP: <span id="bzooko-hp">30</span>/<span id="bzooko-maxhp">30</span></div>
                         <div class="battleHeroStat">AC: <span id="bzooko-ac">12</span></div>
+                        <div class="battleHeroStat" style="color: #FFD700;">XP: <span id="bzooko-xp">0</span></div>
+                        <div class="battleHeroStat" style="color: #ff1744; font-size: 14px;" id="bzooko-heals">❤️ ❤️</div>
                     </div>
                     <div class="battleHeroCard" id="battleCardNate">
                         <div class="battleHeroPortrait" style="background-image: url('people/Nate_a_head_compressed.png'); border-color: #E74C3C;"></div>
                         <div class="battleHeroName" style="color: #E74C3C;">NATE</div>
                         <div class="battleHeroStat" style="color: #ff6b6b;">HP: <span id="bnate-hp">28</span>/<span id="bnate-maxhp">30</span></div>
                         <div class="battleHeroStat">AC: <span id="bnate-ac">14</span></div>
+                        <div class="battleHeroStat" style="color: #FFD700;">XP: <span id="bnate-xp">0</span></div>
+                        <div class="battleHeroStat" style="color: #ff1744; font-size: 14px;" id="bnate-heals">❤️ ❤️</div>
                     </div>
                 </div>
                 
                 <!-- Center Action Bar -->
                 <div id="battleUICenter">
                     <div id="battleTurnInfo">ZOOKO'S TURN</div>
+                    <div id="diceRollDisplay" style="display: none; background: rgba(0,0,0,0.9); color: #FFD700; padding: 12px; border-radius: 8px; font-size: 18px; font-weight: bold; text-align: center; margin-bottom: 10px; border: 2px solid #FFD700;"></div>
                     <div id="battleActions">
-                        <button class="battleButton attack-weak" onclick="battleAction('weakAttack')">⚔ WEAK ATTACK</button>
-                        <button class="battleButton attack-strong" onclick="battleAction('strongAttack')">⚡ STRONG ATTACK</button>
-                        <button class="battleButton special" onclick="battleAction('special')">✨ SPECIAL</button>
+                        <button class="battleButton attack-weak" onclick="battleAction('light')">⚔ LIGHT</button>
+                        <button class="battleButton attack-strong" id="battleHeavyBtn" onclick="battleAction('heavy')">⚡ HEAVY</button>
+                        <button class="battleButton special" id="battleSpecialBtn" onclick="battleAction('special')">✨ SPECIAL</button>
                         <button class="battleButton defend" onclick="battleAction('defend')">🛡 DEFEND</button>
-                        <button class="battleButton heal" onclick="battleAction('heal')" disabled>💚 HEAL</button>
-                        <button class="battleButton" onclick="battleAction('skip')">⏭ SKIP</button>
+                        <button class="battleButton swap" onclick="battleAction('swap')">🔄 SWAP</button>
+                        <button class="battleButton taunt" onclick="battleAction('taunt')">🗣 TAUNT</button>
+                        <button class="battleButton heal" onclick="battleAction('heal')">💚 HEAL</button>
+                        <button class="battleButton" id="battleSkipBtn" onclick="battleAction('skip')">⏭ SKIP</button>
                         <button class="battleButton" onclick="battleAction('talk')">💬 TALK</button>
                         <button class="battleButton retreat" onclick="battleAction('retreat')">🏃 RETREAT</button>
                     </div>
@@ -798,12 +956,17 @@
                         <div class="battleHeroName" style="color: #27AE60;">ZANCAS</div>
                         <div class="battleHeroStat" style="color: #ff6b6b;">HP: <span id="bzancas-hp">24</span>/<span id="bzancas-maxhp">26</span></div>
                         <div class="battleHeroStat">AC: <span id="bzancas-ac">15</span></div>
+                        <div class="battleHeroStat" style="color: #FFD700;">XP: <span id="bzancas-xp">0</span></div>
+                        <div class="battleHeroStat" style="color: #ff1744; font-size: 14px;" id="bzancas-heals">❤️ ❤️</div>
                     </div>
                     <div class="battleHeroCard" id="battleCardCyberAxe">
                         <div class="battleHeroPortrait" style="background-image: url('people/cyberaxe_a_head_compressed.png'); border-color: #2E86DE;"></div>
                         <div class="battleHeroName" style="color: #2E86DE;">CYBERAXE</div>
                         <div class="battleHeroStat" style="color: #ff6b6b;">HP: <span id="bcyberaxe-hp">32</span>/<span id="bcyberaxe-maxhp">35</span></div>
                         <div class="battleHeroStat">AC: <span id="bcyberaxe-ac">15</span></div>
+                        <div class="battleHeroStat" style="color: #FFD700;">XP: <span id="bcyberaxe-xp">0</span></div>
+                        <div class="battleHeroStat" style="color: #ff1744; font-size: 14px;" id="bcyberaxe-heals">❤️ ❤️</div>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -1600,6 +1763,7 @@
         // Battle state
         let battleState = {
             active: false,
+            won: false,
             currentTurn: 0,
             turnOrder: [],
             heroes: [],
@@ -1613,7 +1777,7 @@
         };
         
         // Start a battle encounter
-        function startBattle() {
+        async function startBattle() {
             // Switch to battle screen
             currentScreen = 'battle';
             document.getElementById('dungeonMenuScreen').style.display = 'none';
@@ -1627,6 +1791,19 @@
             battleState.canvas.width = window.innerWidth;
             battleState.canvas.height = window.innerHeight - 180;
             
+            // Load enemy data
+            let bossesData = [];
+            let mobsData = [];
+            try {
+                const bossResponse = await fetch('tunnelsofprivacy/bosses/bosses_data.json');
+                bossesData = await bossResponse.json();
+                const mobResponse = await fetch('tunnelsofprivacy/mobs/mobs_data.json');
+                const mobObj = await mobResponse.json();
+                mobsData = mobObj.mobs || [];
+            } catch(e) {
+                console.error('Failed to load enemy data:', e);
+            }
+            
             // Load shared save to get hero stats
             const sharedSave = loadSharedSave();
             
@@ -1636,6 +1813,8 @@
                     name: 'Zooko', 
                     hp: sharedSave?.heroes?.zooko?.hp || 30, 
                     maxHp: sharedSave?.heroes?.zooko?.maxHp || 30,
+                    xp: sharedSave?.heroes?.zooko?.xp || 0,
+                    healsRemaining: 2,
                     stats: sharedSave?.heroes?.zooko || {},
                     color: '#F2C94C',
                     x: 0, y: 0, platform: null, facing: 'center',
@@ -1646,6 +1825,8 @@
                     name: 'Nate', 
                     hp: sharedSave?.heroes?.nate?.hp || 28, 
                     maxHp: sharedSave?.heroes?.nate?.maxHp || 30,
+                    xp: sharedSave?.heroes?.nate?.xp || 0,
+                    healsRemaining: 2,
                     stats: sharedSave?.heroes?.nate || {},
                     color: '#E74C3C',
                     x: 0, y: 0, platform: null, facing: 'center',
@@ -1656,6 +1837,8 @@
                     name: 'Zancas', 
                     hp: sharedSave?.heroes?.zancas?.hp || 24, 
                     maxHp: sharedSave?.heroes?.zancas?.maxHp || 26,
+                    xp: sharedSave?.heroes?.zancas?.xp || 0,
+                    healsRemaining: 2,
                     stats: sharedSave?.heroes?.zancas || {},
                     color: '#27AE60',
                     x: 0, y: 0, platform: null, facing: 'center',
@@ -1666,6 +1849,8 @@
                     name: 'CyberAxe', 
                     hp: sharedSave?.heroes?.cyberaxe?.hp || 32, 
                     maxHp: sharedSave?.heroes?.cyberaxe?.maxHp || 35,
+                    xp: sharedSave?.heroes?.cyberaxe?.xp || 0,
+                    healsRemaining: 2,
                     stats: sharedSave?.heroes?.cyberaxe || {},
                     color: '#2E86DE',
                     x: 0, y: 0, platform: null, facing: 'center',
@@ -1683,39 +1868,49 @@
                 hero.sprite.src = hero.spritePath + '?v=' + Date.now();
             });
             
-            // Setup test enemies - boss + 2 mobs
-            battleState.enemies = [
-                { 
-                    name: 'Shadow Kraken', 
-                    hp: 50, 
-                    maxHp: 50,
+            // Setup enemies from loaded data (level 2 for testing)
+            battleState.enemies = [];
+            
+            // Add boss from level 2
+            const boss = bossesData.find(b => b.mainLevel === 2);
+            if (boss) {
+                battleState.enemies.push({
+                    name: boss.name,
+                    hp: 20,
+                    maxHp: 20,
+                    ac: boss.stats.ac,
+                    attackDamage: boss.stats.attackDamage,
+                    speed: boss.stats.speed,
+                    dex: boss.stats.initiative || 0,
+                    hostile: boss.behavior?.hostile !== false,
                     color: '#8B45FF',
                     x: 0, y: 0, platform: null, facing: 'center',
                     sprite: new Image(),
-                    spritePath: 'tunnelsofprivacy/bosses/lvl1/boss_lvl1.png',
+                    spritePath: boss.spritePath,
                     isMob: false
-                },
-                {
-                    name: 'Cave Spider',
-                    hp: 10,
-                    maxHp: 10,
+                });
+            }
+            
+            // Add 2 random hostile mobs
+            const hostileMobs = mobsData.filter(m => m.behavior?.hostile);
+            for (let i = 0; i < 2 && i < hostileMobs.length; i++) {
+                const mob = hostileMobs[Math.floor(Math.random() * hostileMobs.length)];
+                battleState.enemies.push({
+                    name: mob.name,
+                    hp: mob.stats.hp,
+                    maxHp: mob.stats.maxHp,
+                    ac: mob.stats.ac,
+                    attackDamage: mob.stats.attackDamage,
+                    speed: mob.stats.speed,
+                    dex: 0,
+                    hostile: mob.behavior?.hostile !== false,
                     color: '#5C3317',
                     x: 0, y: 0, platform: null, facing: 'center',
                     sprite: new Image(),
-                    spritePath: 'tunnelsofprivacy/mobs/spider1.png',
+                    spritePath: mob.spritePath,
                     isMob: true
-                },
-                {
-                    name: 'Dire Rat',
-                    hp: 6,
-                    maxHp: 6,
-                    color: '#6B5B4F',
-                    x: 0, y: 0, platform: null, facing: 'center',
-                    sprite: new Image(),
-                    spritePath: 'tunnelsofprivacy/mobs/rat1.png',
-                    isMob: true
-                }
-            ];
+                });
+            }
             
             // Load enemy sprites
             battleState.enemies.forEach(enemy => {
@@ -1745,17 +1940,42 @@
             };
             battleState.backgroundImage.src = battleState.backgroundPath;
             
-            // Setup turn order (by DEX for now, placeholder)
-            battleState.turnOrder = [...battleState.heroes];
+            // Calculate initiative for all combatants
+            const allCombatants = [...battleState.heroes, ...battleState.enemies];
+            allCombatants.forEach(c => {
+                const dexMod = calculateModifier(c.stats?.dex || c.dex || 10);
+                c.initiative = rollD20() + dexMod;
+            });
+            
+            // Setup turn order sorted by initiative (highest first)
+            battleState.turnOrder = allCombatants.sort((a, b) => b.initiative - a.initiative);
             battleState.currentTurn = 0;
             battleState.active = true;
+            battleState.targetingMode = false;
+            battleState.pendingAction = null;
             
             // Update UI
             updateBattleTurnInfo();
             updateBattleHeroCards();
+            updateBattleEnemyCards();
             
             // Render initial state (will re-render when bg loads)
             renderBattle();
+            
+            // Start battle animation loop for continuous updates (targeting highlights, etc.)
+            function battleAnimationLoop() {
+                if (battleState.active) {
+                    renderBattle();
+                    requestAnimationFrame(battleAnimationLoop);
+                }
+            }
+            battleAnimationLoop();
+            
+            // If first turn is AI, process it automatically
+            const firstCombatant = battleState.turnOrder[0];
+            if (!battleState.heroes.includes(firstCombatant)) {
+                setTimeout(() => processAITurn(firstCombatant), 1500);
+            }
         }
         
 
@@ -2231,10 +2451,62 @@
         }
         
 
+        // Handle canvas clicks for targeting
+        function handleBattleClick(event) {
+            if (!battleState.targetingMode || !battleState.pendingAction) return;
+            
+            const rect = battleState.canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            
+            // Check if click hit an enemy
+            for (const enemy of battleState.enemies) {
+                if (enemy.hp <= 0 || !enemy.hostile) continue;
+                
+                const canvas = battleState.canvas;
+                const depthScale = 0.6 + (enemy.y / canvas.height) * 0.4;
+                let hitWidth, hitHeight, hitX, hitY;
+                
+                if (enemy.isMob) {
+                    const mobAspectRatio = 1344 / 768;
+                    const baseHeight = 75;
+                    const spriteHeight = baseHeight * depthScale;
+                    const spriteWidth = spriteHeight * mobAspectRatio;
+                    hitWidth = spriteWidth;
+                    hitHeight = spriteHeight;
+                    hitX = enemy.x - hitWidth / 2;
+                    hitY = enemy.y - spriteHeight;
+                } else {
+                    hitWidth = 200 * depthScale;
+                    hitHeight = 200 * depthScale;
+                    hitX = enemy.x - hitWidth / 2;
+                    hitY = enemy.y - hitHeight / 2;
+                }
+                
+                if (x >= hitX && x <= hitX + hitWidth && y >= hitY && y <= hitY + hitHeight) {
+                    // Target found!
+                    const attacker = battleState.turnOrder[battleState.currentTurn];
+                    executeAttack(attacker, enemy, battleState.pendingAction);
+                    
+                    // Exit targeting mode
+                    battleState.targetingMode = false;
+                    battleState.pendingAction = null;
+                    battleState.canvas.style.cursor = 'default';
+                    return;
+                }
+            }
+        }
+        
         // Render battle scene
         function renderBattle() {
             const ctx = battleState.ctx;
             const canvas = battleState.canvas;
+            
+            // Setup click handler
+            if (!canvas.hasClickHandler) {
+                canvas.addEventListener('click', handleBattleClick);
+                canvas.hasClickHandler = true;
+            }
             
             // Draw background image if loaded, otherwise fallback to gradient
             if (battleState.backgroundImage && battleState.backgroundImage.complete && battleState.backgroundImage.naturalHeight !== 0) {
@@ -2363,9 +2635,9 @@
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
                 ctx.fillRect(barX, barY, barWidth, barHeight);
                 
-                // HP fill
+                // HP fill (GREEN -> YELLOW for heroes)
                 const hpPercent = hero.hp / hero.maxHp;
-                ctx.fillStyle = hpPercent > 0.5 ? '#27AE60' : hpPercent > 0.25 ? '#F39C12' : '#E74C3C';
+                ctx.fillStyle = hpPercent > 0.5 ? '#27AE60' : hpPercent > 0.25 ? '#F39C12' : '#F1C40F';
                 ctx.fillRect(barX, barY, barWidth * hpPercent, barHeight);
             });
             
@@ -2455,6 +2727,40 @@
                 const hpPercent = enemy.hp / enemy.maxHp;
                 ctx.fillStyle = hpPercent > 0.5 ? '#E74C3C' : hpPercent > 0.25 ? '#C0392B' : '#A93226';
                 ctx.fillRect(barX, barY, barWidth * hpPercent, barHeight);
+                
+                // Highlight clickable enemies in targeting mode
+                if (battleState.targetingMode && enemy.hostile) {
+                    const depthScale = 0.6 + (enemy.y / canvas.height) * 0.4;
+                    let highlightWidth, highlightHeight, highlightX, highlightY;
+                    
+                    if (enemy.isMob) {
+                        const mobAspectRatio = 1344 / 768;
+                        const baseHeight = 75;
+                        const spriteHeight = baseHeight * depthScale;
+                        const spriteWidth = spriteHeight * mobAspectRatio;
+                        highlightWidth = spriteWidth + 20;
+                        highlightHeight = spriteHeight + 20;
+                        highlightX = enemy.x - highlightWidth / 2;
+                        highlightY = enemy.y - spriteHeight - 10;
+                    } else {
+                        highlightWidth = 220 * depthScale;
+                        highlightHeight = 220 * depthScale;
+                        highlightX = enemy.x - highlightWidth / 2;
+                        highlightY = enemy.y - highlightHeight / 2;
+                    }
+                    
+                    // Pulsing glow effect
+                    const pulseAlpha = 0.3 + Math.sin(Date.now() / 200) * 0.2;
+                    ctx.strokeStyle = `rgba(255, 255, 0, ${pulseAlpha})`;
+                    ctx.lineWidth = 4;
+                    ctx.strokeRect(highlightX, highlightY, highlightWidth, highlightHeight);
+                    
+                    // Glow shadow
+                    ctx.shadowColor = 'rgba(255, 255, 0, 0.8)';
+                    ctx.shadowBlur = 20;
+                    ctx.strokeRect(highlightX, highlightY, highlightWidth, highlightHeight);
+                    ctx.shadowBlur = 0;
+                }
             });
             
             // Draw hitboxes if enabled
@@ -2563,28 +2869,506 @@
                 const hpEl = document.getElementById(`b${heroName}-hp`);
                 const maxHpEl = document.getElementById(`b${heroName}-maxhp`);
                 const acEl = document.getElementById(`b${heroName}-ac`);
+                const xpEl = document.getElementById(`b${heroName}-xp`);
+                const healsEl = document.getElementById(`b${heroName}-heals`);
                 
                 if (hpEl) hpEl.textContent = hero.hp;
                 if (maxHpEl) maxHpEl.textContent = hero.maxHp;
                 if (acEl) acEl.textContent = hero.stats.ac || 10;
+                if (xpEl) xpEl.textContent = hero.xp || 0;
+                
+                // Update heal hearts display
+                if (healsEl) {
+                    const healsRemaining = hero.healsRemaining || 0;
+                    let heartsHTML = '';
+                    for (let i = 0; i < 2; i++) {
+                        if (i < healsRemaining) {
+                            heartsHTML += '❤️ ';
+                        } else {
+                            heartsHTML += '❌ ';
+                        }
+                    }
+                    healsEl.innerHTML = heartsHTML.trim();
+                }
             });
+        }
+        
+        // Update battle enemy cards
+        function updateBattleEnemyCards() {
+            const container = document.getElementById('battleEnemyCards');
+            if (!container) return;
+            
+            // Sort enemies: bosses first, then mobs
+            const sortedEnemies = [...battleState.enemies].sort((a, b) => {
+                if (a.isMob === b.isMob) return 0;
+                return a.isMob ? 1 : -1; // Bosses (isMob=false) first
+            });
+            
+            // Set 2-column layout if more than 6 enemies
+            if (sortedEnemies.length > 6) {
+                container.classList.add('twoColumns');
+            } else {
+                container.classList.remove('twoColumns');
+            }
+            
+            // Clear and rebuild cards
+            container.innerHTML = '';
+            
+            sortedEnemies.forEach((enemy, index) => {
+                const card = document.createElement('div');
+                card.className = 'battleEnemyCard';
+                card.id = `enemyCard${index}`;
+                card.dataset.enemyIndex = battleState.enemies.indexOf(enemy);
+                
+                if (!enemy.isMob) {
+                    card.classList.add('boss');
+                }
+                
+                if (enemy.hp <= 0) {
+                    card.classList.add('dead');
+                }
+                
+                // Add targetable class if in targeting mode and hostile
+                if (battleState.targetingMode && enemy.hostile && enemy.hp > 0) {
+                    card.classList.add('targetable');
+                }
+                
+                // Portrait
+                const portrait = document.createElement('div');
+                portrait.className = 'battleEnemyPortrait';
+                portrait.style.backgroundImage = `url('${enemy.spritePath}')`;
+                card.appendChild(portrait);
+                
+                // Name
+                const name = document.createElement('div');
+                name.className = 'battleEnemyName';
+                name.textContent = enemy.name.toUpperCase();
+                card.appendChild(name);
+                
+                // HP stat
+                const hpStat = document.createElement('div');
+                hpStat.className = 'battleEnemyStat';
+                hpStat.style.color = '#ff6b6b';
+                hpStat.innerHTML = `HP: <span>${enemy.hp}</span>/<span>${enemy.maxHp}</span>`;
+                card.appendChild(hpStat);
+                
+                // AC stat
+                const acStat = document.createElement('div');
+                acStat.className = 'battleEnemyStat';
+                acStat.innerHTML = `AC: <span>${enemy.ac || 10}</span>`;
+                card.appendChild(acStat);
+                
+                // Click handler for targeting
+                card.addEventListener('click', () => {
+                    if (battleState.targetingMode && enemy.hostile && enemy.hp > 0) {
+                        const attacker = battleState.turnOrder[battleState.currentTurn];
+                        executeAttack(attacker, enemy, battleState.pendingAction);
+                        
+                        // Exit targeting mode
+                        battleState.targetingMode = false;
+                        battleState.pendingAction = null;
+                        document.getElementById('battleCanvas').style.cursor = 'default';
+                        updateBattleEnemyCards(); // Refresh to remove targetable class
+                    }
+                });
+                
+                container.appendChild(card);
+            });
+        }
+        
+        // D&D modifier calculation
+        function calculateModifier(stat) {
+            return Math.floor((stat - 10) / 2);
+        }
+        
+        // Find closest hero to an enemy
+        function findClosestHero(enemy, heroes) {
+            let target = heroes[0];
+            let minDistance = Math.sqrt(Math.pow(enemy.x - target.x, 2) + Math.pow(enemy.y - target.y, 2));
+            
+            for (let i = 1; i < heroes.length; i++) {
+                const hero = heroes[i];
+                const distance = Math.sqrt(Math.pow(enemy.x - hero.x, 2) + Math.pow(enemy.y - hero.y, 2));
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    target = hero;
+                }
+            }
+            return target;
+        }
+        
+        // Dice rolling functions
+        function rollD20() {
+            return Math.floor(Math.random() * 20) + 1;
+        }
+        
+        function rollD6(count = 1) {
+            let total = 0;
+            for (let i = 0; i < count; i++) {
+                total += Math.floor(Math.random() * 6) + 1;
+            }
+            return total;
+        }
+        
+        // Display dice roll result
+        function showDiceRoll(text) {
+            const display = document.getElementById('diceRollDisplay');
+            if (display) {
+                display.textContent = text;
+                display.style.display = 'block';
+                setTimeout(() => {
+                    display.style.display = 'none';
+                }, 3000);
+            }
+        }
+        
+        // Show battle notification banner
+        function showBattleNotification(text) {
+            const notification = document.getElementById('battleNotification');
+            if (notification) {
+                notification.textContent = text;
+                notification.style.display = 'block';
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 3000);
+            }
         }
         
         // Handle battle actions
         function battleAction(action) {
-            // Placeholder - just advance turn for now
             if (action === 'retreat') {
                 endBattle();
                 return;
             }
             
-            // Next turn
+            const currentCombatant = battleState.turnOrder[battleState.currentTurn];
+            
+            // Check if it's a hero's turn
+            const isHeroTurn = battleState.heroes.includes(currentCombatant);
+            
+            if (!isHeroTurn) {
+                console.log('Not hero turn');
+                return;
+            }
+            
+            // Check if hero is disabled (0 HP)
+            if (currentCombatant.hp <= 0) {
+                showDiceRoll(`${currentCombatant.name} is disabled!`);
+                advanceTurn();
+                return;
+            }
+            
+            // Enter targeting mode for attacks
+            if (action === 'light' || action === 'heavy' || action === 'special') {
+                battleState.targetingMode = true;
+                battleState.pendingAction = action;
+                // Show targeting UI feedback
+                document.getElementById('battleCanvas').style.cursor = 'crosshair';
+                // Highlight enemies on canvas and cards
+                updateBattleEnemyCards();
+                renderBattle();
+                return;
+            }
+            
+            // Defend action - reduce damage by 50% until next turn
+            if (action === 'defend') {
+                currentCombatant.defending = true;
+                showDiceRoll(`${currentCombatant.name} defends!`);
+                advanceTurn();
+                return;
+            }
+            
+            // Heal action - restore 50% of max HP (costs 1 action point)
+            if (action === 'heal') {
+                if (currentCombatant.healsRemaining <= 0) {
+                    showDiceRoll(`${currentCombatant.name} has no heals left!`);
+                    return;
+                }
+                
+                const healAmount = Math.floor(currentCombatant.maxHp * 0.5);
+                currentCombatant.hp = Math.min(currentCombatant.maxHp, currentCombatant.hp + healAmount);
+                currentCombatant.healsRemaining--;
+                currentCombatant.usedHeal = true; // Mark that heal was used this turn
+                
+                showDiceRoll(`${currentCombatant.name} heals for ${healAmount} HP! (1 action used)`);
+                updateBattleHeroCards();
+                
+                // Disable heavy and special buttons after heal
+                document.getElementById('battleHeavyBtn').disabled = true;
+                document.getElementById('battleHeavyBtn').style.opacity = '0.5';
+                document.getElementById('battleSpecialBtn').disabled = true;
+                document.getElementById('battleSpecialBtn').style.opacity = '0.5';
+                
+                return; // Don't advance turn
+            }
+            
+            // Swap action - swap positions with another hero
+            if (action === 'swap') {
+                // TODO: Implement hero selection and position swapping
+                showDiceRoll(`${currentCombatant.name} swaps position! (Not yet implemented)`);
+                advanceTurn();
+                return;
+            }
+            
+            // Taunt action - draw enemy aggro with CHA check
+            if (action === 'taunt') {
+                const chaModifier = calculateModifier(currentCombatant.stats?.cha || 10);
+                const tauntRoll = rollD20() + chaModifier;
+                const tauntDC = 12; // Base difficulty
+                
+                if (tauntRoll >= tauntDC) {
+                    currentCombatant.taunting = true;
+                    currentCombatant.tauntTurns = 3; // Lasts 3 turns
+                    showDiceRoll(`${currentCombatant.name} taunts! d20(${tauntRoll}) SUCCESS!`);
+                } else {
+                    showDiceRoll(`${currentCombatant.name} taunt fails! d20(${tauntRoll}) vs DC ${tauntDC}`);
+                }
+                advanceTurn();
+                return;
+            }
+            
+            // Skip action - end turn without doing anything
+            if (action === 'skip') {
+                showDiceRoll(`${currentCombatant.name} skips turn.`);
+                advanceTurn();
+                return;
+            }
+        }
+        
+        // Execute attack on target
+        function executeAttack(attacker, target, actionType) {
+            const attackerStats = attacker.stats || {};
+            const str = attackerStats.str || 10;
+            const dex = attackerStats.dex || 10;
+            const wis = attackerStats.wis || 10;
+            
+            let attackRoll = rollD20();
+            let modifier = 0;
+            let damageRoll = 0;
+            let attackName = '';
+            
+            // Calculate attack and damage based on action type
+            if (actionType === 'light') {
+                modifier = calculateModifier(dex);
+                attackRoll += calculateModifier(str);
+                damageRoll = rollD6(1) + modifier;
+                attackName = 'Light Attack';
+            } else if (actionType === 'heavy') {
+                modifier = calculateModifier(str);
+                attackRoll += modifier;
+                damageRoll = rollD6(2) + modifier;
+                attackName = 'Heavy Attack';
+            } else if (actionType === 'special') {
+                modifier = calculateModifier(wis);
+                attackRoll += modifier;
+                damageRoll = rollD6(3) + modifier;
+                attackName = 'Special Attack';
+            }
+            
+            // Check if attack hits
+            const targetAC = target.ac || 10;
+            
+            // Award 1 XP for attempting attack
+            attacker.xp = (attacker.xp || 0) + 1;
+            
+            if (attackRoll >= targetAC) {
+                // Apply defending reduction
+                if (target.defending) {
+                    damageRoll = Math.floor(damageRoll / 2);
+                    target.defending = false;
+                }
+                
+                target.hp = Math.max(0, target.hp - damageRoll);
+                
+                // Award 2 XP for hitting (total 3 including attempt)
+                attacker.xp += 2;
+                
+                showDiceRoll(`${attackName}: d20(${attackRoll}) HIT! Damage: ${damageRoll}`);
+            } else {
+                showDiceRoll(`${attackName}: d20(${attackRoll}) MISS vs AC ${targetAC}`);
+            }
+            
+            renderBattle();
+            updateBattleEnemyCards();
+            updateBattleHeroCards();
+            
+            // Check if target is dead
+            if (target.hp <= 0) {
+                // Award 10 XP for killing blow
+                attacker.xp += 10;
+                updateBattleHeroCards();
+                // Remove from battle
+                battleState.enemies = battleState.enemies.filter(e => e !== target);
+                battleState.turnOrder = battleState.turnOrder.filter(c => c !== target);
+                
+                // Check win condition
+                if (battleState.enemies.length === 0) {
+                    battleState.won = true;
+                    showBattleNotification('ROOM CLEARED!');
+                    // Change retreat button to leave
+                    const retreatBtn = document.querySelector('.battleButton.retreat');
+                    if (retreatBtn) {
+                        retreatBtn.textContent = '🚪 LEAVE';
+                    }
+                    return;
+                }
+            }
+            
+            advanceTurn();
+        }
+        
+        // Process AI turn
+        function processAITurn(combatant) {
+            if (!combatant.hostile) {
+                // Friendly/neutral NPCs skip turn
+                showDiceRoll(`${combatant.name} waits...`);
+                advanceTurn();
+                return;
+            }
+            
+            // Hostile AI: pick closest hero and attack
+            const aliveHeroes = battleState.heroes.filter(h => h.hp > 0);
+            if (aliveHeroes.length === 0) {
+                // Game over
+                setTimeout(() => {
+                    alert('Defeat! All heroes fallen.');
+                    endBattle();
+                }, 500);
+                return;
+            }
+            
+            // Check for taunting heroes first
+            const tauntingHeroes = aliveHeroes.filter(h => h.taunting && h.tauntTurns > 0);
+            let target;
+            
+            if (tauntingHeroes.length > 0) {
+                // Roll to resist taunt
+                const resistRoll = rollD20();
+                const resistDC = 15; // Base resist DC
+                
+                if (resistRoll < resistDC) {
+                    // Failed to resist, attack taunter
+                    target = tauntingHeroes[0];
+                    showDiceRoll(`${combatant.name} is taunted by ${target.name}!`);
+                } else {
+                    // Resisted taunt, clear taunt status
+                    tauntingHeroes.forEach(h => {
+                        h.taunting = false;
+                        h.tauntTurns = 0;
+                    });
+                    showDiceRoll(`${combatant.name} resists taunt! d20(${resistRoll})`);
+                    // Fall through to normal targeting
+                    target = findClosestHero(combatant, aliveHeroes);
+                }
+            } else {
+                // No taunters, find closest hero
+                target = findClosestHero(combatant, aliveHeroes);
+            }
+            
+            // AI attack roll
+            const attackRoll = rollD20();
+            const damage = combatant.attackDamage || rollD6(1);
+            
+            // Don't damage heroes already at 0 HP
+            if (target.hp <= 0) {
+                showDiceRoll(`${combatant.name} ignores disabled ${target.name}`);
+                advanceTurn();
+                return;
+            }
+            
+            if (attackRoll >= (target.stats?.ac || 10)) {
+                let finalDamage = damage;
+                if (target.defending) {
+                    finalDamage = Math.floor(damage / 2);
+                    target.defending = false;
+                }
+                
+                target.hp = Math.max(0, target.hp - finalDamage);
+                showDiceRoll(`${combatant.name} attacks ${target.name}: HIT for ${finalDamage} damage!`);
+            } else {
+                showDiceRoll(`${combatant.name} attacks ${target.name}: MISS!`);
+            }
+            
+            renderBattle();
+            updateBattleHeroCards();
+            updateBattleEnemyCards();
+            
+            // Check if hero died
+            if (target.hp <= 0) {
+                const allHeroesDead = battleState.heroes.every(h => h.hp <= 0);
+                if (allHeroesDead) {
+                    setTimeout(() => {
+                        alert('Defeat! All heroes fallen.');
+                        endBattle();
+                    }, 500);
+                    return;
+                }
+            }
+            
+            advanceTurn();
+        }
+        
+        // Advance to next turn
+        function advanceTurn() {
             battleState.currentTurn = (battleState.currentTurn + 1) % battleState.turnOrder.length;
+            const nextCombatant = battleState.turnOrder[battleState.currentTurn];
+            
+            // Reset action state for new turn
+            battleState.heroes.forEach(hero => {
+                hero.usedHeal = false;
+            });
+            
+            // Re-enable all buttons at start of turn
+            const heavyBtn = document.getElementById('battleHeavyBtn');
+            const specialBtn = document.getElementById('battleSpecialBtn');
+            if (heavyBtn) {
+                heavyBtn.disabled = false;
+                heavyBtn.style.opacity = '1';
+            }
+            if (specialBtn) {
+                specialBtn.disabled = false;
+                specialBtn.style.opacity = '1';
+            }
+            
+            // Decrement taunt turns for all heroes
+            battleState.heroes.forEach(hero => {
+                if (hero.tauntTurns > 0) {
+                    hero.tauntTurns--;
+                    if (hero.tauntTurns <= 0) {
+                        hero.taunting = false;
+                    }
+                }
+            });
+            
             updateBattleTurnInfo();
+            
+            // If next combatant is a disabled hero (0 HP), skip their turn
+            if (battleState.heroes.includes(nextCombatant) && nextCombatant.hp <= 0) {
+                showDiceRoll(`${nextCombatant.name} is disabled - turn skipped`);
+                setTimeout(() => advanceTurn(), 1000);
+                return;
+            }
+            
+            // If next turn is AI, process automatically
+            if (!battleState.heroes.includes(nextCombatant)) {
+                setTimeout(() => processAITurn(nextCombatant), 1000);
+            }
         }
         
         // End battle and return to dungeon menu
         function endBattle() {
+            // Save hero XP to shared save
+            const sharedSave = loadSharedSave();
+            if (sharedSave && sharedSave.heroes) {
+                battleState.heroes.forEach(hero => {
+                    const heroKey = hero.name.toLowerCase();
+                    if (sharedSave.heroes[heroKey]) {
+                        sharedSave.heroes[heroKey].xp = hero.xp || 0;
+                    }
+                });
+                saveSharedSave(sharedSave);
+            }
+            
             battleState.active = false;
             currentScreen = 'dungeonMenu';
             document.getElementById('battleScreen').style.display = 'none';
@@ -2713,10 +3497,10 @@
         // Save game from pause menu
         function saveGameFromPause() {
             try {
-                const sharedSave = loadSharedSave();
+                let sharedSave = loadSharedSave();
                 if (!sharedSave) {
-                    alert('No save data found!');
-                    return;
+                    // Create new save if none exists
+                    sharedSave = createDefaultSharedSave();
                 }
                 
                 // Update last played timestamp

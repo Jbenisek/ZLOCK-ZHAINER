@@ -2,6 +2,131 @@
 
 # Changelog
 
+## v0.2.25 - Healing System & Action Economy (2025-11-26)
+- **Summary:**
+  - Implemented healing system with 2 heals per hero per room
+  - Added action point system (heal costs 1 action, can follow with light attack)
+  - Visual heart indicators show remaining heals
+  - Fixed skip action and save game creation
+
+- **Healing Mechanics:**
+  - Each hero gets 2 heals per room (resets at battle start)
+  - Heal restores 50% of max HP
+  - Healing costs 1 action point
+  - After healing, heavy and special attacks are disabled (1 action remaining)
+  - Light attack, defend, swap, taunt, and skip remain available after heal
+  - Visual heart display: ❤️ for available heals, ❌ for used heals
+
+- **Action Economy:**
+  - Heroes have 2 action points per turn
+  - Heal uses 1 action point
+  - Light attack uses 1 action point (can be used after heal)
+  - Heavy and special attacks use 2 action points (disabled after heal)
+  - All buttons re-enable at start of next turn
+
+- **UI Improvements:**
+  - Added heart icons to hero battle cards
+  - Hearts update in real-time as heals are used
+  - Disabled buttons are greyed out (50% opacity)
+  - Skip button remains functional after healing
+
+- **Bug Fixes:**
+  - Fixed skip action not advancing turn
+  - Fixed save game creation when no save exists
+  - Save system now creates default save instead of showing error
+
+- **Technical Changes:**
+  - Added healsRemaining property to hero objects (initialized to 2)
+  - Added usedHeal flag to track action state
+  - Modified updateBattleHeroCards() to render heart icons
+  - Modified advanceTurn() to reset button states
+  - Added battleHeavyBtn and battleSpecialBtn IDs for state management
+  - Modified saveGameFromPause() to create default save if none exists
+
+## v0.2.24 - Combat UI Feedback Improvements (2025-11-26)
+- **Summary:**
+  - Added visual feedback for button clicks
+  - Implemented enemy highlighting during targeting mode
+  - Continuous animation loop for pulsing effects
+
+- **Button Feedback:**
+  - Added :active CSS state for click response
+  - Scale down animation (0.95) on button press
+  - Shadow change on click for tactile feedback
+  - Immediate visual confirmation of user input
+
+- **Enemy Targeting Highlights:**
+  - Yellow pulsing border around hostile enemies in targeting mode
+  - Glow shadow effect using ctx.shadowBlur
+  - Pulse animation using sin wave (Date.now() / 200)
+  - Only hostile enemies are highlighted as clickable targets
+  - Non-hostile/friendly enemies remain unhighlighted
+
+- **Hitbox Improvements:**
+  - Accurate hitbox detection for mobs (1.75:1 aspect ratio)
+  - Accurate hitbox detection for bosses (200x200 scaled)
+  - Depth-scaled hit areas matching sprite sizes
+  - Only hostile enemies respond to clicks
+
+- **Animation System:**
+  - Added battleAnimationLoop() using requestAnimationFrame
+  - Continuous rendering while battleState.active is true
+  - Enables smooth pulsing highlight effects
+  - Automatic cleanup when battle ends
+
+- **Technical Changes:**
+  - Modified battleAction() to call renderBattle() when entering targeting mode
+  - Updated handleBattleClick() to check enemy.hostile flag
+  - Added pulsing highlight rendering in enemy drawing loop
+  - CSS :active pseudo-class for button press feedback
+
+## v0.2.23 - Combat System Implementation (2025-11-26)
+- **Summary:**
+  - Implemented full D&D-style turn-based combat system
+  - Added initiative calculation using DEX modifiers
+  - Integrated bosses_data.json and mobs_data.json for enemy loading
+  - Implemented dice rolling mechanics (d20, d6) with visible results
+
+- **Combat Mechanics:**
+  - Initiative: DEX modifier + d20 roll determines turn order
+  - Light Attack: 1d6 + DEX modifier damage
+  - Heavy Attack: 2d6 + STR modifier damage
+  - Special Attack: 3d6 + WIS modifier damage
+  - Attack Roll: d20 + STR modifier vs target AC
+  - Defend: 50% damage reduction, active until next turn
+
+- **AI Behavior:**
+  - Hostile enemies auto-attack random heroes
+  - Non-hostile NPCs skip their turns
+  - AI processes automatically with 1-second delay
+
+- **Player Interaction:**
+  - Click attack button to enter targeting mode
+  - Click enemy sprite to execute attack
+  - Crosshair cursor during targeting
+  - Dice roll results displayed above action buttons
+
+- **Data Integration:**
+  - Load bosses from tunnelsofprivacy/bosses/bosses_data.json
+  - Load mobs from tunnelsofprivacy/mobs/mobs_data.json
+  - Mix boss + 2 random hostile mobs per encounter
+  - Enemy stats (HP, AC, attackDamage, speed) loaded from JSON
+
+- **Technical Changes:**
+  - startBattle() now async to load JSON data
+  - calculateModifier() function: (stat - 10) / 2
+  - rollD20(), rollD6(count) dice functions
+  - executeAttack() handles damage calculation and AC checks
+  - processAITurn() handles enemy attacks
+  - advanceTurn() manages turn order progression
+  - handleBattleClick() for enemy targeting on canvas
+  - Added diceRollDisplay element for combat feedback
+
+- **UI Updates:**
+  - Renamed battle buttons: WEAK ATTACK → LIGHT ATTACK, STRONG ATTACK → HEAVY ATTACK
+  - Added dice roll display div with gold border and dark background
+  - Targeting mode shows crosshair cursor
+
 ## v0.2.22 - Boss File Organization (2025-11-26)
 - **Summary:**
   - Renamed all boss sprite files to match boss names from bosses_data.json
