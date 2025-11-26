@@ -612,7 +612,8 @@
         #musicTicker {
             position: fixed;
             bottom: 10px;
-            left: 10px;
+            left: 50%;
+            transform: translateX(-50%);
             background: rgba(42, 157, 143, 0.3);
             border: 2px solid #2A9D8F;
             border-radius: 8px;
@@ -621,6 +622,13 @@
             max-width: 25%;
             z-index: 500;
             pointer-events: auto;
+            transition: left 0.3s ease, transform 0.3s ease;
+        }
+        
+        /* Move ticker to bottom left during battle */
+        #musicTicker.battleActive {
+            left: 10px;
+            transform: translateX(0);
         }
         
         #musicTickerWrapper {
@@ -651,7 +659,8 @@
         #musicControls {
             position: fixed;
             bottom: 65px;
-            left: 10px;
+            left: 50%;
+            transform: translateX(-50%);
             background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
             border: 2px solid #2A9D8F;
             border-radius: 8px;
@@ -662,6 +671,13 @@
             backdrop-filter: blur(10px);
             box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8);
             z-index: 500;
+            transition: left 0.3s ease, transform 0.3s ease;
+        }
+        
+        /* Move controls to bottom left during battle */
+        #musicControls.battleActive {
+            left: 10px;
+            transform: translateX(0);
         }
         
         .musicControlTitle {
@@ -1786,6 +1802,10 @@
             currentScreen = 'battle';
             document.getElementById('dungeonMenuScreen').style.display = 'none';
             document.getElementById('battleScreen').style.display = 'block';
+            
+            // Move music controls and ticker to bottom left during battle
+            document.getElementById('musicControls').classList.add('battleActive');
+            document.getElementById('musicTicker').classList.add('battleActive');
             
             // Initialize canvas
             battleState.canvas = document.getElementById('battleCanvas');
@@ -3441,6 +3461,10 @@
             currentScreen = 'dungeonMenu';
             document.getElementById('battleScreen').style.display = 'none';
             document.getElementById('dungeonMenuScreen').style.display = 'block';
+            
+            // Move music controls and ticker back to center bottom
+            document.getElementById('musicControls').classList.remove('battleActive');
+            document.getElementById('musicTicker').classList.remove('battleActive');
         }
         
         // ===== END BATTLE SYSTEM =====
@@ -3577,6 +3601,8 @@
                 // Save to localStorage
                 if (saveSharedSave(sharedSave)) {
                     alert('Game saved successfully!');
+                    // Update button states to reflect save exists
+                    updateTitleScreenButtons();
                 } else {
                     alert('Failed to save game!');
                 }
