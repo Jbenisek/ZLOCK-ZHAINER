@@ -3,7 +3,7 @@
 A 3D blockchain-themed puzzle game inspired by classics like Lumines and Columns. Match colored chain links in a 6×6×25 grid to clear blocks and unleash devastating special abilities!
 
 **Arcade Version:** 0.21.2  
-**Tunnels Version:** 0.2.32  
+**Tunnels Version:** 0.2.33  
 **Created by:** CyberAxe of [OutlandishlyCrafted.com](https://OutlandishlyCrafted.com)
 
 ---

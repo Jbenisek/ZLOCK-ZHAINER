@@ -2,6 +2,30 @@
 
 # Changelog
 
+## v0.2.33 - Multiplayer Fixes & XP Display (2025-11-26)
+- **Summary:**
+  - Fixed client hero stats showing 0s in multiplayer
+  - Added XP display to dungeon menu hero cards
+  - Fixed client battle initialization (background, heroes, enemies)
+  - Fixed music controls positioning in multiplayer
+
+- **Multiplayer Fixes:**
+  - Host now sends save data with all game_start messages (continue, load, new)
+  - Client receives and saves host's save data before loading screens
+  - Client now calls startBattle() to initialize canvas, load assets, setup combatants
+  - Fixed music ticker class removal for dungeon menu transitions
+
+- **UI Enhancements:**
+  - Added XP display to all 4 dungeon menu hero cards (gold text, 11px)
+  - XP now displays between HP and stats
+  - updateHeroDisplay() now updates XP on dungeon screen (dzooko-xp, etc.)
+
+- **Technical Changes:**
+  - Modified startAdventure(), continueGame(), loadSaveGame(), startNewAdventure() to include saveData in messages
+  - Modified game_start handler to save host data and call startBattle() for clients
+  - Added dxpEl elements to updateHeroDisplay() function
+  - XP already saved in endBattle() and loaded from save
+
 ## v0.2.32 - Dungeon Level Persistence (2025-11-26)
 - **Summary:**
   - Added dungeon level saving to maintain progress across sessions

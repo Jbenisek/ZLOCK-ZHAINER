@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.2.32</title>
+    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.2.33</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -869,6 +869,7 @@
                 <div class="heroPortrait" style="background-image: url('people/zooko_a_head_compressed.png'); border-color: #EB5757; box-shadow: 0 0 10px rgba(235, 87, 87, 0.4);"></div>
                 <div class="heroName" style="color: #EB5757;">ZOOKO</div>
                 <div class="heroStat" style="color: #ff6b6b; font-size: 12px; margin: 4px 0;">HP: <span id="dzooko-hp">0</span>/<span id="dzooko-maxhp">0</span></div>
+                <div class="heroStat" style="color: #F2C94C; font-size: 11px; margin: 2px 0;">XP: <span id="dzooko-xp">0</span></div>
                 <div class="heroStat">STR: <span id="dzooko-str">0</span>  INT: <span id="dzooko-int">0</span></div>
                 <div class="heroStat">DEX: <span id="dzooko-dex">0</span>  WIS: <span id="dzooko-wis">0</span></div>
                 <div class="heroStat">CON: <span id="dzooko-con">0</span>  CHA: <span id="dzooko-cha">0</span></div>
@@ -878,6 +879,7 @@
                 <div class="heroPortrait" style="background-image: url('people/Nate_a_head_compressed.png'); border-color: #F2C94C; box-shadow: 0 0 10px rgba(242, 201, 76, 0.4);"></div>
                 <div class="heroName" style="color: #F2C94C;">NATE</div>
                 <div class="heroStat" style="color: #ff6b6b; font-size: 12px; margin: 4px 0;">HP: <span id="dnate-hp">0</span>/<span id="dnate-maxhp">0</span></div>
+                <div class="heroStat" style="color: #F2C94C; font-size: 11px; margin: 2px 0;">XP: <span id="dnate-xp">0</span></div>
                 <div class="heroStat">STR: <span id="dnate-str">0</span>  INT: <span id="dnate-int">0</span></div>
                 <div class="heroStat">DEX: <span id="dnate-dex">0</span>  WIS: <span id="dnate-wis">0</span></div>
                 <div class="heroStat">CON: <span id="dnate-con">0</span>  CHA: <span id="dnate-cha">0</span></div>
@@ -887,6 +889,7 @@
                 <div class="heroPortrait" style="background-image: url('people/Zancas_a_head_compressed.png'); border-color: #27AE60; box-shadow: 0 0 10px rgba(39, 174, 96, 0.4);"></div>
                 <div class="heroName" style="color: #27AE60;">ZANCAS</div>
                 <div class="heroStat" style="color: #ff6b6b; font-size: 12px; margin: 4px 0;">HP: <span id="dzancas-hp">0</span>/<span id="dzancas-maxhp">0</span></div>
+                <div class="heroStat" style="color: #F2C94C; font-size: 11px; margin: 2px 0;">XP: <span id="dzancas-xp">0</span></div>
                 <div class="heroStat">STR: <span id="dzancas-str">0</span>  INT: <span id="dzancas-int">0</span></div>
                 <div class="heroStat">DEX: <span id="dzancas-dex">0</span>  WIS: <span id="dzancas-wis">0</span></div>
                 <div class="heroStat">CON: <span id="dzancas-con">0</span>  CHA: <span id="dzancas-cha">0</span></div>
@@ -896,6 +899,7 @@
                 <div class="heroPortrait" style="background-image: url('people/cyberaxe_a_head_compressed.png'); border-color: #2E86DE; box-shadow: 0 0 10px rgba(46, 134, 222, 0.4);"></div>
                 <div class="heroName" style="color: #2E86DE;">CYBERAXE</div>
                 <div class="heroStat" style="color: #ff6b6b; font-size: 12px; margin: 4px 0;">HP: <span id="dcyberaxe-hp">0</span>/<span id="dcyberaxe-maxhp">0</span></div>
+                <div class="heroStat" style="color: #F2C94C; font-size: 11px; margin: 2px 0;">XP: <span id="dcyberaxe-xp">0</span></div>
                 <div class="heroStat">STR: <span id="dcyberaxe-str">0</span>  INT: <span id="dcyberaxe-int">0</span></div>
                 <div class="heroStat">DEX: <span id="dcyberaxe-dex">0</span>  WIS: <span id="dcyberaxe-wis">0</span></div>
                 <div class="heroStat">CON: <span id="dcyberaxe-con">0</span>  CHA: <span id="dcyberaxe-cha">0</span></div>
@@ -1013,7 +1017,7 @@
                 <button class="menuButton portalButton" onclick="exitPortal()">EXIT PORTAL<br><span style="font-size: 10px; font-weight: 400;">(Return to Arcade)</span><span style="display: inline-block; padding: 4px 10px; background: #8B45FF; border-radius: 5px; margin-left: 10px; font-weight: bold; color: white; font-size: 12px;">BACK</span></button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.2.32 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.2.33 • Portal System Active</div>
             
             <!-- Multiplayer Controls (Bottom Right) -->
             <div style="position: absolute; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; align-items: flex-end; pointer-events: all; z-index: 100;">
@@ -1223,7 +1227,7 @@
         <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         
         <div style="display: block; width: 100%; margin-top: 15px; padding: 10px 0; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A7A8F; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-            Tunnels of Privacy v0.2.32
+            Tunnels of Privacy v0.2.33
         </div>
     </div>
     
@@ -1253,7 +1257,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.2.32';
+        const GAME_VERSION = 'v0.2.33';
         
         // ===== MULTIPLAYER STATE =====
         let multiplayerState = {
@@ -3703,6 +3707,7 @@
             // Dungeon screen hero stats (prefixed with 'd')
             const dhpEl = document.getElementById(`d${prefix}-hp`);
             const dmaxhpEl = document.getElementById(`d${prefix}-maxhp`);
+            const dxpEl = document.getElementById(`d${prefix}-xp`);
             const dstrEl = document.getElementById(`d${prefix}-str`);
             const ddexEl = document.getElementById(`d${prefix}-dex`);
             const dconEl = document.getElementById(`d${prefix}-con`);
@@ -3725,6 +3730,7 @@
             // Update dungeon screen
             if (dhpEl) dhpEl.textContent = stats.hp || 0;
             if (dmaxhpEl) dmaxhpEl.textContent = stats.maxHp || 0;
+            if (dxpEl) dxpEl.textContent = stats.xp || 0;
             if (dstrEl) dstrEl.textContent = stats.str || 0;
             if (ddexEl) ddexEl.textContent = stats.dex || 0;
             if (dconEl) dconEl.textContent = stats.con || 0;
@@ -3772,9 +3778,13 @@
             // Load hero stats from save to dungeon menu
             updateDungeonMenuHeroes();
             
-            // If multiplayer host, notify clients to start
+            // If multiplayer host, notify clients to start and send save data
             if (multiplayerState.enabled && multiplayerState.role === 'host') {
-                sendWebSocketMessage({ type: 'game_start', screen: 'dungeonMenu' });
+                sendWebSocketMessage({ 
+                    type: 'game_start', 
+                    screen: 'dungeonMenu',
+                    saveData: sharedSave
+                });
             }
         }
         
@@ -4417,18 +4427,29 @@
                 case 'game_start':
                     // Host started the game - clients follow
                     if (multiplayerState.role === 'client') {
+                        // Save host's save data to local storage
+                        if (data.saveData) {
+                            saveSharedSave(data.saveData);
+                        }
+                        
                         document.getElementById('titleScreen').style.display = 'none';
                         document.getElementById('heroSelectionModal').style.display = 'none';
                         // Reset music controls position
                         document.getElementById('musicControls').classList.remove('heroSelectionActive');
-                        document.getElementById('musicTicker').classList.remove('battleActive');
                         
                         if (data.screen === 'dungeonMenu') {
+                            document.getElementById('musicTicker').classList.remove('battleActive');
                             document.getElementById('dungeonMenuScreen').style.display = 'block';
                             currentScreen = 'dungeonMenu';
+                            
+                            // Load hero stats from save
+                            updateDungeonMenuHeroes();
                         } else if (data.screen === 'battle') {
-                            document.getElementById('battleScreen').style.display = 'block';
-                            currentScreen = 'battle';
+                            // Client needs to initialize battle too
+                            startBattle().then(() => {
+                                showNotification('Battle started!', 'success');
+                            });
+                            return; // Don't show notification yet, wait for battle load
                         }
                         showNotification('Host started the game!', 'success');
                     }
@@ -4772,9 +4793,6 @@
             document.getElementById('musicControls').classList.remove('heroSelectionActive');
             document.getElementById('musicTicker').classList.remove('battleActive');
             
-            // Notify all clients to start
-            sendWebSocketMessage({ type: 'game_start', screen: 'dungeonMenu', mode: 'continue' });
-            
             // Update dungeon menu with save data
             updateDungeonMenuHeroes();
             
@@ -4782,6 +4800,14 @@
             currentScreen = 'dungeonMenu';
             document.getElementById('titleScreen').style.display = 'none';
             document.getElementById('dungeonMenuScreen').style.display = 'block';
+            
+            // Notify all clients to start WITH save data
+            sendWebSocketMessage({ 
+                type: 'game_start', 
+                screen: 'dungeonMenu', 
+                mode: 'continue',
+                saveData: sharedSave
+            });
             
             showNotification('Continuing from last save...', 'success');
         }
@@ -4812,8 +4838,13 @@
             // Update dungeon menu with save data
             updateDungeonMenuHeroes();
             
-            // Notify all clients to start
-            sendWebSocketMessage({ type: 'game_start', screen: 'dungeonMenu', mode: 'load' });
+            // Notify all clients to start WITH save data
+            sendWebSocketMessage({ 
+                type: 'game_start', 
+                screen: 'dungeonMenu', 
+                mode: 'load',
+                saveData: sharedSave
+            });
             
             showNotification('Load game functionality - showing dungeon menu', 'info');
         }
@@ -4833,10 +4864,7 @@
             document.getElementById('musicControls').classList.remove('heroSelectionActive');
             document.getElementById('musicTicker').classList.remove('battleActive');
             
-            // Notify all clients to start
-            sendWebSocketMessage({ type: 'game_start', screen: 'dungeonMenu', mode: 'new' });
-            
-            // Create fresh save
+            // Create fresh save FIRST
             const newSave = createDefaultSharedSave();
             saveSharedSave(newSave);
             
@@ -4846,6 +4874,14 @@
             currentScreen = 'dungeonMenu';
             document.getElementById('titleScreen').style.display = 'none';
             document.getElementById('dungeonMenuScreen').style.display = 'block';
+            
+            // Notify all clients to start WITH save data
+            sendWebSocketMessage({ 
+                type: 'game_start', 
+                screen: 'dungeonMenu', 
+                mode: 'new',
+                saveData: newSave
+            });
             
             showNotification('Starting new adventure...', 'success');
         }
