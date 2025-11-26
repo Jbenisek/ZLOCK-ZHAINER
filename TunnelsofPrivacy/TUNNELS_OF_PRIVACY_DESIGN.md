@@ -1,7 +1,40 @@
 # TUNNELS OF PRIVACY - Game Design Document
 
+**Current Version:** v0.2.10  
+**Last Updated:** November 25, 2025  
+**Status:** Phase 1 Complete - Portal & Menu System Fully Implemented
+
 ## Project Overview
 Tunnels of Privacy is a dungeon crawler game inspired by the classic TI-99/4A game "Tunnels of Doom" (1982). It shares a universe with ZLOCK CHAINER (arcade puzzle game) through a bidirectional save/load portal system.
+
+## Current Implementation Status
+
+### ✅ COMPLETED - Phase 1: Portal & Menu System
+- [x] Portal system with seamless arcade ↔ dungeon navigation
+- [x] Complete unified save system with hero progression
+- [x] Title screen with animated background
+- [x] Hero party display with live stats
+- [x] Music system with 10 theme tracks
+- [x] Music player controls (play/pause, prev/next, volume)
+- [x] Educational ticker with Zcash/privacy facts
+- [x] Settings panel with independent music controls
+- [x] Loading screen with asset preload
+- [x] Save file download/upload functionality
+- [x] Complete standardization with arcade naming conventions
+
+### 🚧 IN PROGRESS - Phase 2: Core Dungeon Systems
+- [ ] Dungeon generation (procedural levels)
+- [ ] Movement and exploration
+- [ ] Combat system (turn-based)
+- [ ] Inventory and equipment
+- [ ] Hero stat progression
+
+### 📋 PLANNED - Phase 3: Content & Polish
+- [ ] Enemy types and AI
+- [ ] Loot tables and items
+- [ ] Quest system
+- [ ] Boss encounters
+- [ ] Story integration
 
 ## Core Concept
 - **Genre**: Dungeon crawler RPG
@@ -155,27 +188,251 @@ function migrateSave_1_0_0_to_1_1_0(save) {
 
 ## Implementation Phases
 
-### Phase 1: Portal & Menu System (CURRENT)
-- [ ] Add "Enter Portal" button to ZLOCK CHAINER (under TV)
-- [ ] Create save function for cross-game data
-- [ ] Create `tunnels_of_privacy.html` with basic structure
-- [ ] Build start menu (based on ZLOCK CHAINER template)
-- [ ] Add "Exit Portal" button to return
-- [ ] Test seamless back-and-forth navigation
+### ✅ Phase 1: Portal & Menu System (v0.1.0 - v0.2.10) - COMPLETED
+**Status:** Fully implemented and standardized with arcade game
 
-### Phase 2: Core Dungeon Systems (FUTURE)
-- Dungeon generation (procedural levels)
-- Movement and exploration
-- Combat system (turn-based)
-- Inventory and equipment
-- Hero stat progression
+**Completed Features:**
+- [x] Portal system with Enter/Exit buttons in both games
+- [x] Unified save system (`top_shared_save`) with heroes, arcade state, dungeon state
+- [x] Save file download/upload for backups and cross-browser play
+- [x] Title screen with animated background (story intro sprite sheet)
+- [x] Hero party display with live stat updates (STR, DEX, CON, INT, WIS, CHA, HP, AC, Level, XP)
+- [x] Music system with 10 theme tracks (same tracks as arcade)
+- [x] Music player controls: play/pause, previous/next, volume slider (1-150 range)
+- [x] Educational ticker system with Zcash/privacy facts from `ticker_facts.json`
+- [x] Ticker hover slow-down effect (30s → 60s animation)
+- [x] Settings panel with independent music controls
+- [x] Loading screen with progress bar and asset preload
+- [x] Standardized naming: `themeTracks`, `loadMusic()` matching arcade
+- [x] Proper HTML/CSS structure matching arcade exactly
 
-### Phase 3: Content & Polish (FUTURE)
-- Enemy types and AI
-- Loot tables and items
-- Quest system
-- Boss encounters
-- Story integration
+**Technical Implementation:**
+- Functions: `exitPortal()`, `loadSharedSave()`, `saveSharedSave()`, `createDefaultSharedSave()`
+- Music system: `loadMusic()`, `fadeMusic()`, `musicPlayPause()`, `musicPrevious()`, `musicNext()`
+- Ticker system: Loads `ticker_facts.json`, picks random fact per track, displays with music info
+- Asset preloading: Images + music with progress tracking
+- localStorage keys: `top_shared_save`, `top_tunnels_settings`
+
+**Files Modified:**
+- `tunnels_of_privacy.html` - Complete UI and save system (1,398 lines)
+- `zlock_consensus.html` - Portal entry, save download fix
+- `ticker_facts.json` - Shared educational content
+
+### 🚧 Phase 2: Core Dungeon Systems (NEXT) - NOT STARTED
+**Target:** First playable dungeon gameplay
+
+**Features to Implement:**
+- [ ] Dungeon level generation (procedural or pre-designed)
+  - Grid-based or free-form movement
+  - Room generation with corridors
+  - Entrance/exit stairs placement
+  
+- [ ] Player movement and exploration
+  - Keyboard/gamepad controls
+  - First-person or top-down view
+  - Collision detection
+  - Fog of war / unexplored areas
+  
+- [ ] Basic combat system
+  - Turn-based encounters
+  - Attack/defend/flee options
+  - Damage calculation using hero stats
+  - Enemy AI patterns
+  
+- [ ] Inventory management
+  - Item pickup and storage
+  - Equipment slots (weapon, armor, accessory)
+  - Item usage (potions, scrolls)
+  - Weight/capacity limits
+  
+- [ ] Hero stat progression
+  - XP gain from combat
+  - Level up system
+  - Stat increases on level up
+  - Skill/ability unlocks
+
+**Technical Requirements:**
+- Dungeon data structure (grid, rooms, entities)
+- Rendering system (2D canvas or Three.js)
+- Input handling (movement, combat, inventory)
+- Game state machine (exploring, combat, menu, paused)
+- Entity system (heroes, monsters, items, NPCs)
+
+### 📋 Phase 3: Content & Polish (FUTURE) - NOT STARTED
+**Target:** Full game experience with story progression
+**Features to Implement:**
+- [ ] Enemy types and behaviors
+  - 50+ unique monster types across dungeon levels
+  - Boss encounters on milestone levels
+  - Enemy AI with different attack patterns
+  - Loot drops and XP rewards
+  
+- [ ] Item and equipment system
+  - Weapons (swords, staffs, bows, etc.)
+  - Armor (light, medium, heavy)
+  - Accessories (rings, amulets, cloaks)
+  - Consumables (health potions, scrolls, bombs)
+  - Rarity tiers (common, uncommon, rare, legendary)
+  - Equipment stats and bonuses
+  
+- [ ] Quest system
+  - Main quest: Find the Sceptre of Privacy (Level 100)
+  - Side quests from NPCs
+  - Quest tracking UI
+  - Rewards (gold, XP, unique items)
+  
+- [ ] Merchant and town systems
+  - Safe zones with shops
+  - Buy/sell items
+  - Equipment upgrades
+  - Inn for healing/saving
+  
+- [ ] Story integration
+  - Cutscenes on milestone levels
+  - NPC dialogue system
+  - Lore books and environmental storytelling
+  - Connection to arcade game story (TV broadcasts)
+  
+- [ ] Visual and audio polish
+  - Particle effects for spells/abilities
+  - Sound effects for combat/exploration
+  - Music tracks for different dungeon zones
+  - UI animations and transitions
+
+**Technical Requirements:**
+- Enemy database with stats and behaviors
+- Item/equipment database with properties
+- Quest management system
+- Dialogue engine
+- Save/load for all new systems
+- Achievement tracking
+
+---
+
+## AI Coding Standards for Tunnels of Privacy
+
+**MANDATORY RULES - ALL AI ASSISTANTS WORKING ON THIS PROJECT:**
+
+### 1. STANDARDIZATION WITH ARCADE GAME
+When implementing features that exist in `zlock_consensus.html` (arcade), you MUST use identical naming and structure:
+
+**Music System:**
+- ✅ Variable: `themeTracks` (NOT dungeonMusicTracks, musicTracks, or trackList)
+- ✅ Function: `loadMusic()` (NOT loadDungeonMusic, playMusic, or startMusic)
+- ✅ Ticker format: `♫ Theme Song: [name] ♫ • [Random Fact]`
+- ✅ HTML structure: `#musicTicker` > `#musicTickerWrapper` > `.tickerText` spans
+- ✅ Animation name: `scrollTicker` (NOT scroll-left or ticker-scroll)
+
+**Save System:**
+- ✅ Shared save key: `top_shared_save` (NOT zlock_crossgame_save or portal_save)
+- ✅ Properties: `saveVersion`, `lastPlayed`, `arcadeState`, `dungeonState`, `heroes`
+- ✅ Heroes: `zooko`, `nate`, `zancas`, `cyberaxe` (lowercase, exact spelling)
+- ✅ Download function MUST export complete shared save (NOT just gameState)
+
+**Volume System:**
+- ✅ Slider range: 1-150 (user-facing)
+- ✅ Conversion: `Math.min(1.0, sliderValue / 100)` to clamp at 1.0
+- ✅ NEVER set `audio.volume` above 1.0 (causes IndexSizeError)
+
+### 2. COMPLETE FEATURE IMPLEMENTATION
+When told to "add X system the same way as arcade":
+- ❌ DO NOT skip any sub-features (like ticker facts when implementing ticker)
+- ❌ DO NOT create "simplified" or "minimal" versions
+- ✅ Copy ALL components: HTML structure, CSS styling, JavaScript logic, data loading
+- ✅ Include hover effects, animations, error handling, console logging
+- ✅ Verify feature completeness by comparing side-by-side with arcade code
+
+### 3. MULTI-OPERATION CHANGES
+When making changes that affect multiple locations:
+- ✅ Use `multi_replace_string_in_file` to batch all related changes
+- ✅ Search for ALL occurrences of old name/pattern BEFORE making changes
+- ✅ Fix all references in ONE operation, not iteratively
+- ❌ DO NOT rename a function and leave broken call sites for later
+
+**Example - Renaming a function:**
+```javascript
+// WRONG: Change function name only
+function loadMusic() { ... }  // Renamed but calls still use old name
+
+// RIGHT: Find all 6 call sites, fix in one multi_replace operation
+// 1. Function definition
+// 2. ended event listener
+// 3. musicPlayPause() call
+// 4. musicPrevious() call  
+// 5. musicNext() call
+// 6. initialization call
+```
+
+### 4. VERIFICATION REQUIREMENTS
+Before marking a feature complete:
+- ✅ Read the actual code to verify implementation exists
+- ✅ Check browser console for errors after implementation
+- ✅ Test interactive features (hover, clicks, volume changes)
+- ✅ Compare with arcade version for identical behavior
+- ❌ DO NOT assume code works without verification
+- ❌ DO NOT claim features exist without reading source
+
+### 5. FILE STRUCTURE AWARENESS
+- `tunnels_of_privacy.html` - Monolithic single-file architecture (~1,400 lines)
+- All CSS in `<style>` tag within HTML
+- All JavaScript in `<script>` tag within HTML
+- Search for existing functions before adding new ones
+- Use `grep_search` or `read_file` to get context before editing
+
+### 6. VERSION AND CHANGELOG MANAGEMENT
+When updating code:
+- Update BOTH `<title>` tag and `GAME_VERSION` constant
+- Add entry to `TUNNELS_OF_PRIVACY_CHANGELOG.md` with:
+  - Version number (follow sequence: v0.2.9 → v0.2.10 → v0.2.11)
+  - Summary of changes
+  - Detailed feature descriptions
+  - Technical implementation notes
+  - Code examples for complex features
+- Include date (format: 2025-11-25)
+- List all modified files
+
+### 7. USER FEEDBACK HANDLING
+When user reports a bug or missing feature:
+- ✅ Trust the user's report - they are seeing the actual behavior
+- ✅ Investigate the actual code to find root cause
+- ✅ Provide detailed explanation of what was wrong
+- ❌ DO NOT guess at solutions without reading code
+- ❌ DO NOT defend incorrect implementations
+- ❌ DO NOT claim "it should work" - verify it DOES work
+
+### 8. DOCUMENTATION ACCURACY
+- README.md contains overall project documentation
+- TUNNELS_OF_PRIVACY_DESIGN.md contains design specs and progress tracking
+- TUNNELS_OF_PRIVACY_CHANGELOG.md contains version history
+- All docs must be kept in sync with actual implementation
+- Update phase completion status as features are implemented
+
+### 9. TESTING CHECKLIST
+After implementing any feature:
+```
+[ ] Code compiles without syntax errors
+[ ] No console errors on page load
+[ ] Feature works as intended (manual test)
+[ ] Matches arcade behavior (if applicable)
+[ ] All related functions updated
+[ ] Version number incremented
+[ ] Changelog updated
+[ ] Design doc updated if phase complete
+```
+
+### 10. COMMON PITFALLS TO AVOID
+- ❌ Renaming variables without fixing all references
+- ❌ Copying only part of a feature (missing CSS, HTML, or JS)
+- ❌ Using different animation names, IDs, or class names than arcade
+- ❌ Making assumptions about localStorage key names
+- ❌ Setting audio.volume outside 0.0-1.0 range
+- ❌ Exporting gameState instead of complete shared save
+- ❌ Adding global event listeners that trigger unwanted behavior
+- ❌ Skipping error handling or null checks
+- ❌ Forgetting to update version numbers
+- ❌ Implementing features without reading reference code first
+
+---
 
 ## Technical Notes
 
@@ -324,6 +581,32 @@ The story flips: You climb up, escaping the depths, bringing privacy back to the
   - The Sybil King's Final Form
   - The Inflation Demon's Shell
   - The Ledger Colossus Fragment
+
+---
+
+## Development Progress Summary
+
+**Version:** v0.2.10 (November 25, 2025)
+
+**Phase 1 Complete:**
+- Portal system (enter/exit between games)
+- Unified save with heroes (download/upload)
+- Title screen with animated background
+- Hero party display (4 heroes, live stats)
+- Music system (10 tracks, controls, ticker)
+- Educational ticker (ticker_facts.json)
+- Settings panel
+- Loading screen with preload
+- Full standardization with arcade
+
+**Phase 2 - NOT STARTED:**
+- Dungeon gameplay
+- Combat system
+- Inventory/equipment
+- Level generation
+- Hero progression
+
+**Next Steps:** Implement core dungeon systems
 - Each weaker than original form, appearing back-to-back
 - Tone: Not grim - this is cleanup, a heroic march
 

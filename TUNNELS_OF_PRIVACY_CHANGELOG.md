@@ -2,6 +2,131 @@
 
 # Changelog
 
+## v0.2.11 - Dungeon Menu Screen (2025-11-25)
+- **Summary:**
+  - Added dungeon menu screen for room-based navigation
+  - Hero cards repositioned to four corners
+  - New center menu with dungeon options
+  - Music controls and ticker now persist across all screens
+
+- **Dungeon Menu Screen:**
+  - Click "START ADVENTURE" switches from title to dungeon menu
+  - Separate screen state (title screen hidden, dungeon menu shown)
+  - Solid background gradient (no animation)
+  - Hero cards in corners:
+    - Zooko: Top Left
+    - Nate: Bottom Left
+    - Zancas: Top Right
+    - CyberAxe: Bottom Right
+  - Same hero card styling as title screen
+  - Stats sync between both screens
+
+- **Center Menu Buttons:**
+  - **EXPLORER LEVEL** - Enter dungeon exploration (not implemented yet)
+  - **ENTER LEVEL STORE** - Shop system (disabled, coming soon)
+  - **INVENTORY** - View/manage items (not implemented yet)
+  - **REST / SLEEP** - Restore HP/resources (not implemented yet)
+  - All buttons styled matching arcade game aesthetic
+  - Level display at top of menu
+
+- **Music System Fix:**
+  - Moved music controls outside titleScreen container
+  - Moved ticker outside titleScreen container
+  - Changed from `position: absolute` to `position: fixed`
+  - Increased z-index to 500 for proper layering
+  - Now visible on both title screen and dungeon menu
+
+- **Technical Implementation:**
+  - New `#dungeonMenuScreen` container
+  - `.dungeonHeroCard` class for corner positioning
+  - `startAdventure()` function switches screens
+  - Hero stats use `d` prefix for dungeon screen (e.g., `dzooko-hp`)
+  - `updateHeroDisplay()` now updates both title and dungeon screens
+  - Dungeon level syncs from arcade save state
+
+- **Next Steps:**
+  - Implement pause menu (ESC key)
+  - Add functionality to each dungeon menu button
+  - Create room-based exploration system
+
+## v0.2.10 - Complete Standardization with Arcade (2025-11-25)
+- **Summary:**
+  - Complete overhaul to match arcade game systems exactly
+  - Added ticker facts educational system
+  - Fixed all non-standard naming and structures
+  - Full feature parity with arcade's music/ticker system
+
+- **Ticker Facts System (NEW):**
+  - Loads `ticker_facts.json` with Zcash/crypto educational facts
+  - Displays random fact alongside music info
+  - Format: `♫ Theme Song: [name] ♫ • [Random Fact]`
+  - Picks new random fact every time track changes
+  - Educational content while players browse menu
+  - Same ticker facts pool as arcade game
+
+- **Ticker Structure Fixes:**
+  - Fixed HTML structure: `#musicTicker` > `#musicTickerWrapper` > `.tickerText` spans
+  - Was reversed (wrapper > ticker), now matches arcade exactly
+  - Added hover slow-down effect (30s → 60s on hover)
+  - Added `pointer-events: auto` to enable hover despite parent blocking
+  - Changed animation name from `scroll-left` to `scrollTicker` (arcade standard)
+  - Proper seamless scrolling with two identical spans
+
+- **Naming Standardization:**
+  - Renamed `dungeonMusicTracks` → `themeTracks` (arcade standard)
+  - Renamed `loadDungeonMusic()` → `loadMusic()` (arcade standard)
+  - Updated all 6 references to use standard naming
+  - Ticker text: "Dungeon Music" → "Theme Song" (arcade standard)
+  - Consistent variable/function names across both games
+
+- **Technical Implementation:**
+  - Added `tickerFacts` array and `currentTickerFact` variable
+  - Fetch `ticker_facts.json` on page load
+  - `loadMusic()` picks new random fact from array
+  - Combines music info + fact with ` • ` separator
+  - Falls back to music-only if facts not loaded
+  - Logs fact count to console for debugging
+
+- **Benefits:**
+  - Educational: Players learn about Zcash/privacy while browsing
+  - Consistency: Same ticker behavior as arcade
+  - Engagement: Dynamic content changes with each track
+  - Polish: Hover interaction for readability
+  - Maintainability: Identical code structure to arcade
+
+## v0.2.9 - Loading Screen & Music Fix (2025-11-25)
+- **Summary:**
+  - Added complete loading screen system matching arcade
+  - Fixed music autoplay to only start from loading screen button
+  - Removed title/subtitle text (already in animated background)
+  - Complete standalone preload system
+
+- **Loading Screen:**
+  - Full modal with progress bar and percentage display
+  - Category breakdown: Art (5 images), Sound (optional music)
+  - Purple/dungeon theme matching game aesthetic
+  - "🎮 CLICK TO ENTER 🎮" prompt when ready
+  - Fades out smoothly after user clicks
+  - Preloads all assets before allowing play
+
+- **Music System Fix:**
+  - Removed global click/keydown event listeners that started music anywhere
+  - Music now ONLY starts when clicking loading screen button
+  - Respects browser autoplay policies properly
+  - No more unwanted music playback on random clicks
+
+- **Visual Polish:**
+  - Hidden duplicate title text ("TUNNELS OF PRIVACY" and subtitle)
+  - Animated background shows title, no need for overlay text
+  - Cleaner title screen presentation
+
+- **Technical Details:**
+  - Asset tracking: `assetsToLoad`, `assetsLoaded`, `artTotal`, `artLoaded`, `audioTotal`, `audioLoaded`
+  - Progress updates via `updateLoadingProgress()`
+  - `checkAllAssetsReady()` shows click prompt when complete
+  - Music timeout (3 seconds) prevents hanging on music load
+  - Uses `loadedmetadata` event instead of `canplaythrough`
+
 ## v0.2.8 - Unified Save System (2025-11-25)
 - **Summary:**
   - Load Save File now accepts shared save format from arcade

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.2.8</title>
+    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.2.11</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -44,6 +44,41 @@
             pointer-events: none;
         }
         
+        #dungeonMenuScreen {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0A0E12 0%, #1A1E2A 100%);
+            z-index: 100;
+        }
+        
+        #pauseScreen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 14, 18, 0.98);
+            z-index: 1000;
+            pointer-events: all;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #pauseTitle {
+            font-size: 72px;
+            font-weight: 900;
+            color: #8B45FF;
+            text-shadow: 0 0 40px rgba(139, 69, 255, 0.6);
+            margin-bottom: 40px;
+            letter-spacing: 8px;
+        }
+        
         #storyIntroBackground {
             position: absolute;
             top: 0;
@@ -59,29 +94,11 @@
         }
         
         #title {
-            position: absolute;
-            top: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 72px;
-            font-weight: 900;
-            color: #8B45FF;
-            text-shadow: 0 0 40px rgba(139, 69, 255, 0.6);
-            text-align: center;
-            letter-spacing: 2px;
-            pointer-events: none;
+            display: none;
         }
         
         #subtitle {
-            position: absolute;
-            top: 170px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 24px;
-            font-weight: 600;
-            color: #BFD1E0;
-            text-align: center;
-            pointer-events: none;
+            display: none;
         }
         
         /* Center Column - Main Menu Buttons */
@@ -148,7 +165,7 @@
             box-shadow: 0 5px 20px rgba(139, 69, 255, 0.5);
         }
         
-        /* Left Column - Hero Stats */
+        /* Left Column - Hero Stats (Title Screen) */
         #heroStats {
             position: absolute;
             left: 60px;
@@ -163,6 +180,24 @@
             backdrop-filter: blur(10px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
+        
+        /* Hero Cards in Corners (Dungeon Menu) */
+        .dungeonHeroCard {
+            position: absolute;
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.1), rgba(39, 174, 96, 0.05));
+            border: 1px solid #27AE60;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            width: 160px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        }
+        
+        #dungeonZooko { top: 20px; left: 20px; border-color: #EB5757; box-shadow: 0 0 15px rgba(235, 87, 87, 0.3); }
+        #dungeonNate { bottom: 80px; left: 20px; border-color: #F2C94C; box-shadow: 0 0 15px rgba(242, 201, 76, 0.3); }
+        #dungeonZancas { top: 20px; right: 20px; border-color: #27AE60; box-shadow: 0 0 15px rgba(39, 174, 96, 0.3); }
+        #dungeonCyberAxe { bottom: 80px; right: 20px; border-color: #2E86DE; box-shadow: 0 0 15px rgba(46, 134, 222, 0.3); }
         
         .heroRow {
             display: grid;
@@ -243,8 +278,8 @@
         }
         
         /* Music Ticker */
-        #musicTickerWrapper {
-            position: absolute;
+        #musicTicker {
+            position: fixed;
             bottom: 10px;
             left: 50%;
             transform: translateX(-50%);
@@ -254,14 +289,18 @@
             overflow: hidden;
             width: 600px;
             max-width: 90%;
-            z-index: 50;
+            z-index: 500;
+            pointer-events: auto;
         }
         
-        .musicTicker {
+        #musicTickerWrapper {
             display: flex;
             width: fit-content;
-            animation: scroll-left 30s linear infinite;
-            padding: 8px 0;
+            animation: scrollTicker 30s linear infinite;
+        }
+        
+        #musicTicker:hover #musicTickerWrapper {
+            animation-duration: 60s;
         }
         
         .tickerText {
@@ -273,14 +312,14 @@
             padding-right: 100px;
         }
         
-        @keyframes scroll-left {
+        @keyframes scrollTicker {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
         }
         
         /* Music Control Panel - Bottom of Screen Above Ticker */
         #musicControls {
-            position: absolute;
+            position: fixed;
             bottom: 65px;
             left: 50%;
             transform: translateX(-50%);
@@ -292,7 +331,7 @@
             pointer-events: auto;
             backdrop-filter: blur(10px);
             box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8);
-            z-index: 50;
+            z-index: 500;
         }
         
         .musicControlTitle {
@@ -428,10 +467,102 @@
         input[type="range"] {
             width: 200px;
         }
+        
+        /* Loading Screen Styles */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        @keyframes slowBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
     </style>
 </head>
 <body>
+    <!-- Loading Modal -->
+    <div id="loadingModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); display: flex; align-items: center; justify-content: center; z-index: 10000;">
+        <div style="background: linear-gradient(135deg, #1a2332 0%, #0d1218 100%); padding: 40px 60px; border-radius: 15px; border: 2px solid #8B45FF; box-shadow: 0 10px 50px rgba(139, 69, 255, 0.5); text-align: center; min-width: 500px;">
+            <div style="font-size: 48px; margin-bottom: 20px; animation: pulse 1.5s ease-in-out infinite;">🏰</div>
+            <div style="font-size: 24px; font-weight: bold; color: #8B45FF; margin-bottom: 10px;">TUNNELS OF PRIVACY</div>
+            <div style="font-size: 14px; color: #F2C94C; margin-bottom: 15px; font-style: italic;">A Dungeon Crawler Adventure</div>
+            <div id="loadingNote" style="font-size: 12px; color: #BFD1E0; margin-bottom: 20px; line-height: 1.5;">Loading assets... This may take a moment on first visit</div>
+            
+            <!-- Category breakdown -->
+            <div style="margin-bottom: 15px; text-align: left; font-size: 13px; color: #BFD1E0;">
+                <div id="loadingArt" style="margin-bottom: 5px;">🎨 Art: <span style="color: #8B45FF; font-weight: bold;">0/0</span></div>
+                <div id="loadingSound" style="margin-bottom: 5px;">🔊 Sound: <span style="color: #8B45FF; font-weight: bold;">0/0</span></div>
+            </div>
+            
+            <!-- Overall progress -->
+            <div id="loadingIndicator" style="font-size: 18px; color: #2ECC71; margin-bottom: 20px; font-weight: bold;">0%</div>
+            
+            <div style="width: 100%; height: 30px; background: rgba(139, 69, 255, 0.2); border-radius: 15px; overflow: hidden; border: 1px solid #8B45FF;">
+                <div id="loadingBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #8B45FF, #2ECC71); transition: width 0.3s ease; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 14px;"></div>
+            </div>
+            
+            <!-- Click to Play prompt (hidden until ready) -->
+            <div id="clickToPlayPrompt" style="display: none; margin-top: 30px; font-size: 24px; color: #2ECC71; font-weight: bold; animation: slowBlink 2s ease-in-out infinite; cursor: pointer;">
+                <div style="margin-bottom: 10px;">🎮 CLICK TO ENTER 🎮</div>
+            </div>
+        </div>
+    </div>
+    
     <div id="gameContainer">
+        <!-- Dungeon Menu Screen -->
+        <div id="dungeonMenuScreen">
+            <!-- Hero Cards in Corners -->
+            <div class="dungeonHeroCard" id="dungeonZooko">
+                <div class="heroPortrait" style="background-image: url('people/zooko_a_head_compressed.png'); border-color: #EB5757; box-shadow: 0 0 10px rgba(235, 87, 87, 0.4);"></div>
+                <div class="heroName" style="color: #EB5757;">ZOOKO</div>
+                <div class="heroStat" style="color: #ff6b6b; font-size: 12px; margin: 4px 0;">HP: <span id="dzooko-hp">22</span>/<span id="dzooko-maxhp">25</span></div>
+                <div class="heroStat">STR: <span id="dzooko-str">8</span>  INT: <span id="dzooko-int">15</span></div>
+                <div class="heroStat">DEX: <span id="dzooko-dex">11</span>  WIS: <span id="dzooko-wis">13</span></div>
+                <div class="heroStat">CON: <span id="dzooko-con">10</span>  CHA: <span id="dzooko-cha">12</span></div>
+            </div>
+            
+            <div class="dungeonHeroCard" id="dungeonNate">
+                <div class="heroPortrait" style="background-image: url('people/Nate_a_head_compressed.png'); border-color: #F2C94C; box-shadow: 0 0 10px rgba(242, 201, 76, 0.4);"></div>
+                <div class="heroName" style="color: #F2C94C;">NATE</div>
+                <div class="heroStat" style="color: #ff6b6b; font-size: 12px; margin: 4px 0;">HP: <span id="dnate-hp">28</span>/<span id="dnate-maxhp">30</span></div>
+                <div class="heroStat">STR: <span id="dnate-str">14</span>  INT: <span id="dnate-int">10</span></div>
+                <div class="heroStat">DEX: <span id="dnate-dex">12</span>  WIS: <span id="dnate-wis">9</span></div>
+                <div class="heroStat">CON: <span id="dnate-con">13</span>  CHA: <span id="dnate-cha">11</span></div>
+            </div>
+            
+            <div class="dungeonHeroCard" id="dungeonZancas">
+                <div class="heroPortrait" style="background-image: url('people/Zancas_a_head_compressed.png'); border-color: #27AE60; box-shadow: 0 0 10px rgba(39, 174, 96, 0.4);"></div>
+                <div class="heroName" style="color: #27AE60;">ZANCAS</div>
+                <div class="heroStat" style="color: #ff6b6b; font-size: 12px; margin: 4px 0;">HP: <span id="dzancas-hp">24</span>/<span id="dzancas-maxhp">26</span></div>
+                <div class="heroStat">STR: <span id="dzancas-str">10</span>  INT: <span id="dzancas-int">12</span></div>
+                <div class="heroStat">DEX: <span id="dzancas-dex">15</span>  WIS: <span id="dzancas-wis">14</span></div>
+                <div class="heroStat">CON: <span id="dzancas-con">11</span>  CHA: <span id="dzancas-cha">13</span></div>
+            </div>
+            
+            <div class="dungeonHeroCard" id="dungeonCyberAxe">
+                <div class="heroPortrait" style="background-image: url('people/cyberaxe_a_head_compressed.png'); border-color: #2E86DE; box-shadow: 0 0 10px rgba(46, 134, 222, 0.4);"></div>
+                <div class="heroName" style="color: #2E86DE;">CYBERAXE</div>
+                <div class="heroStat" style="color: #ff6b6b; font-size: 12px; margin: 4px 0;">HP: <span id="dcyberaxe-hp">32</span>/<span id="dcyberaxe-maxhp">35</span></div>
+                <div class="heroStat">STR: <span id="dcyberaxe-str">16</span>  INT: <span id="dcyberaxe-int">8</span></div>
+                <div class="heroStat">DEX: <span id="dcyberaxe-dex">10</span>  WIS: <span id="dcyberaxe-wis">11</span></div>
+                <div class="heroStat">CON: <span id="dcyberaxe-con">14</span>  CHA: <span id="dcyberaxe-cha">9</span></div>
+            </div>
+            
+            <!-- Center Menu -->
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 12px;">
+                <div style="text-align: center; padding: 15px; background: linear-gradient(135deg, rgba(139, 69, 255, 0.2), rgba(75, 0, 130, 0.2)); border: 2px solid #8B45FF; border-radius: 10px; width: 380px; backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); margin-bottom: 10px;">
+                    <div style="color: #BFD1E0; font-size: 14px; margin-bottom: 5px;">Dungeon Menu</div>
+                    <div style="color: #F2C94C; font-size: 28px; font-weight: 900; text-shadow: 0 0 20px rgba(242, 201, 76, 0.5);">LEVEL <span id="dungeonMenuLevel">1</span></div>
+                </div>
+                
+                <button class="menuButton">EXPLORER LEVEL<span style="display: inline-block; width: 26px; height: 26px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">⚔</span></button>
+                <button class="menuButton comingSoon" disabled>ENTER LEVEL STORE<br><span style="font-size: 12px; font-weight: 400;">(If Found)</span><span style="display: inline-block; width: 26px; height: 26px; background: #EB5757; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">🛒</span></button>
+                <button class="menuButton">INVENTORY<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">🎒</span></button>
+                <button class="menuButton">REST / SLEEP<span style="display: inline-block; width: 26px; height: 26px; background: #9B59B6; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">💤</span></button>
+            </div>
+        </div>
+        
         <div id="titleScreen">
             <!-- Story Intro Background Animation -->
             <div id="storyIntroBackground"></div>
@@ -488,45 +619,54 @@
                     <div style="color: #F2C94C; font-size: 36px; font-weight: 900; text-shadow: 0 0 20px rgba(242, 201, 76, 0.5);">LEVEL <span id="dungeonLevel">1</span></div>
                 </div>
                 
-                <button class="menuButton comingSoon" disabled>START ADVENTURE<span style="display: inline-block; width: 26px; height: 26px; background: #EB5757; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">A</span></button>
+                <button class="menuButton" onclick="startAdventure()">START ADVENTURE<span style="display: inline-block; width: 26px; height: 26px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">▶</span></button>
                 <button class="menuButton comingSoon" disabled>CONTINUE<span style="display: inline-block; width: 26px; height: 26px; background: #EB5757; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">↻</span></button>
                 <button class="menuButton" onclick="showLoadSave()">LOAD SAVE FILE<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">📁</span></button>
                 <button class="menuButton" onclick="showSettings()">SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #2A9D8F; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">⚙</span></button>
                 <button class="menuButton portalButton" onclick="exitPortal()">EXIT PORTAL<br><span style="font-size: 10px; font-weight: 400;">(Return to Arcade)</span><span style="display: inline-block; width: 26px; height: 26px; background: #8B45FF; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">🌀</span></button>
             </div>
             
-            <!-- Music Control Panel - Bottom Above Ticker -->
-            <div id="musicControls">
-                <h3 class="musicControlTitle">🎵 Music Controls</h3>
-                
-                <!-- Playback Controls -->
-                <div style="display: flex; gap: 6px; justify-content: center; margin-bottom: 12px;">
-                    <button onclick="musicPrevious()" class="musicButton" style="padding: 8px 12px; width: auto;">⏮</button>
-                    <button id="musicPlayPauseBtn" onclick="musicPlayPause()" class="musicButton" style="padding: 8px 16px; border-color: #F2C94C; width: auto;">▶</button>
-                    <button onclick="musicNext()" class="musicButton" style="padding: 8px 12px; width: auto;">⏭</button>
-                </div>
-                
-                <!-- Volume Control -->
-                <div style="margin-bottom: 12px;">
-                    <label style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 10px; display: block; margin-bottom: 4px; text-align: center;">Volume:</label>
-                    <div style="display: flex; align-items: center; gap: 8px; justify-content: center;">
-                        <input type="range" class="volumeSlider" id="volumeSlider" min="1" max="150" value="75" oninput="updateVolume()" style="flex: 1; max-width: 200px;">
-                        <span id="volumeSliderValue" style="color: #2D9CDB; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: bold; min-width: 30px; text-align: right;">75</span>
-                    </div>
-                </div>
+            <div id="versionDisplay">Tunnels of Privacy v0.2.11 • Portal System Active</div>
+        </div>
+        
+        <!-- Music Control Panel - Bottom Above Ticker (OUTSIDE titleScreen so always visible) -->
+        <div id="musicControls">
+            <h3 class="musicControlTitle">🎵 Music Controls</h3>
+            
+            <!-- Playback Controls -->
+            <div style="display: flex; gap: 6px; justify-content: center; margin-bottom: 12px;">
+                <button onclick="musicPrevious()" class="musicButton" style="padding: 8px 12px; width: auto;">⏮</button>
+                <button id="musicPlayPauseBtn" onclick="musicPlayPause()" class="musicButton" style="padding: 8px 16px; border-color: #F2C94C; width: auto;">▶</button>
+                <button onclick="musicNext()" class="musicButton" style="padding: 8px 12px; width: auto;">⏭</button>
             </div>
             
-            
-            <div id="versionDisplay">Tunnels of Privacy v0.2.6 • Portal System Active</div>
-            
-            <!-- Music Ticker -->
-            <div id="musicTickerWrapper">
-                <div class="musicTicker">
-                    <span class="tickerText" id="musicTickerText1">♫ Dungeon Theme Music ♫</span>
-                    <span class="tickerText" id="musicTickerText2">♫ Dungeon Theme Music ♫</span>
+            <!-- Volume Control -->
+            <div style="margin-bottom: 12px;">
+                <label style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 10px; display: block; margin-bottom: 4px; text-align: center;">Volume:</label>
+                <div style="display: flex; align-items: center; gap: 8px; justify-content: center;">
+                    <input type="range" class="volumeSlider" id="volumeSlider" min="1" max="150" value="75" oninput="updateVolume()" style="flex: 1; max-width: 200px;">
+                    <span id="volumeSliderValue" style="color: #2D9CDB; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: bold; min-width: 30px; text-align: right;">75</span>
                 </div>
             </div>
         </div>
+        
+        <!-- Music Ticker (OUTSIDE titleScreen so always visible) -->
+        <div id="musicTicker">
+            <div id="musicTickerWrapper">
+                <span class="tickerText" id="musicTickerText1">♫ Theme Song ♫</span>
+                <span class="tickerText" id="musicTickerText2">♫ Theme Song ♫</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Pause Screen -->
+    <div id="pauseScreen">
+        <div id="pauseTitle">PAUSED</div>
+        <button class="menuButton" onclick="resumeGame()">RESUME<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">ESC</span></button>
+        <button class="menuButton" onclick="saveGameFromPause()" style="background: linear-gradient(135deg, rgba(46, 134, 222, 0.4), rgba(46, 134, 222, 0.3)); border-color: #3498DB;">SAVE GAME<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">💾</span></button>
+        <button class="menuButton" onclick="downloadSaveFile()" style="background: linear-gradient(135deg, rgba(39, 174, 96, 0.4), rgba(39, 174, 96, 0.3)); border-color: #27AE60;">SAVE GAME FILE<span style="display: inline-block; width: 26px; height: 26px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">⬇</span></button>
+        <button class="menuButton" onclick="showSettingsFromPause()">SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">⚙</span></button>
+        <button class="menuButton" onclick="quitToMenu()">QUIT TO MENU<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 10px; font-weight: bold; color: white; font-size: 12px;">◀</span></button>
     </div>
     
     <!-- Overlay for modal panels -->
@@ -555,7 +695,7 @@
         <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">✕</span></button>
         
         <div style="display: block; width: 100%; margin-top: 15px; padding: 10px 0; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A7A8F; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-            Tunnels of Privacy v0.2.6
+            Tunnels of Privacy v0.2.11
         </div>
     </div>
     
@@ -585,7 +725,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.2.6';
+        const GAME_VERSION = 'v0.2.11';
         
         // Music System
         let currentMusic = null;
@@ -593,6 +733,42 @@
         let musicVolume = 75; // Music volume (1-150)
         let musicStarted = false;
         let currentTrackIndex = 0;
+        
+        // Asset loading tracking
+        let assetsToLoad = 0;
+        let assetsLoaded = 0;
+        let artTotal = 0;
+        let artLoaded = 0;
+        let audioTotal = 0;
+        let audioLoaded = 0;
+        let allAssetsReady = false;
+        
+        // Ticker facts system
+        let tickerFacts = [];
+        let currentTickerFact = '';
+        
+        // Game state
+        let isPaused = false;
+        let currentScreen = 'title'; // 'title', 'dungeonMenu', 'exploration'
+        
+        // Load ticker facts from JSON file
+        fetch('ticker_facts.json')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                tickerFacts = data.facts;
+                console.log(`Loaded ${tickerFacts.length} ticker facts`);
+                
+                // Pick initial random fact
+                if (tickerFacts.length > 0) {
+                    currentTickerFact = tickerFacts[Math.floor(Math.random() * tickerFacts.length)];
+                }
+            })
+            .catch(err => console.log('Ticker facts loading failed:', err));
         
         // ===== STORY INTRO BACKGROUND ANIMATION =====
         // intro_a.png is 8x16 atlas (128 frames) at 16fps
@@ -650,7 +826,7 @@
         }
         // ===== END STORY INTRO BACKGROUND ANIMATION =====
         
-        const dungeonMusicTracks = [
+        const themeTracks = [
             { file: 'music/theme_a.webm', name: 'Electric Coin Company' },
             { file: 'music/theme_b.webm', name: 'Zcash Foundation' },
             { file: 'music/theme_c_boss.webm', name: 'Proof of Work Battle' },
@@ -663,7 +839,7 @@
             { file: 'music/theme_j.webm', name: 'Shielded Sunset' }
         ];
         
-        function loadDungeonMusic(trackData) {
+        function loadMusic(trackData) {
             if (!musicEnabled) return;
             
             // Check if we're already playing this track
@@ -675,9 +851,17 @@
             const tickerText1 = document.getElementById('musicTickerText1');
             const tickerText2 = document.getElementById('musicTickerText2');
             if (tickerText1 && tickerText2 && trackData.name) {
-                const musicInfo = `♫ Dungeon Music: ${trackData.name} ♫`;
-                tickerText1.textContent = musicInfo;
-                tickerText2.textContent = musicInfo;
+                // Pick a new random fact each time track changes
+                if (tickerFacts.length > 0) {
+                    currentTickerFact = tickerFacts[Math.floor(Math.random() * tickerFacts.length)];
+                }
+                
+                const musicInfo = `♫ Theme Song: ${trackData.name} ♫`;
+                
+                // Combine music info with fun fact
+                const finalText = currentTickerFact ? `${musicInfo}  •  ${currentTickerFact}` : musicInfo;
+                tickerText1.textContent = finalText;
+                tickerText2.textContent = finalText;
             }
             
             // Use musicVolume divided by 100 (1-150 scale), clamped to max 1.0
@@ -691,8 +875,8 @@
             // When song ends, play next random track
             newMusic.addEventListener('ended', () => {
                 if (!musicEnabled) return;
-                const randomTrack = dungeonMusicTracks[Math.floor(Math.random() * dungeonMusicTracks.length)];
-                loadDungeonMusic(randomTrack);
+                const randomTrack = themeTracks[Math.floor(Math.random() * themeTracks.length)];
+                loadMusic(randomTrack);
             });
             
             // Fade in new track
@@ -735,17 +919,6 @@
             }, stepTime);
         }
         
-        // Start music on first user interaction (browser autoplay policy)
-        function startMusicOnInteraction() {
-            if (!musicStarted && musicEnabled) {
-                const randomTrack = dungeonMusicTracks[Math.floor(Math.random() * dungeonMusicTracks.length)];
-                loadDungeonMusic(randomTrack);
-            }
-        }
-        
-        document.addEventListener('click', startMusicOnInteraction, { once: true });
-        document.addEventListener('keydown', startMusicOnInteraction, { once: true });
-        
         // Music Control Functions
         function musicPlayPause() {
             const btn = document.getElementById('musicPlayPauseBtn');
@@ -753,8 +926,8 @@
             if (!currentMusic) {
                 // No music loaded yet, start the music system
                 musicEnabled = true;
-                const randomTrack = dungeonMusicTracks[Math.floor(Math.random() * dungeonMusicTracks.length)];
-                loadDungeonMusic(randomTrack);
+                const randomTrack = themeTracks[Math.floor(Math.random() * themeTracks.length)];
+                loadMusic(randomTrack);
                 if (btn) btn.textContent = '⏸';
                 return;
             }
@@ -776,8 +949,8 @@
             }
             
             musicEnabled = true; // Enable music if it was paused
-            const randomTrack = dungeonMusicTracks[Math.floor(Math.random() * dungeonMusicTracks.length)];
-            loadDungeonMusic(randomTrack);
+            const randomTrack = themeTracks[Math.floor(Math.random() * themeTracks.length)];
+            loadMusic(randomTrack);
         }
         
         function musicNext() {
@@ -786,8 +959,8 @@
             }
             
             musicEnabled = true; // Enable music if it was paused
-            const randomTrack = dungeonMusicTracks[Math.floor(Math.random() * dungeonMusicTracks.length)];
-            loadDungeonMusic(randomTrack);
+            const randomTrack = themeTracks[Math.floor(Math.random() * themeTracks.length)];
+            loadMusic(randomTrack);
         }
         
         function updateMusicButton() {
@@ -1104,9 +1277,11 @@
             }
         }
         
-        // Update hero stat display
+        // Update hero stat display (both title and dungeon screens)
         function updateHeroDisplay(heroName, stats) {
             const prefix = heroName.toLowerCase();
+            
+            // Title screen hero stats
             const levelEl = document.getElementById(`${prefix}-level`);
             const hpEl = document.getElementById(`${prefix}-hp`);
             const maxhpEl = document.getElementById(`${prefix}-maxhp`);
@@ -1117,6 +1292,17 @@
             const wisEl = document.getElementById(`${prefix}-wis`);
             const chaEl = document.getElementById(`${prefix}-cha`);
             
+            // Dungeon screen hero stats (prefixed with 'd')
+            const dhpEl = document.getElementById(`d${prefix}-hp`);
+            const dmaxhpEl = document.getElementById(`d${prefix}-maxhp`);
+            const dstrEl = document.getElementById(`d${prefix}-str`);
+            const ddexEl = document.getElementById(`d${prefix}-dex`);
+            const dconEl = document.getElementById(`d${prefix}-con`);
+            const dintEl = document.getElementById(`d${prefix}-int`);
+            const dwisEl = document.getElementById(`d${prefix}-wis`);
+            const dchaEl = document.getElementById(`d${prefix}-cha`);
+            
+            // Update title screen
             if (levelEl) levelEl.textContent = stats.level || 1;
             if (hpEl) hpEl.textContent = stats.hp || 0;
             if (maxhpEl) maxhpEl.textContent = stats.maxHp || 0;
@@ -1126,15 +1312,343 @@
             if (intEl) intEl.textContent = stats.int || 0;
             if (wisEl) wisEl.textContent = stats.wis || 0;
             if (chaEl) chaEl.textContent = stats.cha || 0;
+            
+            // Update dungeon screen
+            if (dhpEl) dhpEl.textContent = stats.hp || 0;
+            if (dmaxhpEl) dmaxhpEl.textContent = stats.maxHp || 0;
+            if (dstrEl) dstrEl.textContent = stats.str || 0;
+            if (ddexEl) ddexEl.textContent = stats.dex || 0;
+            if (dconEl) dconEl.textContent = stats.con || 0;
+            if (dintEl) dintEl.textContent = stats.int || 0;
+            if (dwisEl) dwisEl.textContent = stats.wis || 0;
+            if (dchaEl) dchaEl.textContent = stats.cha || 0;
         }
         
+        // Start adventure - switch from title to dungeon menu
+        function startAdventure() {
+            const titleScreen = document.getElementById('titleScreen');
+            const dungeonMenuScreen = document.getElementById('dungeonMenuScreen');
+            
+            if (titleScreen) titleScreen.style.display = 'none';
+            if (dungeonMenuScreen) dungeonMenuScreen.style.display = 'block';
+            
+            currentScreen = 'dungeonMenu';
+            
+            // Sync dungeon level display
+            const sharedSave = loadSharedSave();
+            if (sharedSave && sharedSave.arcadeState && sharedSave.arcadeState.level) {
+                const dungeonMenuLevel = document.getElementById('dungeonMenuLevel');
+                if (dungeonMenuLevel) {
+                    dungeonMenuLevel.textContent = sharedSave.arcadeState.level;
+                }
+            }
+        }
+        
+        // Pause game
+        function pauseGame() {
+            if (currentScreen === 'title') return; // Can't pause on title screen
+            
+            isPaused = true;
+            const pauseScreen = document.getElementById('pauseScreen');
+            if (pauseScreen) pauseScreen.style.display = 'flex';
+        }
+        
+        // Resume game
+        function resumeGame() {
+            isPaused = false;
+            const pauseScreen = document.getElementById('pauseScreen');
+            if (pauseScreen) pauseScreen.style.display = 'none';
+        }
+        
+        // Save game from pause menu
+        function saveGameFromPause() {
+            try {
+                const sharedSave = loadSharedSave();
+                if (!sharedSave) {
+                    alert('No save data found!');
+                    return;
+                }
+                
+                // Update last played timestamp
+                sharedSave.lastPlayed = Date.now();
+                
+                // Save to localStorage
+                if (saveSharedSave(sharedSave)) {
+                    alert('Game saved successfully!');
+                } else {
+                    alert('Failed to save game!');
+                }
+            } catch (e) {
+                console.error('Save error:', e);
+                alert('Error saving game: ' + e.message);
+            }
+        }
+        
+        // Download save file
+        function downloadSaveFile() {
+            try {
+                const sharedSave = loadSharedSave();
+                if (!sharedSave) {
+                    alert('No save data to download!');
+                    return;
+                }
+                
+                // Update timestamp
+                sharedSave.lastPlayed = Date.now();
+                saveSharedSave(sharedSave);
+                
+                // Create filename with date/time
+                const now = new Date();
+                const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+                const hours = now.getHours();
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const ampm = hours >= 12 ? 'pm' : 'am';
+                const hour12 = hours % 12 || 12;
+                const timeStr = `${hour12}_${minutes}_${ampm}`;
+                
+                const level = sharedSave.arcadeState ? sharedSave.arcadeState.level : 1;
+                const filename = `tunnels-save-level${level}-${dateStr}-${timeStr}.json`;
+                
+                // Download JSON
+                const jsonString = JSON.stringify(sharedSave, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                alert(`Save file downloaded: ${filename}`);
+            } catch (e) {
+                console.error('Download error:', e);
+                alert('Error downloading save file: ' + e.message);
+            }
+        }
+        
+        // Show settings from pause
+        function showSettingsFromPause() {
+            showSettings();
+        }
+        
+        // Quit to menu
+        function quitToMenu() {
+            isPaused = false;
+            currentScreen = 'title';
+            
+            const pauseScreen = document.getElementById('pauseScreen');
+            const dungeonMenuScreen = document.getElementById('dungeonMenuScreen');
+            const titleScreen = document.getElementById('titleScreen');
+            
+            if (pauseScreen) pauseScreen.style.display = 'none';
+            if (dungeonMenuScreen) dungeonMenuScreen.style.display = 'none';
+            if (titleScreen) titleScreen.style.display = 'block';
+        }
+        
+        // ESC key listener
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                
+                // Close all panels first
+                const overlay = document.getElementById('overlay');
+                const settingsPanel = document.getElementById('settingsPanel');
+                const loadSavePanel = document.getElementById('loadSavePanel');
+                
+                if (overlay && overlay.style.display === 'block') {
+                    closeAllPanels();
+                    return;
+                }
+                
+                // Toggle pause
+                if (isPaused) {
+                    resumeGame();
+                } else {
+                    pauseGame();
+                }
+            }
+        });
+        
         // Initialize on page load
+        // Preload images and audio into browser cache
+        function preloadAssets() {
+            const imageList = [
+                // Story intro background
+                'story/intro/intro_a.png',
+                // Character head icons
+                'people/zooko_a_head_compressed.png',
+                'people/Nate_a_head_compressed.png',
+                'people/Zancas_a_head_compressed.png',
+                'people/cyberaxe_a_head_compressed.png'
+            ];
+            
+            artTotal = imageList.length;
+            assetsToLoad += imageList.length;
+            
+            // Preload images
+            imageList.forEach(imagePath => {
+                const img = new Image();
+                img.src = imagePath;
+                img.addEventListener('load', () => {
+                    console.log(`Preloaded: ${imagePath}`);
+                    artLoaded++;
+                    assetsLoaded++;
+                    updateLoadingProgress();
+                }, { once: true });
+                img.addEventListener('error', (e) => {
+                    console.error(`Failed to preload: ${imagePath}`, e);
+                    artLoaded++;
+                    assetsLoaded++;
+                    updateLoadingProgress();
+                }, { once: true });
+            });
+            
+            // Preload music if enabled
+            if (musicEnabled && musicVolume > 0) {
+                audioTotal = 1;
+                assetsToLoad += 1;
+                
+                const musicPlayer = document.getElementById('musicPlayer');
+                if (musicPlayer) {
+                    musicPlayer.volume = Math.min(1.0, musicVolume / 100);
+                    musicPlayer.preload = 'metadata'; // Changed from 'auto' to avoid hanging
+                    
+                    // Set a timeout in case music doesn't load
+                    const musicTimeout = setTimeout(() => {
+                        console.log('Music preload timeout - continuing anyway');
+                        audioLoaded++;
+                        assetsLoaded++;
+                        updateLoadingProgress();
+                    }, 3000); // 3 second timeout
+                    
+                    musicPlayer.addEventListener('loadedmetadata', () => {
+                        console.log('Music metadata loaded');
+                        clearTimeout(musicTimeout);
+                        audioLoaded++;
+                        assetsLoaded++;
+                        updateLoadingProgress();
+                    }, { once: true });
+                    
+                    musicPlayer.addEventListener('error', (e) => {
+                        console.error('Failed to preload music', e);
+                        clearTimeout(musicTimeout);
+                        audioLoaded++;
+                        assetsLoaded++;
+                        updateLoadingProgress();
+                    }, { once: true });
+                    
+                    musicPlayer.load();
+                } else {
+                    // Music player doesn't exist, skip it
+                    audioLoaded++;
+                    assetsLoaded++;
+                    updateLoadingProgress();
+                }
+            }
+            
+            updateLoadingProgress();
+        }
+        
+        // Update loading progress indicator
+        function updateLoadingProgress() {
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const loadingBar = document.getElementById('loadingBar');
+            const loadingArt = document.getElementById('loadingArt');
+            const loadingSound = document.getElementById('loadingSound');
+            
+            if (loadingIndicator && assetsToLoad > 0) {
+                const percent = Math.floor((assetsLoaded / assetsToLoad) * 100);
+                loadingIndicator.textContent = `${percent}%`;
+                
+                if (loadingBar) {
+                    loadingBar.style.width = `${percent}%`;
+                    loadingBar.textContent = `${percent}%`;
+                }
+                
+                // Update category counts
+                if (loadingArt) {
+                    loadingArt.innerHTML = `🎨 Art: <span style="color: #8B45FF; font-weight: bold;">${artLoaded}/${artTotal}</span>`;
+                }
+                if (loadingSound) {
+                    loadingSound.innerHTML = `🔊 Sound: <span style="color: #8B45FF; font-weight: bold;">${audioLoaded}/${audioTotal}</span>`;
+                }
+            }
+            
+            checkAllAssetsReady();
+        }
+        
+        function checkAllAssetsReady() {
+            if (assetsToLoad > 0 && assetsLoaded >= assetsToLoad && !allAssetsReady) {
+                allAssetsReady = true;
+                
+                const loadingIndicator = document.getElementById('loadingIndicator');
+                const loadingBar = document.getElementById('loadingBar');
+                const loadingModal = document.getElementById('loadingModal');
+                const loadingNote = document.getElementById('loadingNote');
+                const clickToPlayPrompt = document.getElementById('clickToPlayPrompt');
+                
+                if (loadingIndicator) {
+                    loadingIndicator.textContent = '✓ All Assets Ready!';
+                    loadingIndicator.style.color = '#2ECC71';
+                }
+                
+                if (loadingBar) {
+                    loadingBar.style.width = '100%';
+                    loadingBar.textContent = '100%';
+                    loadingBar.style.background = 'linear-gradient(90deg, #2ECC71, #27AE60)';
+                }
+                
+                if (loadingNote) {
+                    loadingNote.style.display = 'none';
+                }
+                
+                if (clickToPlayPrompt) {
+                    clickToPlayPrompt.style.display = 'block';
+                    
+                    const handleClick = () => {
+                        // Start music when user clicks
+                        if (musicEnabled && musicVolume > 0 && !musicStarted) {
+                            const randomTrack = themeTracks[Math.floor(Math.random() * themeTracks.length)];
+                            loadMusic(randomTrack);
+                        }
+                        
+                        // Fade out and remove loading modal
+                        if (loadingModal) {
+                            loadingModal.style.opacity = '0';
+                            loadingModal.style.transition = 'opacity 0.5s ease';
+                            setTimeout(() => {
+                                loadingModal.style.display = 'none';
+                            }, 500);
+                        }
+                        
+                        // Remove click handler
+                        clickToPlayPrompt.removeEventListener('click', handleClick);
+                        document.removeEventListener('keydown', handleKeyDown);
+                    };
+                    
+                    const handleKeyDown = (e) => {
+                        if (e.key === 'a' || e.key === 'A' || e.key === 'Enter') {
+                            handleClick();
+                        }
+                    };
+                    
+                    clickToPlayPrompt.addEventListener('click', handleClick);
+                    document.addEventListener('keydown', handleKeyDown);
+                }
+            }
+        }
+        
         function init() {
             console.log('Tunnels of Privacy - Initializing...');
             
             // Load settings
             loadSettings();
             console.log('Settings loaded:', settings);
+            
+            // Preload assets
+            preloadAssets();
             
             // Start background animation
             startStoryIntroAnimation();
