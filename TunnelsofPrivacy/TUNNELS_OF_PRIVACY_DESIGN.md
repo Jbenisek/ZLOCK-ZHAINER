@@ -1,8 +1,8 @@
 # TUNNELS OF PRIVACY - Game Design Document
 
-**Current Version:** v0.2.25  
+**Current Version:** v0.2.26  
 **Last Updated:** November 26, 2025  
-**Status:** Phase 2 In Progress - Combat System with Healing & Action Economy
+**Status:** Phase 2 In Progress - Combat System with Full Action Mechanics
 
 ## Project Overview
 Tunnels of Privacy is a dungeon crawler game inspired by the classic TI-99/4A game "Tunnels of Doom" (1982). It shares a universe with ZLOCK CHAINER (arcade puzzle game) through a bidirectional save/load portal system.

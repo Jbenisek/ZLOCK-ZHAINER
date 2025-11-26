@@ -1773,7 +1773,11 @@
             ctx: null,
             backgroundImage: null,
             backgroundPath: '',
-            detectedPlatforms: []
+            detectedPlatforms: [],
+            targetingMode: false,
+            pendingAction: null,
+            swapTargetingMode: false,
+            swapInitiator: null
         };
         
         // Start a battle encounter
@@ -2453,11 +2457,54 @@
 
         // Handle canvas clicks for targeting
         function handleBattleClick(event) {
-            if (!battleState.targetingMode || !battleState.pendingAction) return;
-            
             const rect = battleState.canvas.getBoundingClientRect();
             const x = event.clientX - rect.left;
             const y = event.clientY - rect.top;
+            
+            // Handle swap targeting (hero selection)
+            if (battleState.swapTargetingMode && battleState.swapInitiator) {
+                for (const hero of battleState.heroes) {
+                    if (hero === battleState.swapInitiator || hero.hp <= 0) continue;
+                    
+                    const canvas = battleState.canvas;
+                    const depthScale = 0.6 + (hero.y / canvas.height) * 0.4;
+                    const hitWidth = 64 * depthScale;
+                    const hitHeight = 64 * depthScale;
+                    const hitX = hero.x - hitWidth / 2;
+                    const hitY = hero.y - hitHeight / 2;
+                    
+                    if (x >= hitX && x <= hitX + hitWidth && y >= hitY && y <= hitY + hitHeight) {
+                        // Swap positions
+                        const initiator = battleState.swapInitiator;
+                        const tempX = initiator.x;
+                        const tempY = initiator.y;
+                        const tempPlatform = initiator.platform;
+                        
+                        initiator.x = hero.x;
+                        initiator.y = hero.y;
+                        initiator.platform = hero.platform;
+                        
+                        hero.x = tempX;
+                        hero.y = tempY;
+                        hero.platform = tempPlatform;
+                        
+                        showDiceRoll(`${initiator.name} swapped positions with ${hero.name}!`);
+                        
+                        // Exit swap mode
+                        battleState.swapTargetingMode = false;
+                        battleState.swapInitiator = null;
+                        battleState.canvas.style.cursor = 'default';
+                        
+                        // Swap uses all action points
+                        advanceTurn();
+                        return;
+                    }
+                }
+                return;
+            }
+            
+            // Handle enemy targeting
+            if (!battleState.targetingMode || !battleState.pendingAction) return;
             
             // Check if click hit an enemy
             for (const enemy of battleState.enemies) {
@@ -2579,6 +2626,25 @@
                 // Y range: 0 (top) to canvas.height (bottom)
                 // Scale range: 0.6 (top/far) to 1.0 (bottom/near)
                 const depthScale = 0.6 + (hero.y / canvas.height) * 0.4;
+                
+                // Green highlight for swap targeting (other heroes)
+                if (battleState.swapTargetingMode && hero !== battleState.swapInitiator && hero.hp > 0) {
+                    ctx.save();
+                    ctx.strokeStyle = '#00FF00';
+                    ctx.lineWidth = 4 * depthScale;
+                    ctx.shadowColor = '#00FF00';
+                    ctx.shadowBlur = 20 * depthScale;
+                    const pulseSize = Math.sin(Date.now() / 200) * 3 * depthScale;
+                    const boxWidth = 300 * depthScale;
+                    const boxHeight = 300 * depthScale;
+                    ctx.strokeRect(
+                        hero.x - boxWidth / 2 - pulseSize,
+                        hero.y - boxHeight / 2 - pulseSize,
+                        boxWidth + pulseSize * 2,
+                        boxHeight + pulseSize * 2
+                    );
+                    ctx.restore();
+                }
                 
                 // Draw hero sprite
                 if (hero.sprite && hero.sprite.complete && hero.sprite.naturalHeight !== 0) {
@@ -3104,9 +3170,11 @@
             
             // Swap action - swap positions with another hero
             if (action === 'swap') {
-                // TODO: Implement hero selection and position swapping
-                showDiceRoll(`${currentCombatant.name} swaps position! (Not yet implemented)`);
-                advanceTurn();
+                battleState.swapTargetingMode = true;
+                battleState.swapInitiator = currentCombatant;
+                document.getElementById('battleCanvas').style.cursor = 'pointer';
+                showDiceRoll(`${currentCombatant.name}: Select a hero to swap with`);
+                renderBattle();
                 return;
             }
             

@@ -2,6 +2,40 @@
 
 # Changelog
 
+## v0.2.26 - Swap Action Implementation (2025-11-26)
+- **Summary:**
+  - Implemented swap action allowing heroes to exchange positions
+  - Added green highlight targeting for hero selection
+  - Swap uses all action points and ends turn
+
+- **Swap Mechanics:**
+  - Hero clicks SWAP button to enter swap targeting mode
+  - Green pulsing highlight boxes appear around other living heroes
+  - Click any other hero to swap positions (x, y, platform)
+  - Swap uses all action points (ends turn immediately)
+  - Disabled heroes (0 HP) cannot be swapped with
+
+- **Visual Feedback:**
+  - Green pulsing border around selectable heroes (#00FF00)
+  - Shadow glow effect (20px blur, depth-scaled)
+  - Pulse animation using sin wave (Date.now() / 200)
+  - Cursor changes to pointer during swap targeting
+  - Initiating hero excluded from highlight (cannot swap with self)
+
+- **UI Implementation:**
+  - Added swapTargetingMode flag to battleState
+  - Added swapInitiator property to track who initiated swap
+  - Modified handleBattleClick() to handle hero selection
+  - Modified renderBattle() to draw green highlights
+  - Swap targeting takes priority over enemy targeting in click handler
+
+- **Technical Changes:**
+  - Extended battleState with swapTargetingMode and swapInitiator
+  - Hero hitbox detection for swap clicks (300x300 depth-scaled)
+  - Position swap exchanges x, y, and platform properties
+  - Cursor management (pointer during swap, default after)
+  - Dice display shows swap confirmation message
+
 ## v0.2.25 - Healing System & Action Economy (2025-11-26)
 - **Summary:**
   - Implemented healing system with 2 heals per hero per room
