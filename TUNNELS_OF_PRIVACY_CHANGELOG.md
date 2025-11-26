@@ -2,6 +2,239 @@
 
 # Changelog
 
+## v0.2.19 - Multiplayer UX Improvements (2025-11-26)
+- **Summary:**
+  - Enhanced multiplayer lobby with reactive player tracking
+  - Multiple hero selection per player (for 2-3 player games)
+  - Room codes changed to 6-digit numbers (easier to share)
+  - Added game start options menu
+  - Real-time player name updates
+
+- **Player Management:**
+  - Connected players list shows all players immediately on join
+  - Default player names: Player 1, 2, 3, 4 (auto-assigned)
+  - Player name input field with real-time broadcast to all clients
+  - Server tracks player names and IDs in room state
+  - New `update_name` message type for instant name synchronization
+  - New `players_update` message type for lobby updates
+
+- **Multiple Hero Selection:**
+  - Changed from single hero to array of heroes per player
+  - Players can select/deselect multiple heroes by clicking
+  - No limit on heroes per player (allows 2v2, 1v3, etc.)
+  - Hero cards show player names instead of just "TAKEN"
+  - Added `deselect_hero` server message handler
+
+- **Room Code System:**
+  - Changed from alphanumeric (A-Z0-9) to numeric only (0-9)
+  - 6-digit codes: 000000-999999 (1M combinations)
+  - Easier to communicate verbally for small player groups
+  - Server validation updated to digits only
+
+- **Hero Selection UI:**
+  - Room code display with hide/show toggle (👁 button)
+  - Player count indicator (X/4 players)
+  - Connected players list with "PlayerName → HERO" format
+  - Shows all players even without hero selection
+  - Player name input at top of modal
+  - Music controls move to left side during selection
+
+- **Game Start Options (Host Only):**
+  - Appears when all 4 heroes are selected
+  - Three buttons:
+    - **CONTINUE**: Load last save and start
+    - **LOAD SAVE GAME**: Show dungeon menu (load UI)
+    - **START NEW ADVENTURE**: Reset save with confirmation
+  - Warning message about save replacement
+  - Replaces single "START BATTLE" button
+
+- **Server Updates (zlock_server.py):**
+  - Room structure now includes `players` dict with IDs and names
+  - Heroes store `{ playerId, playerName }` instead of just ID
+  - `select_hero` updated to store and broadcast player names
+  - New handlers: `deselect_hero`, `update_name`
+  - Player list sent on `room_created` and `joined` messages
+  - Broadcast player updates when names change
+
+- **UI/UX Polish:**
+  - Multiplayer controls moved to title screen (removed from settings)
+  - Auto-close settings panel when creating room
+  - Pointer events fix for title screen buttons
+  - Hero selection shows waiting message with hero count
+  - Game start options only visible to host
+  - Smooth transitions between lobby and game start
+
+## v0.2.18 - Multiplayer Co-op System (2025-11-26)
+- **Summary:**
+  - Implemented 4-player co-op multiplayer via WebSocket
+  - Host-authoritative game state with real-time synchronization
+  - Room-based matchmaking with 6-character codes
+  - Hero selection modal with taken indicators
+  - Network debug panel for troubleshooting
+
+- **WebSocket Server (zlock_server.py):**
+  - Added WebSocket server on port 8765 (runs alongside HTTP on 4243)
+  - Room management system with unique 6-character codes (A-Z, 0-9)
+  - Host-authoritative architecture (host runs battle logic, clients send input)
+  - 8 message types: create_room, join_room, select_hero, player_action, state_update, kick_player, skip_turn, change_code
+  - Automatic cleanup on disconnect (AI takeover for clients, kick all if host leaves)
+
+- **UI Components:**
+  - Settings Panel: Host section (Create/Stop Hosting, room code display, Change Code)
+  - Settings Panel: Join section (6-char code input, connection status, Leave Room)
+  - Title Screen: Quick join box (bottom-right corner)
+  - Hero Selection Modal: 4-hero grid with taken indicators and ready state
+  - Host Controls Panel: Player list with Kick/Skip buttons, accessible from pause menu
+  - Battle UI: Multiplayer status indicator (role, room code, player count)
+  - Network Debug Panel: Connection status, room state, message log (last 20)
+
+- **Multiplayer Logic:**
+  - Turn-based synchronization: Only current player can act
+  - Host broadcasts full game state after every action
+  - Clients update local state from host snapshots
+  - Turn validation: "Not your turn!" message if client tries acting out of turn
+  - Button auto-disable when not player's turn (opacity 0.3)
+  - Turn info shows "(YOU)" for current player, "Waiting for X..." for others
+
+- **Hero Selection:**
+  - All players shown modal after joining room
+  - Click hero portrait to select (4 heroes: Zooko, Nate, Zancas, CyberAxe)
+  - Selected heroes show "TAKEN" label and gray out for other players
+  - Host sees "START BATTLE" button when all players ready
+  - Duplicate hero selection prevented
+
+- **Disconnection Handling:**
+  - Client disconnect: AI takeover for their hero, notification to all players
+  - Host disconnect: All clients kicked to title screen
+  - Room cleanup: Rooms deleted when empty or host leaves
+  - Visual notifications for all disconnect events
+
+- **Host Controls:**
+  - KICK PLAYER: Remove player from room
+  - SKIP TURN: Force skip current player's turn
+  - CHANGE CODE: Regenerate room code (kicks all clients)
+  - Player list shows hero name and player ID
+
+- **Network Debug Mode:**
+  - Toggle in Settings: "Network Debug" checkbox
+  - Real-time connection status (Connected/Disconnected)
+  - Room state display (role, code, player count, your hero)
+  - Message log with timestamps and color-coded arrows (⬆️ sent / ⬇️ received)
+  - Auto-scrolling log (max 20 messages)
+  - Clear log button
+
+- **Error Handling:**
+  - Invalid room code: "Room not found" error
+  - Room full: "Room full (max 4 players)" error
+  - Duplicate hero: Selection blocked with notification
+  - Out-of-turn action: "Not your turn!" message
+  - WebSocket connection failure: Error notification
+
+- **Technical Implementation:**
+  - Added multiplayerState global object (7 properties)
+  - 28 new multiplayer functions (~400 lines)
+  - Modified battleAction(), executeAttack(), updateBattleTurnInfo()
+  - Debug logging integrated into WebSocket send/receive
+  - Thread-based WebSocket server (runs in daemon thread)
+
+- **Files Modified:**
+  - zlock_server.py: +180 lines (WebSocket server)
+  - tunnels_of_privacy.html: +650 lines (client-side multiplayer)
+
+- **Testing:**
+  - Install: `pip install websockets`
+  - Start: `python zlock_server.py`
+  - Open 4 browser windows to localhost:4243/tunnels_of_privacy.html
+  - Host creates room, clients join with code
+  - Select heroes, start battle, test turn-based sync
+
+- **Known Limitations:**
+  - No reconnection support (disconnect = AI takeover)
+  - No mid-battle join (join before battle only)
+  - LAN only (requires port forwarding for internet play)
+  - No save/load for multiplayer sessions
+
+## v0.2.30 - Multiplayer UX Improvements (2025-11-26)
+- **Summary:**
+  - Enhanced multiplayer lobby with reactive player tracking
+  - Multiple hero selection per player (for 2-3 player games)
+  - Room codes changed to 6-digit numbers (easier to share)
+  - Added game start options menu
+  - Real-time player name updates
+
+- **Player Management:**
+  - Connected players list shows all players immediately on join
+  - Default player names: Player 1, 2, 3, 4 (auto-assigned)
+  - Player name input field with real-time broadcast to all clients
+  - Server tracks player names and IDs in room state
+  - New `update_name` message type for instant name synchronization
+  - New `players_update` message type for lobby updates
+
+- **Multiple Hero Selection:**
+  - Changed from single hero to array of heroes per player
+  - Players can select/deselect multiple heroes by clicking
+  - No limit on heroes per player (allows 2v2, 1v3, etc.)
+  - Hero cards show player names instead of just "TAKEN"
+  - Added `deselect_hero` server message handler
+
+- **Room Code System:**
+  - Changed from alphanumeric (A-Z0-9) to numeric only (0-9)
+  - 6-digit codes: 000000-999999 (1M combinations)
+  - Easier to communicate verbally for small player groups
+  - Server validation updated to digits only
+
+- **Hero Selection UI:**
+  - Room code display with hide/show toggle (👁 button)
+  - Player count indicator (X/4 players)
+  - Connected players list with "PlayerName → HERO" format
+  - Shows all players even without hero selection
+  - Player name input at top of modal
+  - Music controls move to left side during selection
+
+- **Game Start Options (Host Only):**
+  - Appears when all 4 heroes are selected
+  - Three buttons:
+    - **CONTINUE**: Load last save and start
+    - **LOAD SAVE GAME**: Show dungeon menu (load UI)
+    - **START NEW ADVENTURE**: Reset save with confirmation
+  - Warning message about save replacement
+  - Replaces single "START BATTLE" button
+
+- **Server Updates (zlock_server.py):**
+  - Room structure now includes `players` dict with IDs and names
+  - Heroes store `{ playerId, playerName }` instead of just ID
+  - `select_hero` updated to store and broadcast player names
+  - New handlers: `deselect_hero`, `update_name`
+  - Player list sent on `room_created` and `joined` messages
+  - Broadcast player updates when names change
+
+- **UI/UX Polish:**
+  - Multiplayer controls moved to title screen (removed from settings)
+  - Auto-close settings panel when creating room
+  - Pointer events fix for title screen buttons
+  - Hero selection shows waiting message with hero count
+  - Game start options only visible to host
+  - Smooth transitions between lobby and game start
+
+## v0.2.29 - Music Controls Positioning (2025-11-26)
+- **Summary:**
+  - Music controls move to left side during hero selection lobby
+  - CSS class system for consistent positioning
+  - Matches battle screen behavior
+
+## v0.2.28 - Hero Selection Polish (2025-11-26)
+- **Summary:**
+  - Fixed room code input clickability
+  - Added BACK button to hero selection
+  - Room code hide/show toggle
+  - Auto-close settings on create room
+
+## v0.2.27 - Multiplayer Title Screen Integration (2025-11-26)
+- **Summary:**
+  - Moved multiplayer controls to title screen
+  - Removed multiplayer section from settings panel
+  - CREATE ROOM and JOIN buttons on title screen
+
 ## v0.2.26 - Swap Action Implementation (2025-11-26)
 - **Summary:**
   - Implemented swap action allowing heroes to exchange positions

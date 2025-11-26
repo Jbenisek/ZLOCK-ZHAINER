@@ -1,6 +1,6 @@
 # TUNNELS OF PRIVACY - Game Design Document
 
-**Current Version:** v0.2.26  
+**Current Version:** v0.2.30  
 **Last Updated:** November 26, 2025  
 **Status:** Phase 2 In Progress - Combat System with Full Action Mechanics
 
