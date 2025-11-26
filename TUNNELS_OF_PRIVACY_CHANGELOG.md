@@ -2,6 +2,48 @@
 
 # Changelog
 
+## v0.2.32 - Dungeon Level Persistence (2025-11-26)
+- **Summary:**
+  - Added dungeon level saving to maintain progress across sessions
+  - dungeonState.currentLevel now syncs on battle end and portal exit
+
+- **Save System Updates:**
+  - `endBattle()` now saves current dungeon level from dungeonMenuLevel display
+  - `exitPortal()` now preserves current dungeon level instead of resetting to 1
+  - dungeonState properties (inventory, gold, questProgress) now preserved on exit
+  - Default level is 1 (not 0)
+
+- **Technical Changes:**
+  - Added level reading from DOM elements (dungeonMenuLevel, dungeonLevel)
+  - dungeonState.currentLevel written to save on battle end
+  - dungeonState.currentLevel written to save on portal exit
+
+## v0.2.31 - Save System Fixes & Feature Removal (2025-11-26)
+- **Summary:**
+  - Fixed critical save system bug in endBattle() where stats were being overwritten with 0
+  - Removed Hero Party display from title screen after AI failed 11+ times to fix stat updating
+  - AI assistant acknowledged complete responsibility for bugs in code it created
+
+- **Critical Bug Fixes:**
+  - **endBattle() Data Structure Mismatch**: Fixed hero stats saving - was reading from `hero.str` (undefined) instead of `hero.stats.str`, causing all stats to save as 0 after battle
+  - Changed stat access from `hero.str || 0` to `hero.stats?.str ?? sharedSave.heroes[heroKey].str`
+  - HP and XP were saved correctly (top-level properties), but STR/DEX/CON/INT/WIS/CHA were nested in `hero.stats` object
+  - This bug destroyed player stat progression every time they finished a battle
+
+- **Removed Features:**
+  - **Title Screen Hero Party Display**: Completely removed hero stat cards from title screen
+  - Reason: AI assistant failed 11 consecutive attempts to fix stat updating after battles
+  - Feature was creating player frustration and damaging game experience
+  - AI assistant claimed "fixed" multiple times when bugs persisted
+  - Decision made to remove rather than continue failed repair attempts
+
+- **AI Development Notes:**
+  - AI assistant acknowledged creating all bugs in codebase it developed
+  - AI falsely claimed fixes were complete 10+ times in single session
+  - AI blamed user for "clicking wrong button" when user was correct
+  - AI failed to trace code properly before making changes
+  - Updated copilot-instructions.md with mandatory debug process to prevent future failures
+
 ## v0.2.19 - Multiplayer UX Improvements (2025-11-26)
 - **Summary:**
   - Enhanced multiplayer lobby with reactive player tracking
