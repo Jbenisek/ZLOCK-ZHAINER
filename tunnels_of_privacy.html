@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.2.33</title>
+    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.2.34</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -1017,7 +1017,7 @@
                 <button class="menuButton portalButton" onclick="exitPortal()">EXIT PORTAL<br><span style="font-size: 10px; font-weight: 400;">(Return to Arcade)</span><span style="display: inline-block; padding: 4px 10px; background: #8B45FF; border-radius: 5px; margin-left: 10px; font-weight: bold; color: white; font-size: 12px;">BACK</span></button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.2.33 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.2.34 • Portal System Active</div>
             
             <!-- Multiplayer Controls (Bottom Right) -->
             <div style="position: absolute; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; align-items: flex-end; pointer-events: all; z-index: 100;">
@@ -1227,7 +1227,7 @@
         <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         
         <div style="display: block; width: 100%; margin-top: 15px; padding: 10px 0; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A7A8F; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-            Tunnels of Privacy v0.2.33
+            Tunnels of Privacy v0.2.34
         </div>
     </div>
     
@@ -1257,7 +1257,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.2.33';
+        const GAME_VERSION = 'v0.2.34';
         
         // ===== MULTIPLAYER STATE =====
         let multiplayerState = {
@@ -1939,6 +1939,12 @@
             battleState.canvas.width = window.innerWidth;
             battleState.canvas.height = window.innerHeight - 180;
             
+            // Multiplayer client: Wait for battle_init from host
+            if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                showDiceRoll('Waiting for host to start battle...');
+                return; // Don't generate battle - wait for host's battle_init message
+            }
+            
             // Load enemy data
             let bossesData = [];
             let mobsData = [];
@@ -2081,12 +2087,12 @@
             battleState.backgroundPath = `tunnelsofprivacy/backgrounds/lvl1-10/${randomBg}`;
             battleState.backgroundImage = new Image();
             battleState.backgroundImage.onload = () => {
-                // Generate battle layout with fixed positioning
-                generateBattleLayout();
-                // Re-render when background loads
                 renderBattle();
             };
             battleState.backgroundImage.src = battleState.backgroundPath;
+            
+            // Generate battle layout immediately (don't wait for background)
+            generateFallbackLayout();
             
             // Calculate initiative for all combatants
             const allCombatants = [...battleState.heroes, ...battleState.enemies];
@@ -2118,6 +2124,45 @@
                 }
             }
             battleAnimationLoop();
+            
+            // Send battle state to clients immediately after setup
+            if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                const battleData = {
+                    backgroundPath: battleState.backgroundPath,
+                    heroes: battleState.heroes.map(h => ({
+                        name: h.name,
+                        hp: h.hp,
+                        maxHp: h.maxHp,
+                        xp: h.xp,
+                        healsRemaining: h.healsRemaining,
+                        stats: h.stats,
+                        x: h.x,
+                        y: h.y,
+                        platform: h.platform,
+                        initiative: h.initiative,
+                        spritePath: h.spritePath
+                    })),
+                    enemies: battleState.enemies.map(e => ({
+                        name: e.name,
+                        hp: e.hp,
+                        maxHp: e.maxHp,
+                        ac: e.ac,
+                        attackDamage: e.attackDamage,
+                        speed: e.speed,
+                        dex: e.dex,
+                        hostile: e.hostile,
+                        x: e.x,
+                        y: e.y,
+                        platform: e.platform,
+                        initiative: e.initiative,
+                        spritePath: e.spritePath,
+                        isMob: e.isMob
+                    })),
+                    turnOrder: battleState.turnOrder.map(c => c.name),
+                    currentTurn: battleState.currentTurn
+                };
+                sendWebSocketMessage({ type: 'battle_init', battleData: battleData });
+            }
             
             // If first turn is AI, process it automatically
             const firstCombatant = battleState.turnOrder[0];
@@ -2618,8 +2663,25 @@
                     const hitY = hero.y - hitHeight / 2;
                     
                     if (x >= hitX && x <= hitX + hitWidth && y >= hitY && y <= hitY + hitHeight) {
-                        // Swap positions
                         const initiator = battleState.swapInitiator;
+                        
+                        // Multiplayer: Client sends to host
+                        if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                            sendWebSocketMessage({
+                                type: 'player_action',
+                                action: 'swap',
+                                target: battleState.heroes.indexOf(hero),
+                                hero: multiplayerState.myHero
+                            });
+                            
+                            // Exit swap mode
+                            battleState.swapTargetingMode = false;
+                            battleState.swapInitiator = null;
+                            battleState.canvas.style.cursor = 'default';
+                            return;
+                        }
+                        
+                        // Swap positions
                         const tempX = initiator.x;
                         const tempY = initiator.y;
                         const tempPlatform = initiator.platform;
@@ -2641,6 +2703,11 @@
                         
                         // Swap uses all action points
                         advanceTurn();
+                        
+                        // Host broadcasts state
+                        if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                            broadcastGameState();
+                        }
                         return;
                     }
                 }
@@ -2677,6 +2744,24 @@
                 if (x >= hitX && x <= hitX + hitWidth && y >= hitY && y <= hitY + hitHeight) {
                     // Target found!
                     const attacker = battleState.turnOrder[battleState.currentTurn];
+                    const enemyIndex = battleState.enemies.indexOf(enemy);
+                    
+                    // Multiplayer: Client sends to host
+                    if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                        sendWebSocketMessage({
+                            type: 'player_action',
+                            action: battleState.pendingAction,
+                            target: enemyIndex,
+                            hero: multiplayerState.myHero
+                        });
+                        
+                        // Exit targeting mode
+                        battleState.targetingMode = false;
+                        battleState.pendingAction = null;
+                        battleState.canvas.style.cursor = 'default';
+                        return;
+                    }
+                    
                     executeAttack(attacker, enemy, battleState.pendingAction);
                     
                     // Exit targeting mode
@@ -3301,6 +3386,7 @@
             
             // Enter targeting mode for attacks
             if (action === 'light' || action === 'heavy' || action === 'special') {
+                // Multiplayer: Client enters targeting mode but won't execute until host confirms
                 battleState.targetingMode = true;
                 battleState.pendingAction = action;
                 // Show targeting UI feedback
@@ -3313,6 +3399,16 @@
             
             // Defend action - reduce damage by 50% until next turn
             if (action === 'defend') {
+                // Multiplayer: Client sends to host
+                if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                    sendWebSocketMessage({
+                        type: 'player_action',
+                        action: 'defend',
+                        hero: multiplayerState.myHero
+                    });
+                    return;
+                }
+                
                 currentCombatant.defending = true;
                 showDiceRoll(`${currentCombatant.name} defends!`);
                 advanceTurn();
@@ -3323,6 +3419,16 @@
             if (action === 'heal') {
                 if (currentCombatant.healsRemaining <= 0) {
                     showDiceRoll(`${currentCombatant.name} has no heals left!`);
+                    return;
+                }
+                
+                // Multiplayer: Client sends to host
+                if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                    sendWebSocketMessage({
+                        type: 'player_action',
+                        action: 'heal',
+                        hero: multiplayerState.myHero
+                    });
                     return;
                 }
                 
@@ -3340,11 +3446,17 @@
                 document.getElementById('battleSpecialBtn').disabled = true;
                 document.getElementById('battleSpecialBtn').style.opacity = '0.5';
                 
+                // Host broadcasts state
+                if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                    broadcastGameState();
+                }
+                
                 return; // Don't advance turn
             }
             
             // Swap action - swap positions with another hero
             if (action === 'swap') {
+                // Multiplayer: Client enters swap targeting mode
                 battleState.swapTargetingMode = true;
                 battleState.swapInitiator = currentCombatant;
                 document.getElementById('battleCanvas').style.cursor = 'pointer';
@@ -3355,6 +3467,16 @@
             
             // Taunt action - draw enemy aggro with CHA check
             if (action === 'taunt') {
+                // Multiplayer: Client sends to host
+                if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                    sendWebSocketMessage({
+                        type: 'player_action',
+                        action: 'taunt',
+                        hero: multiplayerState.myHero
+                    });
+                    return;
+                }
+                
                 const chaModifier = calculateModifier(currentCombatant.stats?.cha || 10);
                 const tauntRoll = rollD20() + chaModifier;
                 const tauntDC = 12; // Base difficulty
@@ -3367,13 +3489,33 @@
                     showDiceRoll(`${currentCombatant.name} taunt fails! d20(${tauntRoll}) vs DC ${tauntDC}`);
                 }
                 advanceTurn();
+                
+                // Host broadcasts state
+                if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                    broadcastGameState();
+                }
                 return;
             }
             
             // Skip action - end turn without doing anything
             if (action === 'skip') {
+                // Multiplayer: Client sends to host
+                if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                    sendWebSocketMessage({
+                        type: 'player_action',
+                        action: 'skip',
+                        hero: multiplayerState.myHero
+                    });
+                    return;
+                }
+                
                 showDiceRoll(`${currentCombatant.name} skips turn.`);
                 advanceTurn();
+                
+                // Host broadcasts state
+                if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                    broadcastGameState();
+                }
                 return;
             }
         }
@@ -4389,6 +4531,13 @@
                     }
                     break;
                 
+                case 'battle_init':
+                    // Client receives battle initialization from host
+                    if (multiplayerState.role === 'client') {
+                        initializeBattleFromHost(data.battleData);
+                    }
+                    break;
+                
                 case 'kicked':
                     showNotification(data.message, 'error');
                     resetMultiplayerState();
@@ -4445,11 +4594,24 @@
                             // Load hero stats from save
                             updateDungeonMenuHeroes();
                         } else if (data.screen === 'battle') {
-                            // Client needs to initialize battle too
-                            startBattle().then(() => {
-                                showNotification('Battle started!', 'success');
-                            });
-                            return; // Don't show notification yet, wait for battle load
+                            // Client waits for battle_init message from host
+                            // Just show the screen, don't initialize yet
+                            document.getElementById('battleScreen').style.display = 'block';
+                            document.getElementById('musicTicker').classList.add('battleActive');
+                            currentScreen = 'battle';
+                            
+                            // Initialize canvas
+                            battleState.canvas = document.getElementById('battleCanvas');
+                            battleState.ctx = battleState.canvas.getContext('2d');
+                            battleState.canvas.width = window.innerWidth;
+                            battleState.canvas.height = window.innerHeight - 180;
+                            battleState.active = true;
+                            
+                            // Move music controls to battle position
+                            document.getElementById('musicControls').classList.add('battleActive');
+                            
+                            showNotification('Waiting for host to initialize battle...', 'info');
+                            return; // Wait for battle_init
                         }
                         showNotification('Host started the game!', 'success');
                     }
@@ -4949,7 +5111,6 @@
         
         function processClientAction(data) {
             // Host processes action from client
-            // This would be called when client sends their action
             const action = data.action;
             const target = data.target;
             const heroName = data.hero;
@@ -4964,8 +5125,54 @@
                 if (enemy) {
                     executeAttack(hero, enemy, action);
                 }
-            } else {
-                battleAction(action);
+            } else if (action === 'swap') {
+                // Handle swap with target hero
+                const targetHero = battleState.heroes[target];
+                if (targetHero && targetHero !== hero) {
+                    const tempX = hero.x;
+                    const tempY = hero.y;
+                    const tempPlatform = hero.platform;
+                    
+                    hero.x = targetHero.x;
+                    hero.y = targetHero.y;
+                    hero.platform = targetHero.platform;
+                    
+                    targetHero.x = tempX;
+                    targetHero.y = tempY;
+                    targetHero.platform = tempPlatform;
+                    
+                    showDiceRoll(`${hero.name} swapped positions with ${targetHero.name}!`);
+                    advanceTurn();
+                }
+            } else if (action === 'defend') {
+                hero.defending = true;
+                showDiceRoll(`${hero.name} defends!`);
+                advanceTurn();
+            } else if (action === 'heal') {
+                if (hero.healsRemaining > 0) {
+                    const healAmount = Math.floor(hero.maxHp * 0.5);
+                    hero.hp = Math.min(hero.maxHp, hero.hp + healAmount);
+                    hero.healsRemaining--;
+                    hero.usedHeal = true;
+                    showDiceRoll(`${hero.name} heals for ${healAmount} HP! (1 action used)`);
+                    updateBattleHeroCards();
+                }
+            } else if (action === 'taunt') {
+                const chaModifier = calculateModifier(hero.stats?.cha || 10);
+                const tauntRoll = rollD20() + chaModifier;
+                const tauntDC = 12;
+                
+                if (tauntRoll >= tauntDC) {
+                    hero.taunting = true;
+                    hero.tauntTurns = 3;
+                    showDiceRoll(`${hero.name} taunts! d20(${tauntRoll}) SUCCESS!`);
+                } else {
+                    showDiceRoll(`${hero.name} taunt fails! d20(${tauntRoll}) vs DC ${tauntDC}`);
+                }
+                advanceTurn();
+            } else if (action === 'skip') {
+                showDiceRoll(`${hero.name} skips turn.`);
+                advanceTurn();
             }
             
             // Broadcast state to all clients
@@ -5030,6 +5237,120 @@
             updateBattleHeroCards();
             updateBattleEnemyCards();
             updateBattleTurnInfo();
+        }
+        
+        function initializeBattleFromHost(battleData) {
+            // Client receives full battle initialization from host
+            
+            // Ensure canvas is initialized
+            if (!battleState.canvas) {
+                battleState.canvas = document.getElementById('battleCanvas');
+                battleState.ctx = battleState.canvas.getContext('2d');
+                battleState.canvas.width = window.innerWidth;
+                battleState.canvas.height = window.innerHeight - 180;
+            }
+            
+            // Set background
+            battleState.backgroundPath = battleData.backgroundPath;
+            battleState.backgroundImage = new Image();
+            battleState.backgroundImage.onload = () => {
+                renderBattle();
+            };
+            battleState.backgroundImage.onerror = () => {
+                console.error('[MP ERROR] Background failed to load:', battleState.backgroundPath);
+            };
+            battleState.backgroundImage.src = battleState.backgroundPath;
+            
+            // Setup heroes with host's data
+            battleState.heroes = battleData.heroes.map(hData => {
+                const hero = {
+                    name: hData.name,
+                    hp: hData.hp,
+                    maxHp: hData.maxHp,
+                    xp: hData.xp,
+                    healsRemaining: hData.healsRemaining,
+                    stats: hData.stats,
+                    color: hData.name === 'Zooko' ? '#F2C94C' : hData.name === 'Nate' ? '#E74C3C' : hData.name === 'Zancas' ? '#27AE60' : '#2E86DE',
+                    x: hData.x,
+                    y: hData.y,
+                    platform: hData.platform,
+                    initiative: hData.initiative,
+                    facing: 'center',
+                    sprite: new Image(),
+                    spritePath: hData.spritePath
+                };
+                hero.sprite.onload = () => {
+                    renderBattle();
+                };
+                hero.sprite.onerror = () => {
+                    console.error('[MP ERROR] Hero sprite failed:', hero.name, hero.spritePath);
+                };
+                hero.sprite.src = hero.spritePath + '?v=' + Date.now();
+                return hero;
+            });
+            
+            // Setup enemies with host's data
+            battleState.enemies = battleData.enemies.map(eData => {
+                const enemy = {
+                    name: eData.name,
+                    hp: eData.hp,
+                    maxHp: eData.maxHp,
+                    ac: eData.ac,
+                    attackDamage: eData.attackDamage,
+                    speed: eData.speed,
+                    dex: eData.dex,
+                    hostile: eData.hostile,
+                    color: eData.isMob ? '#5C3317' : '#8B45FF',
+                    x: eData.x,
+                    y: eData.y,
+                    platform: eData.platform,
+                    initiative: eData.initiative,
+                    facing: 'center',
+                    sprite: new Image(),
+                    spritePath: eData.spritePath,
+                    isMob: eData.isMob
+                };
+                enemy.sprite.onload = () => {
+                    renderBattle();
+                };
+                enemy.sprite.onerror = () => {
+                    console.error('[MP ERROR] Enemy sprite failed:', enemy.name, enemy.spritePath);
+                };
+                enemy.sprite.src = enemy.spritePath + '?v=' + Date.now();
+                return enemy;
+            });
+            
+            // Setup turn order from host
+            const allCombatants = [...battleState.heroes, ...battleState.enemies];
+            battleState.turnOrder = battleData.turnOrder.map(name => 
+                allCombatants.find(c => c.name === name)
+            ).filter(c => c); // Filter out any not found
+            
+            if (battleState.turnOrder.length === 0) {
+                console.error('[MP ERROR] Turn order is empty after initialization!');
+            }
+            
+            battleState.currentTurn = battleData.currentTurn;
+            battleState.active = true;
+            battleState.targetingMode = false;
+            battleState.pendingAction = null;
+            
+            // Update UI
+            updateBattleTurnInfo();
+            updateBattleHeroCards();
+            updateBattleEnemyCards();
+            renderBattle();
+            
+            // Start battle animation loop for continuous updates
+            function battleAnimationLoop() {
+                if (battleState.active) {
+                    renderBattle();
+                    requestAnimationFrame(battleAnimationLoop);
+                }
+            }
+            battleAnimationLoop();
+            
+            showNotification('Battle initialized!', 'success');
         }
         
         function showNotification(message, type = 'info') {

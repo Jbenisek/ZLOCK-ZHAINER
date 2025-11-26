@@ -411,6 +411,14 @@ async def handle_websocket(websocket, path):
                         await client.send(message)
                     print(f"[WS] Host started game in room {client_room}: {data.get('mode', 'unknown')}")
             
+            # BATTLE INIT (host only)
+            elif msg_type == 'battle_init':
+                if client_room and client_room in rooms and client_role == 'host':
+                    # Broadcast battle initialization to all clients
+                    for client in rooms[client_room]['clients']:
+                        await client.send(message)
+                    print(f"[WS] Host sent battle_init to room {client_room}")
+            
             # CHANGE CODE (host only)
             elif msg_type == 'change_code':
                 if client_room and client_room in rooms and client_role == 'host':

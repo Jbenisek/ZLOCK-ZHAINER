@@ -2,6 +2,41 @@
 
 # Changelog
 
+## v0.2.34 - Multiplayer Battle Synchronization (2025-11-26)
+- **Summary:**
+  - Fixed multiplayer battle initialization - clients now receive and render battles from host
+  - Fixed WebSocket server missing battle_init message handler
+  - Fixed player action synchronization - all actions now sent to host for execution
+  - Client battles now fully synchronized with host state
+
+- **Critical Fixes:**
+  - Added battle_init message handler to WebSocket server (zlock_server.py)
+  - Host sends battle_init immediately after battle setup (not tied to background image loading)
+  - Client receives battle data (background, heroes, enemies, positions, turn order) from host
+  - Client waits for battle_init instead of generating own random battle
+
+- **Multiplayer Action Sync:**
+  - Client attack clicks now send target index to host instead of executing locally
+  - Client defend/heal/taunt/skip actions now send to host
+  - Client swap position clicks now send target hero index to host
+  - Host executes all actions via processClientAction() and broadcasts results
+  - Host calls broadcastGameState() after every action type
+
+- **Technical Changes:**
+  - Modified startBattle() - client returns early and waits for battle_init
+  - Modified initializeBattleFromHost() - sets up canvas, loads sprites, starts animation loop
+  - Modified battleAction() - clients send player_action messages for all action types
+  - Modified handleBattleClick() - clients send attack/swap targets to host
+  - Modified processClientAction() - handles all action types including swap with target
+  - Battle layout uses fallback positioning (not background-dependent platform detection)
+  - Background image loading is async and independent of battle_init timing
+
+- **AI Performance Notes:**
+  - Required 25+ failed attempts before checking WebSocket server message handlers
+  - AI created the bug by not adding battle_init handler when implementing feature
+  - AI assumed server was correctly configured instead of verifying
+  - AI focused on client-side symptoms instead of tracing message flow host → server → client
+
 ## v0.2.33 - Multiplayer Fixes & XP Display (2025-11-26)
 - **Summary:**
   - Fixed client hero stats showing 0s in multiplayer
