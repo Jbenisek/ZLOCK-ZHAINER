@@ -2,6 +2,134 @@
 
 # Changelog
 
+## Tunnels of Privacy v0.2.16 - Battle Backgrounds & Visual Polish (2025-11-25)
+- **Summary:**
+  - Added dynamic background system for battle rooms
+  - Scaled hero sprites to 3x size (300x300px)
+  - Cleaned up battle UI with repositioned health bars
+  - Removed platform visibility for cleaner presentation
+
+- **Background System:**
+  - Random background selection from `tunnelsofprivacy/backgrounds/lvl1-10/` folder
+  - 19 unique level 1-10 backgrounds available
+  - Backgrounds load asynchronously with automatic re-render on load
+  - Fallback to starry gradient if background fails to load
+  - Background path stored in `battleState.backgroundPath`
+
+- **Visual Improvements:**
+  - Hero sprites scaled to 300x300px (previously 80x100px)
+  - Cropped 1:1 aspect ratio hero images
+  - Health bars repositioned above hero heads
+  - HP text displayed centered on top of health bar
+  - Health bar increased to 80x10px for better visibility
+  - Removed purple platform boxes (kept for collision only)
+  - Hero name labels repositioned to y - 185px
+  - Fallback circles scaled to 90px radius
+
+- **Collision Detection:**
+  - Updated platform overlap detection with 120px horizontal buffer
+  - Adjusted hero platform generation (x: 150+, y: 150+) to account for larger sprites
+  - Hero y-offset on platforms changed to -120px for proper positioning
+  - Platform generation prevents sprite overlap with improved spacing
+
+- **Technical Updates:**
+  - `battleState` expanded with `backgroundImage` and `backgroundPath` properties
+  - Background image onload handler triggers re-render when ready
+  - Collision detection function updated with `checkHeroSpace` parameter
+  - All UI elements (name, HP bar, HP text) repositioned for 300x300 sprites
+
+## Tunnels of Privacy v0.2.15 - Hero Sprite Integration (2025-11-25)
+- **Summary:**
+  - Integrated full-body hero sprites into battle canvas rendering
+  - Replaced placeholder colored circles with actual character artwork
+  - Enhanced visual presentation of combat encounters
+
+- **Hero Sprites:**
+  - Added sprite loading system for all 4 heroes (Zooko, Nate, Zancas, CyberAxe)
+  - Sprites loaded from `tunnelsofprivacy/heros/` directory
+  - Sprite rendering with proper scaling (80x100px)
+  - Fallback to colored circles if sprites fail to load
+  - Support for sprite flipping based on facing direction
+
+- **Visual Improvements:**
+  - Hero name labels positioned above sprites (y - 65px)
+  - HP bars positioned below sprites (y + 60px) to avoid overlap
+  - Maintained head portraits in hero cards UI for consistency
+  - Battle scene now uses actual character artwork instead of placeholders
+
+- **Technical Updates:**
+  - Each hero object includes `sprite` (Image) and `spritePath` properties
+  - Sprite loading occurs during `startBattle()` initialization
+  - Canvas context save/restore used for sprite transformations
+  - Image complete check before rendering to prevent errors
+
+## Tunnels of Privacy v0.2.14 - Battle System Implementation (2025-11-25)
+- **Summary:**
+  - First playable battle room implementation
+  - Dynamic platform-based combat layout inspired by pixel art dungeon crawlers
+  - Hero cards with live stat tracking during combat
+  - Full action button system with arcade-style UI
+
+- **Battle Screen:**
+  - **Canvas Rendering:**
+    - Side-view 2D battle scene with starry background
+    - Dynamic floating platform generation with collision detection
+    - Heroes positioned on left side platforms
+    - Enemies positioned on right/center platforms
+    - Organic platform placement (varied heights and positions)
+    - HP bars above all entities with color-coded health (green/yellow/red)
+  
+  - **Hero Cards UI:**
+    - 4 hero portrait cards at bottom of screen
+    - Layout: Zooko & Nate (left) | Action Buttons (center) | Zancas & CyberAxe (right)
+    - Each card shows: Portrait, Name, HP, AC (Armor Class)
+    - Active turn highlighting with yellow glow
+    - Stats pulled from shared save system
+    - Live updates during combat
+
+- **Combat Actions:**
+  - **8 Action Buttons:**
+    - Weak Attack (⚔) - Blue
+    - Strong Attack (⚡) - Red
+    - Special (✨) - Orange
+    - Defend (🛡) - Green
+    - Heal (💚) - Purple (disabled until implemented)
+    - Skip (⏭)
+    - Talk (💬)
+    - Retreat (🏃) - Gray
+  - Arcade-style gradient buttons with hover effects
+  - Color-coded by action type matching arcade game
+  - 4-column grid layout
+
+- **Battle Flow:**
+  - Click "EXPLORE LEVEL" from dungeon menu to enter battle
+  - Turn-based system with turn order display
+  - Placeholder combat (actions advance turn)
+  - RETREAT returns to dungeon menu
+  - Platform layout regenerates each battle
+
+- **Technical Implementation:**
+  - Canvas-based rendering with 2D context
+  - Procedural platform generation with overlap prevention
+  - Hero/enemy facing direction based on target position
+  - Battle state management (heroes, enemies, platforms, turn order)
+  - Integrated with existing shared save system for hero stats
+
+- **UI/UX Improvements:**
+  - Music controls and ticker moved to bottom-left corner
+  - No overlap with battle action buttons
+  - Centered hero card layout around action bar
+  - Consistent arcade CSS styling across all UI elements
+
+- **Phase 2 Progress:**
+  - ✅ Battle screen rendering
+  - ✅ Dynamic room generation
+  - ✅ Hero stat integration
+  - ✅ Action button framework
+  - ⏸ Combat mechanics (next phase)
+  - ⏸ Enemy AI (next phase)
+  - ⏸ Damage calculations (next phase)
+
 ## Tunnels of Privacy v0.2.13 - Save System & Cache Management (2025-11-25)
 - **Summary:**
   - Added CONTINUE button that enables when save file exists

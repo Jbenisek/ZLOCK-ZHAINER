@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.2.11</title>
+    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.2.19</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -53,6 +53,195 @@
             height: 100%;
             background: linear-gradient(135deg, #0A0E12 0%, #1A1E2A 100%);
             z-index: 100;
+        }
+        
+        #battleScreen {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a0f2e 0%, #0f0a1e 100%);
+            z-index: 100;
+        }
+        
+        #battleCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: calc(100% - 180px);
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+        
+        #battleUI {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(180deg, rgba(10, 14, 18, 0) 0%, rgba(10, 14, 18, 0.95) 20%, rgba(10, 14, 18, 0.98) 100%);
+            display: flex;
+            flex-direction: row;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 15px;
+            gap: 15px;
+        }
+        
+        #battleUILeft {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        
+        #battleUICenter {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        #battleUIRight {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        
+        .battleHeroCard {
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
+            border: 2px solid #2A9D8F;
+            border-radius: 8px;
+            padding: 8px;
+            width: 140px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        }
+        
+        .battleHeroCard.active {
+            border-color: #F2C94C;
+            box-shadow: 0 0 20px rgba(242, 201, 76, 0.6);
+        }
+        
+        .battleHeroPortrait {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            border: 2px solid #2A9D8F;
+            margin: 0 auto 6px auto;
+            box-shadow: 0 0 10px rgba(42, 157, 143, 0.4);
+        }
+        
+        .battleHeroName {
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .battleHeroStat {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: #BFD1E0;
+            text-align: center;
+            margin: 2px 0;
+        }
+        
+        #battleTurnInfo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: #F2C94C;
+            text-shadow: 0 0 10px rgba(242, 201, 76, 0.5);
+            margin-bottom: 5px;
+        }
+        
+        #battleActions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            width: 100%;
+            max-width: 700px;
+        }
+        
+        .battleButton {
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
+            border: 2px solid #2A9D8F;
+            color: #E9F0F7;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 12px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            pointer-events: all;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .battleButton:hover:not(:disabled) {
+            background: linear-gradient(135deg, rgba(42, 157, 143, 0.3), rgba(42, 157, 143, 0.2));
+            border-color: #3DBAA3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(42, 157, 143, 0.4);
+        }
+        
+        .battleButton:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        
+        .battleButton.attack-weak { border-color: #3498DB; }
+        .battleButton.attack-weak:hover:not(:disabled) { 
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.3), rgba(52, 152, 219, 0.2));
+            border-color: #5DADE2;
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+        
+        .battleButton.attack-strong { border-color: #E74C3C; }
+        .battleButton.attack-strong:hover:not(:disabled) { 
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.3), rgba(231, 76, 60, 0.2));
+            border-color: #EC7063;
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+        }
+        
+        .battleButton.special { border-color: #F39C12; }
+        .battleButton.special:hover:not(:disabled) { 
+            background: linear-gradient(135deg, rgba(243, 156, 18, 0.3), rgba(243, 156, 18, 0.2));
+            border-color: #F8C471;
+            box-shadow: 0 6px 20px rgba(243, 156, 18, 0.4);
+        }
+        
+        .battleButton.defend { border-color: #27AE60; }
+        .battleButton.defend:hover:not(:disabled) { 
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.3), rgba(39, 174, 96, 0.2));
+            border-color: #52BE80;
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+        }
+        
+        .battleButton.heal { border-color: #9B59B6; }
+        .battleButton.heal:hover:not(:disabled) { 
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.3), rgba(155, 89, 182, 0.2));
+            border-color: #AF7AC5;
+            box-shadow: 0 6px 20px rgba(155, 89, 182, 0.4);
+        }
+        
+        .battleButton.retreat { border-color: #95A5A6; }
+        .battleButton.retreat:hover:not(:disabled) { 
+            background: linear-gradient(135deg, rgba(149, 165, 166, 0.3), rgba(149, 165, 166, 0.2));
+            border-color: #BDC3C7;
+            box-shadow: 0 6px 20px rgba(149, 165, 166, 0.4);
         }
         
         #pauseScreen {
@@ -281,14 +470,13 @@
         #musicTicker {
             position: fixed;
             bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
+            left: 10px;
             background: rgba(42, 157, 143, 0.3);
             border: 2px solid #2A9D8F;
             border-radius: 8px;
             overflow: hidden;
-            width: 600px;
-            max-width: 90%;
+            width: 400px;
+            max-width: 25%;
             z-index: 500;
             pointer-events: auto;
         }
@@ -321,13 +509,13 @@
         #musicControls {
             position: fixed;
             bottom: 65px;
-            left: 50%;
-            transform: translateX(-50%);
+            left: 10px;
             background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
             border: 2px solid #2A9D8F;
             border-radius: 8px;
             padding: 12px;
-            min-width: 280px;
+            min-width: 240px;
+            max-width: 25%;
             pointer-events: auto;
             backdrop-filter: blur(10px);
             box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8);
@@ -561,10 +749,63 @@
                     <div style="color: #F2C94C; font-size: 28px; font-weight: 900; text-shadow: 0 0 20px rgba(242, 201, 76, 0.5);">LEVEL <span id="dungeonMenuLevel">1</span></div>
                 </div>
                 
-                <button class="menuButton">EXPLORER LEVEL</button>
+                <button class="menuButton" onclick="startBattle()">EXPLORE LEVEL</button>
                 <button class="menuButton comingSoon" disabled>ENTER LEVEL STORE<br><span style="font-size: 12px; font-weight: 400;">(If Found)</span></button>
                 <button class="menuButton">INVENTORY</button>
                 <button class="menuButton">REST / SLEEP</button>
+            </div>
+        </div>
+        
+        <!-- Battle Screen -->
+        <div id="battleScreen">
+            <canvas id="battleCanvas"></canvas>
+            <div id="battleUI">
+                <!-- Left Hero Cards: Zooko & Nate -->
+                <div id="battleUILeft">
+                    <div class="battleHeroCard" id="battleCardZooko">
+                        <div class="battleHeroPortrait" style="background-image: url('people/zooko_a_head_compressed.png'); border-color: #F2C94C;"></div>
+                        <div class="battleHeroName" style="color: #F2C94C;">ZOOKO</div>
+                        <div class="battleHeroStat" style="color: #ff6b6b;">HP: <span id="bzooko-hp">30</span>/<span id="bzooko-maxhp">30</span></div>
+                        <div class="battleHeroStat">AC: <span id="bzooko-ac">12</span></div>
+                    </div>
+                    <div class="battleHeroCard" id="battleCardNate">
+                        <div class="battleHeroPortrait" style="background-image: url('people/Nate_a_head_compressed.png'); border-color: #E74C3C;"></div>
+                        <div class="battleHeroName" style="color: #E74C3C;">NATE</div>
+                        <div class="battleHeroStat" style="color: #ff6b6b;">HP: <span id="bnate-hp">28</span>/<span id="bnate-maxhp">30</span></div>
+                        <div class="battleHeroStat">AC: <span id="bnate-ac">14</span></div>
+                    </div>
+                </div>
+                
+                <!-- Center Action Bar -->
+                <div id="battleUICenter">
+                    <div id="battleTurnInfo">ZOOKO'S TURN</div>
+                    <div id="battleActions">
+                        <button class="battleButton attack-weak" onclick="battleAction('weakAttack')">⚔ WEAK ATTACK</button>
+                        <button class="battleButton attack-strong" onclick="battleAction('strongAttack')">⚡ STRONG ATTACK</button>
+                        <button class="battleButton special" onclick="battleAction('special')">✨ SPECIAL</button>
+                        <button class="battleButton defend" onclick="battleAction('defend')">🛡 DEFEND</button>
+                        <button class="battleButton heal" onclick="battleAction('heal')" disabled>💚 HEAL</button>
+                        <button class="battleButton" onclick="battleAction('skip')">⏭ SKIP</button>
+                        <button class="battleButton" onclick="battleAction('talk')">💬 TALK</button>
+                        <button class="battleButton retreat" onclick="battleAction('retreat')">🏃 RETREAT</button>
+                    </div>
+                </div>
+                
+                <!-- Right Hero Cards: Zancas & CyberAxe -->
+                <div id="battleUIRight">
+                    <div class="battleHeroCard" id="battleCardZancas">
+                        <div class="battleHeroPortrait" style="background-image: url('people/Zancas_a_head_compressed.png'); border-color: #27AE60;"></div>
+                        <div class="battleHeroName" style="color: #27AE60;">ZANCAS</div>
+                        <div class="battleHeroStat" style="color: #ff6b6b;">HP: <span id="bzancas-hp">24</span>/<span id="bzancas-maxhp">26</span></div>
+                        <div class="battleHeroStat">AC: <span id="bzancas-ac">15</span></div>
+                    </div>
+                    <div class="battleHeroCard" id="battleCardCyberAxe">
+                        <div class="battleHeroPortrait" style="background-image: url('people/cyberaxe_a_head_compressed.png'); border-color: #2E86DE;"></div>
+                        <div class="battleHeroName" style="color: #2E86DE;">CYBERAXE</div>
+                        <div class="battleHeroStat" style="color: #ff6b6b;">HP: <span id="bcyberaxe-hp">32</span>/<span id="bcyberaxe-maxhp">35</span></div>
+                        <div class="battleHeroStat">AC: <span id="bcyberaxe-ac">15</span></div>
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -631,7 +872,7 @@
                 <button class="menuButton portalButton" onclick="exitPortal()">EXIT PORTAL<br><span style="font-size: 10px; font-weight: 400;">(Return to Arcade)</span><span style="display: inline-block; padding: 4px 10px; background: #8B45FF; border-radius: 5px; margin-left: 10px; font-weight: bold; color: white; font-size: 12px;">BACK</span></button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.2.13 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.2.16 • Portal System Active</div>
         </div>
         
         <!-- Music Control Panel - Bottom Above Ticker (OUTSIDE titleScreen so always visible) -->
@@ -693,6 +934,12 @@
             <span id="musicVolumeValue" style="margin-left: 8px; font-weight: bold; color: #2D9CDB; font-size: 14px;">75</span>
         </div>
         
+        <!-- Hitbox Toggle -->
+        <div class="settingRow" style="margin-bottom: 15px;">
+            <span class="settingLabel" style="font-size: 16px;">Show Hitboxes</span>
+            <input type="checkbox" id="showHitboxes" onchange="updateSettings()">
+        </div>
+        
         <div style="margin: 10px 0; padding: 10px; background: rgba(42, 157, 143, 0.1); border-radius: 5px; font-size: 11px; color: #89A0B4;">
             💡 Settings are saved independently for Tunnels of Privacy
         </div>
@@ -701,7 +948,7 @@
         <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         
         <div style="display: block; width: 100%; margin-top: 15px; padding: 10px 0; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A7A8F; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-            Tunnels of Privacy v0.2.13
+            Tunnels of Privacy v0.2.16
         </div>
     </div>
     
@@ -731,7 +978,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.2.11';
+        const GAME_VERSION = 'v0.2.18';
         
         // ===== GAMEPAD SUPPORT =====
         let gamepadConnected = false;
@@ -804,14 +1051,13 @@
             })
             .then(data => {
                 tickerFacts = data.facts;
-                console.log(`Loaded ${tickerFacts.length} ticker facts`);
                 
                 // Pick initial random fact
                 if (tickerFacts.length > 0) {
                     currentTickerFact = tickerFacts[Math.floor(Math.random() * tickerFacts.length)];
                 }
             })
-            .catch(err => console.log('Ticker facts loading failed:', err));
+            .catch(err => {});
         
         // ===== STORY INTRO BACKGROUND ANIMATION =====
         // intro_a.png is 8x16 atlas (128 frames) at 16fps
@@ -1053,7 +1299,8 @@
         // Settings System
         let settings = {
             musicEnabled: true,
-            musicVolume: 75
+            musicVolume: 75,
+            showHitboxes: false
         };
         
         function showSettings() {
@@ -1064,12 +1311,14 @@
             document.getElementById('musicEnabled').checked = settings.musicEnabled;
             document.getElementById('musicVolume').value = settings.musicVolume;
             document.getElementById('musicVolumeValue').textContent = settings.musicVolume;
+            document.getElementById('showHitboxes').checked = settings.showHitboxes;
         }
         
         function updateSettings() {
             // Read values from UI
             settings.musicEnabled = document.getElementById('musicEnabled').checked;
             settings.musicVolume = parseInt(document.getElementById('musicVolume').value);
+            settings.showHitboxes = document.getElementById('showHitboxes').checked;
             
             // Update display
             document.getElementById('musicVolumeValue').textContent = settings.musicVolume;
@@ -1077,6 +1326,11 @@
             // Apply to game state
             musicEnabled = settings.musicEnabled;
             musicVolume = settings.musicVolume;
+            
+            // Re-render battle if active to show/hide hitboxes
+            if (battleState.active) {
+                renderBattle();
+            }
             
             // Handle music enable/disable
             if (currentMusic) {
@@ -1289,14 +1543,23 @@
             };
         }
         
-        // Clear cache - deletes all localStorage data
+        // Clear cache - deletes all localStorage data and forces hard reload
         function clearCache() {
             if (confirm('This will delete ALL saved data including your progress. Are you sure?')) {
                 try {
                     localStorage.removeItem(STORAGE_KEYS.SETTINGS);
                     localStorage.removeItem(STORAGE_KEYS.SHARED_SAVE);
-                    alert('Cache cleared! The page will reload.');
-                    location.reload();
+                    
+                    // Clear browser cache for images and assets
+                    if ('caches' in window) {
+                        caches.keys().then(function(names) {
+                            for (let name of names) caches.delete(name);
+                        });
+                    }
+                    
+                    alert('Cache cleared! The page will reload with fresh assets.');
+                    // Force hard reload (bypass cache)
+                    location.reload(true);
                 } catch (e) {
                     console.error('Clear cache error:', e);
                     alert('Error clearing cache: ' + e.message);
@@ -1331,6 +1594,884 @@
         function continueGame() {
             startAdventure();
         }
+        
+        // ===== BATTLE SYSTEM =====
+        
+        // Battle state
+        let battleState = {
+            active: false,
+            currentTurn: 0,
+            turnOrder: [],
+            heroes: [],
+            enemies: [],
+            platforms: [],
+            canvas: null,
+            ctx: null,
+            backgroundImage: null,
+            backgroundPath: '',
+            detectedPlatforms: []
+        };
+        
+        // Start a battle encounter
+        function startBattle() {
+            // Switch to battle screen
+            currentScreen = 'battle';
+            document.getElementById('dungeonMenuScreen').style.display = 'none';
+            document.getElementById('battleScreen').style.display = 'block';
+            
+            // Initialize canvas
+            battleState.canvas = document.getElementById('battleCanvas');
+            battleState.ctx = battleState.canvas.getContext('2d');
+            
+            // Set canvas size
+            battleState.canvas.width = window.innerWidth;
+            battleState.canvas.height = window.innerHeight - 180;
+            
+            // Load shared save to get hero stats
+            const sharedSave = loadSharedSave();
+            
+            // Setup heroes with sprites
+            battleState.heroes = [
+                { 
+                    name: 'Zooko', 
+                    hp: sharedSave?.heroes?.zooko?.hp || 30, 
+                    maxHp: sharedSave?.heroes?.zooko?.maxHp || 30,
+                    stats: sharedSave?.heroes?.zooko || {},
+                    color: '#F2C94C',
+                    x: 0, y: 0, platform: null, facingRight: true,
+                    sprite: new Image(),
+                    spritePath: 'tunnelsofprivacy/heros/zooko.png'
+                },
+                { 
+                    name: 'Nate', 
+                    hp: sharedSave?.heroes?.nate?.hp || 28, 
+                    maxHp: sharedSave?.heroes?.nate?.maxHp || 30,
+                    stats: sharedSave?.heroes?.nate || {},
+                    color: '#E74C3C',
+                    x: 0, y: 0, platform: null, facingRight: true,
+                    sprite: new Image(),
+                    spritePath: 'tunnelsofprivacy/heros/nate.png'
+                },
+                { 
+                    name: 'Zancas', 
+                    hp: sharedSave?.heroes?.zancas?.hp || 24, 
+                    maxHp: sharedSave?.heroes?.zancas?.maxHp || 26,
+                    stats: sharedSave?.heroes?.zancas || {},
+                    color: '#27AE60',
+                    x: 0, y: 0, platform: null, facingRight: true,
+                    sprite: new Image(),
+                    spritePath: 'tunnelsofprivacy/heros/zancas.png'
+                },
+                { 
+                    name: 'CyberAxe', 
+                    hp: sharedSave?.heroes?.cyberaxe?.hp || 32, 
+                    maxHp: sharedSave?.heroes?.cyberaxe?.maxHp || 35,
+                    stats: sharedSave?.heroes?.cyberaxe || {},
+                    color: '#2E86DE',
+                    x: 0, y: 0, platform: null, facingRight: true,
+                    sprite: new Image(),
+                    spritePath: 'tunnelsofprivacy/heros/cyberaxe.png'
+                }
+            ];
+            
+            // Load hero sprites with cache busting
+            battleState.heroes.forEach(hero => {
+                hero.sprite.onload = () => {
+                    renderBattle(); // Re-render when each sprite loads
+                };
+                // Add timestamp to prevent caching
+                hero.sprite.src = hero.spritePath + '?v=' + Date.now();
+            });
+            
+            // Setup test enemy
+            battleState.enemies = [
+                { 
+                    name: 'Shadow Kraken', 
+                    hp: 50, 
+                    maxHp: 50,
+                    color: '#8B45FF',
+                    x: 0, y: 0, platform: null, facingRight: false
+                }
+            ];
+            
+            // Load random background from lvl1-10
+            const backgroundOptions = [
+                'backgrounds_lvl1 (8).png',
+                'backgrounds_lvl1 (10).png',
+                'backgrounds_lvl1 (12).png',
+                'backgrounds_lvl1 (14).png',
+                'backgrounds_lvl1 (15).png',
+                'backgrounds_lvl1 (16).png'
+            ];
+            const randomBg = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
+            battleState.backgroundPath = `tunnelsofprivacy/backgrounds/lvl1-10/${randomBg}`;
+            battleState.backgroundImage = new Image();
+            battleState.backgroundImage.onload = () => {
+                // Generate battle layout with fixed positioning
+                generateBattleLayout();
+                // Re-render when background loads
+                renderBattle();
+            };
+            battleState.backgroundImage.src = battleState.backgroundPath;
+            
+            // Setup turn order (by DEX for now, placeholder)
+            battleState.turnOrder = [...battleState.heroes];
+            battleState.currentTurn = 0;
+            battleState.active = true;
+            
+            // Update UI
+            updateBattleTurnInfo();
+            updateBattleHeroCards();
+            
+            // Render initial state (will re-render when bg loads)
+            renderBattle();
+        }
+        
+
+        
+        // Detect platforms using multi-method approach
+        function detectPlatforms() {
+            if (!battleState.backgroundImage || !battleState.backgroundImage.complete) {
+                return [];
+            }
+            
+            const tempCanvas = document.createElement('canvas');
+            const ctx = tempCanvas.getContext('2d');
+            tempCanvas.width = battleState.backgroundImage.width;
+            tempCanvas.height = battleState.backgroundImage.height;
+            
+            ctx.drawImage(battleState.backgroundImage, 0, 0);
+            const imageData = ctx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+            const data = imageData.data;
+            
+            const allPlatforms = [];
+            
+            // METHOD 1: Adaptive thresholding with local contrast
+            const method1 = detectByAdaptiveThreshold(data, tempCanvas.width, tempCanvas.height);
+            allPlatforms.push(...method1);
+            
+            // METHOD 2: Multi-angle edge detection
+            const method2 = detectByMultiAngle(data, tempCanvas.width, tempCanvas.height);
+            allPlatforms.push(...method2);
+            
+            // METHOD 3: Color clustering
+            const method3 = detectByColorClustering(data, tempCanvas.width, tempCanvas.height);
+            allPlatforms.push(...method3);
+            
+            // Score and rank all platforms
+            const scored = allPlatforms.map(p => ({
+                ...p,
+                score: scorePlatform(p, data, tempCanvas.width, tempCanvas.height)
+            }));
+            
+            // Filter minimum score and sort
+            const valid = scored.filter(p => p.score > 0.3).sort((a, b) => b.score - a.score);
+            
+            // Scale to canvas size
+            const scaleX = battleState.canvas.width / tempCanvas.width;
+            const scaleY = battleState.canvas.height / tempCanvas.height;
+            
+            return valid.map(p => ({
+                x: p.x * scaleX,
+                y: p.y * scaleY,
+                w: p.w * scaleX,
+                h: p.h * scaleY,
+                type: p.type,
+                score: p.score,
+                color: p.color
+            }));
+        }
+        
+        // Adaptive thresholding - find LIGHT horizontal floor areas using box scanning
+        function detectByAdaptiveThreshold(data, width, height) {
+            const platforms = [];
+            const boxWidth = 150; // Scan boxes 150px wide
+            const boxHeight = 50; // 50px tall boxes
+            const boxStepX = 50; // Move box right by 50px
+            const boxStepY = 25; // Move box down by 25px
+            const minBrightness = 100;
+            
+            // Scan bottom 60% of image only
+            for (let boxY = Math.floor(height * 0.6); boxY < height - boxHeight - 10; boxY += boxStepY) {
+                for (let boxX = 0; boxX < width - boxWidth; boxX += boxStepX) {
+                    // Sample the entire box
+                    let boxBrightnessSum = 0;
+                    let boxSamples = 0;
+                    
+                    for (let dy = 0; dy < boxHeight; dy += 5) {
+                        for (let dx = 0; dx < boxWidth; dx += 5) {
+                            const x = boxX + dx;
+                            const y = boxY + dy;
+                            const i = (y * width + x) * 4;
+                            const brightness = (data[i] + data[i+1] + data[i+2]) / 3;
+                            boxBrightnessSum += brightness;
+                            boxSamples++;
+                        }
+                    }
+                    
+                    const avgBrightness = boxBrightnessSum / boxSamples;
+                    
+                    // Check if box is bright enough
+                    if (avgBrightness > minBrightness) {
+                        // Depth test: trace down to find distance to ground
+                        const depthScore = calculateDepthScore(data, width, height, boxX, boxY, boxWidth, boxHeight, avgBrightness);
+                        
+                        // Only accept platforms with good depth scores (close to ground or at bottom)
+                        if (depthScore > 0.5) {
+                            platforms.push({
+                                x: boxX, y: boxY, w: boxWidth, h: boxHeight,
+                                type: 'adaptive', color: '#FF00FF',
+                                depthScore: depthScore
+                            });
+                        }
+                    }
+                }
+            }
+            
+            return platforms;
+        }
+        
+        // Multi-angle edge detection - find LIGHT floor areas at various slopes using boxes
+        function detectByMultiAngle(data, width, height) {
+            const platforms = [];
+            const angles = [0, 5, -5];
+            const boxWidth = 150;
+            const boxHeight = 50;
+            const boxStepX = 50;
+            const boxStepY = 30;
+            const minBrightness = 100;
+            
+            angles.forEach(angle => {
+                const rad = angle * Math.PI / 180;
+                const tanAngle = Math.tan(rad);
+                
+                for (let baseY = Math.floor(height * 0.6); baseY < height - boxHeight - 10; baseY += boxStepY) {
+                    for (let boxX = 0; boxX < width - boxWidth; boxX += boxStepX) {
+                        const centerY = Math.floor(baseY + boxX * tanAngle);
+                        if (centerY < 0 || centerY >= height - boxHeight - 10) continue;
+                        
+                        // Sample box at this position
+                        let boxBrightnessSum = 0;
+                        let boxSamples = 0;
+                        
+                        for (let dy = 0; dy < boxHeight; dy += 5) {
+                            for (let dx = 0; dx < boxWidth; dx += 5) {
+                                const x = boxX + dx;
+                                const y = centerY + dy;
+                                if (y >= height) continue;
+                                const i = (y * width + x) * 4;
+                                const brightness = (data[i] + data[i+1] + data[i+2]) / 3;
+                                boxBrightnessSum += brightness;
+                                boxSamples++;
+                            }
+                        }
+                        
+                        const avgBrightness = boxBrightnessSum / boxSamples;
+                        
+                        if (avgBrightness > minBrightness) {
+                            // Depth test
+                            const depthScore = calculateDepthScore(data, width, height, boxX, centerY, boxWidth, boxHeight, avgBrightness);
+                            
+                            if (depthScore > 0.5) {
+                                platforms.push({
+                                    x: boxX, y: centerY, w: boxWidth, h: boxHeight,
+                                    type: 'angle', color: '#00FFFF',
+                                    depthScore: depthScore
+                                });
+                            }
+                        }
+                    }
+                }
+            });
+            
+            return platforms;
+        }
+        
+        // Color clustering - find LIGHT colored horizontal floor regions using boxes
+        function detectByColorClustering(data, width, height) {
+            const platforms = [];
+            const boxWidth = 150;
+            const boxHeight = 50;
+            const boxStepX = 50;
+            const boxStepY = 25;
+            const colorTolerance = 60;
+            const minBrightness = 100;
+            
+            for (let boxY = Math.floor(height * 0.6); boxY < height - boxHeight - 10; boxY += boxStepY) {
+                for (let boxX = 0; boxX < width - boxWidth; boxX += boxStepX) {
+                    // Sample box at this position
+                    let avgR = 0, avgG = 0, avgB = 0;
+                    let samples = 0;
+                    
+                    for (let dy = 0; dy < boxHeight; dy += 5) {
+                        for (let dx = 0; dx < boxWidth; dx += 5) {
+                            const x = boxX + dx;
+                            const y = boxY + dy;
+                            const i = (y * width + x) * 4;
+                            avgR += data[i];
+                            avgG += data[i+1];
+                            avgB += data[i+2];
+                            samples++;
+                        }
+                    }
+                    
+                    avgR /= samples;
+                    avgG /= samples;
+                    avgB /= samples;
+                    const brightness = (avgR + avgG + avgB) / 3;
+                    
+                    // Only consider LIGHT boxes as potential floor
+                    if (brightness > minBrightness) {
+                        // Depth test
+                        const depthScore = calculateDepthScore(data, width, height, boxX, boxY, boxWidth, boxHeight, brightness);
+                        
+                        if (depthScore > 0.5) {
+                            platforms.push({
+                                x: boxX, y: boxY, w: boxWidth, h: boxHeight,
+                                type: 'cluster', color: '#00FF00',
+                                depthScore: depthScore
+                            });
+                        }
+                    }
+                }
+            }
+            
+            return platforms;
+        }
+        
+        // Calculate depth score - traces downward to find distance to ground
+        function calculateDepthScore(data, width, height, boxX, boxY, boxWidth, boxHeight, platformBrightness) {
+            const centerX = boxX + Math.floor(boxWidth / 2);
+            const startY = boxY + boxHeight;
+            const maxDepth = 200; // Don't trace more than 200px down
+            
+            let distanceToGround = 0;
+            let foundGround = false;
+            
+            // Trace straight down from center of platform
+            for (let y = startY; y < Math.min(height, startY + maxDepth); y += 5) {
+                const i = (y * width + centerX) * 4;
+                const brightness = (data[i] + data[i+1] + data[i+2]) / 3;
+                
+                // Check for ground indicators:
+                // 1. Hit bottom of image
+                if (y >= height - 10) {
+                    distanceToGround = y - startY;
+                    foundGround = true;
+                    break;
+                }
+                
+                // 2. Hit much darker area (void/background)
+                if (brightness < 50) {
+                    distanceToGround = y - startY;
+                    foundGround = true;
+                    break;
+                }
+                
+                // 3. Hit similar brightness (continuous support)
+                if (Math.abs(brightness - platformBrightness) < 30) {
+                    // Keep tracing, we're still on connected surface
+                    continue;
+                }
+            }
+            
+            // If we traced all the way down without finding ground, it's floating
+            if (!foundGround) {
+                return 0;
+            }
+            
+            // Score based on distance to ground
+            // 0 distance (at bottom) = 1.0 score
+            // 50px or more = 0.5 score (minimum acceptable)
+            // >200px = rejected above
+            const score = 1.0 - (distanceToGround / 400);
+            return Math.max(0.5, score);
+        }
+        
+        // Score platform quality
+        function scorePlatform(platform, data, width, height) {
+            let score = 0;
+            
+            // Width score (wider = better, cap at 800px)
+            const widthScore = Math.min(1.0, platform.w / 800);
+            score += widthScore * 0.5;
+            
+            // Position score (lower on screen = better, floors are at bottom)
+            const positionScore = platform.y / height;
+            score += positionScore * 0.3;
+            
+            // Brightness consistency (floors should be consistently LIGHT)
+            let brightnessSum = 0;
+            let sampleCount = 0;
+            for (let x = platform.x; x < platform.x + platform.w; x += 10) {
+                const idx = (Math.floor(platform.y) * width + Math.floor(x)) * 4;
+                const brightness = (data[idx] + data[idx+1] + data[idx+2]) / 3;
+                brightnessSum += brightness;
+                sampleCount++;
+            }
+            const avgBrightness = brightnessSum / sampleCount;
+            const brightnessScore = avgBrightness > 100 ? Math.min(1.0, avgBrightness / 200) : 0;
+            score += brightnessScore * 0.2;
+            
+            return score;
+        }
+        
+        // Generate battle layout using detected platforms
+        function generateBattleLayout() {
+            const canvas = battleState.canvas;
+            battleState.platforms = [];
+            
+            // Detect platforms
+            const detected = detectPlatforms();
+            console.log(`Detected ${detected.length} platforms total`);
+            
+            if (detected.length < 5) {
+                console.log('Not enough platforms detected, using fallback');
+                return generateFallbackLayout();
+            }
+            
+            // Safe zone filtering - only check X bounds, platforms already scanned at bottom
+            const marginX = 160; // 300px sprite / 2 + 10px buffer
+            
+            const safe = detected.filter(p => {
+                const centerX = p.x + p.w / 2;
+                return centerX > marginX && centerX < canvas.width - marginX;
+            });
+            
+            console.log(`${safe.length} platforms in safe zone`);
+            
+            if (safe.length < 5) {
+                console.log('Not enough safe platforms, using fallback');
+                return generateFallbackLayout();
+            }
+            
+            // Shuffle safe platforms for variety each battle
+            const shuffled = [...safe].sort(() => Math.random() - 0.5);
+            
+            // Pick platforms ensuring spatial separation (300px sprites need 200px+ spacing)
+            const minDistance = 200;
+            const selected = [];
+            
+            for (let i = 0; i < shuffled.length && selected.length < 5; i++) {
+                const candidate = shuffled[i];
+                const candidateX = candidate.x + candidate.w / 2;
+                const candidateY = candidate.y;
+                
+                // Check if candidate overlaps with already selected platforms
+                let overlaps = false;
+                for (const existing of selected) {
+                    const existingX = existing.x + existing.w / 2;
+                    const existingY = existing.y;
+                    
+                    const dx = candidateX - existingX;
+                    const dy = candidateY - existingY;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < minDistance) {
+                        overlaps = true;
+                        break;
+                    }
+                }
+                
+                if (!overlaps) {
+                    selected.push(candidate);
+                }
+            }
+            
+            console.log(`Selected ${selected.length} non-overlapping platforms`);
+            
+            // Need at least 5 non-overlapping platforms
+            if (selected.length < 5) {
+                console.log('Could not find 5 non-overlapping platforms, using fallback');
+                return generateFallbackLayout();
+            }
+            
+            // Position heroes
+            for (let i = 0; i < 4; i++) {
+                const p = selected[i];
+                battleState.platforms.push(p);
+                
+                // Center of detection box
+                const centerX = p.x + p.w / 2;
+                const centerY = p.y + p.h / 2;
+                
+                // We need to solve: floor contact point (heroY + scaledBoxSize/2) = centerY
+                // scaledBoxSize = 300 * (0.6 + heroY / canvas.height * 0.4)
+                // This is circular, so we iterate to solve
+                let heroY = centerY - 150; // Initial guess
+                for (let iter = 0; iter < 5; iter++) {
+                    const depthScale = 0.6 + (heroY / canvas.height) * 0.4;
+                    const scaledBoxSize = 300 * depthScale;
+                    heroY = centerY - scaledBoxSize / 2;
+                }
+                
+                battleState.heroes[i].platform = p;
+                battleState.heroes[i].x = centerX;
+                battleState.heroes[i].y = heroY;
+                battleState.heroes[i].facingRight = true;
+            }
+            
+            // Position enemy
+            const ep = selected[4];
+            battleState.platforms.push(ep);
+            
+            // Center of detection box
+            const centerX = ep.x + ep.w / 2;
+            const centerY = ep.y + ep.h / 2;
+            
+            // Solve for Y position where floor contact point = centerY
+            let enemyY = centerY - 150; // Initial guess
+            for (let iter = 0; iter < 5; iter++) {
+                const depthScale = 0.6 + (enemyY / canvas.height) * 0.4;
+                const scaledBoxSize = 300 * depthScale;
+                enemyY = centerY - scaledBoxSize / 2;
+            }
+            
+            battleState.enemies[0].platform = ep;
+            battleState.enemies[0].x = centerX;
+            battleState.enemies[0].y = enemyY;
+            battleState.enemies[0].facingRight = false;
+            
+            battleState.detectedPlatforms = detected;
+            console.log('Platform layout generated successfully');
+        }
+        
+        // Fallback positioning
+        function generateFallbackLayout() {
+            const canvas = battleState.canvas;
+            const safePositions = {
+                heroes: [
+                    { x: 0.20, y: 0.40 },
+                    { x: 0.25, y: 0.55 },
+                    { x: 0.15, y: 0.65 },
+                    { x: 0.30, y: 0.75 }
+                ],
+                enemy: { x: 0.75, y: 0.60 }
+            };
+            
+            for (let i = 0; i < 4; i++) {
+                const pos = safePositions.heroes[i];
+                const heroX = canvas.width * pos.x;
+                const heroY = canvas.height * pos.y;
+                
+                const platform = {
+                    x: heroX - 50, y: heroY + 140, w: 100, h: 10,
+                    type: 'fallback', color: '#6B4FA0'
+                };
+                
+                battleState.platforms.push(platform);
+                battleState.heroes[i].platform = platform;
+                battleState.heroes[i].x = heroX;
+                battleState.heroes[i].y = heroY;
+                battleState.heroes[i].facingRight = true;
+            }
+            
+            const enemyX = canvas.width * safePositions.enemy.x;
+            const enemyY = canvas.height * safePositions.enemy.y;
+            
+            const enemyPlatform = {
+                x: enemyX - 75, y: enemyY + 140, w: 150, h: 10,
+                type: 'fallback', color: '#4A2A6B'
+            };
+            
+            battleState.platforms.push(enemyPlatform);
+            battleState.enemies[0].platform = enemyPlatform;
+            battleState.enemies[0].x = enemyX;
+            battleState.enemies[0].y = enemyY;
+            battleState.enemies[0].facingRight = false;
+        }
+        
+
+        // Render battle scene
+        function renderBattle() {
+            const ctx = battleState.ctx;
+            const canvas = battleState.canvas;
+            
+            // Draw background image if loaded, otherwise fallback to gradient
+            if (battleState.backgroundImage && battleState.backgroundImage.complete && battleState.backgroundImage.naturalHeight !== 0) {
+                ctx.drawImage(battleState.backgroundImage, 0, 0, canvas.width, canvas.height);
+            } else {
+                // Fallback: Clear canvas with gradient
+                ctx.fillStyle = '#1a0f2e';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw starry background
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                for (let i = 0; i < 100; i++) {
+                    const x = Math.random() * canvas.width;
+                    const y = Math.random() * canvas.height;
+                    const r = Math.random() * 2;
+                    ctx.beginPath();
+                    ctx.arc(x, y, r, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            
+            // Draw detected platform spawn areas if hitboxes enabled
+            if (settings.showHitboxes && battleState.detectedPlatforms) {
+                battleState.detectedPlatforms.forEach(platform => {
+                    // Different colors for different detection methods
+                    let fillColor, strokeColor;
+                    
+                    if (platform.type === 'detected') {
+                        // Edge detection = GREEN
+                        fillColor = 'rgba(0, 255, 0, 0.2)';
+                        strokeColor = 'rgba(0, 255, 0, 0.8)';
+                    } else if (platform.type === 'sampled') {
+                        // Grid sampling = MAGENTA
+                        fillColor = 'rgba(255, 0, 255, 0.2)';
+                        strokeColor = 'rgba(255, 0, 255, 0.8)';
+                    } else if (platform.type === 'gradient') {
+                        // Gradient/flat area = CYAN
+                        fillColor = 'rgba(0, 255, 255, 0.2)';
+                        strokeColor = 'rgba(0, 255, 255, 0.8)';
+                    } else {
+                        // Unknown = WHITE
+                        fillColor = 'rgba(255, 255, 255, 0.2)';
+                        strokeColor = 'rgba(255, 255, 255, 0.8)';
+                    }
+                    
+                    ctx.fillStyle = fillColor;
+                    ctx.fillRect(platform.x, platform.y, platform.w, platform.h);
+                    
+                    ctx.strokeStyle = strokeColor;
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(platform.x, platform.y, platform.w, platform.h);
+                });
+            }
+            
+            // Draw platforms
+            battleState.platforms.forEach(platform => {
+                // Don't draw platforms, keep them invisible for collision only
+                // ctx.fillStyle = platform.color;
+                // ctx.fillRect(platform.x, platform.y, platform.w, platform.h);
+                
+                // Platform edge highlight
+                // ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+                // ctx.lineWidth = 2;
+                // ctx.strokeRect(platform.x, platform.y, platform.w, platform.h);
+            });
+            
+            // Draw heroes
+            battleState.heroes.forEach(hero => {
+                // Calculate depth-based scale (higher Y = farther back = smaller)
+                // Y range: 0 (top) to canvas.height (bottom)
+                // Scale range: 0.6 (top/far) to 1.0 (bottom/near)
+                const depthScale = 0.6 + (hero.y / canvas.height) * 0.4;
+                
+                // Draw hero sprite
+                if (hero.sprite && hero.sprite.complete && hero.sprite.naturalHeight !== 0) {
+                    const spriteWidth = 300 * depthScale;
+                    const spriteHeight = 300 * depthScale;
+                    const spriteX = hero.x - spriteWidth / 2;
+                    // Per-hero offset adjustments
+                    let offsetY = 10; // Default (Zooko, Nate)
+                    if (hero.name === 'Zancas') {
+                        offsetY = 20; // Zancas down 10px more
+                    } else if (hero.name === 'CyberAxe') {
+                        offsetY = 13; // CyberAxe down 3px more
+                    }
+                    const spriteY = hero.y - spriteHeight / 2 + offsetY;
+                    
+                    ctx.save();
+                    if (!hero.facingRight) {
+                        ctx.translate(hero.x, hero.y);
+                        ctx.scale(-1, 1);
+                        ctx.translate(-hero.x, -hero.y);
+                    }
+                    ctx.drawImage(hero.sprite, spriteX, spriteY, spriteWidth, spriteHeight);
+                    ctx.restore();
+                } else {
+                    // Fallback to colored circle if sprite not loaded
+                    ctx.fillStyle = hero.color;
+                    ctx.beginPath();
+                    ctx.arc(hero.x, hero.y, 90 * depthScale, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+                
+                // Hero name
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = `bold ${Math.floor(12 * depthScale)}px Inter`;
+                ctx.textAlign = 'center';
+                ctx.fillText(hero.name.toUpperCase(), hero.x, hero.y - 195 * depthScale);
+                
+                // HP bar (positioned above sprite, below name)
+                const barWidth = 80 * depthScale;
+                const barHeight = 10 * depthScale;
+                const barX = hero.x - barWidth / 2;
+                const barY = hero.y - 180 * depthScale;
+                
+                // HP text (centered on top of bar)
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = `bold ${Math.floor(10 * depthScale)}px JetBrains Mono`;
+                ctx.textAlign = 'center';
+                ctx.fillText(`${hero.hp}/${hero.maxHp}`, hero.x, barY - 3);
+                
+                // Background
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+                ctx.fillRect(barX, barY, barWidth, barHeight);
+                
+                // HP fill
+                const hpPercent = hero.hp / hero.maxHp;
+                ctx.fillStyle = hpPercent > 0.5 ? '#27AE60' : hpPercent > 0.25 ? '#F39C12' : '#E74C3C';
+                ctx.fillRect(barX, barY, barWidth * hpPercent, barHeight);
+            });
+            
+            // Draw enemies
+            battleState.enemies.forEach(enemy => {
+                // Calculate depth-based scale (higher Y = farther back = smaller)
+                const depthScale = 0.6 + (enemy.y / canvas.height) * 0.4;
+                
+                // Enemy placeholder (larger colored circle)
+                ctx.fillStyle = enemy.color;
+                ctx.beginPath();
+                ctx.arc(enemy.x, enemy.y, 50 * depthScale, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                
+                // Enemy name
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = `bold ${Math.floor(14 * depthScale)}px Inter`;
+                ctx.textAlign = 'center';
+                ctx.fillText(enemy.name.toUpperCase(), enemy.x, enemy.y - 65 * depthScale);
+                
+                // HP bar
+                const barWidth = 100 * depthScale;
+                const barHeight = 10 * depthScale;
+                const barX = enemy.x - barWidth / 2;
+                const barY = enemy.y + 60 * depthScale;
+                
+                // Background
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+                ctx.fillRect(barX, barY, barWidth, barHeight);
+                
+                // HP fill
+                const hpPercent = enemy.hp / enemy.maxHp;
+                ctx.fillStyle = hpPercent > 0.5 ? '#27AE60' : hpPercent > 0.25 ? '#F39C12' : '#E74C3C';
+                ctx.fillRect(barX, barY, barWidth * hpPercent, barHeight);
+                
+                // HP text
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = `${Math.floor(12 * depthScale)}px JetBrains Mono`;
+                ctx.fillText(`${enemy.hp}/${enemy.maxHp}`, enemy.x, barY + barHeight + 15);
+            });
+            
+            // Draw hitboxes if enabled
+            if (settings.showHitboxes) {
+                // Draw hero spawn area boxes (scaled with depth)
+                battleState.heroes.forEach(hero => {
+                    const depthScale = 0.6 + (hero.y / canvas.height) * 0.4;
+                    const boxSize = 300 * depthScale;
+                    ctx.strokeStyle = '#00FF00';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(hero.x - boxSize / 2, hero.y - boxSize / 2, boxSize, boxSize);
+                    
+                    // Draw center point (hero.x, hero.y)
+                    ctx.fillStyle = '#00FF00';
+                    ctx.beginPath();
+                    ctx.arc(hero.x, hero.y, 5, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Draw FLOOR CONTACT POINT - bottom center of hitbox where feet should touch
+                    const floorY = hero.y + boxSize / 2;
+                    ctx.fillStyle = '#FF00FF';
+                    ctx.beginPath();
+                    ctx.arc(hero.x, floorY, 8, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.strokeStyle = '#FFFFFF';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                });
+                
+                // Draw enemy spawn area boxes (scaled with depth)
+                battleState.enemies.forEach(enemy => {
+                    const depthScale = 0.6 + (enemy.y / canvas.height) * 0.4;
+                    const boxSize = 300 * depthScale;
+                    ctx.strokeStyle = '#FF0000';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(enemy.x - boxSize / 2, enemy.y - boxSize / 2, boxSize, boxSize);
+                    
+                    // Draw center point (enemy.x, enemy.y)
+                    ctx.fillStyle = '#FF0000';
+                    ctx.beginPath();
+                    ctx.arc(enemy.x, enemy.y, 5, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Draw FLOOR CONTACT POINT - bottom center of hitbox where feet should touch
+                    const floorY = enemy.y + boxSize / 2;
+                    ctx.fillStyle = '#FF00FF';
+                    ctx.beginPath();
+                    ctx.arc(enemy.x, floorY, 8, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.strokeStyle = '#FFFFFF';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                });
+                
+                // Draw platform hitboxes
+                battleState.platforms.forEach(platform => {
+                    ctx.strokeStyle = '#FFFF00';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(platform.x, platform.y, platform.w, platform.h);
+                });
+            }
+        }
+        
+        // Update turn info display
+        function updateBattleTurnInfo() {
+            const currentHero = battleState.turnOrder[battleState.currentTurn];
+            const turnInfo = document.getElementById('battleTurnInfo');
+            if (turnInfo && currentHero) {
+                turnInfo.textContent = `${currentHero.name.toUpperCase()}'S TURN`;
+            }
+            
+            // Update active hero card highlighting
+            document.querySelectorAll('.battleHeroCard').forEach(card => card.classList.remove('active'));
+            const activeCard = document.getElementById(`battleCard${currentHero.name}`);
+            if (activeCard) activeCard.classList.add('active');
+        }
+        
+        // Update battle hero card stats
+        function updateBattleHeroCards() {
+            battleState.heroes.forEach(hero => {
+                const heroName = hero.name.toLowerCase();
+                const hpEl = document.getElementById(`b${heroName}-hp`);
+                const maxHpEl = document.getElementById(`b${heroName}-maxhp`);
+                const acEl = document.getElementById(`b${heroName}-ac`);
+                
+                if (hpEl) hpEl.textContent = hero.hp;
+                if (maxHpEl) maxHpEl.textContent = hero.maxHp;
+                if (acEl) acEl.textContent = hero.stats.ac || 10;
+            });
+        }
+        
+        // Handle battle actions
+        function battleAction(action) {
+            // Placeholder - just advance turn for now
+            if (action === 'retreat') {
+                endBattle();
+                return;
+            }
+            
+            // Next turn
+            battleState.currentTurn = (battleState.currentTurn + 1) % battleState.turnOrder.length;
+            updateBattleTurnInfo();
+        }
+        
+        // End battle and return to dungeon menu
+        function endBattle() {
+            battleState.active = false;
+            currentScreen = 'dungeonMenu';
+            document.getElementById('battleScreen').style.display = 'none';
+            document.getElementById('dungeonMenuScreen').style.display = 'block';
+        }
+        
+        // ===== END BATTLE SYSTEM =====
         
         // Exit portal and return to arcade game
         function exitPortal() {

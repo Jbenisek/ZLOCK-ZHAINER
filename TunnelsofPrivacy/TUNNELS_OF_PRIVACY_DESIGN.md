@@ -639,3 +639,485 @@ The story flips: You climb up, escaping the depths, bringing privacy back to the
 - Seamless integration (feels like one game)
 - Standalone playability (dungeon works alone)
 - Stat synergy (dungeon progress helps arcade, arcade progress helps dungeon)
+
+
+TITLE / HIGH CONCEPT
+
+This is a Zcash-themed, D&D-style dungeon crawler inspired by Tunnels of Doom, Eye of the Beholder, and classic turn-based RPGs. The focus is on:
+
+- Menu-driven exploration instead of FPS or free movement.
+- A 1 000 level mega-dungeon.
+- Deep procedural generation using Level Profiles, not prebuilt maps.
+- Party based, turn-based combat against monsters and bosses that personify cryptography, privacy, and Zcash ideas.
+
+The player controls 1–4 heroes. Battles are side-view, turn-based. Exploration is abstracted into menus and procedural room generation, not walking around a 3D dungeon.
+
+
+CORE LOOP OVERVIEW
+
+1. Player clicks “Start Adventure”.
+2. A new run is created with a global seed and 1 000 level profiles.
+3. The player is taken to the Dungeon Menu for the current level.
+4. From the Dungeon Menu they choose actions like Explore Level, Inventory, Rest, etc.
+5. “Explore Level” resolves into opening rooms and encounters based on that level’s profile.
+6. Battles, traps, events, and NPC interactions are resolved through menus and separate combat scenes.
+7. After dealing with rooms and finding the exit, the player descends or ascends a level.
+8. Main story is completed at level 100 when the main boss is defeated and the Sceptre of Privacy is obtained.
+9. Levels 101–1000 are the ascent back to the surface, including a late-game boss rush and finally a non-combat victory climb.
+
+
+DUNGEON MENU (LEVEL HUB UI)
+
+This replaces FPS movement. Every level has a Dungeon Menu that appears as a centered UI panel styled to match the main arcade game UI (same fonts, colors, visual language).
+
+Core entries:
+
+1. Explore Level  
+   - Main exploration button.
+   - When pressed, it rolls to determine what kind of room or encounter the party enters next, based on the Level Profile and remaining room counts.
+
+2. Explorer Level  
+   - Shows current depth (1–1000), overall danger rating, environmental modifiers, and discovered traits of this level.
+
+3. Level Store (Enter Level Store, if found)  
+   - Only active after the player discovers a Store Room on this level.
+   - Allows buy, sell, repair, and possibly identify items depending on store type.
+
+4. Inventory  
+   - Manage items, equipment, consumables.
+   - Equip gear, inspect stats, sort items.
+
+5. Rest / Sleep  
+   - Use camp resources to restore HP, mana, and remove some conditions.
+   - May trigger Rest events (ambush, dreams, NPC visits) based on level risk.
+
+Additional menu entries that complete the Tunnels of Doom style loop:
+
+6. Party Status  
+   - Overview of party members, HP, mana, buffs, debuffs, experience, and conditions.
+
+7. Level Map  
+   - Abstract auto-map. No FPS. Just a list or simple node map of known rooms, room types, and which ones still have unknown content.
+   - Shows Entry, Exit, Store, Boss, and key rooms once discovered.
+
+8. Camp / Use Skills  
+   - Non-sleep actions.
+   - Activate out-of-combat skills, rituals, crafting, short buffs, detection spells, etc.
+
+9. Identify Items  
+   - Spend resources, gold, scrolls, or skills to identify unknown items.
+   - Supports classic “this sword might be cursed” style gameplay.
+
+10. Manage Party / Formation  
+    - Choose which heroes are active.
+    - Set formation (frontline, midline, backline) if your combat system uses it.
+
+11. Bestiary / Lore Log  
+    - View info on monsters, bosses, rooms, and lore unlocked through exploration.
+
+
+1 000 LEVEL STRUCTURE
+
+The dungeon has 1 000 levels. The structure is:
+
+- Levels 1–100: Descending into the deep. Main story arc.
+- Level 100: Main boss battle against The Centralizer. Defeat it to obtain the Sceptre of Privacy.
+- Levels 101–1000: Ascending back to the surface with the sceptre. Endgame arc.
+- Levels 900–990: Final boss rush sequence, fighting remnant echoes of earlier bosses.
+- Levels 991–1000: Ease-off, non-combat victory climb back to the surface and final celebration.
+
+Detailed structure:
+
+
+DESCENT ARC: LEVELS 1–100
+
+Theme: Going down into the cryptographic underworld, discovering how privacy, surveillance, and decentralization clash.
+
+Suggested narrative beats by range:
+
+Levels 1–10: The Unshielded Approach  
+- Tutorial zone.
+- Basic monsters (Leak Imps, Dustlings, simple traps).
+- Teaches rest, inventory, and basic room types.
+
+Levels 11–20: The Broken Ledger Halls  
+- Surveillance themes.  
+- Enemies: Auditor Fragments, Watcher Golems.  
+- Rooms with public ledgers, scrying mirrors, listening devices.
+
+Levels 21–30: The Trusted Setup Catacombs  
+- Crypts of failed ceremonies and forgotten parameter shards.  
+- Mini-boss: Parameter Shade, guarding relics of the old trusted setup.
+
+Levels 31–40: The Forked Maze  
+- Shifting paths, timelines, and chain splits.  
+- Instability, chain-reorg style events.
+
+Levels 41–50: The Fungibility Labyrinth  
+- Hydra-like monsters representing tainted coins and chain analysis.  
+- Boss or mini-boss: Fiend of Fungibility.
+
+Levels 51–60: The Counterfeit Vaults  
+- NULL and inflation threats.  
+- Boss: Inflation Demon, attempting to create undetectable counterfeit currency.
+
+Levels 61–70: The Orchard Sanctum  
+- Sacred forests and temples themed around the shielded pool and unified addresses.  
+- Boss: Orchard Seraph (guardian, not necessarily evil unless corrupted).
+
+Levels 71–80: The Halo Spiral  
+- Recursive space. Rooms loop forward and backward symbolically.  
+- Boss: Halo Prime, a paradoxical entity representing trustless recursive proofs.
+
+Levels 81–90: The Identity Depths  
+- Sybil illusions, copies, and deception.  
+- Boss: Sybil King, an endlessly cloning shapeshifter.
+
+Levels 91–99: Descent to the Core  
+- Extreme darkness, pressure, and residual centralizing forces.  
+- Stronger versions of earlier threats.
+
+Level 100: Throne of Decentralization  
+- Main story boss: The Centralizer.  
+- A machine-god that consumes hashpower, identity, and governance to create a single point of control.
+
+Defeating The Centralizer grants the Sceptre of Privacy.
+
+
+THE SCEPTRE OF PRIVACY
+
+A legendary artifact that combines:
+
+- Shielded proof light (zero-knowledge proofs).
+- Distributed consensus flame.
+- Entropy crystals purified from the Catacombs.
+- Final sealed nullifier.
+
+Game effect conceptually:
+
+- Protects the party’s identity and transactions.
+- Opens the path upward toward freedom.
+- Might grant bonuses to stealth, resistance to surveillance, and special abilities in later levels.
+
+
+ASCENT ARC: LEVELS 101–1000
+
+Now the story flips. You are climbing up to the surface, bringing privacy to the world above. Enemies are remnants and echoes trying to drag you back down.
+
+High level zones:
+
+Levels 101–300: The Rising Tunnels  
+- Still dangerous, but difficulty gradually shifts from oppressive to hopeful.
+- You encounter weakened forms of previous enemies and new threats now trying to reclaim the Sceptre.
+
+Levels 301–600: The Breaking Shadows  
+- Shadows of old power structures crumble.
+- Enemies are more opportunistic than dominant.
+- This midgame is where growth and mastery are highlighted.
+
+Levels 601–800: The Great Uprising  
+- You start finding small settlements, rebels, and underground communities that support you.
+- More Safe Rooms, Stores, Shrines, and NPC Rooms.
+- Environmental hazards lessen. Focus shifts to story events, choices, and optional encounters.
+
+Levels 801–899: The Air of Freedom  
+- Caverns open up. Sky crystals, air vents, and early glimpses of daylight.
+- Occasional minibosses representing unresolved conflicts from the lower depths.
+
+Levels 900–990: The Final Boss Rush (Remnants)  
+- You fight “echo” versions of major bosses. They are weaker but come in sequence across these levels. Examples:
+  - Auditor Titan Shade
+  - Last Forking Wyrm
+  - Fungibility Hydra Remnant
+  - Halo Paradox Echo
+  - Sybil King Final Echo
+  - Inflation Demon Shell
+  - Ledger Colossus Fragment
+- This is a heroic cleanup, not a new main story climax. The emotional tone should be victorious and confident, not grim.
+
+Levels 991–995: The Golden Caverns  
+- Beautiful crystalline halls, peaceful.  
+- Rest, shops, shrines, lore, and nostalgia.  
+- No forced combat.
+
+Levels 996–998: Echo of Good Times  
+- Scenes that recall major victories or key NPCs from earlier in the run.  
+- Optional micro-events, story reflection, last chance to prepare gear.
+
+Level 999: Final Sunwell  
+- You see the end of the tunnel and the light of the world.  
+- NPCs gather at the threshold.  
+- This is the emotional climax of the ascent, still no big fight.
+
+Level 1000: Surface Return – Celebration  
+- No battle.  
+- The world celebrates the return of privacy and freedom.  
+- The Sceptre of Privacy is recognized as a symbol of people’s control over their own information.  
+- Endgame and credits area, with possible new game plus hooks.
+
+
+DND STYLE BOSSES AND MONSTERS (CONCEPTS)
+
+Boss archetypes used in the design:
+
+- Protocol Wraith: bound to failed trusted setup parameters.
+- Auditor Titan: giant stone ledger golem representing surveillance.
+- Fiend of Fungibility: hydra of tainted vs clean coins.
+- Consensys Spider: web of stale blocks and forks.
+- Halo Prime: guardian of recursive proofs.
+- Inflation Demon: counterfeit supply demon.
+- Orchard Seraph: angelic guardian of the shielded pool.
+- Sybil King: shapeshifter spawning multiple fake identities.
+- The Centralizer: main boss of level 100.
+
+Monster concepts used as room content:
+
+- Leak Imps: whisper transaction metadata to enemies.
+- Fee Wisps: drain coins in unstable conditions.
+- View-Key Revenants: haunt dropped viewing keys.
+- Nullifier Shades: track repeat actions and double spends.
+- Dustlings: tiny creatures made of low-value dust.
+- Chain-Reorg Worms: undo areas behind you.
+- Memo Wisps: carry encrypted messages that may help or explode.
+- Sync Ghouls: undead that constantly rescan their own memory.
+- Watcher Golems: constructs that enforce total visibility.
+- Anchor Slimes: sticky blobs representing outdated anchors.
+
+
+PROCEDURAL GENERATION SYSTEM
+
+Goal: Make many levels and rooms feel fresh each game without pre-generating or storing every room. The player might see only a fraction of the content in any run, but the world should still be consistent within that run.
+
+Approach: Level Profiles and on-demand room generation.
+
+Key principles:
+
+1. You do not generate the entire map or all rooms in advance.
+2. You only generate a small Level Profile for each level at the start of the run, based on a seed.
+3. When a room is entered for the first time, its content is rolled based on the Level Profile and remaining counts.
+4. Once generated, that room’s content is fixed for the rest of the run.
+5. Using deterministic RNG with the global seed and room coordinates guarantees that the same run is reproducible.
+
+
+LEVEL PROFILE
+
+Every level from 1 to 1000 has a Level Profile that contains:
+
+A. Room Type Distribution  
+   Counts or weights for each room category (see the 50 room types below). Example for a simple early level:
+
+   - Monster Rooms: 10
+   - Elite Monster Rooms: 2
+   - Mini-Boss Rooms: 1
+   - Store Rooms: 0
+   - Loot Rooms (Common): 5
+   - Trap Rooms: 5
+   - Safe Rooms: 2
+   - Hidden Rooms: 2
+   - Treasure Chest Rooms: 4
+   - etc.
+
+B. Level Modifiers  
+   Global modifiers that affect all encounters on that level. Examples:
+
+   - Acidic air: small poison chance at the start of each combat.
+   - Blessed floor: increased loot quality, reduced trap frequency.
+   - Cursed floor: increased curse rolls, higher enemy crit rate.
+   - Wandering merchant present.
+   - Hidden rooms spawn rate increased.
+   - Environmental storms: occasional cave-ins, lightning events.
+
+C. Encounter Tables  
+   Weighted lists of possible encounters for this level:
+
+   - Monster table: which enemies can appear and how often.
+   - Trap table: trap types, damage ranges, status effects.
+   - NPC table: friendly, neutral, hostile NPC types.
+   - Loot table: item rarity, gold range, special drops.
+   - Event table: text-based scenarios and choices.
+
+D. Special Rooms Flags  
+   - Must contain 1 Entry Room and 1 Exit Room.
+   - Some levels contain required rooms, such as Boss Room for key milestones.
+   - For level 100, the Boss Room for The Centralizer is mandatory.
+
+
+ON DEMAND ROOM GENERATION
+
+1. At the start of the level, the Level Profile is known but rooms are not instantiated.
+2. When the player chooses “Explore Level”, choose or create the next room by:
+   - Checking how many rooms of each type are still available (according to counts).
+   - Rolling a room type using weighted probabilities constrained by remaining counts.
+   - Generating the room’s specific content (monsters, NPCs, traps, loot) using that level’s encounter tables.
+3. Decrease the remaining count for that room type.
+4. Store the generated room result keyed by a deterministic identifier (for example, room index or coordinate plus level number and global seed).
+5. Future visits to the same room reuse the stored result. No rerolling.
+
+The result is that levels feel large and handcrafted, but you never waste CPU or design effort on rooms the player will not see.
+
+
+FULL ROOM TYPE LIST (50 TYPES)
+
+The dungeon uses 50 distinct room archetypes. These are abstract types used by the procedural system. Each gets a short behavior description.
+
+1. Entry Room  
+   - Spawn point for the level. No threats. Establishes the theme.
+
+2. Exit Room  
+   - Leads to the next level up or down. May be locked or gated by conditions.
+
+3. Monster Room  
+   - Standard enemies. Main combat content. Drops common loot.
+
+4. Elite Monster Room  
+   - Tougher enemies with better stats and skills. Increased rewards.
+
+5. Mini-Boss Room  
+   - Strong unique enemy or group. Often guards keys or major items.
+
+6. Level Boss Room  
+   - The main boss of this level (for story or milestone levels). Level 100 uses this for The Centralizer.
+
+7. Loot Room (Common)  
+   - Low to mid tier items, gold, consumables. Usually little or no combat.
+
+8. Loot Room (Rare)  
+   - High tier gear or rare items. Usually has traps, puzzles, or tough defenders.
+
+9. Trap Room  
+   - Focused on traps. Light or no monsters. Includes arrows, pits, magical traps, gas vents.
+
+10. Environmental Hazard Room  
+    - Hazards like collapsing ceilings, lava flows, toxic pools, extreme cold or heat. May require skill checks.
+
+11. Puzzle Room  
+    - Riddles, pattern matching, symbol combinations, logic or resource puzzles. Often gates good loot or shortcuts.
+
+12. Skill Check Room  
+    - Requires specific stats or skills (strength to push a block, magic to dispel a ward, tech to hack a device). Success or failure alters the room outcome.
+
+13. Store Room  
+    - A merchant or vending construct. Buy, sell, repair, identify. Only accessible if discovered on the level.
+
+14. Shrine / Blessing Room  
+    - Offers blessings, buffs, heals, or curses based on choices or offering resources.
+
+15. Good NPC Room  
+    - Friendly NPC. Quests, lore, trading, healing, or temporary ally.
+
+16. Bad NPC Room  
+    - Hostile or deceptive NPC. Might ambush, scam, or trigger bad events.
+
+17. Event Room  
+    - Text or menu based random event. Multiple choice outcomes.
+
+18. Safe Room  
+    - No combat. Safe place to rest, manage inventory, talk, or save.
+
+19. Hidden Room  
+    - Only accessible through secret doors, hidden switches, spells, or skills. Weighted toward rare loot or lore.
+
+20. Secret Door Room  
+    - Appears as a normal wall until detected. May connect important shortcuts.
+
+21. Critter Room  
+    - Non lethal creatures (mice, bats, small spirits). Used for flavor, small resources, or subtle hints.
+
+22. Treasure Chest Room  
+    - One or more chests. Some may be mimics or trapped. Contains concentrated loot.
+
+23. Cursed Room  
+    - Strong negative aura. Higher curse chance, debuffs, corruption effects, but sometimes high reward.
+
+24. Magic Well / Mana Recharge Room  
+    - Recharges mana or special abilities. Possibly with side effects.
+
+25. Weapon Forge / Repair Room  
+    - Smith, magical forge, or tech bench. Repair gear, upgrade items, or craft new equipment.
+
+26. Library / Archive Room  
+    - Shelves and archives. Discover lore, spell scrolls, map fragments, or secrets.
+
+27. Armory Cache Room  
+    - Racks of weapons and armor. High chance for combat gear. May be guarded or trapped.
+
+28. Alchemy Lab Room  
+    - Potions, ingredients, experimentation. Can brew or loot potions, with chance of accidents.
+
+29. Rune Chamber  
+    - Floor or wall runes. Activating them triggers buffs, debuffs, traps, or teleports.
+
+30. Fountain of Restoration  
+    - Heals HP or removes conditions. Sometimes cursed or tainted, occasionally offering risk vs reward choices.
+
+31. Teleporter Chamber  
+    - Sends the party to another discovered room or unknown location. May create shortcuts or risks.
+
+32. Mirror Room  
+    - Magical mirrors. Can show future events, create clones, or reveal illusions. Sometimes spawns mirror enemies.
+
+33. Beast Lair Room  
+    - Nest or lair of a particular creature. Optional or mandatory fight. Good loot if cleared.
+
+34. Hall of Whispers  
+    - Voices in the dark. Provide cryptic hints, reveal secrets, or mislead the player.
+
+35. Treasure Vault (Heavy Lock)  
+    - Defense focused room with a high security chest or vault. Requires multi-step unlocks or puzzles.
+
+36. Prison Cell Block  
+    - Cells with captives, dead prisoners, or hostile inhabitants. Releasing captives can create allies or new problems.
+
+37. Portal Fragment Room  
+    - Contains a fragment of a broken portal. Collecting or repairing multiple fragments may open shortcuts or secret realms.
+
+38. Tomb of the Ancients  
+    - Sarcophagi and coffins. Undead guardians and ancient relics. High risk, high reward.
+
+39. Mushroom Grove / Myconid Den  
+    - Fungal biome. Spores can heal, poison, or alter consciousness. Possible fungal NPC faction.
+
+40. Dimensional Rift Room  
+    - Reality is unstable. Random stat shifts, time distortions, or physics changes for this room or for a short duration.
+
+41. Sound Trap Hall  
+    - Sound reactive. Stepping or acting triggers traps via noise. Can be navigated quietly or by using sound-based skills.
+
+42. Observation Room  
+    - Scrying mirrors, crystals, or tech monitors. Lets the player peek at upcoming rooms, bosses, or secret areas.
+
+43. Abandoned Camp  
+    - Old adventurer camp. Leftover supplies, journals, or remains. May contain traps or clues.
+
+44. Training Hall  
+    - Targets, dummies, magical trainers. Temporary stat boosts, skill unlocks, or challenges.
+
+45. Artifact Pedestal Room  
+    - A single major item on a pedestal. Taking it can trigger traps, curses, guardian fights, or environmental changes.
+
+46. Puzzle Lock Hallway  
+    - Corridor that is itself a puzzle. Must align symbols, levers, or mechanisms to proceed.
+
+47. Collapsed Passage  
+    - Blocked path. Can be cleared with strength, spells, explosives, or special items. Possibly reveals new room clusters.
+
+48. Infested Corridor  
+    - Hordes of small enemies or spreading corruption. Damage over time zone, but yields resources or XP.
+
+49. Echo Chamber  
+    - Amplifies sound and illusions. Enemies appear duplicated, or echoes track the player’s choices.
+
+50. Crystal Conduit Room  
+    - Crystals channel energy. Can amplify spells, recharge items, or overload and explode if mishandled.
+
+
+SUMMARY
+
+The game is a menu driven mega dungeon inspired by Tunnels of Doom and D&D. It uses:
+
+- 1 000 level structure with a 100 level descent and 900 level ascent.
+- A deterministic procedural system based on Level Profiles and on demand room generation.
+- A rich list of 50 room archetypes, bosses, monsters, and level modifiers.
+- A Dungeon Menu that replaces FPS movement, letting you ship something solid in a short timeframe.
+
+This document contains all necessary concepts for another AI or engine system to understand the world structure, procedural design, and core gameplay loops without needing external context.

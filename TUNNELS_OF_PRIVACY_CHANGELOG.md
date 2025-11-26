@@ -2,6 +2,142 @@
 
 # Changelog
 
+## v0.2.19 - Depth-Based Rendering & Platform Positioning (2025-11-26)
+- **Summary:**
+  - Added depth-based scaling for characters based on Y position
+  - Fixed platform positioning to place characters at detection box centers
+  - Added per-character sprite offset adjustments
+  - Implemented depth test for better platform validation
+  - Fixed cache clearing to force fresh asset reload
+
+- **Depth-Based Rendering:**
+  - Characters scale from 0.6x (top/far) to 1.0x (bottom/near)
+  - Scale calculation: `0.6 + (y / canvas.height) * 0.4`
+  - Affects sprites, hitboxes, HP bars, and text
+  - Creates proper perspective in battle scenes
+
+- **Platform Positioning:**
+  - Characters positioned so floor contact point is at detection box center
+  - Iterative solver accounts for depth-based hitbox scaling
+  - Floor contact point = `character.y + (scaledHitboxSize / 2)`
+  - Ensures consistent positioning across all backgrounds
+
+- **Sprite Offsets:**
+  - Per-character vertical offset adjustments:
+    - Zooko: 10px down
+    - Nate: 10px down
+    - Zancas: 20px down
+    - CyberAxe: 13px down
+  - Offsets align character feet with hitbox floor contact
+
+- **Depth Test Validation:**
+  - `calculateDepthScore()` traces downward from platforms
+  - Measures distance to ground (max 200px trace)
+  - Rejects floating platforms (score < 0.5)
+  - Scores platforms: 1.0 at ground, 0.5 at 50px+ height
+  - Validates continuous support path
+
+- **Cache & Asset Loading:**
+  - Clear cache now deletes browser caches via Caches API
+  - Forces hard reload with `location.reload(true)`
+  - Hero sprites load with timestamp parameter to bypass cache
+  - Ensures updated images appear immediately
+
+- **Debug Visualization:**
+  - Hitboxes now scale with depth (matching sprite scale)
+  - Floor contact point shown as large magenta dot with white outline
+  - Center point shown as smaller green/red dot
+  - Platform detection boxes remain visible for debugging
+
+- **Technical Changes:**
+  - `generateBattleLayout()` uses iterative Y position solver
+  - `renderBattle()` calculates `depthScale` for all character elements
+  - `clearCache()` clears both localStorage and browser caches
+  - All 3 detection methods (`detectByAdaptiveThreshold`, `detectByMultiAngle`, `detectByColorClustering`) now use depth scoring
+
+## v0.2.18 - Spawn Randomization & Background Filtering (2025-11-25)
+- **Summary:**
+  - Added spawn point randomization for battle variety
+  - Removed problematic backgrounds from rotation
+  - Each battle now uses different platform combinations
+
+- **Spawn Randomization:**
+  - Shuffles detected platforms before selection
+  - Different hero/enemy positions each battle
+  - Uses `Math.random()` to randomize platform order
+  - Maintains spatial separation checks on randomized set
+
+- **Background Updates:**
+  - Reduced from 12 to 7 backgrounds in lvl1-10 pool
+  - Removed backgrounds with poor platform detection:
+    - backgrounds_lvl1 (1, 2, 3, 5, 6, 7, 9, 11, 13, 17, 18, 19)
+  - Kept only backgrounds with reliable platform detection:
+    - backgrounds_lvl1 (4, 8, 10, 12, 14, 15, 16)
+
+- **Technical Changes:**
+  - `generateBattleLayout()` now creates shuffled copy of safe platforms
+  - Random sort applied before spatial separation loop
+  - Background options array updated to exclude problematic files
+
+## v0.2.17 - Platform Detection Fix (2025-11-25)
+- **Summary:**
+  - Fixed platform detection system to use discrete box scanning instead of continuous spans
+  - Added spatial separation checking to prevent overlapping hero/enemy spawns
+  - Added ground verification to prevent floating platform detection
+  - Complete rewrite of detection algorithms for better accuracy
+
+- **Platform Detection Fixes:**
+  - **Box-Based Scanning:**
+    - Changed from 3px line scans to 150x50px box scans
+    - Scans discrete boxes instead of continuous horizontal spans
+    - Each box independently evaluated for platform viability
+    - Prevents detecting long sky/cloud areas as platforms
+  
+  - **Ground Verification:**
+    - Checks 5px below each detected box for darker area
+    - Platform must be 20+ brightness units brighter than area below
+    - Exception for boxes at bottom edge of image
+    - Eliminates floating platform false positives
+  
+  - **Spatial Separation:**
+    - Added minimum 200px distance check between selected platforms
+    - Prevents overlapping hero/enemy spawns (300x300px sprites)
+    - Iterates through detected platforms to find non-overlapping set
+    - Falls back to manual positioning if insufficient platforms found
+
+- **Detection Method Updates:**
+  - **Adaptive Threshold:**
+    - Box dimensions: 150x50px
+    - Step size: 50px horizontal, 25px vertical
+    - Scans bottom 60% of image
+    - Samples entire box area (every 5px) for brightness
+  
+  - **Multi-Angle Detection:**
+    - Same box dimensions as adaptive
+    - Tests 0°, 5°, -5° angles for sloped platforms
+    - Step size: 50px horizontal, 30px vertical
+    - Ground verification on all detected boxes
+  
+  - **Color Clustering:**
+    - Analyzes 150x50px boxes for color consistency
+    - Averages RGB across entire box
+    - Step size: 50px horizontal, 25px vertical
+    - Ground verification required for all detections
+
+- **Technical Implementation:**
+  - `detectByAdaptiveThreshold()` - Complete rewrite with box scanning
+  - `detectByMultiAngle()` - Complete rewrite with box scanning
+  - `detectByColorClustering()` - Complete rewrite with box scanning
+  - `generateBattleLayout()` - Added spatial separation loop
+  - Console logging for debugging platform counts
+
+- **Benefits:**
+  - No more full-width platform spans that cause overlaps
+  - Discrete platform detection matches actual floor regions
+  - Ground verification eliminates sky/cloud false positives
+  - Spatial checks ensure heroes/enemies spawn in separate locations
+  - More reliable platform detection across different backgrounds
+
 ## v0.2.11 - Dungeon Menu Screen (2025-11-25)
 - **Summary:**
   - Added dungeon menu screen for room-based navigation
