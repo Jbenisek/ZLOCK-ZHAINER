@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.2.19</title>
+    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.2.20</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -1638,7 +1638,7 @@
                     maxHp: sharedSave?.heroes?.zooko?.maxHp || 30,
                     stats: sharedSave?.heroes?.zooko || {},
                     color: '#F2C94C',
-                    x: 0, y: 0, platform: null, facingRight: true,
+                    x: 0, y: 0, platform: null, facing: 'center',
                     sprite: new Image(),
                     spritePath: 'tunnelsofprivacy/heros/zooko.png'
                 },
@@ -1648,7 +1648,7 @@
                     maxHp: sharedSave?.heroes?.nate?.maxHp || 30,
                     stats: sharedSave?.heroes?.nate || {},
                     color: '#E74C3C',
-                    x: 0, y: 0, platform: null, facingRight: true,
+                    x: 0, y: 0, platform: null, facing: 'center',
                     sprite: new Image(),
                     spritePath: 'tunnelsofprivacy/heros/nate.png'
                 },
@@ -1658,7 +1658,7 @@
                     maxHp: sharedSave?.heroes?.zancas?.maxHp || 26,
                     stats: sharedSave?.heroes?.zancas || {},
                     color: '#27AE60',
-                    x: 0, y: 0, platform: null, facingRight: true,
+                    x: 0, y: 0, platform: null, facing: 'center',
                     sprite: new Image(),
                     spritePath: 'tunnelsofprivacy/heros/zancas.png'
                 },
@@ -1668,7 +1668,7 @@
                     maxHp: sharedSave?.heroes?.cyberaxe?.maxHp || 35,
                     stats: sharedSave?.heroes?.cyberaxe || {},
                     color: '#2E86DE',
-                    x: 0, y: 0, platform: null, facingRight: true,
+                    x: 0, y: 0, platform: null, facing: 'center',
                     sprite: new Image(),
                     spritePath: 'tunnelsofprivacy/heros/cyberaxe.png'
                 }
@@ -1683,16 +1683,47 @@
                 hero.sprite.src = hero.spritePath + '?v=' + Date.now();
             });
             
-            // Setup test enemy
+            // Setup test enemies - boss + 2 mobs
             battleState.enemies = [
                 { 
                     name: 'Shadow Kraken', 
                     hp: 50, 
                     maxHp: 50,
                     color: '#8B45FF',
-                    x: 0, y: 0, platform: null, facingRight: false
+                    x: 0, y: 0, platform: null, facing: 'center',
+                    sprite: new Image(),
+                    spritePath: 'tunnelsofprivacy/bosses/lvl1/boss_lvl1.png',
+                    isMob: false
+                },
+                {
+                    name: 'Cave Spider',
+                    hp: 10,
+                    maxHp: 10,
+                    color: '#5C3317',
+                    x: 0, y: 0, platform: null, facing: 'center',
+                    sprite: new Image(),
+                    spritePath: 'tunnelsofprivacy/mobs/spider1.png',
+                    isMob: true
+                },
+                {
+                    name: 'Dire Rat',
+                    hp: 6,
+                    maxHp: 6,
+                    color: '#6B5B4F',
+                    x: 0, y: 0, platform: null, facing: 'center',
+                    sprite: new Image(),
+                    spritePath: 'tunnelsofprivacy/mobs/rat1.png',
+                    isMob: true
                 }
             ];
+            
+            // Load enemy sprites
+            battleState.enemies.forEach(enemy => {
+                enemy.sprite.onload = () => {
+                    renderBattle();
+                };
+                enemy.sprite.src = enemy.spritePath + '?v=' + Date.now();
+            });
             
             // Load random background from lvl1-10
             const backgroundOptions = [
@@ -2025,7 +2056,7 @@
             const detected = detectPlatforms();
             console.log(`Detected ${detected.length} platforms total`);
             
-            if (detected.length < 5) {
+            if (detected.length < 7) {
                 console.log('Not enough platforms detected, using fallback');
                 return generateFallbackLayout();
             }
@@ -2040,7 +2071,7 @@
             
             console.log(`${safe.length} platforms in safe zone`);
             
-            if (safe.length < 5) {
+            if (safe.length < 7) {
                 console.log('Not enough safe platforms, using fallback');
                 return generateFallbackLayout();
             }
@@ -2052,7 +2083,7 @@
             const minDistance = 200;
             const selected = [];
             
-            for (let i = 0; i < shuffled.length && selected.length < 5; i++) {
+            for (let i = 0; i < shuffled.length && selected.length < 7; i++) {
                 const candidate = shuffled[i];
                 const candidateX = candidate.x + candidate.w / 2;
                 const candidateY = candidate.y;
@@ -2080,9 +2111,9 @@
             
             console.log(`Selected ${selected.length} non-overlapping platforms`);
             
-            // Need at least 5 non-overlapping platforms
-            if (selected.length < 5) {
-                console.log('Could not find 5 non-overlapping platforms, using fallback');
+            // Need at least 7 non-overlapping platforms (4 heroes + 3 enemies)
+            if (selected.length < 7) {
+                console.log('Could not find 7 non-overlapping platforms, using fallback');
                 return generateFallbackLayout();
             }
             
@@ -2108,29 +2139,40 @@
                 battleState.heroes[i].platform = p;
                 battleState.heroes[i].x = centerX;
                 battleState.heroes[i].y = heroY;
-                battleState.heroes[i].facingRight = true;
+                battleState.heroes[i].facing = 'center';
             }
             
-            // Position enemy
-            const ep = selected[4];
-            battleState.platforms.push(ep);
-            
-            // Center of detection box
-            const centerX = ep.x + ep.w / 2;
-            const centerY = ep.y + ep.h / 2;
-            
-            // Solve for Y position where floor contact point = centerY
-            let enemyY = centerY - 150; // Initial guess
-            for (let iter = 0; iter < 5; iter++) {
-                const depthScale = 0.6 + (enemyY / canvas.height) * 0.4;
-                const scaledBoxSize = 300 * depthScale;
-                enemyY = centerY - scaledBoxSize / 2;
+            // Position enemies
+            for (let i = 0; i < battleState.enemies.length; i++) {
+                const ep = selected[4 + i];
+                battleState.platforms.push(ep);
+                
+                // Center of detection box
+                const centerX = ep.x + ep.w / 2;
+                const centerY = ep.y + ep.h / 2;
+                
+                const enemy = battleState.enemies[i];
+                
+                if (enemy.isMob) {
+                    // For mobs: enemy.y is at FEET (bottom of sprite)
+                    // Sprite bottom should be at centerY
+                    enemy.x = centerX;
+                    enemy.y = centerY;
+                } else {
+                    // For bosses: solve for Y position where floor contact point = centerY
+                    let enemyY = centerY - 150; // Initial guess
+                    for (let iter = 0; iter < 5; iter++) {
+                        const depthScale = 0.6 + (enemyY / canvas.height) * 0.4;
+                        const scaledBoxSize = 300 * depthScale;
+                        enemyY = centerY - scaledBoxSize / 2;
+                    }
+                    enemy.x = centerX;
+                    enemy.y = enemyY;
+                }
+                
+                enemy.platform = ep;
+                enemy.facing = 'center';
             }
-            
-            battleState.enemies[0].platform = ep;
-            battleState.enemies[0].x = centerX;
-            battleState.enemies[0].y = enemyY;
-            battleState.enemies[0].facingRight = false;
             
             battleState.detectedPlatforms = detected;
             console.log('Platform layout generated successfully');
@@ -2146,7 +2188,11 @@
                     { x: 0.15, y: 0.65 },
                     { x: 0.30, y: 0.75 }
                 ],
-                enemy: { x: 0.75, y: 0.60 }
+                enemies: [
+                    { x: 0.75, y: 0.60 },
+                    { x: 0.70, y: 0.45 },
+                    { x: 0.80, y: 0.70 }
+                ]
             };
             
             for (let i = 0; i < 4; i++) {
@@ -2163,22 +2209,25 @@
                 battleState.heroes[i].platform = platform;
                 battleState.heroes[i].x = heroX;
                 battleState.heroes[i].y = heroY;
-                battleState.heroes[i].facingRight = true;
+                battleState.heroes[i].facing = 'center';
             }
             
-            const enemyX = canvas.width * safePositions.enemy.x;
-            const enemyY = canvas.height * safePositions.enemy.y;
-            
-            const enemyPlatform = {
-                x: enemyX - 75, y: enemyY + 140, w: 150, h: 10,
-                type: 'fallback', color: '#4A2A6B'
-            };
-            
-            battleState.platforms.push(enemyPlatform);
-            battleState.enemies[0].platform = enemyPlatform;
-            battleState.enemies[0].x = enemyX;
-            battleState.enemies[0].y = enemyY;
-            battleState.enemies[0].facingRight = false;
+            for (let i = 0; i < battleState.enemies.length; i++) {
+                const pos = safePositions.enemies[i];
+                const enemyX = canvas.width * pos.x;
+                const enemyY = canvas.height * pos.y;
+                
+                const enemyPlatform = {
+                    x: enemyX - 75, y: enemyY + 140, w: 150, h: 10,
+                    type: 'fallback', color: '#4A2A6B'
+                };
+                
+                battleState.platforms.push(enemyPlatform);
+                battleState.enemies[i].platform = enemyPlatform;
+                battleState.enemies[i].x = enemyX;
+                battleState.enemies[i].y = enemyY;
+                battleState.enemies[i].facing = 'center';
+            }
         }
         
 
@@ -2274,7 +2323,7 @@
                     const spriteY = hero.y - spriteHeight / 2 + offsetY;
                     
                     ctx.save();
-                    if (!hero.facingRight) {
+                    if (hero.facing === 'left') {
                         ctx.translate(hero.x, hero.y);
                         ctx.scale(-1, 1);
                         ctx.translate(-hero.x, -hero.y);
@@ -2325,40 +2374,87 @@
                 // Calculate depth-based scale (higher Y = farther back = smaller)
                 const depthScale = 0.6 + (enemy.y / canvas.height) * 0.4;
                 
-                // Enemy placeholder (larger colored circle)
-                ctx.fillStyle = enemy.color;
-                ctx.beginPath();
-                ctx.arc(enemy.x, enemy.y, 50 * depthScale, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
-                ctx.lineWidth = 3;
-                ctx.stroke();
+                // Draw enemy sprite
+                if (enemy.sprite && enemy.sprite.complete && enemy.sprite.naturalHeight !== 0) {
+                    let spriteWidth, spriteHeight, spriteX, spriteY;
+                    
+                    if (enemy.isMob) {
+                        // Mobs are 1344x768, render 4x smaller with correct aspect ratio
+                        const mobAspectRatio = 1344 / 768; // 1.75
+                        const baseHeight = 75; // 768 / 4 / 2.56 ≈ 75px base height
+                        spriteHeight = baseHeight * depthScale;
+                        spriteWidth = spriteHeight * mobAspectRatio;
+                        spriteX = enemy.x - spriteWidth / 2;
+                        // Position so BOTTOM of sprite is at enemy.y (feet on ground)
+                        spriteY = enemy.y - spriteHeight;
+                    } else {
+                        // Bosses are 300x300, centered
+                        spriteWidth = 300 * depthScale;
+                        spriteHeight = 300 * depthScale;
+                        spriteX = enemy.x - spriteWidth / 2;
+                        spriteY = enemy.y - spriteHeight / 2 + 10; // Offset down by 10px
+                    }
+                    
+                    ctx.save();
+                    if (enemy.facing === 'left') {
+                        ctx.translate(enemy.x, enemy.y);
+                        ctx.scale(-1, 1);
+                        ctx.translate(-enemy.x, -enemy.y);
+                    }
+                    ctx.drawImage(enemy.sprite, spriteX, spriteY, spriteWidth, spriteHeight);
+                    ctx.restore();
+                } else {
+                    // Fallback to colored circle if sprite not loaded
+                    ctx.fillStyle = enemy.color;
+                    ctx.beginPath();
+                    ctx.arc(enemy.x, enemy.y, 50 * depthScale, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                }
                 
-                // Enemy name
-                ctx.fillStyle = '#FFFFFF';
+                // Enemy name (RED for enemies)
+                ctx.fillStyle = '#FF4444';
                 ctx.font = `bold ${Math.floor(14 * depthScale)}px Inter`;
                 ctx.textAlign = 'center';
-                ctx.fillText(enemy.name.toUpperCase(), enemy.x, enemy.y - 65 * depthScale);
+                
+                let nameOffsetY, barOffsetY;
+                if (enemy.isMob) {
+                    // For mobs, position above the sprite (which starts at enemy.y - spriteHeight)
+                    const mobAspectRatio = 1344 / 768;
+                    const baseHeight = 75;
+                    const spriteHeight = baseHeight * depthScale;
+                    nameOffsetY = enemy.y - spriteHeight - 10;
+                    barOffsetY = enemy.y - spriteHeight - 30;
+                } else {
+                    // For bosses, position above centered sprite
+                    nameOffsetY = enemy.y - 195 * depthScale;
+                    barOffsetY = enemy.y - 180 * depthScale;
+                }
+                
+                ctx.fillText(enemy.name.toUpperCase(), enemy.x, nameOffsetY);
                 
                 // HP bar
                 const barWidth = 100 * depthScale;
                 const barHeight = 10 * depthScale;
                 const barX = enemy.x - barWidth / 2;
-                const barY = enemy.y + 60 * depthScale;
+                const barY = barOffsetY;
+                
+                // HP text (centered on top of bar)
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = `bold ${Math.floor(10 * depthScale)}px JetBrains Mono`;
+                ctx.textAlign = 'center';
+                ctx.fillText(`${enemy.hp}/${enemy.maxHp}`, enemy.x, barY - 3);
                 
                 // Background
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
                 ctx.fillRect(barX, barY, barWidth, barHeight);
                 
-                // HP fill
+                // HP fill (RED for enemies)
                 const hpPercent = enemy.hp / enemy.maxHp;
-                ctx.fillStyle = hpPercent > 0.5 ? '#27AE60' : hpPercent > 0.25 ? '#F39C12' : '#E74C3C';
+                ctx.fillStyle = hpPercent > 0.5 ? '#E74C3C' : hpPercent > 0.25 ? '#C0392B' : '#A93226';
                 ctx.fillRect(barX, barY, barWidth * hpPercent, barHeight);
-                
-                // HP text
-                ctx.fillStyle = '#FFFFFF';
-                ctx.font = `${Math.floor(12 * depthScale)}px JetBrains Mono`;
-                ctx.fillText(`${enemy.hp}/${enemy.maxHp}`, enemy.x, barY + barHeight + 15);
             });
             
             // Draw hitboxes if enabled
@@ -2391,26 +2487,50 @@
                 // Draw enemy spawn area boxes (scaled with depth)
                 battleState.enemies.forEach(enemy => {
                     const depthScale = 0.6 + (enemy.y / canvas.height) * 0.4;
-                    const boxSize = 300 * depthScale;
-                    ctx.strokeStyle = '#FF0000';
-                    ctx.lineWidth = 2;
-                    ctx.strokeRect(enemy.x - boxSize / 2, enemy.y - boxSize / 2, boxSize, boxSize);
                     
-                    // Draw center point (enemy.x, enemy.y)
-                    ctx.fillStyle = '#FF0000';
-                    ctx.beginPath();
-                    ctx.arc(enemy.x, enemy.y, 5, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    // Draw FLOOR CONTACT POINT - bottom center of hitbox where feet should touch
-                    const floorY = enemy.y + boxSize / 2;
-                    ctx.fillStyle = '#FF00FF';
-                    ctx.beginPath();
-                    ctx.arc(enemy.x, floorY, 8, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.strokeStyle = '#FFFFFF';
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
+                    let boxSize, boxY;
+                    if (enemy.isMob) {
+                        // Mobs: hitbox matches sprite size (aspect ratio 1.75:1)
+                        const mobAspectRatio = 1344 / 768;
+                        const baseHeight = 75;
+                        const spriteHeight = baseHeight * depthScale;
+                        const spriteWidth = spriteHeight * mobAspectRatio;
+                        // Hitbox from feet (enemy.y) upward
+                        ctx.strokeStyle = '#FF0000';
+                        ctx.lineWidth = 2;
+                        ctx.strokeRect(enemy.x - spriteWidth / 2, enemy.y - spriteHeight, spriteWidth, spriteHeight);
+                        
+                        // Draw floor contact point at enemy.y (feet)
+                        ctx.fillStyle = '#FF00FF';
+                        ctx.beginPath();
+                        ctx.arc(enemy.x, enemy.y, 8, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.strokeStyle = '#FFFFFF';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                    } else {
+                        // Bosses: 300x300 scaled box centered
+                        const boxSize = 300 * depthScale;
+                        ctx.strokeStyle = '#FF0000';
+                        ctx.lineWidth = 2;
+                        ctx.strokeRect(enemy.x - boxSize / 2, enemy.y - boxSize / 2, boxSize, boxSize);
+                        
+                        // Draw center point
+                        ctx.fillStyle = '#FF0000';
+                        ctx.beginPath();
+                        ctx.arc(enemy.x, enemy.y, 5, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        // Draw floor contact point
+                        const floorY = enemy.y + boxSize / 2;
+                        ctx.fillStyle = '#FF00FF';
+                        ctx.beginPath();
+                        ctx.arc(enemy.x, floorY, 8, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.strokeStyle = '#FFFFFF';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                    }
                 });
                 
                 // Draw platform hitboxes

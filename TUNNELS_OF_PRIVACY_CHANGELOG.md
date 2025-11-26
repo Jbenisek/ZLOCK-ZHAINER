@@ -2,6 +2,143 @@
 
 # Changelog
 
+## v0.2.22 - Boss File Organization (2025-11-26)
+- **Summary:**
+  - Renamed all boss sprite files to match boss names from bosses_data.json
+  - Updated all sprite paths to use individual level folders (lvl2-lvl21)
+  - Organized boss assets into proper folder structure
+
+- **Boss File Renaming:**
+  - Level 2: boss_lvl2.png → metadata_swarm_mass.png
+  - Level 3: boss_lvl3.png → open_ledger_golem.png
+  - Level 4: boss_lvl4.png → leak_channel_imp.png
+  - Level 5: boss_lvl5.png → trace_hound_construct.png
+  - Level 6: boss_lvl6.png → clear_torch_sentinel.png
+  - Level 7: boss_lvl7.png → echo_signal_wraith.png
+  - Level 8: boss_lvl8.png → data_trail_collector.png
+  - Level 9: boss_lvl9.png → scan_mask_idol.png
+  - Level 10: boss_lvl10.png → unmasked_scribe_apparition.png
+  - Level 11: boss_lvl11.png → watcher_eye_construct.png
+  - Level 12: boss_lvl12.png → pattern_matcher_phantasm.png
+  - Level 13: boss_lvl13.png → chain_analysis_serpent.png
+  - Level 14: boss_lvl14.png → compliance_herald.png
+  - Level 15: boss_lvl15.png → identity_probe_specter.png
+  - Level 16: boss_lvl16.png → telemetry_spider.png
+  - Level 17: envato-labs-image-edit.png → observer_node_golem.png
+  - Level 18: boss_lvl18.png → cross_correlation_beast.png
+  - Level 19: boss_lvl19.png → surveillance_lens_knight.png
+  - Level 20: boss_lvl20.png → record_keeper_titan.png
+  - Level 21: boss_lvl21.png → broken_entropy_shade.png
+
+- **Sprite Path Updates:**
+  - Changed from grouped folders (lvl1-10, lvl11-20, lvl21-30) to individual level folders
+  - All paths now follow pattern: `tunnelsofprivacy/bosses/lvl{N}/{boss_name}.png`
+  - Matches actual folder structure in filesystem
+
+- **Technical Changes:**
+  - Updated all 21 boss entries in bosses_data.json
+  - Sprite paths now accurately reflect file locations
+  - Boss names, files, and data now fully synchronized
+
+## v0.2.21 - Boss Data Alignment (2025-11-26)
+- **Summary:**
+  - Fixed all boss names in bosses_data.json to match bosses_details.md exactly
+  - Updated boss stats based on visual descriptions and level scaling
+  - Corrected 18 boss entries (levels 4-21)
+
+- **Boss Name Corrections:**
+  - Level 4: Chain-Bound Horror → Leak-Channel Imp
+  - Level 5: Address Reuse Wraith → Trace Hound Construct
+  - Level 6: Dust Trail Demon → Clear-Torch Sentinel
+  - Level 7: Transaction Graph Spider → Echo-Signal Wraith
+  - Level 8: Heuristic Hunter → Data-Trail Collector
+  - Level 9: Cluster Analysis Fiend → Scan-Mask Idol
+  - Level 10: Fingerprint Leviathan → Unmasked Scribe Apparition
+  - Level 11: Linkability Phantom → Watcher-Eye Construct
+  - Level 12: Timing Correlation Beast → Pattern-Matcher Phantasm
+  - Level 13: Deanonymizer Construct → Chain-Analysis Serpent
+  - Level 14: Surveillance Eye Swarm → Compliance Herald
+  - Level 15: zkProof Breaker → Identity-Probe Specter
+  - Level 16: Shielded Transaction Knight → Telemetry Spider
+  - Level 17: Note Plaintext Specter → Observer Node Golem
+  - Level 18: Encrypted Memo Guardian → Cross-Correlation Beast
+  - Level 19: Value Pool Hydra → Surveillance Lens Knight
+  - Level 20: JoinSplit Amalgam → Record-Keeper Titan
+  - Level 21: Commitment Scheme Titan → Broken Entropy Shade
+
+- **Boss Stat Rebalancing:**
+  - Small/fast bosses (imps, wraiths, specters): Lower HP, higher speed, lower AC
+  - Heavy/armored bosses (golems, knights, titans): Higher HP, lower speed, higher AC
+  - Mechanical constructs: Balanced stats with moderate AC
+  - Serpents/beasts: High HP pools with moderate all-around stats
+  - Stats now properly reflect visual descriptions from bosses_details.md
+
+- **Technical Changes:**
+  - All boss IDs updated to match new names (snake_case format)
+  - Sprite paths updated to reference correct boss images
+  - Maintained existing loot tables and special abilities
+  - Preserved behavior flags and drop chances
+
+## v0.2.20 - Mob System Implementation (2025-11-26)
+- **Summary:**
+  - Added 20 unique mobs with full stats, behaviors, and loot tables
+  - Implemented multi-enemy battles (boss + 2 mobs)
+  - Added proper mob rendering with correct aspect ratio and positioning
+  - Created mobs_data.json for mob definitions
+  - Fixed enemy visual styling (red names and HP bars)
+
+- **Mob System:**
+  - Created `tunnelsofprivacy/mobs/mobs_data.json` with 20 mob definitions:
+    - beetles, blobs, creatures, gnawers, goblins, insects, mites, moths, orbs, rats, spiders, worms
+  - Each mob includes: hp, attackDamage, ac, speed, experience
+  - Behavior flags: hostile, friendly, canChat, fleeThreshold
+  - Loot tables with drop chances and item varieties
+  - Special abilities with cooldowns
+  - Dialogue for chattable/friendly mobs
+
+- **Multi-Enemy Battles:**
+  - Updated platform detection to support 7 platforms (4 heroes + 3 enemies)
+  - Boss + 2 mobs spawn in test battles
+  - Each enemy positioned on separate platform with spatial separation
+  - Fallback layout supports multiple enemies
+
+- **Mob Rendering:**
+  - Mobs use 1344x768 sprite dimensions (aspect ratio 1.75:1)
+  - Rendered at 4x smaller scale than original (base height ~75px)
+  - Feet positioned at ground level (enemy.y = feet position)
+  - Hitboxes match sprite dimensions and aspect ratio
+  - Depth scaling applies to both sprite and hitbox
+
+- **Enemy Visual Styling:**
+  - Enemy names displayed in RED (#FF4444)
+  - Enemy HP bars use RED gradient:
+    - Healthy (>50%): #E74C3C
+    - Medium (25-50%): #C0392B
+    - Low (<25%): #A93226
+  - HP text remains white for readability
+  - Name and HP bar positioned above sprite for both mobs and bosses
+
+- **Mob vs Boss Rendering:**
+  - `isMob` flag differentiates rendering logic:
+    - Mobs: 1344x768 aspect ratio, feet at enemy.y, smaller scale
+    - Bosses: 300x300 square, centered on enemy.y, standard scale
+  - Hitboxes adapt to entity type:
+    - Mobs: rectangle matching sprite aspect ratio from feet upward
+    - Bosses: square centered on position
+  - Floor contact point (magenta dot) shows at feet for mobs, bottom of hitbox for bosses
+
+- **Platform Positioning:**
+  - Mobs positioned with feet directly at platform center Y
+  - Bosses use iterative solver for floor contact at platform center Y
+  - All enemies use correct depth scaling
+
+- **Technical Changes:**
+  - `generateBattleLayout()` now selects 7 platforms and positions 3 enemies
+  - `generateFallbackLayout()` supports multiple enemy positions
+  - Enemy sprite rendering checks `isMob` flag for dimension calculations
+  - HP bar positioning calculates sprite height to place bars above
+  - Hitbox debug rendering adapts to mob vs boss sizing
+
 ## v0.2.19 - Depth-Based Rendering & Platform Positioning (2025-11-26)
 - **Summary:**
   - Added depth-based scaling for characters based on Y position

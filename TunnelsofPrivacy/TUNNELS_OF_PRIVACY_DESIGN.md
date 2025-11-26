@@ -1,7 +1,7 @@
 # TUNNELS OF PRIVACY - Game Design Document
 
-**Current Version:** v0.2.10  
-**Last Updated:** November 25, 2025  
+**Current Version:** v0.2.22  
+**Last Updated:** November 26, 2025  
 **Status:** Phase 1 Complete - Portal & Menu System Fully Implemented
 
 ## Project Overview
