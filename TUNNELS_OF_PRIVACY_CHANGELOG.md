@@ -2,6 +2,82 @@
 
 # Changelog
 
+## v0.2.39 - Complete State Synchronization Overhaul (2025-11-26)
+- **Summary:**
+  - Implemented complete game state broadcasting for turn-based multiplayer
+  - ALL hero/enemy fields now sync across host and clients after every action
+  - Fixed issue where client-controlled heroes didn't update stats on dungeon menu
+  - Host-controlled and client-controlled heroes now sync equally
+
+- **Complete State Broadcasting:**
+  - `broadcastGameState()` now includes ALL hero fields:
+    - Core stats: hp, maxHp, xp, level, healsRemaining, stats
+    - Position/visuals: x, y, platform, facing, color, spritePath
+    - Battle state: defending, taunting, tauntTurns, usedHeal, retreated
+    - Turn info: initiative
+  - `broadcastGameState()` now includes ALL enemy fields:
+    - Core stats: hp, maxHp, ac, attackDamage, speed, dex
+    - Position/visuals: x, y, platform, facing, spritePath
+    - Battle state: hostile, isMob
+    - Turn info: initiative
+
+- **Complete State Replacement:**
+  - `updateGameStateFromHost()` now updates ALL hero fields from host state
+  - No partial updates - complete state replacement ensures perfect sync
+  - All 18 hero fields updated: hp, maxHp, xp, level, healsRemaining, stats, x, y, platform, defending, taunting, tauntTurns, usedHeal, facing, retreated, color, spritePath, initiative
+  - All 13 enemy fields updated: hp, maxHp, ac, attackDamage, speed, dex, hostile, x, y, platform, facing, isMob, spritePath, initiative
+
+- **Architecture Rationale:**
+  - Turn-based game = actions happen sequentially (not real-time FPS)
+  - Complete state snapshots sent after each action (not incremental deltas)
+  - Performance impact negligible for 4 players + 3 enemies
+  - Eliminates desync bugs from partial field updates
+  - Follows proven patterns from XCOM, Civilization, etc.
+
+- **Bug Fix:**
+  - Fixed: Client-controlled heroes (CyberAxe/Zancas) not updating XP on dungeon menu
+  - Fixed: Host-controlled heroes (Zooko/Nate) updating but client heroes not syncing
+  - Root cause: Missing fields in state broadcast (platform, retreated, level, etc.)
+  - Solution: Complete state broadcast with ALL fields ensures perfect sync
+
+## v0.2.38 - Retreat/Knockout System Refinement (2025-11-26)
+- **Summary:**
+  - Retreat no longer damages heroes - HP stays intact
+  - Knockout system clarified: 0 HP = knocked out (not dead)
+  - Heroes never die, only get knocked out
+  - XP and stats persist for all heroes regardless of battle outcome
+
+- **Retreat Mechanics:**
+  - Retreat marks heroes with `retreated: true` flag instead of setting HP to 0
+  - Heroes removed from battle keep full HP when returning to dungeon
+  - Retreated heroes filtered from `battleState.heroes` and `turnOrder`
+  - All hero stats saved to `battleState.allHeroes` before filtering
+  - `endBattle()` uses `allHeroes` to save stats for both active and retreated heroes
+
+- **Knockout System (0 HP):**
+  - Heroes with 0 HP are "knocked out" (not dead)
+  - Knocked out heroes remain in `battleState.heroes` array
+  - Knocked out heroes stay visible with greyed out cards
+  - Their turns are automatically skipped (existing check at line 3536)
+  - All knocked out heroes saved with 0 HP to shared save
+  - No death/removal - future updates will add revival mechanics
+
+- **Battle End Conditions:**
+  - Battle ends when all heroes knocked out (all 0 HP) OR all heroes retreat
+  - Heroes return to dungeon menu with their current HP (0 if knocked out, full if retreated)
+  - Defeat notification: "DEFEAT! ALL HEROES FALLEN!" for knockouts
+  - Retreat notification: "DEFEAT! ALL HEROES RETREATED!" for retreats
+
+- **XP Persistence:**
+  - XP gained during battle saves for ALL heroes (active, retreated, knocked out)
+  - Fixed bug where retreated heroes lost XP between rooms
+  - `battleState.allHeroes` tracks all heroes before removal for stat saving
+
+- **Visual Feedback:**
+  - Hero cards greyed out for both knocked out (HP ≤ 0) AND retreated heroes
+  - Check: `if (!hero || hero.hp <= 0 || hero.retreated)`
+  - All 4 hero slots always visible in UI for party awareness
+
 ## v0.2.37 - Multiplayer Retreat System & UI Improvements (2025-11-26)
 - **Summary:**
   - Complete retreat system overhaul for multiplayer

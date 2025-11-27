@@ -1017,7 +1017,7 @@
                 <button class="menuButton portalButton" onclick="exitPortal()">EXIT PORTAL<br><span style="font-size: 10px; font-weight: 400;">(Return to Arcade)</span><span style="display: inline-block; padding: 4px 10px; background: #8B45FF; border-radius: 5px; margin-left: 10px; font-weight: bold; color: white; font-size: 12px;">BACK</span></button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.2.37 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.2.38 • Portal System Active</div>
             
             <!-- Multiplayer Controls (Bottom Right) -->
             <div style="position: absolute; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; align-items: flex-end; pointer-events: all; z-index: 100;">
@@ -1239,7 +1239,7 @@
         <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         
         <div style="display: block; width: 100%; margin-top: 15px; padding: 10px 0; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A7A8F; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-            Tunnels of Privacy v0.2.37
+            Tunnels of Privacy v0.2.38
         </div>
     </div>
     
@@ -1269,7 +1269,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.2.37';
+        const GAME_VERSION = 'v0.2.39';
         
         // ===== MULTIPLAYER STATE =====
         let multiplayerState = {
@@ -1914,6 +1914,7 @@
             currentTurn: 0,
             turnOrder: [],
             heroes: [],
+            allHeroes: [], // All heroes including dead/retreated ones (for saving stats)
             enemies: [],
             platforms: [],
             canvas: null,
@@ -3239,7 +3240,7 @@
                 
                 if (card) {
                     // Grey out if hero is dead/retreated
-                    if (!hero || hero.hp <= 0) {
+                    if (!hero || hero.hp <= 0 || hero.retreated) {
                         card.style.opacity = '0.3';
                         card.style.filter = 'grayscale(100%)';
                     } else {
@@ -3439,18 +3440,21 @@
         // Handle battle actions
         function battleAction(action) {
             if (action === 'retreat') {
-                // In multiplayer, retreat kills all your controlled heroes
+                // In multiplayer, retreat removes your controlled heroes
                 if (multiplayerState.enabled) {
                     multiplayerState.myHeroes.forEach(heroName => {
                         const hero = battleState.heroes.find(h => h.name.toLowerCase() === heroName);
                         if (hero) {
-                            hero.hp = 0;
+                            hero.retreated = true;
                         }
                     });
                     
                     if (multiplayerState.role === 'host') {
-                        // Remove dead heroes from arrays
-                        battleState.heroes = battleState.heroes.filter(h => h.hp > 0);
+                        // Save all heroes for stat persistence (before filtering)
+                        battleState.allHeroes = [...battleState.heroes];
+                        
+                        // Remove retreated heroes from arrays
+                        battleState.heroes = battleState.heroes.filter(h => !h.retreated);
                         battleState.turnOrder = battleState.turnOrder.filter(combatant => {
                             if (battleState.heroes.includes(combatant)) return true;
                             if (battleState.enemies.includes(combatant)) return combatant.hp > 0;
@@ -3928,7 +3932,10 @@
             // Save hero stats to shared save
             const sharedSave = loadSharedSave();
             if (sharedSave && sharedSave.heroes) {
-                battleState.heroes.forEach(hero => {
+                // Use allHeroes to include dead/retreated heroes
+                const heroesToSave = battleState.allHeroes.length > 0 ? battleState.allHeroes : battleState.heroes;
+                
+                heroesToSave.forEach(hero => {
                     const heroKey = hero.name.toLowerCase();
                     if (sharedSave.heroes[heroKey]) {
                         // Save all stats back to save file
@@ -3952,12 +3959,23 @@
                 }
                 
                 saveSharedSave(sharedSave);
+                
+                // In multiplayer, broadcast final hero stats to clients
+                if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                    sendWebSocketMessage({
+                        type: 'save_sync',
+                        saveData: sharedSave
+                    });
+                }
             }
             
             battleState.active = false;
             currentScreen = 'dungeonMenu';
             document.getElementById('battleScreen').style.display = 'none';
             document.getElementById('dungeonMenuScreen').style.display = 'block';
+            
+            // Update dungeon menu hero displays with saved stats
+            updateDungeonMenuHeroes();
             
             // Move music controls and ticker back to center bottom
             document.getElementById('musicControls').classList.remove('battleActive');
@@ -4736,6 +4754,14 @@
                     }
                     break;
                 
+                case 'save_sync':
+                    // Host sends updated save data to clients
+                    if (multiplayerState.role === 'client' && data.saveData) {
+                        saveSharedSave(data.saveData);
+                        updateDungeonMenuHeroes();
+                    }
+                    break;
+                
                 case 'kicked':
                     showNotification(data.message, 'error');
                     resetMultiplayerState();
@@ -5322,17 +5348,20 @@
             const heroName = data.hero;
             const heroesArray = data.heroes;
             
-            // Handle retreat - kills all player's heroes
+            // Handle retreat - marks player's heroes as retreated
             if (action === 'retreat' && heroesArray) {
                 heroesArray.forEach(hName => {
                     const hero = battleState.heroes.find(h => h.name.toLowerCase() === hName.toLowerCase());
                     if (hero) {
-                        hero.hp = 0;
+                        hero.retreated = true;
                     }
                 });
                 
-                // Remove dead heroes from arrays
-                battleState.heroes = battleState.heroes.filter(h => h.hp > 0);
+                // Save all heroes for stat persistence (before filtering)
+                battleState.allHeroes = [...battleState.heroes];
+                
+                // Remove retreated heroes from arrays
+                battleState.heroes = battleState.heroes.filter(h => !h.retreated);
                 battleState.turnOrder = battleState.turnOrder.filter(combatant => {
                     if (battleState.heroes.includes(combatant)) return true;
                     if (battleState.enemies.includes(combatant)) return combatant.hp > 0;
@@ -5447,23 +5476,38 @@
                     hp: h.hp,
                     maxHp: h.maxHp,
                     xp: h.xp,
+                    level: h.level,
                     healsRemaining: h.healsRemaining,
                     stats: h.stats,
                     x: h.x / canvas.width,
                     y: h.y / canvas.height,
+                    platform: h.platform,
                     defending: h.defending,
                     taunting: h.taunting,
                     tauntTurns: h.tauntTurns || 0,
                     usedHeal: h.usedHeal || false,
-                    facing: h.facing
+                    facing: h.facing,
+                    retreated: h.retreated || false,
+                    color: h.color,
+                    spritePath: h.spritePath,
+                    initiative: h.initiative
                 })),
                 enemies: battleState.enemies.map(e => ({
                     name: e.name,
                     hp: e.hp,
                     maxHp: e.maxHp,
+                    ac: e.ac,
+                    attackDamage: e.attackDamage,
+                    speed: e.speed,
+                    dex: e.dex,
                     hostile: e.hostile,
                     x: e.x / canvas.width,
-                    y: e.y / canvas.height
+                    y: e.y / canvas.height,
+                    platform: e.platform,
+                    facing: e.facing,
+                    isMob: e.isMob,
+                    spritePath: e.spritePath,
+                    initiative: e.initiative
                 })),
                 currentTurn: battleState.currentTurn
             };
@@ -5481,19 +5525,25 @@
             battleState.heroes = state.heroes.map(heroData => {
                 const existingHero = battleState.heroes.find(h => h.name === heroData.name);
                 if (existingHero) {
-                    // Update existing hero
+                    // Update ALL fields from host state for complete sync
                     existingHero.hp = heroData.hp;
                     existingHero.maxHp = heroData.maxHp;
                     existingHero.xp = heroData.xp;
+                    existingHero.level = heroData.level;
                     existingHero.healsRemaining = heroData.healsRemaining;
                     existingHero.stats = heroData.stats;
                     existingHero.x = heroData.x * canvas.width;
                     existingHero.y = (heroData.y * canvas.height) - 25;
+                    existingHero.platform = heroData.platform;
                     existingHero.defending = heroData.defending;
                     existingHero.taunting = heroData.taunting;
                     existingHero.tauntTurns = heroData.tauntTurns || 0;
                     existingHero.usedHeal = heroData.usedHeal || false;
                     existingHero.facing = heroData.facing;
+                    existingHero.retreated = heroData.retreated || false;
+                    existingHero.color = heroData.color;
+                    existingHero.spritePath = heroData.spritePath;
+                    existingHero.initiative = heroData.initiative;
                     return existingHero;
                 } else {
                     console.warn('[MP] Received unknown hero:', heroData.name);
@@ -5505,12 +5555,21 @@
             battleState.enemies = state.enemies.map(enemyData => {
                 const existingEnemy = battleState.enemies.find(e => e.name === enemyData.name);
                 if (existingEnemy) {
-                    // Update existing enemy
+                    // Update ALL enemy fields from host state for complete sync
                     existingEnemy.hp = enemyData.hp;
                     existingEnemy.maxHp = enemyData.maxHp;
+                    existingEnemy.ac = enemyData.ac;
+                    existingEnemy.attackDamage = enemyData.attackDamage;
+                    existingEnemy.speed = enemyData.speed;
+                    existingEnemy.dex = enemyData.dex;
                     existingEnemy.hostile = enemyData.hostile;
                     existingEnemy.x = enemyData.x * canvas.width;
                     existingEnemy.y = (enemyData.y * canvas.height) - 25;
+                    existingEnemy.platform = enemyData.platform;
+                    existingEnemy.facing = enemyData.facing;
+                    existingEnemy.isMob = enemyData.isMob;
+                    existingEnemy.spritePath = enemyData.spritePath;
+                    existingEnemy.initiative = enemyData.initiative;
                     return existingEnemy;
                 } else {
                     // This shouldn't happen in normal gameplay, but handle it
