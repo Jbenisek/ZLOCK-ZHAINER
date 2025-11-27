@@ -2,6 +2,50 @@
 
 # Changelog
 
+## v0.2.36 - Multiplayer Turn-Based Control & State Sync (2025-11-26)
+- **Summary:**
+  - Fixed client hero control - players can now control their selected heroes
+  - Fixed button enabling/disabling for both host and client based on turn ownership
+  - Implemented complete state synchronization for turn-based gameplay
+  - Added multi-hero retreat functionality
+
+- **Hero Control System:**
+  - Fixed case sensitivity bug preventing client hero control ("Nate" vs "nate")
+  - Both host and client now use `myHeroes` array to track controlled heroes
+  - Action buttons enable/disable based on whether current turn hero is in player's `myHeroes` array
+  - Players can control 1-3 heroes per game session
+  - Host only controls heroes not selected by any client
+
+- **Complete State Synchronization:**
+  - `broadcastGameState()` now sends full battle state after every action:
+    - Hero stats: hp, maxHp, xp, healsRemaining, stats
+    - Hero status: defending, taunting, tauntTurns, usedHeal, facing
+    - Enemy status: hp, maxHp, hostile
+    - Turn order and current turn index
+  - `updateGameStateFromHost()` applies all received state fields
+  - AI turns now broadcast state updates to clients
+  - Turn advancement broadcasts state to keep clients synchronized
+
+- **Retreat System:**
+  - Retreat now kills all player-controlled heroes (not just end battle)
+  - Host retreat: Sets all their heroes' HP to 0, broadcasts state, checks for defeat
+  - Client retreat: Sends retreat action with array of controlled heroes to host
+  - Host processes client retreat by setting all their heroes' HP to 0
+  - Battle ends when all heroes reach 0 HP
+
+- **Server Updates:**
+  - WebSocket server now tracks multiple heroes per player (heroes array instead of single hero)
+  - `select_hero` and `deselect_hero` messages build players list with heroes arrays
+  - Server broadcasts players list with all selected heroes per player
+  - Properly handles multiple hero selections from same player
+
+- **Technical Fixes:**
+  - Fixed `multiplayerState.myHero` (non-existent) → `multiplayerState.myHeroes` (array)
+  - All turn checks now use `.toLowerCase()` for case-insensitive comparison
+  - Player action messages send actual hero name instead of placeholder
+  - UI displays comma-separated list of controlled heroes
+  - Debug logging added for turn ownership verification
+
 ## v0.2.35 - Resolution-Independent Multiplayer Positioning (2025-11-26)
 - **Summary:**
   - Fixed multiplayer position synchronization across different screen resolutions

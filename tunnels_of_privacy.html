@@ -1017,7 +1017,7 @@
                 <button class="menuButton portalButton" onclick="exitPortal()">EXIT PORTAL<br><span style="font-size: 10px; font-weight: 400;">(Return to Arcade)</span><span style="display: inline-block; padding: 4px 10px; background: #8B45FF; border-radius: 5px; margin-left: 10px; font-weight: bold; color: white; font-size: 12px;">BACK</span></button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.2.35 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.2.36 • Portal System Active</div>
             
             <!-- Multiplayer Controls (Bottom Right) -->
             <div style="position: absolute; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; align-items: flex-end; pointer-events: all; z-index: 100;">
@@ -1227,7 +1227,7 @@
         <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         
         <div style="display: block; width: 100%; margin-top: 15px; padding: 10px 0; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A7A8F; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-            Tunnels of Privacy v0.2.35
+            Tunnels of Privacy v0.2.36
         </div>
     </div>
     
@@ -1257,7 +1257,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.2.35';
+        const GAME_VERSION = 'v0.2.36';
         
         // ===== MULTIPLAYER STATE =====
         let multiplayerState = {
@@ -2687,7 +2687,7 @@
                                 type: 'player_action',
                                 action: 'swap',
                                 target: battleState.heroes.indexOf(hero),
-                                hero: multiplayerState.myHero
+                                hero: initiator.name
                             });
                             
                             // Exit swap mode
@@ -2768,7 +2768,7 @@
                             type: 'player_action',
                             action: battleState.pendingAction,
                             target: enemyIndex,
-                            hero: multiplayerState.myHero
+                            hero: attacker.name
                         });
                         
                         // Exit targeting mode
@@ -3188,7 +3188,7 @@
                 // Multiplayer: Show if it's you or waiting
                 if (multiplayerState.enabled) {
                     if (multiplayerState.role === 'client') {
-                        if (currentHero.name.toLowerCase() === multiplayerState.myHero) {
+                        if (multiplayerState.myHeroes.includes(currentHero.name.toLowerCase())) {
                             turnText += ' (YOU)';
                         } else {
                             turnText = `Waiting for ${currentHero.name.toUpperCase()}...`;
@@ -3205,8 +3205,9 @@
             if (activeCard) activeCard.classList.add('active');
             
             // Disable/enable buttons based on turn in multiplayer
-            if (multiplayerState.enabled && multiplayerState.role === 'client') {
-                const isMyTurn = currentHero.name.toLowerCase() === multiplayerState.myHero;
+            if (multiplayerState.enabled) {
+                const isMyTurn = multiplayerState.myHeroes.includes(currentHero.name.toLowerCase());
+                console.log('[TURN CHECK] Current hero:', currentHero.name, '| My heroes:', multiplayerState.myHeroes, '| Is my turn:', isMyTurn, '| Role:', multiplayerState.role);
                 document.querySelectorAll('.battleButton').forEach(btn => {
                     if (btn.textContent.includes('RETREAT')) return; // Always allow retreat
                     btn.disabled = !isMyTurn;
@@ -3390,7 +3391,42 @@
         // Handle battle actions
         function battleAction(action) {
             if (action === 'retreat') {
-                endBattle();
+                // In multiplayer, retreat kills all your controlled heroes
+                if (multiplayerState.enabled) {
+                    multiplayerState.myHeroes.forEach(heroName => {
+                        const hero = battleState.heroes.find(h => h.name.toLowerCase() === heroName);
+                        if (hero) {
+                            hero.hp = 0;
+                        }
+                    });
+                    
+                    // Update UI and broadcast
+                    updateBattleHeroCards();
+                    renderBattle();
+                    
+                    if (multiplayerState.role === 'host') {
+                        broadcastGameState();
+                        
+                        // Check if all heroes dead
+                        const allDead = battleState.heroes.every(h => h.hp <= 0);
+                        if (allDead) {
+                            setTimeout(() => {
+                                alert('Defeat! All heroes have retreated.');
+                                endBattle();
+                            }, 500);
+                        }
+                    } else {
+                        // Client sends retreat to host
+                        sendWebSocketMessage({
+                            type: 'player_action',
+                            action: 'retreat',
+                            heroes: multiplayerState.myHeroes
+                        });
+                    }
+                } else {
+                    // Single player - just end battle
+                    endBattle();
+                }
                 return;
             }
             
@@ -3406,7 +3442,7 @@
             
             // Multiplayer: Check if this is my hero
             if (multiplayerState.enabled && multiplayerState.role === 'client') {
-                if (currentCombatant.name.toLowerCase() !== multiplayerState.myHero) {
+                if (!multiplayerState.myHeroes.includes(currentCombatant.name.toLowerCase())) {
                     showDiceRoll('Not your turn!');
                     return;
                 }
@@ -3439,7 +3475,7 @@
                     sendWebSocketMessage({
                         type: 'player_action',
                         action: 'defend',
-                        hero: multiplayerState.myHero
+                        hero: currentCombatant.name
                     });
                     return;
                 }
@@ -3462,7 +3498,7 @@
                     sendWebSocketMessage({
                         type: 'player_action',
                         action: 'heal',
-                        hero: multiplayerState.myHero
+                        hero: currentCombatant.name
                     });
                     return;
                 }
@@ -3507,7 +3543,7 @@
                     sendWebSocketMessage({
                         type: 'player_action',
                         action: 'taunt',
-                        hero: multiplayerState.myHero
+                        hero: currentCombatant.name
                     });
                     return;
                 }
@@ -3539,7 +3575,7 @@
                     sendWebSocketMessage({
                         type: 'player_action',
                         action: 'skip',
-                        hero: multiplayerState.myHero
+                        hero: currentCombatant.name
                     });
                     return;
                 }
@@ -3722,6 +3758,9 @@
             updateBattleHeroCards();
             updateBattleEnemyCards();
             
+            // Broadcast AI action to clients
+            broadcastGameState();
+            
             // Check if hero died
             if (target.hp <= 0) {
                 const allHeroesDead = battleState.heroes.every(h => h.hp <= 0);
@@ -3770,6 +3809,9 @@
             });
             
             updateBattleTurnInfo();
+            
+            // Broadcast turn advancement to clients
+            broadcastGameState();
             
             // If next combatant is a disabled hero (0 HP), skip their turn
             if (battleState.heroes.includes(nextCombatant) && nextCombatant.hp <= 0) {
@@ -4925,7 +4967,9 @@
                 const playerBadge = document.createElement('div');
                 playerBadge.style.cssText = 'padding: 6px 12px; background: rgba(42, 157, 143, 0.3); border: 1px solid #2A9D8F; border-radius: 5px; font-size: 12px; margin-bottom: 5px;';
                 
-                const heroText = player.hero ? ` → ${player.hero.toUpperCase()}` : ' → (no hero)';
+                const heroText = player.heroes && player.heroes.length > 0 
+                    ? ` → ${player.heroes.map(h => h.toUpperCase()).join(', ')}` 
+                    : ' → (no heroes)';
                 playerBadge.innerHTML = `<span style="color: #F2C94C;">${player.name}</span> <span style="color: #89A0B4;">${heroText}</span>`;
                 listContent.appendChild(playerBadge);
             });
@@ -4947,7 +4991,9 @@
                 const playerBadge = document.createElement('div');
                 playerBadge.style.cssText = 'padding: 6px 12px; background: rgba(42, 157, 143, 0.3); border: 1px solid #2A9D8F; border-radius: 5px; font-size: 12px; margin-bottom: 5px;';
                 
-                const heroText = player.hero ? ` → ${player.hero.toUpperCase()}` : ' → (no hero)';
+                const heroText = player.heroes && player.heroes.length > 0 
+                    ? ` → ${player.heroes.map(h => h.toUpperCase()).join(', ')}` 
+                    : ' → (no heroes)';
                 playerBadge.innerHTML = `<span style="color: #F2C94C;">${player.name}</span> <span style="color: #89A0B4;">${heroText}</span>`;
                 listContent.appendChild(playerBadge);
             });
@@ -5149,6 +5195,31 @@
             const action = data.action;
             const target = data.target;
             const heroName = data.hero;
+            const heroesArray = data.heroes;
+            
+            // Handle retreat - kills all player's heroes
+            if (action === 'retreat' && heroesArray) {
+                heroesArray.forEach(hName => {
+                    const hero = battleState.heroes.find(h => h.name.toLowerCase() === hName.toLowerCase());
+                    if (hero) {
+                        hero.hp = 0;
+                    }
+                });
+                
+                updateBattleHeroCards();
+                renderBattle();
+                broadcastGameState();
+                
+                // Check if all heroes dead
+                const allDead = battleState.heroes.every(h => h.hp <= 0);
+                if (allDead) {
+                    setTimeout(() => {
+                        alert('Defeat! All heroes have retreated.');
+                        endBattle();
+                    }, 500);
+                }
+                return;
+            }
             
             // Find hero
             const hero = battleState.heroes.find(h => h.name.toLowerCase() === heroName.toLowerCase());
@@ -5225,15 +5296,22 @@
                     name: h.name,
                     hp: h.hp,
                     maxHp: h.maxHp,
+                    xp: h.xp,
+                    healsRemaining: h.healsRemaining,
+                    stats: h.stats,
                     x: h.x / canvas.width,
                     y: h.y / canvas.height,
                     defending: h.defending,
-                    taunting: h.taunting
+                    taunting: h.taunting,
+                    tauntTurns: h.tauntTurns || 0,
+                    usedHeal: h.usedHeal || false,
+                    facing: h.facing
                 })),
                 enemies: battleState.enemies.map(e => ({
                     name: e.name,
                     hp: e.hp,
                     maxHp: e.maxHp,
+                    hostile: e.hostile,
                     x: e.x / canvas.width,
                     y: e.y / canvas.height
                 })),
@@ -5254,10 +5332,17 @@
                 const hero = battleState.heroes.find(h => h.name === heroData.name);
                 if (hero) {
                     hero.hp = heroData.hp;
+                    hero.maxHp = heroData.maxHp;
+                    hero.xp = heroData.xp;
+                    hero.healsRemaining = heroData.healsRemaining;
+                    hero.stats = heroData.stats;
                     hero.x = heroData.x * canvas.width;
                     hero.y = (heroData.y * canvas.height) - 25;
                     hero.defending = heroData.defending;
                     hero.taunting = heroData.taunting;
+                    hero.tauntTurns = heroData.tauntTurns || 0;
+                    hero.usedHeal = heroData.usedHeal || false;
+                    hero.facing = heroData.facing;
                 }
             });
             
@@ -5266,6 +5351,8 @@
                 const enemy = battleState.enemies.find(e => e.name === enemyData.name);
                 if (enemy) {
                     enemy.hp = enemyData.hp;
+                    enemy.maxHp = enemyData.maxHp;
+                    enemy.hostile = enemyData.hostile;
                     enemy.x = enemyData.x * canvas.width;
                     enemy.y = (enemyData.y * canvas.height) - 25;
                 }
@@ -5483,7 +5570,7 @@
                         <div>${role}</div>
                         <div style="margin-top: 3px;">Code: <span style="color: #F2C94C; font-weight: bold;">${multiplayerState.roomCode}</span></div>
                         <div style="margin-top: 3px;">Players: ${players}/4</div>
-                        <div style="margin-top: 3px;">My Hero: <span style="color: #F2C94C;">${multiplayerState.myHero || 'None'}</span></div>
+                        <div style="margin-top: 3px;">My Heroes: <span style="color: #F2C94C;">${multiplayerState.myHeroes.join(', ') || 'None'}</span></div>
                     `;
                     roomState.style.color = '#2A9D8F';
                 } else {

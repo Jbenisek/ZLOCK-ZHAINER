@@ -280,15 +280,14 @@ async def handle_websocket(websocket, path):
                         'playerName': player_name
                     }
                     
-                    # Build players list
+                    # Build players list with hero arrays
                     players_list = []
                     for pid, pdata in rooms[client_room]['players'].items():
-                        hero = None
+                        heroes = []
                         for h, hdata in rooms[client_room]['heroes'].items():
                             if hdata['playerId'] == pid:
-                                hero = h
-                                break
-                        players_list.append({ 'id': pid, 'name': pdata['name'], 'hero': hero })
+                                heroes.append(h)
+                        players_list.append({ 'id': pid, 'name': pdata['name'], 'heroes': heroes })
                     
                     # Broadcast hero selection to all in room
                     msg = json.dumps({
@@ -313,15 +312,14 @@ async def handle_websocket(websocket, path):
                         if rooms[client_room]['heroes'][hero_name]['playerId'] == player_id:
                             del rooms[client_room]['heroes'][hero_name]
                     
-                    # Build players list
+                    # Build players list with hero arrays
                     players_list = []
                     for pid, pdata in rooms[client_room]['players'].items():
-                        hero = None
+                        heroes = []
                         for h, hdata in rooms[client_room]['heroes'].items():
                             if hdata['playerId'] == pid:
-                                hero = h
-                                break
-                        players_list.append({ 'id': pid, 'name': pdata['name'], 'hero': hero })
+                                heroes.append(h)
+                        players_list.append({ 'id': pid, 'name': pdata['name'], 'heroes': heroes })
                     
                     # Broadcast update
                     msg = json.dumps({
