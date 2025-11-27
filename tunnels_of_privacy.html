@@ -1042,7 +1042,7 @@
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.2.46 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.2.47 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div style="
@@ -1291,7 +1291,7 @@
         <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         
         <div style="display: block; width: 100%; margin-top: 15px; padding: 10px 0; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A7A8F; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-            Tunnels of Privacy v0.2.46
+            Tunnels of Privacy v0.2.47
         </div>
     </div>
     
@@ -1418,6 +1418,7 @@
         let musicVolume = 75; // Music volume (1-150)
         let musicStarted = false;
         let currentTrackIndex = 0;
+        let mainThemePlayed = false; // Track if main theme has played
         
         // Asset loading tracking
         let assetsToLoad = 0;
@@ -1511,6 +1512,7 @@
         // ===== END STORY INTRO BACKGROUND ANIMATION =====
         
         const themeTracks = [
+            { file: 'music/main_theme.webm', name: 'Tunnels of Privacy Theme' },
             { file: 'music/theme_a.webm', name: 'Electric Coin Company' },
             { file: 'music/theme_b.webm', name: 'Zcash Foundation' },
             { file: 'music/theme_c_boss.webm', name: 'Proof of Work Battle' },
@@ -1559,7 +1561,10 @@
             // When song ends, play next random track
             newMusic.addEventListener('ended', () => {
                 if (!musicEnabled) return;
-                const randomTrack = themeTracks[Math.floor(Math.random() * themeTracks.length)];
+                mainThemePlayed = true; // Mark main theme as played
+                // Pick random track excluding main theme (index 0)
+                const randomIndex = Math.floor(Math.random() * (themeTracks.length - 1)) + 1;
+                const randomTrack = themeTracks[randomIndex];
                 loadMusic(randomTrack);
             });
             
@@ -1608,10 +1613,9 @@
             const btn = document.getElementById('musicPlayPauseBtn');
             
             if (!currentMusic) {
-                // No music loaded yet, start the music system
+                // No music loaded yet, start with main theme
                 musicEnabled = true;
-                const randomTrack = themeTracks[Math.floor(Math.random() * themeTracks.length)];
-                loadMusic(randomTrack);
+                loadMusic(themeTracks[0]); // Always start with main theme
                 if (btn) btn.textContent = '⏸';
                 return;
             }
@@ -1633,7 +1637,10 @@
             }
             
             musicEnabled = true; // Enable music if it was paused
-            const randomTrack = themeTracks[Math.floor(Math.random() * themeTracks.length)];
+            mainThemePlayed = true;
+            // Pick random track excluding main theme (index 0)
+            const randomIndex = Math.floor(Math.random() * (themeTracks.length - 1)) + 1;
+            const randomTrack = themeTracks[randomIndex];
             loadMusic(randomTrack);
         }
         
@@ -1643,7 +1650,10 @@
             }
             
             musicEnabled = true; // Enable music if it was paused
-            const randomTrack = themeTracks[Math.floor(Math.random() * themeTracks.length)];
+            mainThemePlayed = true;
+            // Pick random track excluding main theme (index 0)
+            const randomIndex = Math.floor(Math.random() * (themeTracks.length - 1)) + 1;
+            const randomTrack = themeTracks[randomIndex];
             loadMusic(randomTrack);
         }
         
@@ -4894,10 +4904,9 @@
                     pollGamepadForClickToPlay();
                     
                     const handleClick = () => {
-                        // Start music when user clicks
+                        // Start music when user clicks - always start with main theme
                         if (musicEnabled && musicVolume > 0 && !musicStarted) {
-                            const randomTrack = themeTracks[Math.floor(Math.random() * themeTracks.length)];
-                            loadMusic(randomTrack);
+                            loadMusic(themeTracks[0]); // Always start with main theme (index 0)
                         }
                         
                         // Fade out and remove loading modal

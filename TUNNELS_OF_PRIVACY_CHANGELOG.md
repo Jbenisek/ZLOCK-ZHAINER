@@ -2,6 +2,29 @@
 
 # Changelog
 
+## v0.2.47 - Main Theme Priority Music System (2025-11-26)
+- **Summary:**
+  - Main theme always plays first on game load
+  - Random rotation of other tracks after main theme completes
+
+- **Music Playback Changes:**
+  - Added `main_theme.webm` as first track in rotation
+  - Track name: "Tunnels of Privacy Theme"
+  - Always plays on "CLICK TO ENTER" after preload
+  - Added `mainThemePlayed` flag to track first play
+
+- **Random Rotation:**
+  - After main theme ends: randomly picks from 10 other tracks
+  - Skip buttons (⏮ Previous / ⏭ Next): pick random tracks (excluding main theme)
+  - Play/Pause button (when no music loaded): starts with main theme
+  - Random selection excludes main theme (index 0) after first play
+
+- **Technical Details:**
+  - `themeTracks[0]` = main_theme.webm (priority track)
+  - `themeTracks[1-10]` = theme_a through theme_j (random rotation)
+  - Random index calculation: `Math.floor(Math.random() * (themeTracks.length - 1)) + 1`
+  - Main theme only plays once per session unless manually restarted
+
 ## v0.2.46 - Title Screen UI Polish (2025-11-26)
 - **Summary:**
   - Reorganized multiplayer controls layout
