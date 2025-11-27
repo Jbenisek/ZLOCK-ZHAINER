@@ -10,6 +10,19 @@ PID_FILE=/tmp/zlock_server.pid
 
 case "$1" in
     start)
+        # Check and install pip3 if not present
+        if ! command -v pip3 &> /dev/null; then
+            echo "Installing pip3..."
+            sudo apt-get update
+            sudo apt-get install -y python3-pip
+        fi
+        
+        # Check and install websockets module if not present
+        if ! python3 -c "import websockets" 2>/dev/null; then
+            echo "Installing websockets module..."
+            sudo pip3 install websockets
+        fi
+        
         # Check if port is already in use BEFORE trying to start
         PORT_PID=$(lsof -ti:$PORT 2>/dev/null)
         if [ ! -z "$PORT_PID" ]; then
@@ -30,8 +43,9 @@ case "$1" in
             fi
         fi
         
-        echo "Opening firewall port $PORT..."
+        echo "Opening firewall ports $PORT and 8765..."
         sudo ufw allow $PORT/tcp 2>/dev/null
+        sudo ufw allow 8765/tcp 2>/dev/null
         
         echo "Starting ZLOCK web server on port $PORT..."
         cd $DIR

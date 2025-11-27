@@ -2,6 +2,26 @@
 
 # Changelog
 
+## v0.2.51 - Server Script Multiplayer Dependencies (2025-11-27)
+- **Summary:**
+  - Bash script now auto-installs pip3 and websockets module
+  - WebSocket port 8765 now opened in firewall automatically
+  - Zero manual dependency setup required for multiplayer
+
+- **Dependency Installation:**
+  - Script checks for `pip3` command, installs `python3-pip` if missing
+  - Script checks for `websockets` module, installs via `pip3` if missing
+  - Uses `sudo apt-get` for pip3 installation
+  - Uses `sudo pip3 install` for websockets module
+
+- **Firewall Configuration:**
+  - Port 4243 (HTTP) opened in firewall
+  - Port 8765 (WebSocket) opened in firewall
+  - Both ports configured automatically on script start
+
+- **Files Modified:**
+  - `zlock_server.sh` - Added dependency checks and WebSocket port opening
+
 ## v0.2.50 - Host Hero Control Transfer (2025-11-27)
 - **Summary:**
   - Modified hero control transfer when client disconnects
