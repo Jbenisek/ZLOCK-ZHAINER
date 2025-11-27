@@ -93,7 +93,7 @@
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
             z-index: 1000;
             display: none;
-            max-width: 80%;
+            width: 700px;
             text-align: center;
             word-wrap: break-word;
             overflow-wrap: break-word;
@@ -616,8 +616,8 @@
         #musicTicker {
             position: fixed;
             bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
+            left: 10px;
+            transform: translateX(0);
             background: rgba(42, 157, 143, 0.3);
             border: 2px solid #2A9D8F;
             border-radius: 8px;
@@ -627,6 +627,12 @@
             z-index: 500;
             pointer-events: auto;
             transition: left 0.3s ease, transform 0.3s ease;
+        }
+        
+        /* Center ticker on dungeon menu */
+        #musicTicker.dungeonMenuActive {
+            left: 50%;
+            transform: translateX(-50%);
         }
         
         /* Move ticker to bottom left during battle */
@@ -663,8 +669,8 @@
         #musicControls {
             position: fixed;
             bottom: 65px;
-            left: 50%;
-            transform: translateX(-50%);
+            left: 10px;
+            transform: translateX(0);
             background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
             border: 2px solid #2A9D8F;
             border-radius: 8px;
@@ -676,6 +682,12 @@
             box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8);
             z-index: 500;
             transition: left 0.3s ease, transform 0.3s ease;
+        }
+        
+        /* Center controls on dungeon menu */
+        #musicControls.dungeonMenuActive {
+            left: 50%;
+            transform: translateX(-50%);
         }
         
         /* Move controls to bottom left during battle or hero selection */
@@ -963,7 +975,7 @@
                     <div id="multiplayerStatus" style="display: none; background: rgba(42, 157, 143, 0.3); border: 2px solid #2A9D8F; border-radius: 5px; padding: 5px 10px; font-size: 11px; color: #2A9D8F; margin-bottom: 8px; text-align: center;">
                         🎮 <span id="mpStatusText">Multiplayer</span>
                     </div>
-                    <div id="diceRollDisplay" style="display: none; background: rgba(0,0,0,0.9); color: #FFD700; padding: 12px; border-radius: 8px; font-size: 18px; font-weight: bold; text-align: center; margin-bottom: 10px; border: 2px solid #FFD700;"></div>
+                    <div id="diceRollDisplay" style="display: block; background: rgba(0,0,0,0.9); color: #FFD700; padding: 12px; border-radius: 8px; font-size: 18px; font-weight: bold; text-align: center; margin-bottom: 10px; border: 2px solid #FFD700; width: 500px;">⏳ Waiting to Roll...</div>
                     <div id="battleActions">
                         <button class="battleButton attack-weak" onclick="battleAction('light')">⚔ LIGHT</button>
                         <button class="battleButton attack-strong" id="battleHeavyBtn" onclick="battleAction('heavy')">⚡ HEAVY</button>
@@ -1019,26 +1031,55 @@
                 <button id="continueBtn" class="menuButton comingSoon" disabled onclick="continueGame()">CONTINUE<span style="display: inline-block; width: 26px; height: 26px; background: #EB5757; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">A</span></button>
                 <button class="menuButton" onclick="showLoadSave()">LOAD SAVE FILE<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
                 <button class="menuButton" onclick="showSettings()">SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #2A9D8F; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">Y</span></button>
-                <button class="menuButton portalButton" onclick="exitPortal()">EXIT PORTAL<br><span style="font-size: 10px; font-weight: 400;">(Return to Arcade)</span><span style="display: inline-block; padding: 4px 10px; background: #8B45FF; border-radius: 5px; margin-left: 10px; font-weight: bold; color: white; font-size: 12px;">BACK</span></button>
+                <button class="menuButton portalButton" onclick="exitPortal()">
+                    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                        <div style="text-align: left;">
+                            <div style="font-size: 18px; font-weight: 700;">EXIT PORTAL</div>
+                            <div style="font-size: 10px; font-weight: 400; margin-top: 2px;">(RETURN TO ARCADE)</div>
+                        </div>
+                        <span style="display: inline-block; padding: 4px 10px; background: #8B45FF; border-radius: 5px; font-weight: bold; color: white; font-size: 12px;">BACK</span>
+                    </div>
+                </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.2.44 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.2.46 • Portal System Active</div>
             
-            <!-- Multiplayer Controls (Bottom Right) -->
-            <div style="position: absolute; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; align-items: flex-end; pointer-events: all; z-index: 100;">
-                <!-- Player Name Input -->
-                <div style="display: flex; flex-direction: column; gap: 5px; align-items: flex-end;">
-                    <label style="color: #BFD1E0; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Player Name</label>
-                    <input type="text" id="multiplayerPlayerName" placeholder="Enter your name" maxlength="20" style="width: 260px; padding: 8px 12px; background: rgba(0,0,0,0.7); border: 2px solid #2A9D8F; border-radius: 5px; color: #E9F0F7; font-size: 14px; font-family: 'Inter', sans-serif; pointer-events: all;">
+            <!-- About/Donate Button (Bottom Right) -->
+            <div style="
+                position: absolute;
+                bottom: 20px;
+                right: 20px;
+                width: 200px;
+                background: rgba(10, 14, 18, 0.8);
+                border: 2px solid #2D9CDB;
+                border-radius: 10px;
+                padding: 12px;
+                backdrop-filter: blur(10px);
+                cursor: pointer;
+                transition: all 0.3s ease;
+                text-align: center;
+                pointer-events: all;
+                z-index: 100;
+            " onclick="showAbout()" onmouseenter="this.style.borderColor='#F2C94C'; this.style.boxShadow='0 0 15px rgba(242, 201, 76, 0.4)';" onmouseleave="this.style.borderColor='#2D9CDB'; this.style.boxShadow='none';">
+                <div style="font-size: 14px; font-weight: 700; color: #F2C94C; margin-bottom: 3px;">ABOUT / DONATE</div>
+                <div style="font-size: 11px; color: #89A0B4;">Support Development</div>
+            </div>
+            
+            <!-- Multiplayer Controls (Top Left) -->
+            <div style="position: absolute; top: 20px; left: 20px; display: flex; flex-direction: column; gap: 10px; align-items: flex-start; pointer-events: all; z-index: 100;">
+                <!-- Create Room Button -->
+                <button class="menuButton" onclick="createMultiplayerRoom()" style="padding: 10px 20px; font-size: 14px; margin: 0; pointer-events: all; background: linear-gradient(135deg, rgba(42, 157, 143, 0.4), rgba(42, 157, 143, 0.3)); border-color: #2A9D8F; white-space: nowrap; width: 250px;">🎮 CREATE ROOM</button>
+                
+                <!-- Room Code Input and Join Button -->
+                <div style="display: flex; gap: 10px; align-items: stretch;">
+                    <input type="text" id="titleJoinCode" placeholder="CODE" maxlength="6" onkeypress="if(event.key==='Enter') quickJoinRoom()" style="width: 90px; padding: 10px; background: rgba(0,0,0,0.7); border: 2px solid #2A9D8F; border-radius: 5px; color: #F2C94C; font-size: 14px; text-align: center; letter-spacing: 2px; font-family: 'JetBrains Mono', monospace; text-transform: uppercase; pointer-events: all;">
+                    <button class="menuButton" onclick="quickJoinRoom()" style="padding: 10px 15px; font-size: 14px; margin: 0; pointer-events: all; white-space: nowrap; width: 150px;">JOIN</button>
                 </div>
                 
-                <!-- Create Room Button -->
-                <button class="menuButton" onclick="createMultiplayerRoom()" style="padding: 10px 20px; font-size: 14px; margin: 0; pointer-events: all; background: linear-gradient(135deg, rgba(42, 157, 143, 0.4), rgba(42, 157, 143, 0.3)); border-color: #2A9D8F; white-space: nowrap;">🎮 CREATE ROOM</button>
-                
-                <!-- Join Room -->
-                <div style="display: flex; gap: 8px; align-items: center;">
-                    <input type="text" id="titleJoinCode" placeholder="CODE" maxlength="6" onkeypress="if(event.key==='Enter') quickJoinRoom()" style="width: 140px; padding: 8px 10px; background: rgba(0,0,0,0.7); border: 2px solid #2A9D8F; border-radius: 5px; color: #F2C94C; font-size: 14px; text-align: center; letter-spacing: 2px; font-family: 'JetBrains Mono', monospace; text-transform: uppercase; pointer-events: all;">
-                    <button class="menuButton" onclick="quickJoinRoom()" style="padding: 8px 12px; font-size: 13px; margin: 0; pointer-events: all; white-space: nowrap;">JOIN</button>
+                <!-- Player Name Input -->
+                <div style="display: flex; flex-direction: column; gap: 5px; align-items: flex-start;">
+                    <input type="text" id="multiplayerPlayerName" placeholder="Enter your Player Name" maxlength="20" style="width: 250px; padding: 10px; background: rgba(0,0,0,0.7); border: 2px solid #2A9D8F; border-radius: 5px; color: #E9F0F7; font-size: 14px; font-family: 'Inter', sans-serif; pointer-events: all;">
+                    <div style="color: #F2C94C; font-size: 10px; font-style: italic; margin-top: -2px;">Changing will Reset Join in Progress</div>
                 </div>
             </div>
         </div>
@@ -1250,8 +1291,39 @@
         <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         
         <div style="display: block; width: 100%; margin-top: 15px; padding: 10px 0; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A7A8F; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-            Tunnels of Privacy v0.2.38
+            Tunnels of Privacy v0.2.46
         </div>
+    </div>
+    
+    <!-- About/Donate Panel -->
+    <div id="aboutPanel" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); border: 2px solid #2D9CDB; border-radius: 12px; padding: 25px; max-width: 500px; width: 85vw; z-index: 200; pointer-events: all; box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px);">
+        <div class="panelTitle">ABOUT / DONATE</div>
+        <div style="font-family: 'Inter', sans-serif; color: #D4E3F0; line-height: 1.8; text-align: center;">
+            <div style="margin-bottom: 25px;">
+                <div style="font-size: 18px; font-weight: 700; color: #F2C94C; margin-bottom: 10px;">Created by CyberAxe</div>
+                <div style="font-size: 16px; margin-bottom: 5px;">
+                    <a href="https://www.OutlandishlyCrafted.com" target="_blank" style="color: #2D9CDB; text-decoration: none; font-weight: 600;">www.OutlandishlyCrafted.com</a>
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 25px; padding-top: 20px; border-top: 2px solid #26313B;">
+                <div style="font-size: 16px; font-weight: 700; color: #27AE60; margin-bottom: 10px;">Report Bugs & Get Support</div>
+                <div style="font-size: 14px;">
+                    <a href="https://github.com/Jbenisek/ZLOCK-ZHAINER" target="_blank" style="color: #2D9CDB; text-decoration: none; font-weight: 600;">github.com/Jbenisek/ZLOCK-ZHAINER</a>
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 20px; padding-top: 20px; border-top: 2px solid #26313B;">
+                <div style="font-size: 18px; font-weight: 700; color: #EB5757; margin-bottom: 15px;">Donate and Support</div>
+                <div style="font-size: 11px; font-family: 'JetBrains Mono', monospace; background: rgba(0, 0, 0, 0.3); padding: 12px; border-radius: 8px; word-break: break-all; color: #F2C94C; margin-bottom: 15px;">
+                    u1gvnthgukm0ecnan3tgj3h6pdhrmmv8zyqx8ayup9yg9er4t5l7nesas6leavc4x3rsj98n65nn2w3ekzur9yejadlmv7k4vjgu8kp58q
+                </div>
+                <div>
+                    <img src="items/CyberAxeZcashWalletQR.PNG" alt="Zcash Donation QR Code" style="max-width: 200px; border: 2px solid #26313B; border-radius: 8px; background: white; padding: 10px;">
+                </div>
+            </div>
+        </div>
+        <button class="menuButton" onclick="closeAllPanels()" style="width: 100%; margin-top: 20px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
     </div>
     
     <!-- Load Save Panel -->
@@ -1638,6 +1710,11 @@
             document.getElementById('showHitboxes').checked = settings.showHitboxes;
         }
         
+        function showAbout() {
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('aboutPanel').style.display = 'block';
+        }
+        
         function updateSettings() {
             // Read values from UI
             settings.musicEnabled = document.getElementById('musicEnabled').checked;
@@ -1686,6 +1763,7 @@
         function closeAllPanels() {
             document.getElementById('overlay').style.display = 'none';
             document.getElementById('settingsPanel').style.display = 'none';
+            document.getElementById('aboutPanel').style.display = 'none';
             const loadSavePanel = document.getElementById('loadSavePanel');
             if (loadSavePanel) {
                 loadSavePanel.style.display = 'none';
@@ -1900,21 +1978,14 @@
         // Update title screen button states based on save existence
         function updateTitleScreenButtons() {
             const sharedSave = loadSharedSave();
-            const startBtn = document.getElementById('startAdventureBtn');
             const continueBtn = document.getElementById('continueBtn');
             
             if (sharedSave && (sharedSave.arcadeState || sharedSave.dungeonState)) {
-                // Has save - enable CONTINUE, disable START ADVENTURE
+                // Has save - enable CONTINUE
                 continueBtn.disabled = false;
                 continueBtn.classList.remove('comingSoon');
-                startBtn.disabled = true;
-                startBtn.style.opacity = '0.5';
-                startBtn.style.cursor = 'not-allowed';
             } else {
-                // No save - enable START ADVENTURE, disable CONTINUE
-                startBtn.disabled = false;
-                startBtn.style.opacity = '1';
-                startBtn.style.cursor = 'pointer';
+                // No save - disable CONTINUE
                 continueBtn.disabled = true;
                 continueBtn.classList.add('comingSoon');
             }
@@ -1928,7 +1999,21 @@
                 alert('No save game found! Start a new adventure first.');
                 return;
             }
-            startAdventure();
+            
+            // Center music controls for dungeon menu
+            document.getElementById('musicControls').classList.add('dungeonMenuActive');
+            document.getElementById('musicTicker').classList.add('dungeonMenuActive');
+            
+            // Show dungeon menu with existing save (no warning needed)
+            document.getElementById('titleScreen').style.display = 'none';
+            document.getElementById('dungeonMenuScreen').style.display = 'block';
+            currentScreen = 'dungeonMenu';
+            
+            // Update dungeon menu with save data
+            updateDungeonMenuHeroes();
+            
+            // Apply client UI restrictions
+            applyClientUIRestrictions();
         }
         
         // Router: Determine which continue function to call
@@ -1984,6 +2069,9 @@
             // Move music controls and ticker to bottom left during battle
             document.getElementById('musicControls').classList.add('battleActive');
             document.getElementById('musicTicker').classList.add('battleActive');
+            
+            // Start dice roll ticker
+            startDiceRollTicker();
             
             // Initialize canvas
             battleState.canvas = document.getElementById('battleCanvas');
@@ -3438,14 +3526,55 @@
             return total;
         }
         
+        // Dice roll ticker system
+        let diceRollTickerInterval = null;
+        const diceRollTickerText = '⏳ Waiting to Roll...  🎮 Tunnels of Privacy...  ⚡ Created by CyberAxe for the Zcash Community...  ';
+        let diceRollTickerPosition = 0;
+        
+        function startDiceRollTicker() {
+            if (diceRollTickerInterval) return; // Already running
+            const display = document.getElementById('diceRollDisplay');
+            if (display) {
+                display.style.overflow = 'hidden';
+                display.style.whiteSpace = 'nowrap';
+            }
+            diceRollTickerInterval = setInterval(() => {
+                const display = document.getElementById('diceRollDisplay');
+                if (display) {
+                    const fullText = diceRollTickerText + diceRollTickerText; // Double for seamless loop
+                    const visibleChars = 50; // Approximate characters visible in 500px
+                    const visibleText = fullText.substring(diceRollTickerPosition, diceRollTickerPosition + visibleChars);
+                    display.innerHTML = visibleText;
+                    diceRollTickerPosition++;
+                    if (diceRollTickerPosition >= diceRollTickerText.length) {
+                        diceRollTickerPosition = 0;
+                    }
+                }
+            }, 100); // Update every 100ms for smooth scrolling
+        }
+        
+        function stopDiceRollTicker() {
+            if (diceRollTickerInterval) {
+                clearInterval(diceRollTickerInterval);
+                diceRollTickerInterval = null;
+                diceRollTickerPosition = 0;
+            }
+        }
+        
         // Display dice roll result
         function showDiceRoll(text) {
             const display = document.getElementById('diceRollDisplay');
             if (display) {
-                display.textContent = text;
+                stopDiceRollTicker();
+                display.style.overflow = 'visible';
+                display.style.whiteSpace = 'normal';
+                display.innerHTML = text;
                 display.style.display = 'block';
                 setTimeout(() => {
-                    display.style.display = 'none';
+                    display.style.overflow = 'hidden';
+                    display.style.whiteSpace = 'nowrap';
+                    diceRollTickerPosition = 0;
+                    startDiceRollTicker();
                 }, 3000);
             }
         }
@@ -3800,13 +3929,27 @@
                 // Award 2 XP for hitting (total 3 including attempt)
                 attacker.xp += 2;
                 
-                showDiceRoll(`${attackName}: d20(${attackRoll}) HIT! Damage: ${damageRoll}`);
+                // Generate fake dice rolls for display
+                const numDice = actionType === 'light' ? 1 : (actionType === 'heavy' ? 2 : 3);
+                const diceRolls = [];
+                for (let i = 0; i < numDice; i++) {
+                    diceRolls.push(Math.floor(Math.random() * 6) + 1);
+                }
+                const diceTotal = diceRolls.reduce((a, b) => a + b, 0);
+                showDiceRoll(`🎲 Rolled: ${diceRolls.join(', ')} = <span style="color:#00ff00">${diceTotal}</span> vs <span style="color:#00ff00">${targetAC}</span> <span style="color:#00ff00">✓</span>`);
             } else {
                 // Miss - award 1 XP to defender if they're a hero
                 if (battleState.heroes.includes(target)) {
                     target.xp = (target.xp || 0) + 1;
                 }
-                showDiceRoll(`${attackName}: d20(${attackRoll}) MISS vs AC ${targetAC}`);
+                // Generate fake dice rolls for display
+                const numDice = actionType === 'light' ? 1 : (actionType === 'heavy' ? 2 : 3);
+                const diceRolls = [];
+                for (let i = 0; i < numDice; i++) {
+                    diceRolls.push(Math.floor(Math.random() * 6) + 1);
+                }
+                const diceTotal = diceRolls.reduce((a, b) => a + b, 0);
+                showDiceRoll(`🎲 Rolled: ${diceRolls.join(', ')} = <span style="color:#ff0000">${diceTotal}</span> vs <span style="color:#ff0000">${targetAC}</span> <span style="color:#ff0000">✗</span>`);
             }
             
             renderBattle();
@@ -4212,6 +4355,25 @@
         
         // Start adventure - switch from title to dungeon menu
         function startAdventure() {
+            // Check if save exists and warn user
+            const existingSave = loadSharedSave();
+            if (existingSave && (existingSave.arcadeState || existingSave.dungeonState)) {
+                showConfirmation(
+                    'START NEW ADVENTURE?',
+                    'This will replace your current save game. Save to file first if you want to keep your progress!',
+                    (confirmed) => {
+                        if (!confirmed) return;
+                        proceedWithNewAdventure();
+                    }
+                );
+                return;
+            }
+            
+            // No save exists, proceed directly
+            proceedWithNewAdventure();
+        }
+        
+        function proceedWithNewAdventure() {
             const titleScreen = document.getElementById('titleScreen');
             const dungeonMenuScreen = document.getElementById('dungeonMenuScreen');
             
@@ -4220,12 +4382,13 @@
             
             currentScreen = 'dungeonMenu';
             
-            // Create save if it doesn't exist
-            let sharedSave = loadSharedSave();
-            if (!sharedSave) {
-                sharedSave = createDefaultSharedSave();
-                saveSharedSave(sharedSave);
-            }
+            // Center music controls for dungeon menu
+            document.getElementById('musicControls').classList.add('dungeonMenuActive');
+            document.getElementById('musicTicker').classList.add('dungeonMenuActive');
+            
+            // Create fresh save
+            let sharedSave = createDefaultSharedSave();
+            saveSharedSave(sharedSave);
             
             // Sync dungeon level display
             if (sharedSave && sharedSave.arcadeState && sharedSave.arcadeState.level) {
@@ -4381,6 +4544,10 @@
             if (dungeonMenuScreen) dungeonMenuScreen.style.display = 'none';
             if (battleScreen) battleScreen.style.display = 'none';
             if (titleScreen) titleScreen.style.display = 'block';
+            
+            // Reset music controls to title screen position (bottom left)
+            document.getElementById('musicControls').classList.remove('dungeonMenuActive');
+            document.getElementById('musicTicker').classList.remove('dungeonMenuActive');
             
             // Reload hero stats from save
             const savedData = loadSharedSave();
@@ -5366,6 +5533,10 @@
             document.getElementById('heroSelectionModal').style.display = 'none';
             document.getElementById('musicControls').classList.remove('heroSelectionActive');
             document.getElementById('musicTicker').classList.remove('battleActive');
+            
+            // Center music controls for dungeon menu
+            document.getElementById('musicControls').classList.add('dungeonMenuActive');
+            document.getElementById('musicTicker').classList.add('dungeonMenuActive');
             
             // Update dungeon menu with save data
             updateDungeonMenuHeroes();

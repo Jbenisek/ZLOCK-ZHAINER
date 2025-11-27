@@ -2,6 +2,76 @@
 
 # Changelog
 
+## v0.2.46 - Title Screen UI Polish (2025-11-26)
+- **Summary:**
+  - Reorganized multiplayer controls layout
+  - Added About/Donate panel and button
+  - Improved EXIT PORTAL button text layout
+
+- **Multiplayer Controls Reorganization:**
+  - Moved all multiplayer controls to top-left corner
+  - CREATE ROOM button: 250px width
+  - Room code input (90px) + JOIN button (150px) in horizontal row
+  - Player name input: 250px width with placeholder "Enter your Player Name"
+  - Gold warning text: "Changing will Reset Join in Progress"
+  - All elements left-aligned in clean vertical stack
+
+- **About/Donate Panel:**
+  - Added clickable card in bottom-right corner of title screen
+  - Hover effect: border changes from blue to gold with glow
+  - Panel shows creator info (CyberAxe, OutlandishlyCrafted.com)
+  - GitHub link for bug reports and support
+  - Zcash donation address with QR code
+  - Matches design from zlock_consensus.html arcade game
+
+- **EXIT PORTAL Button:**
+  - Improved text layout to 2 clear rows:
+    - Row 1: "EXIT PORTAL" (18px bold)
+    - Row 2: "(RETURN TO ARCADE)" (10px)
+  - Text left-aligned, BACK badge right-aligned
+  - Uses flexbox for proper spacing
+
+- **Technical Details:**
+  - Added `showAbout()` function to display panel
+  - `closeAllPanels()` now closes about panel
+  - Multiplayer controls: Fixed widths for alignment (250px/90px/150px)
+  - About panel: Same styling as settings/load panels
+
+## v0.2.45 - Dice Roll Display System (2025-11-26)
+- **Summary:**
+  - Complete redesign of dice roll display
+  - Scrolling ticker system when idle
+  - Color-coded success/failure indicators
+  - Always-visible fixed-width display
+
+- **Dice Roll Display:**
+  - Casual dice game format: `🎲 Rolled: 3, 5, 6 = 14 vs 12 ✓`
+  - Shows individual dice results, total, and target AC
+  - Green color (#00ff00) for hits with ✓ checkmark
+  - Red color (#ff0000) for misses with ✗ symbol
+  - Number of dice based on attack type (Light=1, Heavy=2, Special=3)
+  - Fixed 500px width for consistent layout
+
+- **Scrolling Ticker:**
+  - When idle, displays scrolling ticker like music ticker
+  - Messages: "⏳ Waiting to Roll... 🎮 Tunnels of Privacy... ⚡ Created by CyberAxe for the Zcash Community..."
+  - Right-to-left scrolling animation
+  - Automatically starts on battle entry
+  - Pauses during dice roll display (3 seconds), then resumes
+
+- **Technical Details:**
+  - `startDiceRollTicker()` - Initiates scrolling animation
+  - `stopDiceRollTicker()` - Pauses ticker during roll display
+  - `showDiceRoll()` - Changed from `textContent` to `innerHTML` for color spans
+  - 100ms interval for smooth character-by-character scrolling
+  - Seamless loop with doubled text string
+
+- **UI Improvements:**
+  - Display always visible during battle (not hidden)
+  - Consistent positioning above battle action buttons
+  - Professional color-coded feedback
+  - No layout shift - fixed width prevents UI jumping
+
 ## v0.2.44 - Save System Fixes & Code Organization (2025-11-26)
 - **Summary:**
   - Fixed single-player save not persisting when quitting
