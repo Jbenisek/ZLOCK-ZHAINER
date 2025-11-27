@@ -2,6 +2,52 @@
 
 # Changelog
 
+## v0.2.37 - Multiplayer Retreat System & UI Improvements (2025-11-26)
+- **Summary:**
+  - Complete retreat system overhaul for multiplayer
+  - Heroes properly removed from battle on retreat
+  - Replaced all browser alerts with styled notifications
+  - Fixed client synchronization for battle end events
+
+- **Retreat Mechanics:**
+  - Retreated heroes (HP = 0) removed from `battleState.heroes` array
+  - Retreated heroes removed from `battleState.turnOrder` (turns skipped automatically)
+  - Client rebuilds hero arrays from host state to handle removals
+  - Battle continues with remaining heroes (partial retreat supported)
+  - Battle ends only when all heroes removed or dead
+
+- **Visual Feedback:**
+  - Hero cards greyed out (30% opacity + grayscale filter) when HP = 0
+  - All hero cards still display in UI (alive or dead) for full party visibility
+  - Styled defeat notifications replace browser alerts:
+    - "DEFEAT! ALL HEROES RETREATED!"
+    - "DEFEAT! ALL HEROES FALLEN!"
+  - Notifications auto-dismiss after 2 seconds
+  - Confirmation modal for "START NEW ADVENTURE" (replaces browser confirm)
+
+- **Battle End Synchronization:**
+  - Host broadcasts `battle_end` message to all clients
+  - Server now handles `battle_end` message type (broadcasts to all clients in room)
+  - Clients receive defeat reason ('retreat' or 'defeat') and show appropriate notification
+  - All players return to dungeon menu together after 2-second notification
+  - Notification explicitly hidden before `endBattle()` to prevent UI blocking
+
+- **Turn Order Management:**
+  - Dead heroes filtered from turnOrder when removed from battle
+  - Current turn index resets if active combatant was removed
+  - No more "disabled hero turn skipped" messages (dead heroes not in turnOrder)
+
+- **Server Updates:**
+  - Added `battle_end` message handler in `zlock_server.py`
+  - Server logs battle end events with reason (retreat/defeat)
+  - Ensures all clients receive end-of-battle notifications
+
+- **Technical Fixes:**
+  - `updateBattleHeroCards()` now checks all 4 hero slots, greys out missing/dead heroes
+  - Client `updateGameStateFromHost()` rebuilds heroes array (not just updates)
+  - `endBattle()` called consistently across all defeat scenarios
+  - Confirmation modal system added for reusable styled confirmations
+
 ## v0.2.36 - Multiplayer Turn-Based Control & State Sync (2025-11-26)
 - **Summary:**
   - Fixed client hero control - players can now control their selected heroes

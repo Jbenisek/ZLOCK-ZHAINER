@@ -1017,7 +1017,7 @@
                 <button class="menuButton portalButton" onclick="exitPortal()">EXIT PORTAL<br><span style="font-size: 10px; font-weight: 400;">(Return to Arcade)</span><span style="display: inline-block; padding: 4px 10px; background: #8B45FF; border-radius: 5px; margin-left: 10px; font-weight: bold; color: white; font-size: 12px;">BACK</span></button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.2.36 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.2.37 • Portal System Active</div>
             
             <!-- Multiplayer Controls (Bottom Right) -->
             <div style="position: absolute; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; align-items: flex-end; pointer-events: all; z-index: 100;">
@@ -1188,6 +1188,18 @@
         </div>
     </div>
     
+    <!-- Confirmation Modal -->
+    <div id="confirmationModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 400; pointer-events: all;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; background: linear-gradient(135deg, rgba(26, 26, 46, 0.95), rgba(13, 13, 26, 0.95)); border: 3px solid #F2C94C; border-radius: 15px; padding: 40px 60px; box-shadow: 0 10px 50px rgba(0, 0, 0, 0.9);">
+            <div id="confirmationTitle" style="color: #F2C94C; font-size: 28px; font-weight: 900; margin-bottom: 20px; text-shadow: 0 0 15px rgba(242, 201, 76, 0.5); text-transform: uppercase; letter-spacing: 2px;">CONFIRM ACTION</div>
+            <div id="confirmationMessage" style="color: #89A0B4; font-size: 16px; margin-bottom: 30px; line-height: 1.5;">Are you sure?</div>
+            <div style="display: flex; gap: 20px; justify-content: center;">
+                <button onclick="confirmModalAction(true)" style="padding: 12px 30px; font-size: 16px; font-weight: bold; background: linear-gradient(135deg, rgba(46, 204, 113, 0.4), rgba(39, 174, 96, 0.4)); border: 2px solid #27AE60; border-radius: 8px; color: #FFFFFF; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s;">YES</button>
+                <button onclick="confirmModalAction(false)" style="padding: 12px 30px; font-size: 16px; font-weight: bold; background: linear-gradient(135deg, rgba(231, 76, 60, 0.4), rgba(192, 57, 43, 0.4)); border: 2px solid #E74C3C; border-radius: 8px; color: #FFFFFF; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s;">CANCEL</button>
+            </div>
+        </div>
+    </div>
+    
     <!-- Overlay for modal panels -->
     <div id="overlay" onclick="closeAllPanels()"></div>
     
@@ -1227,7 +1239,7 @@
         <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         
         <div style="display: block; width: 100%; margin-top: 15px; padding: 10px 0; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A7A8F; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-            Tunnels of Privacy v0.2.36
+            Tunnels of Privacy v0.2.37
         </div>
     </div>
     
@@ -1257,7 +1269,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.2.36';
+        const GAME_VERSION = 'v0.2.37';
         
         // ===== MULTIPLAYER STATE =====
         let multiplayerState = {
@@ -3218,8 +3230,26 @@
         
         // Update battle hero card stats
         function updateBattleHeroCards() {
-            battleState.heroes.forEach(hero => {
-                const heroName = hero.name.toLowerCase();
+            // Include all heroes from original selection (alive or dead)
+            const allHeroNames = ['nate', 'zooko', 'cyberaxe', 'zancas'];
+            
+            allHeroNames.forEach(heroName => {
+                const hero = battleState.heroes.find(h => h.name.toLowerCase() === heroName);
+                const card = document.getElementById(`battleCard${heroName.charAt(0).toUpperCase() + heroName.slice(1)}`);
+                
+                if (card) {
+                    // Grey out if hero is dead/retreated
+                    if (!hero || hero.hp <= 0) {
+                        card.style.opacity = '0.3';
+                        card.style.filter = 'grayscale(100%)';
+                    } else {
+                        card.style.opacity = '1';
+                        card.style.filter = 'none';
+                    }
+                }
+                
+                if (!hero) return; // Skip if hero not in battle
+                
                 const hpEl = document.getElementById(`b${heroName}-hp`);
                 const maxHpEl = document.getElementById(`b${heroName}-maxhp`);
                 const acEl = document.getElementById(`b${heroName}-ac`);
@@ -3388,6 +3418,24 @@
             }
         }
         
+        // Confirmation modal system
+        let confirmationCallback = null;
+        
+        function showConfirmation(title, message, callback) {
+            document.getElementById('confirmationTitle').textContent = title;
+            document.getElementById('confirmationMessage').textContent = message;
+            confirmationCallback = callback;
+            document.getElementById('confirmationModal').style.display = 'block';
+        }
+        
+        function confirmModalAction(confirmed) {
+            document.getElementById('confirmationModal').style.display = 'none';
+            if (confirmationCallback) {
+                confirmationCallback(confirmed);
+                confirmationCallback = null;
+            }
+        }
+        
         // Handle battle actions
         function battleAction(action) {
             if (action === 'retreat') {
@@ -3400,20 +3448,46 @@
                         }
                     });
                     
-                    // Update UI and broadcast
-                    updateBattleHeroCards();
-                    renderBattle();
-                    
                     if (multiplayerState.role === 'host') {
+                        // Remove dead heroes from arrays
+                        battleState.heroes = battleState.heroes.filter(h => h.hp > 0);
+                        battleState.turnOrder = battleState.turnOrder.filter(combatant => {
+                            if (battleState.heroes.includes(combatant)) return true;
+                            if (battleState.enemies.includes(combatant)) return combatant.hp > 0;
+                            return false;
+                        });
+                        
+                        // Update UI and broadcast
+                        updateBattleHeroCards();
+                        renderBattle();
                         broadcastGameState();
                         
-                        // Check if all heroes dead
-                        const allDead = battleState.heroes.every(h => h.hp <= 0);
-                        if (allDead) {
+                        // Check if any heroes still alive
+                        if (battleState.heroes.length === 0) {
+                            showBattleNotification('DEFEAT! ALL HEROES RETREATED!');
+                            
+                            // Notify clients to end battle
+                            if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                                sendWebSocketMessage({
+                                    type: 'battle_end',
+                                    reason: 'retreat'
+                                });
+                            }
+                            
                             setTimeout(() => {
-                                alert('Defeat! All heroes have retreated.');
+                                // Hide notification
+                                const notification = document.getElementById('battleNotification');
+                                if (notification) notification.style.display = 'none';
+                                
                                 endBattle();
-                            }, 500);
+                            }, 2000);
+                        } else {
+                            // Reset turn if current combatant was removed
+                            const currentCombatant = battleState.turnOrder[battleState.currentTurn];
+                            if (!currentCombatant) {
+                                battleState.currentTurn = 0;
+                                updateBattleTurnInfo();
+                            }
                         }
                     } else {
                         // Client sends retreat to host
@@ -3422,6 +3496,10 @@
                             action: 'retreat',
                             heroes: multiplayerState.myHeroes
                         });
+                        
+                        // Update local UI immediately
+                        updateBattleHeroCards();
+                        renderBattle();
                     }
                 } else {
                     // Single player - just end battle
@@ -3695,10 +3773,23 @@
             const aliveHeroes = battleState.heroes.filter(h => h.hp > 0);
             if (aliveHeroes.length === 0) {
                 // Game over
+                showBattleNotification('DEFEAT! ALL HEROES FALLEN!');
+                
+                // Notify clients if multiplayer
+                if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                    sendWebSocketMessage({
+                        type: 'battle_end',
+                        reason: 'defeat'
+                    });
+                }
+                
                 setTimeout(() => {
-                    alert('Defeat! All heroes fallen.');
+                    // Hide notification
+                    const notification = document.getElementById('battleNotification');
+                    if (notification) notification.style.display = 'none';
+                    
                     endBattle();
-                }, 500);
+                }, 2000);
                 return;
             }
             
@@ -3765,10 +3856,23 @@
             if (target.hp <= 0) {
                 const allHeroesDead = battleState.heroes.every(h => h.hp <= 0);
                 if (allHeroesDead) {
+                    showBattleNotification('DEFEAT! ALL HEROES FALLEN!');
+                    
+                    // Notify clients if multiplayer
+                    if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                        sendWebSocketMessage({
+                            type: 'battle_end',
+                            reason: 'defeat'
+                        });
+                    }
+                    
                     setTimeout(() => {
-                        alert('Defeat! All heroes fallen.');
+                        // Hide notification
+                        const notification = document.getElementById('battleNotification');
+                        if (notification) notification.style.display = 'none';
+                        
                         endBattle();
-                    }, 500);
+                    }, 2000);
                     return;
                 }
             }
@@ -3812,13 +3916,6 @@
             
             // Broadcast turn advancement to clients
             broadcastGameState();
-            
-            // If next combatant is a disabled hero (0 HP), skip their turn
-            if (battleState.heroes.includes(nextCombatant) && nextCombatant.hp <= 0) {
-                showDiceRoll(`${nextCombatant.name} is disabled - turn skipped`);
-                setTimeout(() => advanceTurn(), 1000);
-                return;
-            }
             
             // If next turn is AI, process automatically
             if (!battleState.heroes.includes(nextCombatant)) {
@@ -4615,6 +4712,30 @@
                     }
                     break;
                 
+                case 'battle_end':
+                    // Host notifies battle has ended
+                    if (multiplayerState.role === 'client') {
+                        const reason = data.reason;
+                        if (reason === 'retreat') {
+                            showBattleNotification('DEFEAT! ALL HEROES RETREATED!');
+                        } else if (reason === 'defeat') {
+                            showBattleNotification('DEFEAT! ALL HEROES FALLEN!');
+                        }
+                        
+                        setTimeout(() => {
+                            // Hide notification
+                            const notification = document.getElementById('battleNotification');
+                            if (notification) notification.style.display = 'none';
+                            
+                            // End battle and return to dungeon menu
+                            endBattle();
+                            
+                            // Update dungeon menu with latest data
+                            updateDungeonMenuHeroes();
+                        }, 2000);
+                    }
+                    break;
+                
                 case 'kicked':
                     showNotification(data.message, 'error');
                     resetMultiplayerState();
@@ -5098,35 +5219,39 @@
                 return;
             }
             
-            if (!confirm('Start new adventure? This will replace your local save game.')) {
-                return;
-            }
-            
-            // Hide hero selection
-            document.getElementById('heroSelectionModal').style.display = 'none';
-            document.getElementById('musicControls').classList.remove('heroSelectionActive');
-            document.getElementById('musicTicker').classList.remove('battleActive');
-            
-            // Create fresh save FIRST
-            const newSave = createDefaultSharedSave();
-            saveSharedSave(newSave);
-            
-            // Update dungeon menu with new save data
-            updateDungeonMenuHeroes();
-            
-            currentScreen = 'dungeonMenu';
-            document.getElementById('titleScreen').style.display = 'none';
-            document.getElementById('dungeonMenuScreen').style.display = 'block';
-            
-            // Notify all clients to start WITH save data
-            sendWebSocketMessage({ 
-                type: 'game_start', 
-                screen: 'dungeonMenu', 
-                mode: 'new',
-                saveData: newSave
-            });
-            
-            showNotification('Starting new adventure...', 'success');
+            showConfirmation(
+                'START NEW ADVENTURE?',
+                'This will replace your local save game. All progress will be lost.',
+                (confirmed) => {
+                    if (!confirmed) return;
+                    
+                    // Hide hero selection
+                    document.getElementById('heroSelectionModal').style.display = 'none';
+                    document.getElementById('musicControls').classList.remove('heroSelectionActive');
+                    document.getElementById('musicTicker').classList.remove('battleActive');
+                    
+                    // Create fresh save FIRST
+                    const newSave = createDefaultSharedSave();
+                    saveSharedSave(newSave);
+                    
+                    // Update dungeon menu with new save data
+                    updateDungeonMenuHeroes();
+                    
+                    currentScreen = 'dungeonMenu';
+                    document.getElementById('titleScreen').style.display = 'none';
+                    document.getElementById('dungeonMenuScreen').style.display = 'block';
+                    
+                    // Notify all clients to start WITH save data
+                    sendWebSocketMessage({ 
+                        type: 'game_start', 
+                        screen: 'dungeonMenu', 
+                        mode: 'new',
+                        saveData: newSave
+                    });
+                    
+                    showNotification('Starting new adventure...', 'success');
+                }
+            );
         }
         
         function showHostControls() {
@@ -5206,17 +5331,42 @@
                     }
                 });
                 
+                // Remove dead heroes from arrays
+                battleState.heroes = battleState.heroes.filter(h => h.hp > 0);
+                battleState.turnOrder = battleState.turnOrder.filter(combatant => {
+                    if (battleState.heroes.includes(combatant)) return true;
+                    if (battleState.enemies.includes(combatant)) return combatant.hp > 0;
+                    return false;
+                });
+                
                 updateBattleHeroCards();
                 renderBattle();
                 broadcastGameState();
                 
-                // Check if all heroes dead
-                const allDead = battleState.heroes.every(h => h.hp <= 0);
-                if (allDead) {
+                // Check if any heroes still alive
+                if (battleState.heroes.length === 0) {
+                    showBattleNotification('DEFEAT! ALL HEROES RETREATED!');
+                    
+                    // Notify all clients to end battle
+                    sendWebSocketMessage({
+                        type: 'battle_end',
+                        reason: 'retreat'
+                    });
+                    
                     setTimeout(() => {
-                        alert('Defeat! All heroes have retreated.');
+                        // Hide notification
+                        const notification = document.getElementById('battleNotification');
+                        if (notification) notification.style.display = 'none';
+                        
                         endBattle();
-                    }, 500);
+                    }, 2000);
+                } else {
+                    // Reset turn if current combatant was removed
+                    const currentCombatant = battleState.turnOrder[battleState.currentTurn];
+                    if (!currentCombatant) {
+                        battleState.currentTurn = 0;
+                        updateBattleTurnInfo();
+                    }
                 }
                 return;
             }
@@ -5327,36 +5477,53 @@
             
             const canvas = battleState.canvas;
             
-            // Update heroes
-            state.heroes.forEach(heroData => {
-                const hero = battleState.heroes.find(h => h.name === heroData.name);
-                if (hero) {
-                    hero.hp = heroData.hp;
-                    hero.maxHp = heroData.maxHp;
-                    hero.xp = heroData.xp;
-                    hero.healsRemaining = heroData.healsRemaining;
-                    hero.stats = heroData.stats;
-                    hero.x = heroData.x * canvas.width;
-                    hero.y = (heroData.y * canvas.height) - 25;
-                    hero.defending = heroData.defending;
-                    hero.taunting = heroData.taunting;
-                    hero.tauntTurns = heroData.tauntTurns || 0;
-                    hero.usedHeal = heroData.usedHeal || false;
-                    hero.facing = heroData.facing;
+            // Rebuild heroes array to handle removals (retreats)
+            battleState.heroes = state.heroes.map(heroData => {
+                const existingHero = battleState.heroes.find(h => h.name === heroData.name);
+                if (existingHero) {
+                    // Update existing hero
+                    existingHero.hp = heroData.hp;
+                    existingHero.maxHp = heroData.maxHp;
+                    existingHero.xp = heroData.xp;
+                    existingHero.healsRemaining = heroData.healsRemaining;
+                    existingHero.stats = heroData.stats;
+                    existingHero.x = heroData.x * canvas.width;
+                    existingHero.y = (heroData.y * canvas.height) - 25;
+                    existingHero.defending = heroData.defending;
+                    existingHero.taunting = heroData.taunting;
+                    existingHero.tauntTurns = heroData.tauntTurns || 0;
+                    existingHero.usedHeal = heroData.usedHeal || false;
+                    existingHero.facing = heroData.facing;
+                    return existingHero;
+                } else {
+                    console.warn('[MP] Received unknown hero:', heroData.name);
+                    return null;
                 }
-            });
+            }).filter(h => h !== null);
             
-            // Update enemies
-            state.enemies.forEach(enemyData => {
-                const enemy = battleState.enemies.find(e => e.name === enemyData.name);
-                if (enemy) {
-                    enemy.hp = enemyData.hp;
-                    enemy.maxHp = enemyData.maxHp;
-                    enemy.hostile = enemyData.hostile;
-                    enemy.x = enemyData.x * canvas.width;
-                    enemy.y = (enemyData.y * canvas.height) - 25;
+            // Update enemies - rebuild array to handle removals
+            battleState.enemies = state.enemies.map(enemyData => {
+                const existingEnemy = battleState.enemies.find(e => e.name === enemyData.name);
+                if (existingEnemy) {
+                    // Update existing enemy
+                    existingEnemy.hp = enemyData.hp;
+                    existingEnemy.maxHp = enemyData.maxHp;
+                    existingEnemy.hostile = enemyData.hostile;
+                    existingEnemy.x = enemyData.x * canvas.width;
+                    existingEnemy.y = (enemyData.y * canvas.height) - 25;
+                    return existingEnemy;
+                } else {
+                    // This shouldn't happen in normal gameplay, but handle it
+                    console.warn('[MP] Received unknown enemy:', enemyData.name);
+                    return null;
                 }
-            });
+            }).filter(e => e !== null);
+            
+            // Rebuild turn order to match host
+            battleState.turnOrder = state.turnOrder.map(combatantData => {
+                return battleState.heroes.find(h => h.name === combatantData.name) || 
+                       battleState.enemies.find(e => e.name === combatantData.name);
+            }).filter(c => c);
             
             // Re-render
             renderBattle();
