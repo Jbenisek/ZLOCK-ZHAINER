@@ -2,6 +2,50 @@
 
 # Changelog
 
+## v0.2.48 - Multiplayer & UI Fixes (2025-11-27)
+- **Summary:**
+  - Fixed critical multiplayer bug where client hero stats showed as 0 in dungeon menu
+  - Fixed music controls positioning issues across all screen transitions
+  - Character sheet borders now match hero theme colors
+  - Dice ticker text improvements
+
+- **Multiplayer Fixes:**
+  - Client now properly receives hero stats when starting new adventure
+  - `heroStatsCache` populated from host's `saveData` on game start
+  - Clients display correct HP, maxHP, XP, level, and all ability scores
+  - Fixed missing stats in dungeon menu after hero selection
+
+- **Music Controls Positioning:**
+  - Added `dungeonMenuActive` class to ALL transitions to dungeon menu
+  - Fixed: After battle ends (host and client)
+  - Fixed: Continue game multiplayer
+  - Fixed: Start new adventure
+  - Fixed: Client joining game
+  - Music controls now consistently centered on dungeon menu
+
+- **Visual Improvements:**
+  - Character cards now have theme-colored borders:
+    - Zooko: Yellow (#F2C94C)
+    - Nate: Red (#E74C3C)
+    - Zancas: Green (#27AE60)
+    - CyberAxe: Blue (#2E86DE)
+  - Each card has subtle glow matching character color
+
+- **Dice Display:**
+  - Changed "Zcash Community" to "Zcash" in ticker message
+  - Reduced font size from 18px to 14px to prevent text wrapping during combat
+  - Ticker now reads: "Created by CyberAxe for Zcash..."
+
+- **Music System:**
+  - Fixed event listener attachment timing for song transitions
+  - `ended` event now attached after `play()` promise resolves
+  - Prevents music from stopping after first track
+
+- **Technical Details:**
+  - Client `game_start` handler now populates `heroStatsCache` with: hp, maxHp, xp, level, str, dex, con, int, wis, cha
+  - All 8 dungeon menu transitions now properly manage music control classes
+  - Character card styles use ID selectors: `#battleCardZooko`, `#battleCardNate`, etc.
+
 ## v0.2.47 - Main Theme Priority Music System (2025-11-26)
 - **Summary:**
   - Main theme always plays first on game load

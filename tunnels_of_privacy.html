@@ -255,6 +255,24 @@
             box-shadow: 0 0 20px rgba(242, 201, 76, 0.6);
         }
         
+        /* Character-specific card borders */
+        #battleCardZooko {
+            border-color: #F2C94C;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 10px rgba(242, 201, 76, 0.3);
+        }
+        #battleCardNate {
+            border-color: #E74C3C;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 10px rgba(231, 76, 60, 0.3);
+        }
+        #battleCardZancas {
+            border-color: #27AE60;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 10px rgba(39, 174, 96, 0.3);
+        }
+        #battleCardCyberAxe {
+            border-color: #2E86DE;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 10px rgba(46, 134, 222, 0.3);
+        }
+        
         .battleHeroPortrait {
             width: 60px;
             height: 60px;
@@ -975,7 +993,7 @@
                     <div id="multiplayerStatus" style="display: none; background: rgba(42, 157, 143, 0.3); border: 2px solid #2A9D8F; border-radius: 5px; padding: 5px 10px; font-size: 11px; color: #2A9D8F; margin-bottom: 8px; text-align: center;">
                         🎮 <span id="mpStatusText">Multiplayer</span>
                     </div>
-                    <div id="diceRollDisplay" style="display: block; background: rgba(0,0,0,0.9); color: #FFD700; padding: 12px; border-radius: 8px; font-size: 18px; font-weight: bold; text-align: center; margin-bottom: 10px; border: 2px solid #FFD700; width: 500px;">⏳ Waiting to Roll...</div>
+                    <div id="diceRollDisplay" style="display: block; background: linear-gradient(135deg, rgba(0,0,0,0.95), rgba(20,20,40,0.95)); color: #E0E0E0; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: bold; text-align: center; margin-bottom: 10px; border: 2px solid #7A8B9C; width: 500px; box-shadow: 0 0 20px rgba(122, 139, 156, 0.2), inset 0 0 20px rgba(122, 139, 156, 0.05); text-shadow: 0 0 10px rgba(224, 224, 224, 0.5), 0 0 20px rgba(224, 224, 224, 0.2); letter-spacing: 1px;">⏳ Waiting to Roll...</div>
                     <div id="battleActions">
                         <button class="battleButton attack-weak" onclick="battleAction('light')">⚔ LIGHT</button>
                         <button class="battleButton attack-strong" id="battleHeavyBtn" onclick="battleAction('heavy')">⚡ HEAVY</button>
@@ -1042,7 +1060,7 @@
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.2.47 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.2.48 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div style="
@@ -1352,7 +1370,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.2.44';
+        const GAME_VERSION = 'v0.2.48';
         
         // ===== MULTIPLAYER STATE =====
         let multiplayerState = {
@@ -1558,21 +1576,22 @@
             newMusic.loop = false;
             newMusic.volume = 0; // Start silent
             
-            // When song ends, play next random track
-            newMusic.addEventListener('ended', () => {
-                if (!musicEnabled) return;
-                mainThemePlayed = true; // Mark main theme as played
-                // Pick random track excluding main theme (index 0)
-                const randomIndex = Math.floor(Math.random() * (themeTracks.length - 1)) + 1;
-                const randomTrack = themeTracks[randomIndex];
-                loadMusic(randomTrack);
-            });
-            
             // Fade in new track
             newMusic.play().then(() => {
                 fadeMusic(newMusic, 0, volumeScale, 1000);
                 musicStarted = true;
                 updateMusicButton();
+                
+                // When song ends, play next random track
+                // Add listener AFTER play() succeeds to ensure it's attached
+                newMusic.addEventListener('ended', () => {
+                    if (!musicEnabled) return;
+                    mainThemePlayed = true; // Mark main theme as played
+                    // Pick random track excluding main theme (index 0)
+                    const randomIndex = Math.floor(Math.random() * (themeTracks.length - 1)) + 1;
+                    const randomTrack = themeTracks[randomIndex];
+                    loadMusic(randomTrack);
+                });
             }).catch(err => {
                 console.log('Music autoplay blocked:', err);
             });
@@ -3538,36 +3557,70 @@
         
         // Dice roll ticker system
         let diceRollTickerInterval = null;
-        const diceRollTickerText = '⏳ Waiting to Roll...  🎮 Tunnels of Privacy...  ⚡ Created by CyberAxe for the Zcash Community...  ';
-        let diceRollTickerPosition = 0;
+        const diceRollTickerMessages = [
+            '⏳ ...Waiting to Roll... ⏳',
+            '🎮 ...Tunnels of Privacy... 🎮',
+            '...Created by CyberAxe for Zcash...'
+        ];
+        let diceRollTickerIndex = 0;
+        let diceRollTickerCharIndex = 0;
+        let currentMessage = '';
         
         function startDiceRollTicker() {
             if (diceRollTickerInterval) return; // Already running
             const display = document.getElementById('diceRollDisplay');
             if (display) {
-                display.style.overflow = 'hidden';
-                display.style.whiteSpace = 'nowrap';
+                display.style.overflow = 'visible';
+                display.style.whiteSpace = 'normal';
             }
+            
+            // Waterfall effect: reveal text from center outward
             diceRollTickerInterval = setInterval(() => {
                 const display = document.getElementById('diceRollDisplay');
                 if (display) {
-                    const fullText = diceRollTickerText + diceRollTickerText; // Double for seamless loop
-                    const visibleChars = 50; // Approximate characters visible in 500px
-                    const visibleText = fullText.substring(diceRollTickerPosition, diceRollTickerPosition + visibleChars);
-                    display.innerHTML = visibleText;
-                    diceRollTickerPosition++;
-                    if (diceRollTickerPosition >= diceRollTickerText.length) {
-                        diceRollTickerPosition = 0;
+                    const message = diceRollTickerMessages[diceRollTickerIndex];
+                    const totalLength = message.length;
+                    
+                    if (diceRollTickerCharIndex < totalLength) {
+                        // Build text from center outward
+                        const center = Math.floor(totalLength / 2);
+                        const revealRadius = Math.floor(diceRollTickerCharIndex / 2);
+                        
+                        let visibleText = '';
+                        for (let i = 0; i < totalLength; i++) {
+                            const distanceFromCenter = Math.abs(i - center);
+                            if (distanceFromCenter <= revealRadius) {
+                                visibleText += message[i];
+                            } else {
+                                visibleText += ' ';
+                            }
+                        }
+                        
+                        display.innerHTML = visibleText;
+                        diceRollTickerCharIndex++;
+                    } else {
+                        // Hold full message for 2 seconds
+                        if (diceRollTickerCharIndex === totalLength) {
+                            display.innerHTML = message;
+                        }
+                        diceRollTickerCharIndex++;
+                        
+                        // After holding, move to next message
+                        if (diceRollTickerCharIndex > totalLength + 13) { // 13 frames * 150ms ≈ 2 seconds
+                            diceRollTickerIndex = (diceRollTickerIndex + 1) % diceRollTickerMessages.length;
+                            diceRollTickerCharIndex = 0;
+                        }
                     }
                 }
-            }, 100); // Update every 100ms for smooth scrolling
+            }, 150);
         }
         
         function stopDiceRollTicker() {
             if (diceRollTickerInterval) {
                 clearInterval(diceRollTickerInterval);
                 diceRollTickerInterval = null;
-                diceRollTickerPosition = 0;
+                diceRollTickerIndex = 0;
+                diceRollTickerCharIndex = 0;
             }
         }
         
@@ -4219,6 +4272,12 @@
             currentScreen = 'dungeonMenu';
             document.getElementById('battleScreen').style.display = 'none';
             document.getElementById('dungeonMenuScreen').style.display = 'block';
+            
+            // Move music controls back to center
+            document.getElementById('musicControls').classList.remove('battleActive');
+            document.getElementById('musicControls').classList.add('dungeonMenuActive');
+            document.getElementById('musicTicker').classList.remove('battleActive');
+            document.getElementById('musicTicker').classList.add('dungeonMenuActive');
             
             // Update dungeon menu hero displays with saved stats
             updateDungeonMenuHeroes();
@@ -5092,7 +5151,9 @@
                             
                             // Move music controls and ticker back to center bottom
                             document.getElementById('musicControls').classList.remove('battleActive');
+                            document.getElementById('musicControls').classList.add('dungeonMenuActive');
                             document.getElementById('musicTicker').classList.remove('battleActive');
+                            document.getElementById('musicTicker').classList.add('dungeonMenuActive');
                             
                             // Update dungeon menu from cached stats (already updated from state_update broadcasts)
                             updateDungeonMenuHeroes();
@@ -5141,6 +5202,27 @@
                         // Save host's save data to local storage
                         if (data.saveData) {
                             saveSharedSave(data.saveData);
+                            
+                            // Populate heroStatsCache from saveData for client display
+                            if (data.saveData.heroes) {
+                                ['zooko', 'nate', 'zancas', 'cyberaxe'].forEach(heroKey => {
+                                    const heroData = data.saveData.heroes[heroKey];
+                                    if (heroData) {
+                                        multiplayerState.heroStatsCache[heroKey] = {
+                                            hp: heroData.hp,
+                                            maxHp: heroData.maxHp,
+                                            xp: heroData.xp,
+                                            level: heroData.level,
+                                            str: heroData.str,
+                                            dex: heroData.dex,
+                                            con: heroData.con,
+                                            int: heroData.int,
+                                            wis: heroData.wis,
+                                            cha: heroData.cha
+                                        };
+                                    }
+                                });
+                            }
                         }
                         
                         document.getElementById('titleScreen').style.display = 'none';
@@ -5150,6 +5232,8 @@
                         
                         if (data.screen === 'dungeonMenu') {
                             document.getElementById('musicTicker').classList.remove('battleActive');
+                            document.getElementById('musicControls').classList.add('dungeonMenuActive');
+                            document.getElementById('musicTicker').classList.add('dungeonMenuActive');
                             document.getElementById('dungeonMenuScreen').style.display = 'block';
                             currentScreen = 'dungeonMenu';
                             
@@ -5582,7 +5666,9 @@
             // Hide hero selection
             document.getElementById('heroSelectionModal').style.display = 'none';
             document.getElementById('musicControls').classList.remove('heroSelectionActive');
+            document.getElementById('musicControls').classList.add('dungeonMenuActive');
             document.getElementById('musicTicker').classList.remove('battleActive');
+            document.getElementById('musicTicker').classList.add('dungeonMenuActive');
             
             // For now, just show dungeon menu - load game UI can be added later
             currentScreen = 'dungeonMenu';
@@ -5630,6 +5716,12 @@
                     currentScreen = 'dungeonMenu';
                     document.getElementById('titleScreen').style.display = 'none';
                     document.getElementById('dungeonMenuScreen').style.display = 'block';
+                    
+                    // Center music controls
+                    document.getElementById('musicControls').classList.remove('heroSelectionActive');
+                    document.getElementById('musicControls').classList.add('dungeonMenuActive');
+                    document.getElementById('musicTicker').classList.remove('battleActive');
+                    document.getElementById('musicTicker').classList.add('dungeonMenuActive');
                     
                     // Notify all clients to start WITH save data
                     sendWebSocketMessage({ 
