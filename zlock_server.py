@@ -425,6 +425,24 @@ async def handle_websocket(websocket, path):
                         await client.send(message)
                     print(f"[WS] Host sent battle_end to room {client_room}: {data.get('reason', 'unknown')}")
             
+            # PLAYER LEAVE (victory leave tracking)
+            elif msg_type == 'player_leave':
+                if client_room and client_room in rooms:
+                    # Broadcast to all in room
+                    for client in rooms[client_room]['clients']:
+                        await client.send(message)
+                    if rooms[client_room]['host']:
+                        await rooms[client_room]['host'].send(message)
+                    print(f"[WS] Player leave in room {client_room}")
+            
+            # LEAVE STATUS (victory leave count broadcast)
+            elif msg_type == 'leave_status':
+                if client_room and client_room in rooms and client_role == 'host':
+                    # Broadcast leave status to all clients
+                    for client in rooms[client_room]['clients']:
+                        await client.send(message)
+                    print(f"[WS] Host sent leave_status to room {client_room}")
+            
             # SAVE SYNC (host only)
             elif msg_type == 'save_sync':
                 if client_room and client_room in rooms and client_role == 'host':

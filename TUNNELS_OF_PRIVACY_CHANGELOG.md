@@ -2,6 +2,115 @@
 
 # Changelog
 
+## v0.2.42 - Victory System & Critical Fixes (2025-11-26)
+- **Summary:**
+  - Complete victory/leave system for multiplayer battles
+  - Fixed critical 0 HP hero turn blocking issue
+  - Fixed client notification system (wasn't working at all)
+  - Host-controlled victory leave (simplified from vote system)
+  - Auto-skip turns for disabled heroes
+
+- **Victory Leave System:**
+  - Retreat button changes to "🚪 LEAVE" when battle is won (all enemies defeated)
+  - Host clicks LEAVE → Battle ends for everyone
+  - Client clicks LEAVE → Shows "Waiting for host to leave..." message
+  - Simplified host-controlled system (no vote tracking needed)
+  - Both host and clients see "ROOM CLEARED!" notification
+
+- **Critical Fixes:**
+  - FIXED: 0 HP heroes blocking turns and causing desync
+  - Solution: `advanceTurn()` now auto-skips heroes with HP <= 0 or retreated flag
+  - Shows "X is disabled - skipping turn" message and advances automatically
+  - FIXED: Client notifications not showing (battleNotification element issue)
+  - Root cause: Notification element wasn't being found/displayed on clients
+  - Solution: Added explicit element checks and display forcing
+
+- **Multiplayer Improvements:**
+  - LEAVE button always enabled for all players (host and clients)
+  - "ROOM CLEARED!" notification syncs to all players when enemies defeated
+  - Client win condition detection in `updateGameStateFromHost()`
+  - Persistent notification for clients waiting for host to leave
+
+- **Testing Changes:**
+  - Enemy HP reduced to 3 for quick testing (boss + mobs)
+  - Allows rapid iteration on victory flow testing
+
+- **Verified Working:**
+  - ✅ 0 HP heroes auto-skipped (no more blocking)
+  - ✅ Retreated heroes auto-skipped
+  - ✅ Victory notifications show on all players
+  - ✅ Host controls when party leaves after victory
+  - ✅ All hero stats save correctly after victory
+  - ✅ Client notifications now display properly
+
+## v0.2.41 - AllHeroes Merge Fix & Testing (2025-11-26)
+- **Summary:**
+  - Fixed critical bug where host's heroes didn't update after retreat
+  - AllHeroes array now merges instead of overwrites during sequential retreats
+  - All 4 heroes now save correctly regardless of retreat order
+  - Reduced enemy HP to 3 for testing (boss + mobs)
+
+- **Bug Fix:**
+  - FIXED: When client retreats then host retreats, host's heroes weren't saving
+  - Root cause: Second retreat overwrote `battleState.allHeroes` array
+  - Solution: Merge heroes into allHeroes instead of replacing
+  - Now preserves all heroes from both players across multiple retreat actions
+
+- **AllHeroes Merge Logic:**
+  - First retreat: Initialize `allHeroes = [all current heroes]`
+  - Subsequent retreats: Check if `allHeroes.length > 0`
+  - If yes: Add any heroes not already in allHeroes (merge)
+  - Result: Complete hero list preserved for final save
+
+- **Testing Changes:**
+  - Boss HP: 20 → 3
+  - Mob HP: variable → 3
+  - Allows quick battle wins for testing victory flow
+
+- **Verified Working:**
+  - ✅ Solo host: All heroes update correctly
+  - ✅ Client retreat first: Client heroes save correctly
+  - ✅ Host retreat first: Host heroes save correctly
+  - ✅ Both retreat: All 4 heroes save with correct XP/stats
+  - ✅ Dungeon menu displays: Host from localStorage, Clients from cache
+
+## v0.2.40 - Client-Side Cache System (Foolproof Sync) (2025-11-26)
+- **Summary:**
+  - Complete architectural overhaul for multiplayer data synchronization
+  - Clients NEVER save to localStorage - only display cached stats from host
+  - Host is single source of truth - only host saves game data
+  - Eliminates all race conditions and sync failures
+
+- **New Architecture:**
+  - Added `multiplayerState.heroStatsCache` object on clients
+  - Cache populated from every `state_update` broadcast during battle
+  - `updateDungeonMenuHeroes()` reads from cache (clients) or localStorage (host/solo)
+  - Cache includes: hp, maxHp, xp, level, str, dex, con, int, wis, cha
+
+- **Removed Systems:**
+  - REMOVED: `save_sync` WebSocket message type entirely
+  - REMOVED: Clients saving to localStorage during/after battles
+  - REMOVED: Client-side `endBattle()` calls
+  - Simplified battle end flow: clients just switch UI and display cache
+
+- **Data Flow:**
+  1. Host action → Host updates `battleState.heroes` → Host broadcasts `state_update`
+  2. Clients receive `state_update` → Update `battleState.heroes` AND cache stats
+  3. Battle ends → Host saves to localStorage → Clients switch to dungeon menu
+  4. Dungeon menu → Host reads localStorage, Clients read cache
+  5. Result: Perfect 1:1 sync between what host saved and what clients display
+
+- **Why This Works:**
+  - Eliminates timing issues (no waiting for save_sync after battle_end)
+  - Eliminates data source conflicts (only one source: host's state_update)
+  - Clients are pure display layers - no save/load logic to fail
+  - Turn-based architecture allows complete state snapshots without performance cost
+
+- **Testing:**
+  - Solo play: Works identically (host uses localStorage as before)
+  - Multiplayer: Clients display exact hero stats from host's broadcasts
+  - All 4 heroes update correctly regardless of which player controls them
+
 ## v0.2.39 - Complete State Synchronization Overhaul (2025-11-26)
 - **Summary:**
   - Implemented complete game state broadcasting for turn-based multiplayer

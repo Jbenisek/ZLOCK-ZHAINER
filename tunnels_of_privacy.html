@@ -916,6 +916,7 @@
                 <button class="menuButton comingSoon" disabled>ENTER LEVEL STORE<br><span style="font-size: 12px; font-weight: 400;">(If Found)</span></button>
                 <button class="menuButton">INVENTORY</button>
                 <button class="menuButton">REST / SLEEP</button>
+                <button class="menuButton" onclick="refreshGameData()" style="background: linear-gradient(135deg, #2A9D8F, #1B7368); border-color: #2A9D8F;">🔄 REFRESH DATA</button>
             </div>
         </div>
         
@@ -1269,7 +1270,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.2.39';
+        const GAME_VERSION = 'v0.2.42';
         
         // ===== MULTIPLAYER STATE =====
         let multiplayerState = {
@@ -1282,7 +1283,14 @@
             playerName: 'Player',
             playerHeroes: {}, // { hero_name: { playerId, playerName } }
             connectedPlayers: [], // [ { id, hero, name } ]
-            isReconnecting: false
+            isReconnecting: false,
+            // Client-only: Cache of hero stats from host broadcasts
+            heroStatsCache: {
+                zooko: null,
+                nate: null,
+                zancas: null,
+                cyberaxe: null
+            }
         };
         
         // ===== GAMEPAD SUPPORT =====
@@ -2049,8 +2057,8 @@
             if (boss) {
                 battleState.enemies.push({
                     name: boss.name,
-                    hp: 20,
-                    maxHp: 20,
+                    hp: 3,
+                    maxHp: 3,
                     ac: boss.stats.ac,
                     attackDamage: boss.stats.attackDamage,
                     speed: boss.stats.speed,
@@ -2070,8 +2078,8 @@
                 const mob = hostileMobs[Math.floor(Math.random() * hostileMobs.length)];
                 battleState.enemies.push({
                     name: mob.name,
-                    hp: mob.stats.hp,
-                    maxHp: mob.stats.maxHp,
+                    hp: 3,
+                    maxHp: 3,
                     ac: mob.stats.ac,
                     attackDamage: mob.stats.attackDamage,
                     speed: mob.stats.speed,
@@ -2132,6 +2140,7 @@
             battleState.turnOrder = allCombatants.sort((a, b) => b.initiative - a.initiative);
             battleState.currentTurn = 0;
             battleState.active = true;
+            battleState.won = false;
             battleState.targetingMode = false;
             battleState.pendingAction = null;
             
@@ -3195,7 +3204,14 @@
         function updateBattleTurnInfo() {
             const currentHero = battleState.turnOrder[battleState.currentTurn];
             const turnInfo = document.getElementById('battleTurnInfo');
-            if (turnInfo && currentHero) {
+            
+            // Safety check: currentHero can be undefined if turnOrder is empty or currentTurn is out of bounds
+            if (!currentHero) {
+                if (turnInfo) turnInfo.textContent = 'Waiting...';
+                return;
+            }
+            
+            if (turnInfo) {
                 let turnText = `${currentHero.name.toUpperCase()}'S TURN`;
                 
                 // Multiplayer: Show if it's you or waiting
@@ -3220,9 +3236,9 @@
             // Disable/enable buttons based on turn in multiplayer
             if (multiplayerState.enabled) {
                 const isMyTurn = multiplayerState.myHeroes.includes(currentHero.name.toLowerCase());
-                console.log('[TURN CHECK] Current hero:', currentHero.name, '| My heroes:', multiplayerState.myHeroes, '| Is my turn:', isMyTurn, '| Role:', multiplayerState.role);
                 document.querySelectorAll('.battleButton').forEach(btn => {
-                    if (btn.textContent.includes('RETREAT')) return; // Always allow retreat
+                    // Always allow retreat/leave button
+                    if (btn.textContent.includes('RETREAT') || btn.textContent.includes('LEAVE')) return;
                     btn.disabled = !isMyTurn;
                     btn.style.opacity = isMyTurn ? '1' : '0.3';
                 });
@@ -3440,7 +3456,28 @@
         // Handle battle actions
         function battleAction(action) {
             if (action === 'retreat') {
-                // In multiplayer, retreat removes your controlled heroes
+                // Check if battle is won (leave instead of retreat)
+                if (battleState.won && multiplayerState.enabled) {
+                    // Only host can leave after victory - clients wait
+                    if (multiplayerState.role === 'host') {
+                        // Host clicked leave - end battle for everyone
+                        sendWebSocketMessage({ type: 'battle_end', reason: 'victory' });
+                        setTimeout(() => {
+                            endBattle();
+                        }, 1000);
+                    } else {
+                        // Client clicked leave - show persistent message to wait for host
+                        const notification = document.getElementById('battleNotification');
+                        if (notification) {
+                            notification.textContent = 'Waiting for host to leave...';
+                            notification.style.display = 'block';
+                            // Don't auto-hide - will hide when battle_end is received
+                        }
+                    }
+                    return;
+                }
+                
+                // Regular retreat logic (battle not won)
                 if (multiplayerState.enabled) {
                     multiplayerState.myHeroes.forEach(heroName => {
                         const hero = battleState.heroes.find(h => h.name.toLowerCase() === heroName);
@@ -3451,7 +3488,17 @@
                     
                     if (multiplayerState.role === 'host') {
                         // Save all heroes for stat persistence (before filtering)
-                        battleState.allHeroes = [...battleState.heroes];
+                        // Merge with existing allHeroes to preserve previously retreated heroes
+                        if (battleState.allHeroes.length === 0) {
+                            battleState.allHeroes = [...battleState.heroes];
+                        } else {
+                            // Add any heroes not already in allHeroes
+                            battleState.heroes.forEach(hero => {
+                                if (!battleState.allHeroes.find(h => h.name === hero.name)) {
+                                    battleState.allHeroes.push(hero);
+                                }
+                            });
+                        }
                         
                         // Remove retreated heroes from arrays
                         battleState.heroes = battleState.heroes.filter(h => !h.retreated);
@@ -3921,6 +3968,15 @@
             // Broadcast turn advancement to clients
             broadcastGameState();
             
+            // Auto-skip if current combatant has 0 HP or is retreated
+            if (nextCombatant && (nextCombatant.hp <= 0 || nextCombatant.retreated)) {
+                if (battleState.heroes.includes(nextCombatant)) {
+                    showDiceRoll(`${nextCombatant.name} is disabled - skipping turn`);
+                }
+                setTimeout(() => advanceTurn(), 500);
+                return;
+            }
+            
             // If next turn is AI, process automatically
             if (!battleState.heroes.includes(nextCombatant)) {
                 setTimeout(() => processAITurn(nextCombatant), 1000);
@@ -3960,13 +4016,7 @@
                 
                 saveSharedSave(sharedSave);
                 
-                // In multiplayer, broadcast final hero stats to clients
-                if (multiplayerState.enabled && multiplayerState.role === 'host') {
-                    sendWebSocketMessage({
-                        type: 'save_sync',
-                        saveData: sharedSave
-                    });
-                }
+                // Host saves to localStorage only - clients will update from next state_update
             }
             
             battleState.active = false;
@@ -4075,13 +4125,46 @@
         
         // Update dungeon menu hero stats from save
         function updateDungeonMenuHeroes() {
+            // Clients use cached stats from host broadcasts, host uses localStorage
+            if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                // Client: Display from cache
+                updateHeroDisplay('zooko', multiplayerState.heroStatsCache.zooko || {});
+                updateHeroDisplay('nate', multiplayerState.heroStatsCache.nate || {});
+                updateHeroDisplay('zancas', multiplayerState.heroStatsCache.zancas || {});
+                updateHeroDisplay('cyberaxe', multiplayerState.heroStatsCache.cyberaxe || {});
+            } else {
+                // Host or solo: Load from localStorage
+                const sharedSave = loadSharedSave();
+                if (!sharedSave || !sharedSave.heroes) return;
+                
+                updateHeroDisplay('zooko', sharedSave.heroes.zooko);
+                updateHeroDisplay('nate', sharedSave.heroes.nate);
+                updateHeroDisplay('zancas', sharedSave.heroes.zancas);
+                updateHeroDisplay('cyberaxe', sharedSave.heroes.cyberaxe);
+            }
+        }
+        
+        // Refresh all game data and broadcast to clients
+        function refreshGameData() {
             const sharedSave = loadSharedSave();
-            if (!sharedSave || !sharedSave.heroes) return;
             
-            updateHeroDisplay('zooko', sharedSave.heroes.zooko);
-            updateHeroDisplay('nate', sharedSave.heroes.nate);
-            updateHeroDisplay('zancas', sharedSave.heroes.zancas);
-            updateHeroDisplay('cyberaxe', sharedSave.heroes.cyberaxe);
+            if (!sharedSave) {
+                showNotification('No save data found', 'error');
+                return;
+            }
+            
+            // Update local displays
+            updateDungeonMenuHeroes();
+            
+            // If multiplayer host, broadcast current game state
+            if (multiplayerState.enabled && multiplayerState.role === 'host' && battleState.active) {
+                broadcastGameState();
+                showNotification('Data refreshed and synced to all players', 'success');
+            } else if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                showNotification('Data refreshed from cache', 'info');
+            } else {
+                showNotification('Data refreshed', 'success');
+            }
         }
         
         // Start adventure - switch from title to dungeon menu
@@ -4745,20 +4828,19 @@
                             const notification = document.getElementById('battleNotification');
                             if (notification) notification.style.display = 'none';
                             
-                            // End battle and return to dungeon menu
-                            endBattle();
+                            // Client: Switch UI and display from cached stats
+                            battleState.active = false;
+                            currentScreen = 'dungeonMenu';
+                            document.getElementById('battleScreen').style.display = 'none';
+                            document.getElementById('dungeonMenuScreen').style.display = 'block';
                             
-                            // Update dungeon menu with latest data
+                            // Move music controls and ticker back to center bottom
+                            document.getElementById('musicControls').classList.remove('battleActive');
+                            document.getElementById('musicTicker').classList.remove('battleActive');
+                            
+                            // Update dungeon menu from cached stats (already updated from state_update broadcasts)
                             updateDungeonMenuHeroes();
                         }, 2000);
-                    }
-                    break;
-                
-                case 'save_sync':
-                    // Host sends updated save data to clients
-                    if (multiplayerState.role === 'client' && data.saveData) {
-                        saveSharedSave(data.saveData);
-                        updateDungeonMenuHeroes();
                     }
                     break;
                 
@@ -5358,7 +5440,17 @@
                 });
                 
                 // Save all heroes for stat persistence (before filtering)
-                battleState.allHeroes = [...battleState.heroes];
+                // Merge with existing allHeroes to preserve previously retreated heroes
+                if (battleState.allHeroes.length === 0) {
+                    battleState.allHeroes = [...battleState.heroes];
+                } else {
+                    // Add any heroes not already in allHeroes
+                    battleState.heroes.forEach(hero => {
+                        if (!battleState.allHeroes.find(h => h.name === hero.name)) {
+                            battleState.allHeroes.push(hero);
+                        }
+                    });
+                }
                 
                 // Remove retreated heroes from arrays
                 battleState.heroes = battleState.heroes.filter(h => !h.retreated);
@@ -5583,6 +5675,37 @@
                 return battleState.heroes.find(h => h.name === combatantData.name) || 
                        battleState.enemies.find(e => e.name === combatantData.name);
             }).filter(c => c);
+            
+            // Update client hero stats cache from host state
+            if (multiplayerState.role === 'client') {
+                state.heroes.forEach(heroData => {
+                    const heroKey = heroData.name.toLowerCase();
+                    if (multiplayerState.heroStatsCache[heroKey] !== undefined) {
+                        multiplayerState.heroStatsCache[heroKey] = {
+                            hp: heroData.hp,
+                            maxHp: heroData.maxHp,
+                            xp: heroData.xp,
+                            level: heroData.level,
+                            str: heroData.stats?.str,
+                            dex: heroData.stats?.dex,
+                            con: heroData.stats?.con,
+                            int: heroData.stats?.int,
+                            wis: heroData.stats?.wis,
+                            cha: heroData.stats?.cha
+                        };
+                    }
+                });
+            }
+            
+            // Check win condition for clients - change retreat button and show notification
+            if (multiplayerState.role === 'client' && battleState.enemies.length === 0 && !battleState.won) {
+                battleState.won = true;
+                showBattleNotification('ROOM CLEARED!');
+                const retreatBtn = document.querySelector('.battleButton.retreat');
+                if (retreatBtn) {
+                    retreatBtn.textContent = '🚪 LEAVE';
+                }
+            }
             
             // Re-render
             renderBattle();
