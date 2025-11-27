@@ -2,6 +2,78 @@
 
 # Changelog
 
+## v0.2.44 - Save System Fixes & Code Organization (2025-11-26)
+- **Summary:**
+  - Fixed single-player save not persisting when quitting
+  - Fixed Continue button not working
+  - Cleaned up duplicate function definitions
+  - Fixed confirmation dialog button order
+  - Fixed battle notification text overflow
+
+- **Save System Fixes:**
+  - `quitToMenu()` now saves game state before returning to title screen
+  - Saves dungeon level, hero stats, XP, and all progress
+  - Continue button now works correctly in single-player
+  - Separated single-player and multiplayer continue logic cleanly
+
+- **Code Organization:**
+  - Split `continueGame()` into separate paths:
+    - `continueGameSinglePlayer()` - Single-player logic
+    - `continueGameMultiplayer()` - Multiplayer host logic  
+    - `continueGame()` - Router function that calls appropriate path
+  - Removed duplicate function definitions causing conflicts
+  - Clear separation between single-player and multiplayer code paths
+
+- **UI Improvements:**
+  - Confirmation dialogs now show CANCEL (left) and YES (right) - positive on right
+  - Battle notifications now have max-width (80%) to prevent pushing UI elements
+  - Text wraps properly instead of overflowing
+
+- **Verified Working:**
+  - ✅ Single-player: Start adventure → Quit → Continue works
+  - ✅ Save persists with all hero stats and XP
+  - ✅ Confirmation dialogs have correct button order
+  - ✅ Battle notifications don't push hero portraits around
+
+## v0.2.43 - Reconnection System & UI Polish (2025-11-26)
+- **Summary:**
+  - Complete reconnection system for multiplayer
+  - Player name persistence across sessions
+  - Client UI permission restrictions
+
+- **Reconnection System:**
+  - Player name input added to title screen (above CREATE ROOM/JOIN buttons)
+  - Player names stored with hero selections on server
+  - Automatic reconnection detection by matching player names
+  - Heroes automatically reassigned to reconnecting players
+  - "Reconnected to room" notification vs "Joined room" for new players
+  - Players can disconnect and rejoin seamlessly without losing progress
+
+- **Player Name Persistence:**
+  - Player name saved to localStorage settings
+  - Automatically populates input field on subsequent visits
+  - No need to re-enter name each session
+  - Completely isolated from hero names (CyberAxe player can select CyberAxe hero)
+
+- **Client UI Restrictions:**
+  - "Explore Level" button disabled for clients (host-only)
+  - Visual feedback: 50% opacity, not-allowed cursor
+  - Button text: "EXPLORE LEVEL" (line 1) + "(HOST/PARTY LEADER ONLY)" (line 2)
+  - Defense-in-depth: Button disabled + function guard + visual indicator
+
+- **Server Improvements:**
+  - Player names passed with create_room and join_room messages
+  - Reconnection logic checks existing player names before creating new player
+  - Old player_id replaced with new websocket connection
+  - Hero playerId updated to new connection seamlessly
+
+- **Verified Working:**
+  - ✅ Player disconnects and rejoins with same name → Hero reassigned
+  - ✅ Player name persists across browser sessions
+  - ✅ Clients see disabled "Explore Level" button with clear messaging
+  - ✅ Host retains full control over battle start
+  - ✅ Player names completely isolated from hero selection system
+
 ## v0.2.42 - Victory System & Critical Fixes (2025-11-26)
 - **Summary:**
   - Complete victory/leave system for multiplayer battles

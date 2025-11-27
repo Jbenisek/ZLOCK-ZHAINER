@@ -186,12 +186,13 @@ async def handle_websocket(websocket, path):
             if msg_type == 'create_room':
                 room_code = generate_room_code()
                 player_id = id(websocket)
+                player_name = data.get('player_name', 'Player 1')
                 rooms[room_code] = {
                     'host': websocket,
                     'clients': [],
                     'state': {},
                     'heroes': {},  # { hero_name: { 'playerId': id, 'playerName': str } }
-                    'players': { player_id: { 'id': player_id, 'name': 'Player 1', 'ws': websocket } }  # All players
+                    'players': { player_id: { 'id': player_id, 'name': player_name, 'ws': websocket } }  # All players
                 }
                 client_room = room_code
                 client_role = 'host'
@@ -199,13 +200,15 @@ async def handle_websocket(websocket, path):
                     'type': 'room_created',
                     'code': room_code,
                     'player_id': player_id,
-                    'players': [{ 'id': player_id, 'name': 'Player 1', 'hero': None }]
+                    'players': [{ 'id': player_id, 'name': player_name, 'hero': None }]
                 }))
-                print(f"[WS] Room {room_code} created")
+                print(f"[WS] Room {room_code} created by {player_name}")
             
             # JOIN ROOM (client)
             elif msg_type == 'join_room':
                 room_code = data.get('code', '').upper()
+                player_name = data.get('player_name', 'Player')
+                
                 if room_code not in rooms:
                     await websocket.send(json.dumps({
                         'type': 'error',
@@ -219,9 +222,37 @@ async def handle_websocket(websocket, path):
                 else:
                     rooms[room_code]['clients'].append(websocket)
                     player_id = id(websocket)
-                    player_num = len(rooms[room_code]['clients']) + 1
-                    player_name = f'Player {player_num}'
-                    rooms[room_code]['players'][player_id] = { 'id': player_id, 'name': player_name, 'ws': websocket }
+                    
+                    # Check if this is a reconnection (same name as existing player)
+                    is_reconnect = False
+                    old_player_id = None
+                    for pid, pdata in rooms[room_code]['players'].items():
+                        if pdata['name'] == player_name:
+                            is_reconnect = True
+                            old_player_id = pid
+                            break
+                    
+                    if is_reconnect:
+                        # Reconnection: reassign hero to new player_id
+                        print(f"[WS] Player '{player_name}' reconnecting to room {room_code}")
+                        
+                        # Update player record with new websocket and ID
+                        del rooms[room_code]['players'][old_player_id]
+                        rooms[room_code]['players'][player_id] = { 'id': player_id, 'name': player_name, 'ws': websocket }
+                        
+                        # Reassign hero to new player_id
+                        for hero_name, hero_data in rooms[room_code]['heroes'].items():
+                            if hero_data['playerId'] == old_player_id:
+                                hero_data['playerId'] = player_id
+                                print(f"[WS] Reassigned hero '{hero_name}' to reconnected player {player_id}")
+                                break
+                    else:
+                        # New player
+                        player_num = len(rooms[room_code]['players']) + 1
+                        if not player_name or player_name == 'Player':
+                            player_name = f'Player {player_num}'
+                        rooms[room_code]['players'][player_id] = { 'id': player_id, 'name': player_name, 'ws': websocket }
+                    
                     client_room = room_code
                     client_role = 'client'
                     
@@ -239,7 +270,8 @@ async def handle_websocket(websocket, path):
                         'type': 'joined',
                         'code': room_code,
                         'player_id': player_id,
-                        'players': players_list
+                        'players': players_list,
+                        'reconnected': is_reconnect
                     }))
                     
                     # Broadcast player list update to all
@@ -252,7 +284,10 @@ async def handle_websocket(websocket, path):
                         if client != websocket:
                             await client.send(broadcast_msg)
                     
-                    print(f"[WS] Client joined room {room_code} as {player_name}")
+                    if is_reconnect:
+                        print(f"[WS] {player_name} reconnected to room {room_code}")
+                    else:
+                        print(f"[WS] {player_name} joined room {room_code}")
             
             # SELECT HERO
             elif msg_type == 'select_hero':

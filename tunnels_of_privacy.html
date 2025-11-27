@@ -93,6 +93,10 @@
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
             z-index: 1000;
             display: none;
+            max-width: 80%;
+            text-align: center;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
             text-align: center;
             text-transform: uppercase;
             letter-spacing: 4px;
@@ -912,7 +916,7 @@
                     <div style="color: #F2C94C; font-size: 28px; font-weight: 900; text-shadow: 0 0 20px rgba(242, 201, 76, 0.5);">LEVEL <span id="dungeonMenuLevel">1</span></div>
                 </div>
                 
-                <button class="menuButton" onclick="startBattle()">EXPLORE LEVEL</button>
+                <button class="menuButton" id="exploreLevelBtn" onclick="startBattle()">EXPLORE LEVEL</button>
                 <button class="menuButton comingSoon" disabled>ENTER LEVEL STORE<br><span style="font-size: 12px; font-weight: 400;">(If Found)</span></button>
                 <button class="menuButton">INVENTORY</button>
                 <button class="menuButton">REST / SLEEP</button>
@@ -1018,10 +1022,16 @@
                 <button class="menuButton portalButton" onclick="exitPortal()">EXIT PORTAL<br><span style="font-size: 10px; font-weight: 400;">(Return to Arcade)</span><span style="display: inline-block; padding: 4px 10px; background: #8B45FF; border-radius: 5px; margin-left: 10px; font-weight: bold; color: white; font-size: 12px;">BACK</span></button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.2.38 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.2.44 • Portal System Active</div>
             
             <!-- Multiplayer Controls (Bottom Right) -->
             <div style="position: absolute; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; align-items: flex-end; pointer-events: all; z-index: 100;">
+                <!-- Player Name Input -->
+                <div style="display: flex; flex-direction: column; gap: 5px; align-items: flex-end;">
+                    <label style="color: #BFD1E0; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Player Name</label>
+                    <input type="text" id="multiplayerPlayerName" placeholder="Enter your name" maxlength="20" style="width: 260px; padding: 8px 12px; background: rgba(0,0,0,0.7); border: 2px solid #2A9D8F; border-radius: 5px; color: #E9F0F7; font-size: 14px; font-family: 'Inter', sans-serif; pointer-events: all;">
+                </div>
+                
                 <!-- Create Room Button -->
                 <button class="menuButton" onclick="createMultiplayerRoom()" style="padding: 10px 20px; font-size: 14px; margin: 0; pointer-events: all; background: linear-gradient(135deg, rgba(42, 157, 143, 0.4), rgba(42, 157, 143, 0.3)); border-color: #2A9D8F; white-space: nowrap;">🎮 CREATE ROOM</button>
                 
@@ -1195,8 +1205,8 @@
             <div id="confirmationTitle" style="color: #F2C94C; font-size: 28px; font-weight: 900; margin-bottom: 20px; text-shadow: 0 0 15px rgba(242, 201, 76, 0.5); text-transform: uppercase; letter-spacing: 2px;">CONFIRM ACTION</div>
             <div id="confirmationMessage" style="color: #89A0B4; font-size: 16px; margin-bottom: 30px; line-height: 1.5;">Are you sure?</div>
             <div style="display: flex; gap: 20px; justify-content: center;">
-                <button onclick="confirmModalAction(true)" style="padding: 12px 30px; font-size: 16px; font-weight: bold; background: linear-gradient(135deg, rgba(46, 204, 113, 0.4), rgba(39, 174, 96, 0.4)); border: 2px solid #27AE60; border-radius: 8px; color: #FFFFFF; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s;">YES</button>
                 <button onclick="confirmModalAction(false)" style="padding: 12px 30px; font-size: 16px; font-weight: bold; background: linear-gradient(135deg, rgba(231, 76, 60, 0.4), rgba(192, 57, 43, 0.4)); border: 2px solid #E74C3C; border-radius: 8px; color: #FFFFFF; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s;">CANCEL</button>
+                <button onclick="confirmModalAction(true)" style="padding: 12px 30px; font-size: 16px; font-weight: bold; background: linear-gradient(135deg, rgba(46, 204, 113, 0.4), rgba(39, 174, 96, 0.4)); border: 2px solid #27AE60; border-radius: 8px; color: #FFFFFF; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s;">YES</button>
             </div>
         </div>
     </div>
@@ -1270,7 +1280,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.2.42';
+        const GAME_VERSION = 'v0.2.44';
         
         // ===== MULTIPLAYER STATE =====
         let multiplayerState = {
@@ -1613,7 +1623,8 @@
         let settings = {
             musicEnabled: true,
             musicVolume: 75,
-            showHitboxes: false
+            showHitboxes: false,
+            playerName: ''
         };
         
         function showSettings() {
@@ -1776,6 +1787,12 @@
                     if (volumeDisplay) {
                         volumeDisplay.textContent = musicVolume;
                     }
+                    
+                    // Populate player name input field
+                    const playerNameInput = document.getElementById('multiplayerPlayerName');
+                    if (playerNameInput && settings.playerName) {
+                        playerNameInput.value = settings.playerName;
+                    }
                 }
             } catch (e) {
                 console.error('Failed to load settings:', e);
@@ -1904,13 +1921,23 @@
         }
         
         // Continue game - load from save
-        function continueGame() {
+        // Single-player: Continue game from save
+        function continueGameSinglePlayer() {
             const sharedSave = loadSharedSave();
             if (!sharedSave) {
                 alert('No save game found! Start a new adventure first.');
                 return;
             }
             startAdventure();
+        }
+        
+        // Router: Determine which continue function to call
+        function continueGame() {
+            if (multiplayerState.enabled) {
+                continueGameMultiplayer();
+            } else {
+                continueGameSinglePlayer();
+            }
         }
         
         // ===== BATTLE SYSTEM =====
@@ -3761,6 +3788,11 @@
                 if (target.defending) {
                     damageRoll = Math.floor(damageRoll / 2);
                     target.defending = false;
+                    
+                    // Award 3 XP to defender for successfully defending
+                    if (battleState.heroes.includes(target)) {
+                        target.xp = (target.xp || 0) + 3;
+                    }
                 }
                 
                 target.hp = Math.max(0, target.hp - damageRoll);
@@ -3770,6 +3802,10 @@
                 
                 showDiceRoll(`${attackName}: d20(${attackRoll}) HIT! Damage: ${damageRoll}`);
             } else {
+                // Miss - award 1 XP to defender if they're a hero
+                if (battleState.heroes.includes(target)) {
+                    target.xp = (target.xp || 0) + 1;
+                }
                 showDiceRoll(`${attackName}: d20(${attackRoll}) MISS vs AC ${targetAC}`);
             }
             
@@ -3789,6 +3825,13 @@
                 // Check win condition
                 if (battleState.enemies.length === 0) {
                     battleState.won = true;
+                    
+                    // Award 100 XP to all heroes for clearing the room
+                    battleState.heroes.forEach(hero => {
+                        hero.xp = (hero.xp || 0) + 100;
+                    });
+                    updateBattleHeroCards();
+                    
                     showBattleNotification('ROOM CLEARED!');
                     // Change retreat button to leave
                     const retreatBtn = document.querySelector('.battleButton.retreat');
@@ -4195,6 +4238,9 @@
             // Load hero stats from save to dungeon menu
             updateDungeonMenuHeroes();
             
+            // Apply client UI restrictions
+            applyClientUIRestrictions();
+            
             // If multiplayer host, notify clients to start and send save data
             if (multiplayerState.enabled && multiplayerState.role === 'host') {
                 sendWebSocketMessage({ 
@@ -4202,6 +4248,19 @@
                     screen: 'dungeonMenu',
                     saveData: sharedSave
                 });
+            }
+        }
+        
+        // Apply client UI restrictions (disable host-only buttons)
+        function applyClientUIRestrictions() {
+            if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                const exploreLevelBtn = document.getElementById('exploreLevelBtn');
+                if (exploreLevelBtn) {
+                    exploreLevelBtn.disabled = true;
+                    exploreLevelBtn.style.opacity = '0.5';
+                    exploreLevelBtn.style.cursor = 'not-allowed';
+                    exploreLevelBtn.innerHTML = 'EXPLORE LEVEL<br>(HOST/PARTY LEADER ONLY)';
+                }
             }
         }
         
@@ -4298,6 +4357,18 @@
         
         // Quit to menu
         function quitToMenu() {
+            // Save game state before quitting
+            const sharedSave = loadSharedSave();
+            if (sharedSave) {
+                // Update dungeon level if visible
+                const dungeonLevelEl = document.getElementById('dungeonMenuLevel');
+                if (dungeonLevelEl && sharedSave.dungeonState) {
+                    sharedSave.dungeonState.currentLevel = parseInt(dungeonLevelEl.textContent) || 1;
+                }
+                sharedSave.lastPlayed = Date.now();
+                saveSharedSave(sharedSave);
+            }
+            
             isPaused = false;
             currentScreen = 'title';
             
@@ -4312,18 +4383,18 @@
             if (titleScreen) titleScreen.style.display = 'block';
             
             // Reload hero stats from save
-            const sharedSave = loadSharedSave();
+            const savedData = loadSharedSave();
             const heroStatsEl = document.getElementById('heroStats');
             
-            if (sharedSave && sharedSave.heroes) {
+            if (savedData && savedData.heroes) {
                 // Show hero party
                 if (heroStatsEl) heroStatsEl.style.display = 'block';
                 
                 // Update each hero's display
-                updateHeroDisplay('zooko', sharedSave.heroes.zooko);
-                updateHeroDisplay('nate', sharedSave.heroes.nate);
-                updateHeroDisplay('zancas', sharedSave.heroes.zancas);
-                updateHeroDisplay('cyberaxe', sharedSave.heroes.cyberaxe);
+                updateHeroDisplay('zooko', savedData.heroes.zooko);
+                updateHeroDisplay('nate', savedData.heroes.nate);
+                updateHeroDisplay('zancas', savedData.heroes.zancas);
+                updateHeroDisplay('cyberaxe', savedData.heroes.cyberaxe);
             } else {
                 // Hide hero party when no save exists
                 if (heroStatsEl) heroStatsEl.style.display = 'none';
@@ -4732,8 +4803,10 @@
                     multiplayerState.roomCode = data.code;
                     multiplayerState.role = 'host';
                     multiplayerState.myPlayerId = data.player_id;
-                    // Host is always Player 1
-                    multiplayerState.playerName = 'Player 1';
+                    // Get player name from data (set by user on title screen)
+                    if (data.players && data.players[0]) {
+                        multiplayerState.playerName = data.players[0].name;
+                    }
                     // Store initial player list
                     if (data.players) {
                         multiplayerState.connectedPlayers = data.players;
@@ -4756,7 +4829,14 @@
                             multiplayerState.playerName = me.name;
                         }
                     }
-                    showNotification(`Joined room: ${data.code}`, 'success');
+                    
+                    // Check if this is a reconnection
+                    if (data.reconnected) {
+                        showNotification(`Reconnected to room: ${data.code}`, 'success');
+                    } else {
+                        showNotification(`Joined room: ${data.code}`, 'success');
+                    }
+                    
                     // Show hero selection
                     showHeroSelection();
                     break;
@@ -4899,6 +4979,9 @@
                             
                             // Load hero stats from save
                             updateDungeonMenuHeroes();
+                            
+                            // Apply client UI restrictions
+                            applyClientUIRestrictions();
                         } else if (data.screen === 'battle') {
                             // Client waits for battle_init message from host
                             // Just show the screen, don't initialize yet
@@ -4940,12 +5023,21 @@
         }
         
         function createMultiplayerRoom() {
+            // Get player name
+            const playerNameInput = document.getElementById('multiplayerPlayerName');
+            const playerName = playerNameInput.value.trim() || 'Player';
+            multiplayerState.playerName = playerName;
+            
+            // Save player name to settings
+            settings.playerName = playerName;
+            saveSettings();
+            
             // Close settings panel
             closeAllPanels();
             
             connectWebSocket();
             setTimeout(() => {
-                sendWebSocketMessage({ type: 'create_room' });
+                sendWebSocketMessage({ type: 'create_room', player_name: playerName });
             }, 100);
         }
         
@@ -4969,9 +5061,18 @@
                 return;
             }
             
+            // Get player name
+            const playerNameInput = document.getElementById('multiplayerPlayerName');
+            const playerName = playerNameInput.value.trim() || 'Player';
+            multiplayerState.playerName = playerName;
+            
+            // Save player name to settings
+            settings.playerName = playerName;
+            saveSettings();
+            
             connectWebSocket();
             setTimeout(() => {
-                sendWebSocketMessage({ type: 'join_room', code });
+                sendWebSocketMessage({ type: 'join_room', code, player_name: playerName });
             }, 100);
         }
         
@@ -5247,7 +5348,8 @@
             // See continueGame(), loadSaveGame(), startNewAdventure()
         }
         
-        function continueGame() {
+        // Multiplayer: Continue game from save (host only)
+        function continueGameMultiplayer() {
             if (multiplayerState.role !== 'host') {
                 showNotification('Only host can start the game', 'error');
                 return;
