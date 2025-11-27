@@ -2,6 +2,38 @@
 
 # Changelog
 
+## v0.2.35 - Resolution-Independent Multiplayer Positioning (2025-11-26)
+- **Summary:**
+  - Fixed multiplayer position synchronization across different screen resolutions
+  - Implemented normalized coordinate system for aspect-ratio independence
+  - Scaled all sprite rendering offsets with depth for proper perspective on all screens
+
+- **Coordinate System Overhaul:**
+  - Host normalizes positions to 0-1 range before sending (x / canvasWidth, y / canvasHeight)
+  - Client denormalizes to actual pixels using their own canvas dimensions (normalized * clientCanvasSize)
+  - Positions now work correctly across 4:3, 16:9, 21:9, ultrawide, and custom aspect ratios
+  - Added -25px client-side vertical adjustment for optimal visual alignment
+
+- **Depth-Scaled Rendering:**
+  - Hero sprite offsetY values now scale with depthScale (10px, 13px, 20px → multiplied by depthScale)
+  - Boss sprite offset scaled with depthScale (10px → 10 * depthScale)
+  - Mob name/health bar offsets scaled with depthScale (10px, 30px → multiplied by depthScale)
+  - All fixed pixel offsets converted to proportional scaling for resolution independence
+
+- **Multiplayer Synchronization:**
+  - `sendBattleInitToClients()` - normalizes hero/enemy x/y coordinates before transmission
+  - `initializeBattleFromHost()` - denormalizes coordinates using client canvas dimensions
+  - `broadcastGameState()` - normalizes ongoing position updates in state_update messages
+  - `updateGameStateFromHost()` - denormalizes state updates on client side
+  - Canvas width/height included in battleData for reference
+
+- **Technical Updates:**
+  - Battle initialization message includes canvasWidth and canvasHeight fields
+  - State updates use normalized coordinates in both battle_init and state_update messages
+  - DepthScale calculation (0.6 + (y/height)*0.4) maintains consistent perspective ratios
+  - Sprite rendering offsets now proportional to character depth and screen size
+  - Client-side denormalization applies -25px vertical offset for alignment correction
+
 ## v0.2.34 - Multiplayer Battle Synchronization (2025-11-26)
 - **Summary:**
   - Fixed multiplayer battle initialization - clients now receive and render battles from host

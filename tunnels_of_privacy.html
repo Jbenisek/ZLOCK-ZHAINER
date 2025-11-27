@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.2.34</title>
+    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.2.35</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -1017,7 +1017,7 @@
                 <button class="menuButton portalButton" onclick="exitPortal()">EXIT PORTAL<br><span style="font-size: 10px; font-weight: 400;">(Return to Arcade)</span><span style="display: inline-block; padding: 4px 10px; background: #8B45FF; border-radius: 5px; margin-left: 10px; font-weight: bold; color: white; font-size: 12px;">BACK</span></button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.2.34 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.2.35 • Portal System Active</div>
             
             <!-- Multiplayer Controls (Bottom Right) -->
             <div style="position: absolute; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; align-items: flex-end; pointer-events: all; z-index: 100;">
@@ -1227,7 +1227,7 @@
         <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         
         <div style="display: block; width: 100%; margin-top: 15px; padding: 10px 0; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A7A8F; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-            Tunnels of Privacy v0.2.34
+            Tunnels of Privacy v0.2.35
         </div>
     </div>
     
@@ -1257,7 +1257,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.2.34';
+        const GAME_VERSION = 'v0.2.35';
         
         // ===== MULTIPLAYER STATE =====
         let multiplayerState = {
@@ -1917,6 +1917,12 @@
         
         // Start a battle encounter
         async function startBattle() {
+            // Multiplayer clients cannot start battles - only host
+            if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                showNotification('Only host can start battles', 'error');
+                return;
+            }
+            
             // Switch to battle screen
             currentScreen = 'battle';
             document.getElementById('dungeonMenuScreen').style.display = 'none';
@@ -2087,12 +2093,20 @@
             battleState.backgroundPath = `tunnelsofprivacy/backgrounds/lvl1-10/${randomBg}`;
             battleState.backgroundImage = new Image();
             battleState.backgroundImage.onload = () => {
+                // Only host runs floor scanning
+                if (!multiplayerState.enabled || multiplayerState.role === 'host') {
+                    // Run floor scanning to detect platforms
+                    generateBattleLayout();
+                    
+                    // After layout is generated, send to clients
+                    if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                        sendBattleInitToClients();
+                    }
+                }
+                
                 renderBattle();
             };
             battleState.backgroundImage.src = battleState.backgroundPath;
-            
-            // Generate battle layout immediately (don't wait for background)
-            generateFallbackLayout();
             
             // Calculate initiative for all combatants
             const allCombatants = [...battleState.heroes, ...battleState.enemies];
@@ -2125,45 +2139,6 @@
             }
             battleAnimationLoop();
             
-            // Send battle state to clients immediately after setup
-            if (multiplayerState.enabled && multiplayerState.role === 'host') {
-                const battleData = {
-                    backgroundPath: battleState.backgroundPath,
-                    heroes: battleState.heroes.map(h => ({
-                        name: h.name,
-                        hp: h.hp,
-                        maxHp: h.maxHp,
-                        xp: h.xp,
-                        healsRemaining: h.healsRemaining,
-                        stats: h.stats,
-                        x: h.x,
-                        y: h.y,
-                        platform: h.platform,
-                        initiative: h.initiative,
-                        spritePath: h.spritePath
-                    })),
-                    enemies: battleState.enemies.map(e => ({
-                        name: e.name,
-                        hp: e.hp,
-                        maxHp: e.maxHp,
-                        ac: e.ac,
-                        attackDamage: e.attackDamage,
-                        speed: e.speed,
-                        dex: e.dex,
-                        hostile: e.hostile,
-                        x: e.x,
-                        y: e.y,
-                        platform: e.platform,
-                        initiative: e.initiative,
-                        spritePath: e.spritePath,
-                        isMob: e.isMob
-                    })),
-                    turnOrder: battleState.turnOrder.map(c => c.name),
-                    currentTurn: battleState.currentTurn
-                };
-                sendWebSocketMessage({ type: 'battle_init', battleData: battleData });
-            }
-            
             // If first turn is AI, process it automatically
             const firstCombatant = battleState.turnOrder[0];
             if (!battleState.heroes.includes(firstCombatant)) {
@@ -2171,6 +2146,47 @@
             }
         }
         
+        // Send battle initialization data to clients (called after floor scanning completes)
+        function sendBattleInitToClients() {
+            const canvas = battleState.canvas;
+            const battleData = {
+                backgroundPath: battleState.backgroundPath,
+                canvasWidth: canvas.width,
+                canvasHeight: canvas.height,
+                heroes: battleState.heroes.map(h => ({
+                    name: h.name,
+                    hp: h.hp,
+                    maxHp: h.maxHp,
+                    xp: h.xp,
+                    healsRemaining: h.healsRemaining,
+                    stats: h.stats,
+                    x: h.x / canvas.width,
+                    y: h.y / canvas.height,
+                    platform: h.platform,
+                    initiative: h.initiative,
+                    spritePath: h.spritePath
+                })),
+                enemies: battleState.enemies.map(e => ({
+                    name: e.name,
+                    hp: e.hp,
+                    maxHp: e.maxHp,
+                    ac: e.ac,
+                    attackDamage: e.attackDamage,
+                    speed: e.speed,
+                    dex: e.dex,
+                    hostile: e.hostile,
+                    x: e.x / canvas.width,
+                    y: e.y / canvas.height,
+                    platform: e.platform,
+                    initiative: e.initiative,
+                    spritePath: e.spritePath,
+                    isMob: e.isMob
+                })),
+                turnOrder: battleState.turnOrder.map(c => c.name),
+                currentTurn: battleState.currentTurn
+            };
+            sendWebSocketMessage({ type: 'battle_init', battleData: battleData });
+        }
 
         
         // Detect platforms using multi-method approach
@@ -2880,12 +2896,12 @@
                     const spriteWidth = 300 * depthScale;
                     const spriteHeight = 300 * depthScale;
                     const spriteX = hero.x - spriteWidth / 2;
-                    // Per-hero offset adjustments
-                    let offsetY = 10; // Default (Zooko, Nate)
+                    // Per-hero offset adjustments (scaled with depth)
+                    let offsetY = 10 * depthScale; // Default (Zooko, Nate)
                     if (hero.name === 'Zancas') {
-                        offsetY = 20; // Zancas down 10px more
+                        offsetY = 20 * depthScale; // Zancas down 10px more
                     } else if (hero.name === 'CyberAxe') {
-                        offsetY = 13; // CyberAxe down 3px more
+                        offsetY = 13 * depthScale; // CyberAxe down 3px more
                     }
                     const spriteY = hero.y - spriteHeight / 2 + offsetY;
                     
@@ -2959,7 +2975,7 @@
                         spriteWidth = 300 * depthScale;
                         spriteHeight = 300 * depthScale;
                         spriteX = enemy.x - spriteWidth / 2;
-                        spriteY = enemy.y - spriteHeight / 2 + 10; // Offset down by 10px
+                        spriteY = enemy.y - spriteHeight / 2 + (10 * depthScale); // Offset down, scaled
                     }
                     
                     ctx.save();
@@ -2992,8 +3008,8 @@
                     const mobAspectRatio = 1344 / 768;
                     const baseHeight = 75;
                     const spriteHeight = baseHeight * depthScale;
-                    nameOffsetY = enemy.y - spriteHeight - 10;
-                    barOffsetY = enemy.y - spriteHeight - 30;
+                    nameOffsetY = enemy.y - spriteHeight - (10 * depthScale);
+                    barOffsetY = enemy.y - spriteHeight - (30 * depthScale);
                 } else {
                     // For bosses, position above centered sprite
                     nameOffsetY = enemy.y - 195 * depthScale;
@@ -3083,13 +3099,20 @@
                     ctx.strokeStyle = '#FFFFFF';
                     ctx.lineWidth = 2;
                     ctx.stroke();
+                    
+                    // Draw x/y coordinates at top of hitbox
+                    const topY = hero.y - boxSize / 2 - 5;
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.font = 'bold 12px monospace';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(`x:${Math.round(hero.x)} y:${Math.round(hero.y)}`, hero.x, topY);
                 });
                 
                 // Draw enemy spawn area boxes (scaled with depth)
                 battleState.enemies.forEach(enemy => {
                     const depthScale = 0.6 + (enemy.y / canvas.height) * 0.4;
                     
-                    let boxSize, boxY;
+                    let boxSize, boxY, topY;
                     if (enemy.isMob) {
                         // Mobs: hitbox matches sprite size (aspect ratio 1.75:1)
                         const mobAspectRatio = 1344 / 768;
@@ -3109,6 +3132,9 @@
                         ctx.strokeStyle = '#FFFFFF';
                         ctx.lineWidth = 2;
                         ctx.stroke();
+                        
+                        // Top of hitbox for coordinates
+                        topY = enemy.y - spriteHeight - 5;
                     } else {
                         // Bosses: 300x300 scaled box centered
                         const boxSize = 300 * depthScale;
@@ -3131,7 +3157,16 @@
                         ctx.strokeStyle = '#FFFFFF';
                         ctx.lineWidth = 2;
                         ctx.stroke();
+                        
+                        // Top of hitbox for coordinates
+                        topY = enemy.y - boxSize / 2 - 5;
                     }
+                    
+                    // Draw x/y coordinates at top of hitbox
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.font = 'bold 12px monospace';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(`x:${Math.round(enemy.x)} y:${Math.round(enemy.y)}`, enemy.x, topY);
                 });
                 
                 // Draw platform hitboxes
@@ -5182,14 +5217,16 @@
         function broadcastGameState() {
             if (multiplayerState.role !== 'host') return;
             
+            const canvas = battleState.canvas;
+            
             const state = {
                 turnOrder: battleState.turnOrder.map(c => ({ name: c.name, hp: c.hp })),
                 heroes: battleState.heroes.map(h => ({
                     name: h.name,
                     hp: h.hp,
                     maxHp: h.maxHp,
-                    x: h.x,
-                    y: h.y,
+                    x: h.x / canvas.width,
+                    y: h.y / canvas.height,
                     defending: h.defending,
                     taunting: h.taunting
                 })),
@@ -5197,8 +5234,8 @@
                     name: e.name,
                     hp: e.hp,
                     maxHp: e.maxHp,
-                    x: e.x,
-                    y: e.y
+                    x: e.x / canvas.width,
+                    y: e.y / canvas.height
                 })),
                 currentTurn: battleState.currentTurn
             };
@@ -5210,13 +5247,15 @@
             // Client updates local state from host
             battleState.currentTurn = state.currentTurn;
             
+            const canvas = battleState.canvas;
+            
             // Update heroes
             state.heroes.forEach(heroData => {
                 const hero = battleState.heroes.find(h => h.name === heroData.name);
                 if (hero) {
                     hero.hp = heroData.hp;
-                    hero.x = heroData.x;
-                    hero.y = heroData.y;
+                    hero.x = heroData.x * canvas.width;
+                    hero.y = (heroData.y * canvas.height) - 25;
                     hero.defending = heroData.defending;
                     hero.taunting = heroData.taunting;
                 }
@@ -5227,8 +5266,8 @@
                 const enemy = battleState.enemies.find(e => e.name === enemyData.name);
                 if (enemy) {
                     enemy.hp = enemyData.hp;
-                    enemy.x = enemyData.x;
-                    enemy.y = enemyData.y;
+                    enemy.x = enemyData.x * canvas.width;
+                    enemy.y = (enemyData.y * canvas.height) - 25;
                 }
             });
             
@@ -5241,7 +5280,6 @@
         
         function initializeBattleFromHost(battleData) {
             // Client receives full battle initialization from host
-            
             // Ensure canvas is initialized
             if (!battleState.canvas) {
                 battleState.canvas = document.getElementById('battleCanvas');
@@ -5249,6 +5287,8 @@
                 battleState.canvas.width = window.innerWidth;
                 battleState.canvas.height = window.innerHeight - 180;
             }
+            
+            const canvas = battleState.canvas;
             
             // Set background
             battleState.backgroundPath = battleData.backgroundPath;
@@ -5271,8 +5311,8 @@
                     healsRemaining: hData.healsRemaining,
                     stats: hData.stats,
                     color: hData.name === 'Zooko' ? '#F2C94C' : hData.name === 'Nate' ? '#E74C3C' : hData.name === 'Zancas' ? '#27AE60' : '#2E86DE',
-                    x: hData.x,
-                    y: hData.y,
+                    x: hData.x * canvas.width,
+                    y: (hData.y * canvas.height) - 25,
                     platform: hData.platform,
                     initiative: hData.initiative,
                     facing: 'center',
@@ -5301,8 +5341,8 @@
                     dex: eData.dex,
                     hostile: eData.hostile,
                     color: eData.isMob ? '#5C3317' : '#8B45FF',
-                    x: eData.x,
-                    y: eData.y,
+                    x: eData.x * canvas.width,
+                    y: (eData.y * canvas.height) - 25,
                     platform: eData.platform,
                     initiative: eData.initiative,
                     facing: 'center',
