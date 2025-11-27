@@ -1060,7 +1060,7 @@
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.2.48 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.2.49 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div style="
@@ -1231,6 +1231,13 @@
                 </div>
             </div>
             <div id="heroWaitingMessage" style="color: #89A0B4; font-size: 14px; margin-bottom: 15px;">Click heroes to select. Players can select multiple heroes.</div>
+            <div id="reconnectOptions" style="display: none; margin-bottom: 15px;">
+                <div style="color: #2A9D8F; font-size: 16px; margin-bottom: 15px; font-weight: bold;">🔄 Reconnecting to Game in Progress</div>
+                <div style="display: flex; flex-direction: column; gap: 10px; max-width: 400px; margin: 0 auto;">
+                    <button class="menuButton" onclick="rejoinGame()" style="padding: 15px; font-size: 14px; background: linear-gradient(135deg, rgba(42, 157, 143, 0.4), rgba(42, 157, 143, 0.3)); border-color: #2A9D8F;">REJOIN GAME</button>
+                    <div style="color: #89A0B4; font-size: 12px; font-style: italic; margin-top: 5px;">Select your heroes above, then click to rejoin</div>
+                </div>
+            </div>
             <div id="gameStartOptions" style="display: none; margin-bottom: 15px;">
                 <div style="color: #F2C94C; font-size: 16px; margin-bottom: 15px; font-weight: bold;">All heroes selected! Choose how to start:</div>
                 <div style="display: flex; flex-direction: column; gap: 10px; max-width: 400px; margin: 0 auto;">
@@ -1370,7 +1377,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.2.48';
+        const GAME_VERSION = 'v0.2.49';
         
         // ===== MULTIPLAYER STATE =====
         let multiplayerState = {
@@ -5067,8 +5074,10 @@
                     
                     // Check if this is a reconnection
                     if (data.reconnected) {
+                        multiplayerState.isReconnecting = true;
                         showNotification(`Reconnected to room: ${data.code}`, 'success');
                     } else {
+                        multiplayerState.isReconnecting = false;
                         showNotification(`Joined room: ${data.code}`, 'success');
                     }
                     
@@ -5181,6 +5190,97 @@
                     }
                     break;
                 
+                case 'request_sync':
+                    // Client requesting full sync after reconnection
+                    console.log('[HOST] Received request_sync from client');
+                    console.log('[HOST] multiplayerState.role:', multiplayerState.role);
+                    console.log('[HOST] currentScreen:', currentScreen);
+                    
+                    if (multiplayerState.role === 'host') {
+                        const sharedSave = loadSharedSave();
+                        console.log('[HOST] sharedSave exists:', !!sharedSave);
+                        
+                        if (sharedSave) {
+                            console.log('[HOST] Sending sync_state to client');
+                            // Send current save state to rejoining client
+                            sendWebSocketMessage({ 
+                                type: 'sync_state', 
+                                screen: currentScreen,
+                                saveData: sharedSave
+                            });
+                            
+                            // If in battle, also send battle_init
+                            if (currentScreen === 'battle' && battleState.active) {
+                                setTimeout(() => {
+                                    sendBattleInitToClients();
+                                }, 100);
+                            }
+                        }
+                    }
+                    break;
+                
+                case 'sync_state':
+                    console.log('[CLIENT] Received sync_state');
+                    console.log('[CLIENT] data.screen:', data.screen);
+                    console.log('[CLIENT] multiplayerState.role:', multiplayerState.role);
+                    
+                    // Client receiving sync after reconnection
+                    if (multiplayerState.role === 'client') {
+                        // Save host's save data
+                        if (data.saveData) {
+                            saveSharedSave(data.saveData);
+                            
+                            // Populate heroStatsCache
+                            if (data.saveData.heroes) {
+                                ['zooko', 'nate', 'zancas', 'cyberaxe'].forEach(heroKey => {
+                                    const heroData = data.saveData.heroes[heroKey];
+                                    if (heroData) {
+                                        multiplayerState.heroStatsCache[heroKey] = {
+                                            hp: heroData.hp,
+                                            maxHp: heroData.maxHp,
+                                            xp: heroData.xp,
+                                            level: heroData.level,
+                                            str: heroData.str,
+                                            dex: heroData.dex,
+                                            con: heroData.con,
+                                            int: heroData.int,
+                                            wis: heroData.wis,
+                                            cha: heroData.cha
+                                        };
+                                    }
+                                });
+                            }
+                        }
+                        
+                        // Hide modals and title screen
+                        document.getElementById('titleScreen').style.display = 'none';
+                        document.getElementById('heroSelectionModal').style.display = 'none';
+                        document.getElementById('musicControls').classList.remove('heroSelectionActive');
+                        
+                        // Go to the screen where host is
+                        if (data.screen === 'dungeonMenu') {
+                            document.getElementById('battleScreen').style.display = 'none';
+                            document.getElementById('musicTicker').classList.remove('battleActive');
+                            document.getElementById('musicControls').classList.add('dungeonMenuActive');
+                            document.getElementById('musicTicker').classList.add('dungeonMenuActive');
+                            document.getElementById('dungeonMenuScreen').style.display = 'block';
+                            currentScreen = 'dungeonMenu';
+                            updateDungeonMenuHeroes();
+                            applyClientUIRestrictions();
+                            showNotification('Rejoined game!', 'success');
+                        } else if (data.screen === 'battle') {
+                            document.getElementById('dungeonMenuScreen').style.display = 'none';
+                            document.getElementById('musicTicker').classList.remove('dungeonMenuActive');
+                            document.getElementById('musicControls').classList.remove('dungeonMenuActive');
+                            document.getElementById('battleScreen').style.display = 'block';
+                            document.getElementById('musicTicker').classList.add('battleActive');
+                            document.getElementById('musicControls').classList.add('battleActive');
+                            currentScreen = 'battle';
+                            showNotification('Rejoined battle - waiting for sync...', 'info');
+                        }
+                    }
+                    break;
+                
                 case 'code_changed':
                     multiplayerState.roomCode = data.code;
                     showNotification(`Room code changed to: ${data.code}`, 'info');
@@ -5231,6 +5331,7 @@
                         document.getElementById('musicControls').classList.remove('heroSelectionActive');
                         
                         if (data.screen === 'dungeonMenu') {
+                            document.getElementById('battleScreen').style.display = 'none';
                             document.getElementById('musicTicker').classList.remove('battleActive');
                             document.getElementById('musicControls').classList.add('dungeonMenuActive');
                             document.getElementById('musicTicker').classList.add('dungeonMenuActive');
@@ -5245,8 +5346,10 @@
                         } else if (data.screen === 'battle') {
                             // Client waits for battle_init message from host
                             // Just show the screen, don't initialize yet
+                            document.getElementById('dungeonMenuScreen').style.display = 'none';
                             document.getElementById('battleScreen').style.display = 'block';
                             document.getElementById('musicTicker').classList.add('battleActive');
+                            document.getElementById('musicControls').classList.add('battleActive');
                             currentScreen = 'battle';
                             
                             // Initialize canvas
@@ -5261,9 +5364,23 @@
                             
                             showNotification('Waiting for host to initialize battle...', 'info');
                             return; // Wait for battle_init
+                        } else {
+                            // Fallback to dungeon menu for any other screen value
+                            document.getElementById('battleScreen').style.display = 'none';
+                            document.getElementById('musicTicker').classList.remove('battleActive');
+                            document.getElementById('musicControls').classList.add('dungeonMenuActive');
+                            document.getElementById('musicTicker').classList.add('dungeonMenuActive');
+                            document.getElementById('dungeonMenuScreen').style.display = 'block';
+                            currentScreen = 'dungeonMenu';
+                            updateDungeonMenuHeroes();
+                            applyClientUIRestrictions();
                         }
                         showNotification('Host started the game!', 'success');
                     }
+                    break;
+                
+                default:
+                    console.warn('[MP] Unhandled message type:', data.type, data);
                     break;
             }
             
@@ -5273,12 +5390,14 @@
         }
         
         function sendWebSocketMessage(data) {
+            console.log('[WS] Attempting to send:', data.type);
             if (multiplayerState.ws && multiplayerState.ws.readyState === WebSocket.OPEN) {
                 multiplayerState.ws.send(JSON.stringify(data));
+                console.log('[WS] Sent successfully:', data.type);
                 logDebugMessage(data.type, data, 'out');
                 updateDebugStatus();
             } else {
-                console.error('[MP] WebSocket not connected');
+                console.error('[MP] WebSocket not connected. State:', multiplayerState.ws ? multiplayerState.ws.readyState : 'null');
             }
         }
         
@@ -5426,6 +5545,16 @@
             const nameInput = document.getElementById('playerNameInput');
             if (nameInput) {
                 nameInput.value = multiplayerState.playerName;
+            }
+            
+            // Show reconnect options if this is a reconnection
+            const reconnectOptions = document.getElementById('reconnectOptions');
+            const gameStartOptions = document.getElementById('gameStartOptions');
+            if (multiplayerState.isReconnecting) {
+                if (reconnectOptions) reconnectOptions.style.display = 'block';
+                if (gameStartOptions) gameStartOptions.style.display = 'none';
+            } else {
+                if (reconnectOptions) reconnectOptions.style.display = 'none';
             }
         }
         
@@ -5734,6 +5863,35 @@
                     showNotification('Starting new adventure...', 'success');
                 }
             );
+        }
+        
+        function rejoinGame() {
+            console.log('[REJOIN] rejoinGame() called');
+            console.log('[REJOIN] multiplayerState.role:', multiplayerState.role);
+            console.log('[REJOIN] multiplayerState.myHeroes:', multiplayerState.myHeroes);
+            
+            if (multiplayerState.role !== 'client') {
+                showNotification('Only clients can rejoin', 'error');
+                return;
+            }
+            
+            if (multiplayerState.myHeroes.length === 0) {
+                showNotification('Please select at least one hero', 'warning');
+                return;
+            }
+            
+            console.log('[REJOIN] Sending request_sync');
+            
+            // Request current game state from host
+            sendWebSocketMessage({ 
+                type: 'request_sync',
+                heroes: multiplayerState.myHeroes
+            });
+            
+            showNotification('Rejoining game...', 'info');
+            multiplayerState.isReconnecting = false;
+            
+            // Don't hide anything here - let game_start handler manage all screen transitions
         }
         
         function showHostControls() {

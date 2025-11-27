@@ -486,6 +486,21 @@ async def handle_websocket(websocket, path):
                         await client.send(message)
                     print(f"[WS] Host synced save data to room {client_room}")
             
+            # REQUEST SYNC (client requesting state after reconnect)
+            elif msg_type == 'request_sync':
+                if client_room and client_room in rooms:
+                    # Forward to host only
+                    await rooms[client_room]['host'].send(message)
+                    print(f"[WS] Client requested sync in room {client_room}")
+            
+            # SYNC STATE (host responding to reconnection request)
+            elif msg_type == 'sync_state':
+                if client_room and client_room in rooms and client_role == 'host':
+                    # Broadcast to all clients
+                    for client in rooms[client_room]['clients']:
+                        await client.send(message)
+                    print(f"[WS] Host sent sync_state to room {client_room}")
+            
             # CHANGE CODE (host only)
             elif msg_type == 'change_code':
                 if client_room and client_room in rooms and client_role == 'host':

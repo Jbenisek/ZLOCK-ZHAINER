@@ -2,6 +2,42 @@
 
 # Changelog
 
+## v0.2.49 - Reconnection System (2025-11-27)
+- **Summary:**
+  - Fixed client reconnection after disconnect
+  - Added REJOIN GAME button for reconnecting clients
+  - Server now relays reconnection messages
+  - Clients can rejoin active battles or dungeon menu
+
+- **Reconnection Flow:**
+  - Client disconnects and reconnects to same room code
+  - Server detects reconnection and sends `reconnected: true`
+  - Client sees "REJOIN GAME" button instead of normal start options
+  - Client selects their heroes and clicks REJOIN GAME
+  - Host receives `request_sync` and sends current game state
+  - Client receives `sync_state` with save data and current screen
+  - If battle is active, host also sends `battle_init` to fully sync client
+
+- **Technical Implementation:**
+  - Added `multiplayerState.isReconnecting` flag
+  - New message types: `request_sync` and `sync_state`
+  - Server handlers in `zlock_server.py` for new message types
+  - `rejoinGame()` function sends sync request to host
+  - Host checks `currentScreen` and sends appropriate data
+  - Battle reconnection includes both state sync and battle initialization
+  - Client properly hides hero selection modal after rejoin
+
+- **Server Changes:**
+  - Added `request_sync` handler: forwards client request to host
+  - Added `sync_state` handler: broadcasts host response to clients
+  - Both handlers with console logging for debugging
+
+- **Bug Fixes:**
+  - Fixed music controls not centering after game_start for clients
+  - Added fallback screen handling in sync_state receiver
+  - Removed premature screen hiding in rejoinGame() function
+  - Added default case in message handler to catch unhandled types
+
 ## v0.2.48 - Multiplayer & UI Fixes (2025-11-27)
 - **Summary:**
   - Fixed critical multiplayer bug where client hero stats showed as 0 in dungeon menu
