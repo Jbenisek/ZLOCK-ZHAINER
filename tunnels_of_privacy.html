@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.2.35</title>
+    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.2.50</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -1060,7 +1060,7 @@
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.2.49 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.2.50 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div style="
@@ -1377,7 +1377,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.2.49';
+        const GAME_VERSION = 'v0.2.50';
         
         // ===== MULTIPLAYER STATE =====
         let multiplayerState = {
@@ -5197,6 +5197,19 @@
                     console.log('[HOST] currentScreen:', currentScreen);
                     
                     if (multiplayerState.role === 'host') {
+                        // Transfer heroes back from host to reconnecting player
+                        if (data.heroes && Array.isArray(data.heroes)) {
+                            data.heroes.forEach(heroName => {
+                                const heroKey = heroName.toLowerCase();
+                                // Remove from host's control
+                                const hostIndex = multiplayerState.myHeroes.indexOf(heroKey);
+                                if (hostIndex > -1) {
+                                    multiplayerState.myHeroes.splice(hostIndex, 1);
+                                    showNotification(`${heroName} returned to player control`, 'info');
+                                }
+                            });
+                        }
+                        
                         const sharedSave = loadSharedSave();
                         console.log('[HOST] sharedSave exists:', !!sharedSave);
                         
@@ -5938,19 +5951,35 @@
         }
         
         function handlePlayerDisconnect(playerId) {
-            // Find hero controlled by this player
-            for (let heroName in multiplayerState.playerHeroes) {
-                if (multiplayerState.playerHeroes[heroName] === playerId) {
-                    showNotification(`${heroName} disconnected - AI taking over`, 'warning');
-                    // Mark hero as AI-controlled
-                    const hero = battleState.heroes.find(h => h.name.toLowerCase() === heroName.toLowerCase());
+            // Find disconnected player info
+            const disconnectedPlayer = multiplayerState.connectedPlayers.find(p => p.id === playerId);
+            
+            // Find heroes controlled by this player
+            const disconnectedHeroes = [];
+            if (disconnectedPlayer && disconnectedPlayer.heroes) {
+                disconnectedPlayer.heroes.forEach(heroName => {
+                    disconnectedHeroes.push(heroName);
+                    // Transfer control to host
+                    const hero = battleState.heroes?.find(h => h.name.toLowerCase() === heroName.toLowerCase());
                     if (hero) {
-                        hero.aiControlled = true;
+                        hero.aiControlled = false; // Host controls it, not AI
                     }
-                    delete multiplayerState.playerHeroes[heroName];
-                    break;
+                    // Add to host's heroes (stored lowercase)
+                    const heroLower = heroName.toLowerCase();
+                    if (!multiplayerState.myHeroes.includes(heroLower)) {
+                        multiplayerState.myHeroes.push(heroLower);
+                    }
+                });
+            }
+            
+            if (disconnectedHeroes.length > 0) {
+                showNotification(`Player disconnected - you now control: ${disconnectedHeroes.join(', ')}`, 'warning');
+                // Update UI to enable buttons for these heroes
+                if (battleState.active && battleState.currentHeroIndex !== undefined) {
+                    updateHeroTurn();
                 }
             }
+            
             // Remove from connected players
             multiplayerState.connectedPlayers = multiplayerState.connectedPlayers.filter(p => p.id !== playerId);
         }

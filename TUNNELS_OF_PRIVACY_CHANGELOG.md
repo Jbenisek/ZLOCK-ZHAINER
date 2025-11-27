@@ -2,6 +2,18 @@
 
 # Changelog
 
+## v0.2.50 - Host Hero Control Transfer (2025-11-27)
+- **Summary:**
+  - Modified hero control transfer when client disconnects
+  - Host now receives control of disconnected player's heroes
+  - UI buttons refresh after hero transfer
+
+- **Changes:**
+  - `handlePlayerDisconnect()` now uses `connectedPlayers[].heroes` array
+  - Heroes added to host's `myHeroes` array on client disconnect
+  - Added `updateHeroTurn()` call to refresh button states
+  - Removed unused `multiplayerState.playerHeroes` object reference
+
 ## v0.2.49 - Reconnection System (2025-11-27)
 - **Summary:**
   - Fixed client reconnection after disconnect
