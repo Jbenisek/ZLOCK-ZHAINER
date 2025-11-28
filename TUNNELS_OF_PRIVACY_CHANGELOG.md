@@ -2,6 +2,43 @@
 
 # Changelog
 
+## v0.2.63 - Captive NPC Visuals & Chat Model Improvements (2025-11-28)
+- **Summary:**
+  - Captive NPCs now render as proper battlefield entities with fallback circles
+  - Captives positioned on far left of battlefield, below heroes
+  - Default chat model changed to free model 2 (Groq Llama 3.1 8B)
+  - Rate-limited models now show red ✕ overlay and auto-switch to available models
+  - Fixed model selector button highlighting bug
+  - Full multiplayer sync for captive NPCs
+
+- **Captive NPC Visual System:**
+  - Captives render like mobs with depth scaling
+  - Gold fallback circle with chain icon (⛓️) when no sprite
+  - Name displayed above with "⛓️ CAPTIVE" label
+  - Positioned at (10%, 80%) - far left, lower area
+  - Can be chatted with (priority over enemies)
+  - Full sprite support ready (tunnelsofprivacy/mobs/captive.png)
+
+- **Chat Model Selector Fixes:**
+  - Default model changed from 1 (paid) to 2 (free)
+  - Fixed button highlighting bug - was using index instead of model ID
+  - Added `exhaustedModels` tracking array
+  - CSS for exhausted buttons: 50% opacity + red ✕ overlay
+  - Can't select exhausted models
+  - Auto-switches to next free model when current exhausted
+
+- **Rate Limit Detection:**
+  - Detects: rate, limit, quota, 429, exceeded in error messages
+  - `markModelExhausted()` function marks and visually updates buttons
+  - System chat message notifies player of rate limit
+  - Tooltip updated to show "(RATE LIMITED)" suffix
+
+- **Multiplayer Sync:**
+  - `sendBattleInitToClients()` includes full captive data
+  - `initializeBattleFromHost()` recreates captive with all properties
+  - Captive position normalized/denormalized for different screen sizes
+  - Properties synced: name, backstory, rescueReward, dialogueOnRescue, position, sprite
+
 ## v0.2.62 - API Key Management & Graceful LLM Degradation (2025-11-28)
 - **Summary:**
   - Removed hardcoded API keys from server for security

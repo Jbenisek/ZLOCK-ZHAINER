@@ -319,12 +319,20 @@
             cursor: pointer;
         }
         
-#chatModelSelector {
+        #chatModelSelector {
             display: flex;
             gap: 3px;
             padding: 5px 10px;
             border-bottom: 1px solid #333;
             flex-wrap: wrap;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+        }
+        
+        #chatModelSelector span {
+            pointer-events: none;
+            user-select: none;
         }
         
         .modelBtn {
@@ -337,6 +345,8 @@
             font-size: 11px;
             cursor: pointer;
             padding: 0;
+            position: relative;
+            z-index: 11;
         }
         
         .modelBtn:hover {
@@ -348,6 +358,24 @@
             background: #5865F2;
             color: white;
             border-color: #5865F2;
+        }
+        
+        .modelBtn.exhausted {
+            opacity: 0.5;
+            cursor: not-allowed;
+            position: relative;
+        }
+        
+        .modelBtn.exhausted::after {
+            content: '✕';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #E74C3C;
+            font-size: 18px;
+            font-weight: bold;
+            text-shadow: 0 0 2px black;
         }
         
         #chatSendBtn:hover {
@@ -1203,11 +1231,11 @@
                 </div>
                 <div id="chatModelSelector">
                     <span style="font-size: 10px; color: #888; margin-right: 4px;">Free:</span>
-                    <button class="modelBtn" onclick="selectChatModel(2)" title="Groq Llama 3.1 8B (FREE)">2</button>
+                    <button class="modelBtn active" onclick="selectChatModel(2)" title="Groq Llama 3.1 8B (FREE)">2</button>
                     <button class="modelBtn" onclick="selectChatModel(4)" title="Groq Gemma 2 9B (FREE)">4</button>
                     <button class="modelBtn" onclick="selectChatModel(5)" title="Groq Mixtral 8x7B (FREE)">5</button>
                     <span style="font-size: 10px; color: #F39C12; margin-left: 6px; margin-right: 4px;">Paid:</span>
-                    <button class="modelBtn active" onclick="selectChatModel(1)" title="OpenRouter Mistral Nemo ($)" style="border-color: #F39C12;">1</button>
+                    <button class="modelBtn" onclick="selectChatModel(1)" title="OpenRouter Mistral Nemo ($)" style="border-color: #F39C12;">1</button>
                     <button class="modelBtn" onclick="selectChatModel(3)" title="Groq Llama 3.3 70B ($)" style="border-color: #F39C12;">3</button>
                     <button class="modelBtn" onclick="selectChatModel(6)" title="OpenRouter Llama 3.1 8B ($)" style="border-color: #F39C12;">6</button>
                     <button class="modelBtn" onclick="selectChatModel(7)" title="OpenRouter Gemma 2 9B ($)" style="border-color: #F39C12;">7</button>
@@ -1253,7 +1281,7 @@
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.2.62 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.2.63 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div style="
@@ -1589,7 +1617,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.2.62';
+        const GAME_VERSION = 'v0.2.63';
         
         // ===== MULTIPLAYER STATE =====
         let multiplayerState = {
@@ -2601,19 +2629,57 @@
             visible: false,
             messages: [],  // { id, senderName, senderType, senderAvatar, text, timestamp }
             targetNpc: null,  // Currently selected NPC to chat with
-            selectedModel: 1,  // Model ID 1-10 for testing
+            selectedModel: 2,  // Model ID 1-10 (default to free model 2)
+            exhaustedModels: [],  // Track rate-limited models
             totalCost: 0,      // Running cost tally in dollars
             totalTokens: 0     // Running token count
         };
         
         // Select chat model (1-10)
         function selectChatModel(modelId) {
+            // Don't allow selecting exhausted models
+            if (chatState.exhaustedModels.includes(modelId)) {
+                console.log(`[Chat] Model ${modelId} is exhausted (rate limited)`);
+                return;
+            }
+            
             chatState.selectedModel = modelId;
-            // Update button visuals
-            document.querySelectorAll('.modelBtn').forEach((btn, i) => {
-                btn.classList.toggle('active', i + 1 === modelId);
+            // Update button visuals - use onclick attribute to match model ID
+            document.querySelectorAll('.modelBtn').forEach(btn => {
+                // Extract model ID from onclick attribute: onclick="selectChatModel(X)"
+                const onclickAttr = btn.getAttribute('onclick') || '';
+                const match = onclickAttr.match(/selectChatModel\((\d+)\)/);
+                const btnModelId = match ? parseInt(match[1]) : 0;
+                btn.classList.toggle('active', btnModelId === modelId);
             });
             console.log(`[Chat] Selected model ${modelId}`);
+        }
+        
+        // Mark a model as exhausted (rate limited)
+        function markModelExhausted(modelId) {
+            if (!chatState.exhaustedModels.includes(modelId)) {
+                chatState.exhaustedModels.push(modelId);
+                // Update button visual
+                document.querySelectorAll('.modelBtn').forEach(btn => {
+                    const onclickAttr = btn.getAttribute('onclick') || '';
+                    const match = onclickAttr.match(/selectChatModel\((\d+)\)/);
+                    const btnModelId = match ? parseInt(match[1]) : 0;
+                    if (btnModelId === modelId) {
+                        btn.classList.add('exhausted');
+                        btn.title = btn.title + ' (RATE LIMITED)';
+                    }
+                });
+                console.log(`[Chat] Model ${modelId} marked as exhausted`);
+                
+                // If current model is exhausted, switch to another free model
+                if (chatState.selectedModel === modelId) {
+                    const freeModels = [2, 4, 5];
+                    const availableFree = freeModels.filter(m => !chatState.exhaustedModels.includes(m));
+                    if (availableFree.length > 0) {
+                        selectChatModel(availableFree[0]);
+                    }
+                }
+            }
         }
         
         // Toggle chat window visibility
@@ -2725,8 +2791,18 @@
                 return;
             }
             
-            // Get NPC to respond (first alive enemy with backstory)
-            const respondingNpc = battleState.enemies.find(e => e.hp > 0 && e.backstory);
+            // Get NPC to respond (priority: captive if present, then first alive enemy with backstory)
+            let respondingNpc = null;
+            
+            // Check captive first (friendly NPC who can chat)
+            if (battleState.captiveNpc && !battleState.captiveNpc.rescued && battleState.captiveNpc.canChat) {
+                respondingNpc = battleState.captiveNpc;
+            }
+            
+            // If no captive, try enemies
+            if (!respondingNpc) {
+                respondingNpc = battleState.enemies.find(e => e.hp > 0 && e.backstory);
+            }
             
             if (!respondingNpc) {
                 // No NPC can respond
@@ -2736,6 +2812,9 @@
                 setTimeout(() => { if (statusEl) statusEl.textContent = ''; }, 2000);
                 return;
             }
+            
+            // Determine NPC type for the API
+            const npcType = respondingNpc.isCaptive ? 'captive' : (respondingNpc.isBoss ? 'boss' : 'mob');
             
             // Disable send while waiting
             sendBtn.disabled = true;
@@ -2756,7 +2835,7 @@
                     body: JSON.stringify({
                         npcName: respondingNpc.name,
                         backstory: respondingNpc.backstory || 'A mysterious creature.',
-                        npcType: respondingNpc.isBoss ? 'boss' : 'mob',
+                        npcType: npcType,
                         conversation: chatState.messages.slice(0, 10).reverse(),
                         message: message,
                         playerName: playerName,
@@ -2785,20 +2864,37 @@
                         }
                     }
                     
-                    // Determine NPC type for color
-                    const npcType = respondingNpc.hostile ? 'hostile' : 
-                        (respondingNpc.questable ? 'questable' : 'friendly');
+                    // Determine NPC type for color (captive = friendly, hostile enemy = hostile, etc)
+                    const chatNpcType = respondingNpc.isCaptive ? 'friendly' :
+                        (respondingNpc.hostile ? 'hostile' : 
+                        (respondingNpc.questable ? 'questable' : 'friendly'));
                     
                     // Add NPC response
                     addChatMessage(
                         respondingNpc.name,
-                        npcType,
+                        chatNpcType,
                         respondingNpc.spritePath || 'people/zooko_a_head_compressed.png',
                         result.response,
                         true
                     );
                 } else {
-                    if (statusEl) statusEl.textContent = `Error (${totalTime}s): ` + (result.error || 'Unknown');
+                    // Check for rate limit error
+                    const errorMsg = result.error || 'Unknown';
+                    const isRateLimit = errorMsg.toLowerCase().includes('rate') || 
+                                       errorMsg.toLowerCase().includes('limit') ||
+                                       errorMsg.toLowerCase().includes('quota') ||
+                                       errorMsg.toLowerCase().includes('429') ||
+                                       errorMsg.toLowerCase().includes('exceeded');
+                    
+                    if (isRateLimit) {
+                        // Mark current model as exhausted
+                        markModelExhausted(chatState.selectedModel);
+                        if (statusEl) statusEl.textContent = `Model ${chatState.selectedModel} rate limited!`;
+                        addChatMessage('System', 'friendly', 'people/zooko_a_head_compressed.png', 
+                            `*Model ${chatState.selectedModel} is rate limited. Try another model.*`, true);
+                    } else {
+                        if (statusEl) statusEl.textContent = `Error (${totalTime}s): ` + errorMsg;
+                    }
                     console.error('Chat API error:', result.error);
                 }
             } catch (error) {
@@ -3155,20 +3251,42 @@
             }
             
             // Generate captive NPC (50% chance per room)
+            battleState.captiveNpc = null;
             if (Math.random() > 0.5) {
                 const captiveData = await generateEncounter('captive', {}, roomLevel);
-                if (captiveData) {
-                    battleState.captiveNpc = {
-                        name: captiveData.name || 'Mysterious Prisoner',
-                        species: captiveData.species || 'human',
-                        backstory: captiveData.backstory || 'A prisoner needing rescue.',
-                        personality: captiveData.personality || 'grateful',
-                        rescueReward: captiveData.rescueReward || { gold: 20 },
-                        dialogueOnRescue: captiveData.dialogueOnRescue || 'Thank you for saving me!',
-                        rescued: false
-                    };
-                    console.log('[DM] Captive NPC generated:', battleState.captiveNpc);
-                }
+                
+                battleState.captiveNpc = {
+                    name: captiveData?.name || 'Mysterious Prisoner',
+                    species: captiveData?.species || 'human',
+                    backstory: captiveData?.backstory || 'A prisoner needing rescue.',
+                    personality: captiveData?.personality || 'grateful',
+                    rescueReward: captiveData?.rescueReward || { gold: 20 },
+                    dialogueOnRescue: captiveData?.dialogueOnRescue || 'Thank you for saving me!',
+                    rescued: false,
+                    // Visual properties - like a mob
+                    x: 0,
+                    y: 0,
+                    sprite: new Image(),
+                    spritePath: 'tunnelsofprivacy/mobs/captive.png',  // Will use fallback circle until sprite exists
+                    color: '#F2C94C',  // Gold color for friendly
+                    isCaptive: true,
+                    isMob: true,  // Render like a mob
+                    canChat: true,
+                    hostile: false,
+                    hp: 1,  // For display purposes
+                    maxHp: 1
+                };
+                
+                // Try to load captive sprite (will fail gracefully to circle fallback)
+                battleState.captiveNpc.sprite.onerror = () => {
+                    console.log('[DM] Captive sprite not found, using fallback circle');
+                };
+                battleState.captiveNpc.sprite.onload = () => {
+                    renderBattle();
+                };
+                battleState.captiveNpc.sprite.src = battleState.captiveNpc.spritePath + '?v=' + Date.now();
+                
+                console.log('[DM] Captive NPC generated:', battleState.captiveNpc.name);
             }
             
             // Load enemy sprites
@@ -3295,6 +3413,25 @@
                     spritePath: e.spritePath,
                     isMob: e.isMob
                 })),
+                // Include captive NPC data for clients (full mob-like data)
+                captiveNpc: battleState.captiveNpc ? {
+                    name: battleState.captiveNpc.name,
+                    species: battleState.captiveNpc.species,
+                    backstory: battleState.captiveNpc.backstory,
+                    personality: battleState.captiveNpc.personality,
+                    rescueReward: battleState.captiveNpc.rescueReward,
+                    dialogueOnRescue: battleState.captiveNpc.dialogueOnRescue,
+                    rescued: battleState.captiveNpc.rescued,
+                    x: battleState.captiveNpc.x / canvas.width,
+                    y: battleState.captiveNpc.y / canvas.height,
+                    spritePath: battleState.captiveNpc.spritePath,
+                    color: battleState.captiveNpc.color,
+                    isCaptive: true,
+                    isMob: true,
+                    canChat: true,
+                    hostile: false,
+                    facing: battleState.captiveNpc.facing || 'center'
+                } : null,
                 turnOrder: battleState.turnOrder.map(c => c.name),
                 currentTurn: battleState.currentTurn
             };
@@ -3716,6 +3853,13 @@
                 enemy.facing = 'center';
             }
             
+            // Position captive NPC if present (far left, below heroes)
+            if (battleState.captiveNpc && !battleState.captiveNpc.rescued) {
+                battleState.captiveNpc.x = canvas.width * 0.10;
+                battleState.captiveNpc.y = canvas.height * 0.80;
+                battleState.captiveNpc.facing = 'center';
+            }
+            
             battleState.detectedPlatforms = detected;
             console.log('Platform layout generated successfully');
         }
@@ -3769,6 +3913,15 @@
                 battleState.enemies[i].x = enemyX;
                 battleState.enemies[i].y = enemyY;
                 battleState.enemies[i].facing = 'center';
+            }
+            
+            // Position captive NPC if present (far left, below heroes - like a friendly mob)
+            if (battleState.captiveNpc && !battleState.captiveNpc.rescued) {
+                const captiveX = canvas.width * 0.10;  // Far left
+                const captiveY = canvas.height * 0.80;  // Lower area (front of room)
+                battleState.captiveNpc.x = captiveX;
+                battleState.captiveNpc.y = captiveY;
+                battleState.captiveNpc.facing = 'center';
             }
         }
         
@@ -4185,6 +4338,64 @@
                     ctx.shadowBlur = 0;
                 }
             });
+            
+            // Draw captive NPC if present and not rescued (rendered like a mob)
+            if (battleState.captiveNpc && !battleState.captiveNpc.rescued && battleState.captiveNpc.x > 0) {
+                const captive = battleState.captiveNpc;
+                const depthScale = 0.6 + (captive.y / canvas.height) * 0.4;
+                
+                // Draw captive sprite like a mob, or fallback to colored circle
+                if (captive.sprite && captive.sprite.complete && captive.sprite.naturalHeight !== 0) {
+                    // Render like a mob (1344x768 sprite scaled down)
+                    const mobAspectRatio = 1344 / 768;
+                    const baseHeight = 75;
+                    const spriteHeight = baseHeight * depthScale;
+                    const spriteWidth = spriteHeight * mobAspectRatio;
+                    const spriteX = captive.x - spriteWidth / 2;
+                    const spriteY = captive.y - spriteHeight;
+                    
+                    ctx.save();
+                    if (captive.facing === 'left') {
+                        ctx.translate(captive.x, captive.y);
+                        ctx.scale(-1, 1);
+                        ctx.translate(-captive.x, -captive.y);
+                    }
+                    ctx.drawImage(captive.sprite, spriteX, spriteY, spriteWidth, spriteHeight);
+                    ctx.restore();
+                } else {
+                    // Fallback to gold circle (like mobs fallback)
+                    ctx.fillStyle = captive.color || '#F2C94C';
+                    ctx.beginPath();
+                    ctx.arc(captive.x, captive.y, 50 * depthScale, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                    
+                    // Add chain icon in center
+                    ctx.fillStyle = '#8B4513';
+                    ctx.font = `bold ${Math.floor(24 * depthScale)}px Arial`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('⛓️', captive.x, captive.y);
+                }
+                
+                // Captive name (GOLD for friendly) - positioned like mob names
+                const baseHeight = 75;
+                const spriteHeight = baseHeight * depthScale;
+                const nameOffsetY = captive.y - spriteHeight - (10 * depthScale);
+                
+                ctx.fillStyle = '#F2C94C';
+                ctx.font = `bold ${Math.floor(14 * depthScale)}px Inter`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'alphabetic';
+                ctx.fillText(captive.name.toUpperCase(), captive.x, nameOffsetY);
+                
+                // "CAPTIVE" label above name
+                ctx.fillStyle = '#27AE60';
+                ctx.font = `${Math.floor(10 * depthScale)}px Inter`;
+                ctx.fillText('⛓️ CAPTIVE', captive.x, nameOffsetY - (15 * depthScale));
+            }
             
             // Draw hitboxes if enabled
             if (settings.showHitboxes) {
@@ -7613,6 +7824,40 @@
             
             if (battleState.turnOrder.length === 0) {
                 console.error('[MP ERROR] Turn order is empty after initialization!');
+            }
+            
+            // Setup captive NPC from host's data (full mob-like entity)
+            if (battleData.captiveNpc) {
+                battleState.captiveNpc = {
+                    name: battleData.captiveNpc.name,
+                    species: battleData.captiveNpc.species,
+                    backstory: battleData.captiveNpc.backstory,
+                    personality: battleData.captiveNpc.personality,
+                    rescueReward: battleData.captiveNpc.rescueReward,
+                    dialogueOnRescue: battleData.captiveNpc.dialogueOnRescue,
+                    rescued: battleData.captiveNpc.rescued,
+                    x: battleData.captiveNpc.x * canvas.width,
+                    y: battleData.captiveNpc.y * canvas.height,
+                    spritePath: battleData.captiveNpc.spritePath,
+                    color: battleData.captiveNpc.color || '#F2C94C',
+                    sprite: new Image(),
+                    isCaptive: true,
+                    isMob: true,
+                    canChat: true,
+                    hostile: false,
+                    facing: battleData.captiveNpc.facing || 'center'
+                };
+                // Handle sprite load with graceful fallback
+                battleState.captiveNpc.sprite.onerror = () => {
+                    console.log('[MP] Captive sprite not found, using fallback circle');
+                };
+                battleState.captiveNpc.sprite.onload = () => {
+                    renderBattle();
+                };
+                battleState.captiveNpc.sprite.src = battleState.captiveNpc.spritePath + '?v=' + Date.now();
+                console.log('[MP] Captive NPC received:', battleState.captiveNpc.name);
+            } else {
+                battleState.captiveNpc = null;
             }
             
             battleState.currentTurn = battleData.currentTurn;
