@@ -2,6 +2,51 @@
 
 # Changelog
 
+## v0.2.52 - Sprite Sheet Animation System (2025-11-27)
+- **Summary:**
+  - Added complete sprite sheet animation system for battle sprites
+  - Heroes now use animated 9x9 atlas sprite sheets (81 frames at 16fps)
+  - Ping-pong, loop, and once play modes supported
+  - Attack animations delay damage logic to sync with visuals
+
+- **Animation System:**
+  - `HERO_ANIM_PATHS` - Maps hero names to animation state paths
+  - `spriteSheetCache` - Caches loaded sprite sheets for performance
+  - `loadSpriteSheet()` - Lazy loads sprite sheets with caching
+  - `initAnimation()` - Creates animation controller for any combatant
+  - `updateAnimation()` - Advances frames at 16fps with configurable play modes
+  - `drawAnimatedSprite()` - Draws correct frame from 9x9 grid atlas
+  - `setAnimationState()` - Transitions between animation states with callbacks
+
+- **Play Modes:**
+  - `pingpong` - Plays forward then reverse (default for idle)
+  - `loop` - Plays forward and restarts from frame 0
+  - `once` - Plays forward once then stops (for attacks)
+
+- **Hero Idle Animations:**
+  - `tunnelsofprivacy/heros/zooko_idle.png`
+  - `tunnelsofprivacy/heros/nate_idle.png`
+  - `tunnelsofprivacy/heros/zancas_idle.png`
+  - `tunnelsofprivacy/heros/cyberaxe_idle.png`
+
+- **CyberAxe Attack Animations:**
+  - `cyberaxe_light_attack.png` - Light attack animation
+  - `cyberaxe_heavy_attack.png` - Heavy attack animation
+  - `cyberaxe_special_attack.png` - Special attack animation
+  - Attack animations play once, then return to idle
+  - 2-second delay before damage logic executes (syncs with animation)
+
+- **Technical Details:**
+  - 9x9 grid atlas format (81 total frames)
+  - Auto-detects frame size from `sheet.width / 9`
+  - Frame calculation: `col = frame % 9`, `row = floor(frame / 9)`
+  - Uses `ctx.drawImage()` with source rectangle clipping
+  - Falls back to static sprite if animation not loaded
+  - `executeAttack()` split into animation trigger + delayed `executeAttackLogic()`
+
+- **Files Modified:**
+  - `tunnels_of_privacy.html` - Added animation system (~170 lines)
+
 ## v0.2.51 - Server Script Multiplayer Dependencies (2025-11-27)
 - **Summary:**
   - Bash script now auto-installs pip3 and websockets module

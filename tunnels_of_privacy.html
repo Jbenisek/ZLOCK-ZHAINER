@@ -1060,7 +1060,7 @@
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.2.50 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.2.52 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div style="
@@ -1377,7 +1377,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.2.50';
+        const GAME_VERSION = 'v0.2.52';
         
         // ===== MULTIPLAYER STATE =====
         let multiplayerState = {
@@ -1535,6 +1535,190 @@
             }
         }
         // ===== END STORY INTRO BACKGROUND ANIMATION =====
+        
+        // ===== SPRITE SHEET ANIMATION SYSTEM =====
+        // Supports 9x9 atlas (81 frames), 16fps, ping-pong/loop/once modes
+        // Used for heroes, mobs, bosses in battle
+        
+        const ANIM_GRID_SIZE = 9; // 9x9 grid
+        const ANIM_TOTAL_FRAMES = 81;
+        const ANIM_DEFAULT_FPS = 16;
+        
+        // Animation state paths for heroes
+        const HERO_ANIM_PATHS = {
+            zooko: { idle: 'tunnelsofprivacy/heros/zooko_idle.png' },
+            nate: { idle: 'tunnelsofprivacy/heros/nate_idle.png' },
+            zancas: { idle: 'tunnelsofprivacy/heros/zancas_idle.png' },
+            cyberaxe: { 
+                idle: 'tunnelsofprivacy/heros/cyberaxe_idle.png',
+                light_attack: 'tunnelsofprivacy/heros/cyberaxe_light_attack.png',
+                heavy_attack: 'tunnelsofprivacy/heros/cyberaxe_heavy_attack.png',
+                special_attack: 'tunnelsofprivacy/heros/cyberaxe_special_attack.png'
+            }
+        };
+        
+        // Cache for loaded sprite sheets
+        const spriteSheetCache = {};
+        
+        // Load a sprite sheet (lazy load with caching)
+        function loadSpriteSheet(path) {
+            if (spriteSheetCache[path]) {
+                return Promise.resolve(spriteSheetCache[path]);
+            }
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => {
+                    spriteSheetCache[path] = img;
+                    resolve(img);
+                };
+                img.onerror = reject;
+                img.src = path + '?v=' + Date.now();
+            });
+        }
+        
+        // Initialize animation controller for a combatant
+        function initAnimation(combatant, sheetPath, playMode = 'pingpong') {
+            combatant.anim = {
+                sheet: null,
+                sheetPath: sheetPath,
+                frameSize: 0,       // Auto-calculated from sheet.width / 9
+                frame: 0,           // Current frame 0-80
+                fps: ANIM_DEFAULT_FPS,
+                lastTime: 0,        // Last frame update timestamp
+                direction: 1,       // 1 = forward, -1 = reverse
+                playMode: playMode, // 'pingpong', 'loop', 'once'
+                state: 'idle',
+                playing: true,
+                onComplete: null    // Callback when animation completes (for 'once' mode)
+            };
+            
+            // Load the sprite sheet
+            loadSpriteSheet(sheetPath).then(sheet => {
+                combatant.anim.sheet = sheet;
+                combatant.anim.frameSize = sheet.width / ANIM_GRID_SIZE;
+            }).catch(err => {
+                console.error('Failed to load sprite sheet:', sheetPath, err);
+            });
+        }
+        
+        // Update animation frame based on elapsed time
+        function updateAnimation(combatant, currentTime) {
+            const anim = combatant.anim;
+            if (!anim || !anim.sheet || !anim.playing) return;
+            
+            // Initialize lastTime on first call
+            if (anim.lastTime === 0) {
+                anim.lastTime = currentTime;
+                return;
+            }
+            
+            const frameInterval = 1000 / anim.fps;
+            const elapsed = currentTime - anim.lastTime;
+            
+            if (elapsed >= frameInterval) {
+                anim.lastTime = currentTime - (elapsed % frameInterval);
+                
+                // Advance frame
+                anim.frame += anim.direction;
+                
+                // Handle boundaries based on play mode
+                if (anim.playMode === 'pingpong') {
+                    if (anim.frame >= ANIM_TOTAL_FRAMES - 1) {
+                        anim.frame = ANIM_TOTAL_FRAMES - 1;
+                        anim.direction = -1;
+                    } else if (anim.frame <= 0) {
+                        anim.frame = 0;
+                        anim.direction = 1;
+                    }
+                } else if (anim.playMode === 'loop') {
+                    if (anim.frame >= ANIM_TOTAL_FRAMES) {
+                        anim.frame = 0;
+                    }
+                } else if (anim.playMode === 'once') {
+                    if (anim.frame >= ANIM_TOTAL_FRAMES - 1) {
+                        anim.frame = ANIM_TOTAL_FRAMES - 1;
+                        anim.playing = false;
+                        if (anim.onComplete) anim.onComplete();
+                    }
+                }
+            }
+        }
+        
+        // Draw animated sprite from atlas
+        function drawAnimatedSprite(ctx, combatant, destX, destY, destWidth, destHeight, flipX = false) {
+            const anim = combatant.anim;
+            if (!anim || !anim.sheet || !anim.sheet.complete) {
+                // Fallback: draw static sprite if available
+                if (combatant.sprite && combatant.sprite.complete && combatant.sprite.naturalHeight !== 0) {
+                    ctx.save();
+                    if (flipX) {
+                        ctx.translate(destX + destWidth / 2, destY + destHeight / 2);
+                        ctx.scale(-1, 1);
+                        ctx.translate(-(destX + destWidth / 2), -(destY + destHeight / 2));
+                    }
+                    ctx.drawImage(combatant.sprite, destX, destY, destWidth, destHeight);
+                    ctx.restore();
+                }
+                return;
+            }
+            
+            // Calculate source rectangle from 9x9 grid
+            const col = anim.frame % ANIM_GRID_SIZE;
+            const row = Math.floor(anim.frame / ANIM_GRID_SIZE);
+            const srcX = col * anim.frameSize;
+            const srcY = row * anim.frameSize;
+            const srcSize = anim.frameSize;
+            
+            ctx.save();
+            if (flipX) {
+                ctx.translate(destX + destWidth / 2, destY + destHeight / 2);
+                ctx.scale(-1, 1);
+                ctx.translate(-(destX + destWidth / 2), -(destY + destHeight / 2));
+            }
+            ctx.drawImage(
+                anim.sheet,
+                srcX, srcY, srcSize, srcSize,  // Source rectangle
+                destX, destY, destWidth, destHeight  // Destination rectangle
+            );
+            ctx.restore();
+        }
+        
+        // Change animation state (e.g., idle -> attack -> idle)
+        function setAnimationState(combatant, newState, playMode = 'pingpong', onComplete = null) {
+            const anim = combatant.anim;
+            if (!anim) return;
+            
+            // Get the path for this combatant's new state
+            const heroKey = combatant.name.toLowerCase();
+            const paths = HERO_ANIM_PATHS[heroKey];
+            if (!paths || !paths[newState]) {
+                console.warn('No animation path for:', heroKey, newState);
+                return;
+            }
+            
+            const newPath = paths[newState];
+            
+            // If same state and already playing, don't restart
+            if (anim.state === newState && anim.sheetPath === newPath && anim.playing) {
+                return;
+            }
+            
+            anim.state = newState;
+            anim.sheetPath = newPath;
+            anim.frame = 0;
+            anim.direction = 1;
+            anim.playMode = playMode;
+            anim.playing = true;
+            anim.onComplete = onComplete;
+            anim.lastTime = 0;
+            
+            // Load new sprite sheet
+            loadSpriteSheet(newPath).then(sheet => {
+                anim.sheet = sheet;
+                anim.frameSize = sheet.width / ANIM_GRID_SIZE;
+            });
+        }
+        // ===== END SPRITE SHEET ANIMATION SYSTEM =====
         
         const themeTracks = [
             { file: 'music/main_theme.webm', name: 'Tunnels of Privacy Theme' },
@@ -2191,7 +2375,16 @@
                 }
             ];
             
-            // Load hero sprites with cache busting
+            // Initialize animation controllers for heroes
+            battleState.heroes.forEach(hero => {
+                const heroKey = hero.name.toLowerCase();
+                const idlePath = HERO_ANIM_PATHS[heroKey]?.idle;
+                if (idlePath) {
+                    initAnimation(hero, idlePath, 'pingpong');
+                }
+            });
+            
+            // Load hero sprites with cache busting (fallback for when animation not loaded)
             battleState.heroes.forEach(hero => {
                 hero.sprite.onload = () => {
                     renderBattle(); // Re-render when each sprite loads
@@ -3064,29 +3257,28 @@
                     ctx.restore();
                 }
                 
-                // Draw hero sprite
-                if (hero.sprite && hero.sprite.complete && hero.sprite.naturalHeight !== 0) {
-                    const spriteWidth = 300 * depthScale;
-                    const spriteHeight = 300 * depthScale;
-                    const spriteX = hero.x - spriteWidth / 2;
-                    // Per-hero offset adjustments (scaled with depth)
-                    let offsetY = 10 * depthScale; // Default (Zooko, Nate)
-                    if (hero.name === 'Zancas') {
-                        offsetY = 20 * depthScale; // Zancas down 10px more
-                    } else if (hero.name === 'CyberAxe') {
-                        offsetY = 13 * depthScale; // CyberAxe down 3px more
-                    }
-                    const spriteY = hero.y - spriteHeight / 2 + offsetY;
-                    
-                    ctx.save();
-                    if (hero.facing === 'left') {
-                        ctx.translate(hero.x, hero.y);
-                        ctx.scale(-1, 1);
-                        ctx.translate(-hero.x, -hero.y);
-                    }
-                    ctx.drawImage(hero.sprite, spriteX, spriteY, spriteWidth, spriteHeight);
-                    ctx.restore();
-                } else {
+                // Update animation frame
+                const currentTime = performance.now();
+                updateAnimation(hero, currentTime);
+                
+                // Draw hero sprite (animated or fallback)
+                const spriteWidth = 300 * depthScale;
+                const spriteHeight = 300 * depthScale;
+                const spriteX = hero.x - spriteWidth / 2;
+                // Per-hero offset adjustments (scaled with depth)
+                let offsetY = 10 * depthScale; // Default (Zooko, Nate)
+                if (hero.name === 'Zancas') {
+                    offsetY = 20 * depthScale; // Zancas down 10px more
+                } else if (hero.name === 'CyberAxe') {
+                    offsetY = 13 * depthScale; // CyberAxe down 3px more
+                }
+                const spriteY = hero.y - spriteHeight / 2 + offsetY;
+                
+                const flipX = hero.facing === 'left';
+                drawAnimatedSprite(ctx, hero, spriteX, spriteY, spriteWidth, spriteHeight, flipX);
+                
+                // Fallback check - if no animation and no static sprite loaded
+                if ((!hero.anim || !hero.anim.sheet) && (!hero.sprite || !hero.sprite.complete || hero.sprite.naturalHeight === 0)) {
                     // Fallback to colored circle if sprite not loaded
                     ctx.fillStyle = hero.color;
                     ctx.beginPath();
@@ -3948,6 +4140,30 @@
         
         // Execute attack on target
         function executeAttack(attacker, target, actionType) {
+            // Check if hero has attack animation
+            const isHero = battleState.heroes.includes(attacker);
+            const heroKey = isHero ? attacker.name.toLowerCase() : null;
+            const animState = actionType + '_attack'; // 'light_attack', 'heavy_attack', 'special_attack'
+            const paths = heroKey ? HERO_ANIM_PATHS[heroKey] : null;
+            const hasAnimation = paths && paths[animState];
+            
+            // Trigger attack animation if hero has one
+            if (hasAnimation) {
+                setAnimationState(attacker, animState, 'once', () => {
+                    setAnimationState(attacker, 'idle', 'pingpong');
+                });
+            }
+            
+            // Delay attack logic to sync with animation (2 seconds)
+            const delay = hasAnimation ? 2000 : 0;
+            
+            setTimeout(() => {
+                executeAttackLogic(attacker, target, actionType);
+            }, delay);
+        }
+        
+        // Actual attack logic (separated for animation delay)
+        function executeAttackLogic(attacker, target, actionType) {
             const attackerStats = attacker.stats || {};
             const str = attackerStats.str || 10;
             const dex = attackerStats.dex || 10;
