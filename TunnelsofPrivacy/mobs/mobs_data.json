@@ -173,6 +173,7 @@
         "canChat": true,
         "fleeThreshold": 0.2
       },
+      "backstory": "An ancient dweller of these tunnels, once human perhaps, now something else entirely. They have lived in the darkness for so long they've forgotten the sun. They are not hostile - they simply want to trade, share stories, and warn travelers of the dangers ahead. They speak slowly, thoughtfully, with pauses as if remembering how words work.",
       "loot": {
         "dropChance": 0.2,
         "items": [

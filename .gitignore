@@ -1,0 +1,25 @@
+# API Keys - NEVER commit these
+.zlock_api_keys.json
+.api_keys
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Editor files
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Node modules (if any)
+node_modules/

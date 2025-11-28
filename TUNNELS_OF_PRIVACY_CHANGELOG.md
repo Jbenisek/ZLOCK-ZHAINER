@@ -2,6 +2,214 @@
 
 # Changelog
 
+## v0.2.62 - API Key Management & Graceful LLM Degradation (2025-11-28)
+- **Summary:**
+  - Removed hardcoded API keys from server for security
+  - Server prompts for API keys on first startup
+  - Keys saved to `.zlock_api_keys.json` for persistent storage
+  - LLM features gracefully disable when no keys provided
+  - Added `/api/llm-status` endpoint for client to check LLM availability
+  - Added `.gitignore` to prevent committing API keys
+
+- **API Key Management:**
+  - `init_api_keys()` function runs on server startup
+  - `load_api_keys()` loads from config file if exists
+  - `prompt_for_api_keys()` prompts user for Groq/OpenRouter keys
+  - `save_api_keys()` persists keys to `.zlock_api_keys.json`
+  - Keys only requested once, then loaded from file on future restarts
+
+- **Graceful LLM Degradation:**
+  - `LLM_ENABLED` global flag controls LLM availability
+  - Chat API returns fallback "*stares silently*" response when disabled
+  - Generate encounter API returns default data when disabled
+  - Server startup shows clear LLM status (ENABLED/DISABLED)
+
+- **Security:**
+  - No API keys hardcoded in source code
+  - Config file excluded via `.gitignore`
+  - Keys stored locally, never transmitted or logged fully
+
+## v0.2.61 - Dungeon Master LLM & Dynamic Encounters (2025-11-28)
+- **Summary:**
+  - Added Dungeon Master LLM system that generates unique boss names, backstories, and stats each battle
+  - Bosses and mobs now have procedurally generated names and personalities via AI
+  - Added captive NPC system - rescue prisoners for gold, items, and secret info
+  - Added NPC Free Will Chat - enemies comment on battle events autonomously
+  - Added settings for LLM Free Will and Free/Paid model preference
+  - Model selector now shows Free vs Paid labels with visual distinction
+
+- **Dungeon Master LLM System:**
+  - New `/api/generate-encounter` endpoint on server
+  - Generates unique boss names, backstories, personalities for each battle
+  - Stat modifiers (HP, damage, AC) applied based on LLM suggestions
+  - Negotiation data generated: bribe amounts, anger triggers, friendship paths
+  - Uses fast Groq models for generation (Llama 3.1 8B by default)
+
+- **Dynamic Boss Generation:**
+  - Bosses get unique names instead of generic types (e.g. "Metadata Swarm Mass")
+  - Rich backstories generated fitting the Tunnels of Privacy lore
+  - Opening lines generated for battle start dialogue
+  - Mobs have 50% chance to get unique names/personalities
+
+- **Captive NPC System:**
+  - 50% chance per room to have a captive NPC
+  - Captive rescued automatically when room is cleared
+  - Rewards include: gold (10-100), items, secret information
+  - Captive dialogue shown in chat on rescue
+  - Info rewards revealed as whispered secrets
+
+- **NPC Free Will Chat:**
+  - `triggerFreeWillChat()` function for autonomous NPC dialogue
+  - Triggers on: battle_start, took_damage, dealt_damage, low_health, ally_died
+  - 10-second cooldown prevents spam
+  - Controlled by "NPC Free Will Chat" setting in Settings panel
+  - Opening lines displayed immediately if generated
+
+- **Settings Panel Updates:**
+  - Added "NPC Free Will Chat" toggle - controls autonomous NPC dialogue
+  - Added "Use Paid LLM Models" toggle - switches between free/paid APIs
+  - AI Settings section with visual separation
+
+- **Model Selector UI:**
+  - Free models (2, 4, 5) shown first with "Free:" label
+  - Paid models (1, 3, 6-10) shown second with "Paid:" label and orange border
+  - Tooltips show model name and provider on hover
+  - Groq models 2, 4, 5 are truly free (no cost)
+
+- **Server Updates (zlock_server.py):**
+  - New `handle_generate_encounter()` method
+  - World lore context for consistent generation
+  - JSON parsing with markdown cleanup
+  - Supports boss, mob, captive, and generic NPC generation
+
+## v0.2.60 - Multiplayer NPC Chat Sync & Hybrid LLM Providers (2025-11-28)
+- **Summary:**
+  - NPC chat now fully synced in multiplayer - clients can chat with NPCs via host
+  - Added hybrid Groq + OpenRouter provider system for model testing
+  - Fixed IPv6 timeout issue causing 40+ second delays on all API calls
+  - Animations broadcast to clients (infrastructure added, visual sync WIP)
+
+- **Multiplayer Chat Sync:**
+  - Clients can now send chat messages - forwarded to host for LLM processing
+  - Host broadcasts all chat messages (player and NPC) to all clients
+  - Enemy backstory and isBoss now synced to clients for proper NPC context
+  - Fixed duplicate message echo - clients filter out their own messages from broadcast
+  - Added `chat_request` and `chat_message` WebSocket message types
+
+- **Hybrid LLM Provider System:**
+  - Model 1: OpenRouter (Mistral Nemo) for comparison
+  - Models 2-5: Groq (instant inference) - Llama 3.1 8B, Llama 3.3 70B, Gemma 2 9B, Mixtral 8x7B
+  - Models 6-10: OpenRouter (variety) - Llama 3.1 8B, Gemma 2 9B, Qwen 2.5 7B, Ministral 3B, L3 Lunaris 8B
+  - Server dynamically selects API endpoint based on provider
+
+- **IPv4-Only Fix:**
+  - Patched Python's `socket.getaddrinfo` to force IPv4 only
+  - Fixed 20+ second TCP connect timeouts caused by IPv6 fallback
+  - All API calls now instant (was 40+ seconds due to dual IPv6 timeout)
+
+- **Animation Sync Infrastructure:**
+  - `setAnimationState()` now broadcasts `animation_sync` messages to clients
+  - Clients receive animation updates and apply locally
+  - Server relays `animation_sync` from host to all clients
+  - (Note: Visual sync not yet working - will fix in next version)
+
+- **Server Updates (zlock_server.py):**
+  - Added `GROQ_API_KEY` for Groq API access
+  - `MODEL_OPTIONS` now uses `(provider, model)` tuples
+  - Dynamic URL/header selection based on provider ('groq' or 'openrouter')
+  - Added WebSocket handlers for `animation_sync`, `chat_message`, `chat_request`
+
+## v0.2.59 - LLM Model Selector & Cost Tracking (2025-11-28)
+- **Summary:**
+  - Added 10-model selector buttons to chat window for A/B testing different LLMs
+  - Added real-time cost and token tracking display
+  - Added response time timer showing seconds per request
+  - Moved chat window to bottom-right corner and made it 2x taller
+
+- **Model Selector:**
+  - 10 numbered buttons (1-10) to switch between LLM models instantly
+  - Active model highlighted with blue background
+  - Models include: Gemma 3 4B, Qwen 2.5 Coder 7B, L3 Lunaris 8B, Llama 3.1 8B, Gemma 2 9B, Mistral Nemo, Gemma 3n E4B, Ministral 3B, Mistral Small 24B, IBM Granite 4.0 Micro
+
+- **Cost Tracking:**
+  - Running tally of total cost displayed next to model buttons
+  - Shows format: `$0.000123 | 456 tok`
+  - Costs per million tokens configured for each model (input/output)
+  - Server returns `usage` data with prompt and completion tokens
+
+- **Response Timer:**
+  - Live timer updates every 0.1s while waiting for LLM response
+  - Shows `Model X - 2.5s...` while waiting
+  - Shows `Model X: 4.23s` after response received
+  - Helps compare model latency for A/B testing
+
+- **Chat Window Improvements:**
+  - Moved to bottom-right corner (`bottom: 10px`)
+  - Increased height from 350px to 600px (2x taller)
+  - Increased width from 320px to 350px
+  - Fixed text overflow with `white-space: pre-wrap`
+
+- **Server Updates (zlock_server.py):**
+  - `MODEL_OPTIONS` dict maps button numbers to model IDs
+  - `MODEL_COSTS` dict stores (input, output) costs per million tokens
+  - API response includes `usage` object with `promptTokens`, `completionTokens`, `cost`
+  - Accepts `modelId` parameter in POST request to select model
+
+## v0.2.58 - Chat Text Formatting Fix (2025-11-28)
+- **Summary:**
+  - Fixed text formatting in chat window - asterisks now display as italics instead of strikethrough
+  - Changed LLM model to `mistralai/mistral-7b-instruct:free` for reliable system prompt support
+
+- **Chat Text Formatting:**
+  - Added `formatChatText()` function to properly handle roleplay notation
+  - Converts `*text*` to `<em>text</em>` for proper italics display
+  - Escapes HTML special characters to prevent XSS and rendering issues
+  - Example: `*whispers*` now displays as *whispers* (italic) not ~~whispers~~ (strikethrough)
+
+- **LLM Model Change:**
+  - Changed from `google/gemma-3n-e4b-it:free` to `mistralai/mistral-7b-instruct:free`
+  - Previous model returned 400 error ("Developer instruction is not enabled")
+  - Mistral 7B Instruct properly supports system prompts for NPC persona
+
+## v0.2.57 - NPC Chat System with LLM Integration (2025-11-28)
+- **Summary:**
+  - Added Discord-style chat window for talking to NPCs, mobs, and bosses
+  - Integrated OpenRouter LLM API for dynamic NPC conversations
+  - Full multiplayer support - all players see chat in real-time
+
+- **Chat Window:**
+  - Bottom-right corner of battle screen
+  - Toggled via TALK button (can use anytime, no turn cost)
+  - Discord-style layout: headshot + colored name + message
+  - Color codes: Red (hostile), Yellow (questable), Green (friendly), White (player)
+  - Newest messages at top, oldest at bottom
+  - Text input with Enter key or Send button
+
+- **LLM Integration:**
+  - Server-side `/api/chat` endpoint in `zlock_server.py`
+  - Uses OpenRouter API with `meta-llama/llama-3.1-8b-instruct:free` model
+  - NPCs stay in character based on their backstory
+  - Conversation context maintained within battle
+  - Short, dramatic responses (1-3 sentences)
+
+- **Multiplayer Support:**
+  - Host-authoritative: only host calls LLM API
+  - Clients send chat requests to host via WebSocket
+  - Host broadcasts all messages to all clients
+  - No complex syncing - simple message broadcast
+
+- **NPC Backstories:**
+  - Added `backstory` field to mobs/bosses JSON data
+  - NPCs with backstory can chat, others stay silent
+  - Example: Metadata Swarm Mass, Open Ledger Golem, Cave Dweller
+
+- **Technical Details:**
+  - `chatState` object tracks messages and visibility
+  - `addChatMessage()` adds message and broadcasts to clients
+  - `sendChatMessage()` handles player input and LLM calls
+  - `clearBattleChat()` called when battle ends
+  - Chat window clears per-battle
+
 ## v0.2.56 - Complete Hero Animation Sets & New Animation Triggers (2025-11-28)
 - **Summary:**
   - Added complete animation sets for Zancas and Nate

@@ -15,9 +15,10 @@
     },
     "behavior": {
       "hostile": true,
-      "canChat": false,
+      "canChat": true,
       "fleeThreshold": 0.2
     },
+    "backstory": "A swirling mass of stolen metadata fragments. It whispers secrets it has collected - names, addresses, transaction histories. It feeds on exposed information and grows stronger with every privacy violation. It speaks in fragmented sentences, often revealing embarrassing truths about its victims.",
     "loot": {
       "dropChance": 0.95,
       "items": [
@@ -48,9 +49,10 @@
     },
     "behavior": {
       "hostile": true,
-      "canChat": false,
+      "canChat": true,
       "fleeThreshold": 0.1
     },
+    "backstory": "A massive construct built from transparent ledger pages. Every transaction ever made is inscribed on its crystalline body for all to see. It believes total transparency is the only path to truth, and sees privacy as a form of deception. It speaks in formal, proclamatory tones like reading legal documents aloud.",
     "loot": {
       "dropChance": 0.95,
       "items": [

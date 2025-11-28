@@ -3,6 +3,7 @@
 ZLOCK Web Server with proper MIME types for GLB files
 Fixes binary file serving issues on Linux
 Includes WebSocket server for multiplayer co-op
+Includes OpenRouter LLM API for NPC chat
 """
 
 import http.server
@@ -15,7 +16,99 @@ import asyncio
 import json
 import random
 import string
+import urllib.request
+import urllib.error
+import socket
 from threading import Thread
+from pathlib import Path
+
+# Force IPv4 - fixes 20+ second delays on systems with broken IPv6
+original_getaddrinfo = socket.getaddrinfo
+def ipv4_only_getaddrinfo(host, port, family=0, type=0, proto=0, flags=0):
+    return original_getaddrinfo(host, port, socket.AF_INET, type, proto, flags)
+socket.getaddrinfo = ipv4_only_getaddrinfo
+
+# API Keys - loaded from config file or prompted on startup
+OPENROUTER_API_KEY = None
+GROQ_API_KEY = None
+LLM_ENABLED = False
+
+# Config file path (same directory as server)
+CONFIG_FILE = Path(__file__).parent / '.zlock_api_keys.json'
+
+def load_api_keys():
+    """Load API keys from config file if it exists"""
+    global OPENROUTER_API_KEY, GROQ_API_KEY, LLM_ENABLED
+    
+    if CONFIG_FILE.exists():
+        try:
+            with open(CONFIG_FILE, 'r') as f:
+                config = json.load(f)
+                OPENROUTER_API_KEY = config.get('openrouter_api_key', '')
+                GROQ_API_KEY = config.get('groq_api_key', '')
+                if OPENROUTER_API_KEY or GROQ_API_KEY:
+                    LLM_ENABLED = True
+                    print(f"✓ Loaded API keys from {CONFIG_FILE.name}")
+                    if GROQ_API_KEY:
+                        print(f"  • Groq API: {GROQ_API_KEY[:20]}...")
+                    if OPENROUTER_API_KEY:
+                        print(f"  • OpenRouter API: {OPENROUTER_API_KEY[:20]}...")
+                return True
+        except Exception as e:
+            print(f"⚠️ Error loading config: {e}")
+    return False
+
+def save_api_keys():
+    """Save API keys to config file"""
+    try:
+        with open(CONFIG_FILE, 'w') as f:
+            json.dump({
+                'openrouter_api_key': OPENROUTER_API_KEY or '',
+                'groq_api_key': GROQ_API_KEY or ''
+            }, f, indent=2)
+        print(f"✓ Saved API keys to {CONFIG_FILE.name}")
+    except Exception as e:
+        print(f"⚠️ Error saving config: {e}")
+
+def prompt_for_api_keys():
+    """Prompt user for API keys on startup"""
+    global OPENROUTER_API_KEY, GROQ_API_KEY, LLM_ENABLED
+    
+    print("\n" + "="*60)
+    print("🔑 API KEY SETUP")
+    print("="*60)
+    print("LLM features require API keys for Groq and/or OpenRouter.")
+    print("Press Enter to skip (LLM chat will be disabled).")
+    print("Keys are saved locally and won't be asked again.\n")
+    
+    # Groq API Key (free, fast)
+    print("GROQ API Key (FREE - get one at console.groq.com):")
+    groq_input = input("  > ").strip()
+    if groq_input:
+        GROQ_API_KEY = groq_input
+        LLM_ENABLED = True
+    
+    # OpenRouter API Key (paid, more models)
+    print("\nOpenRouter API Key (PAID - get one at openrouter.ai):")
+    openrouter_input = input("  > ").strip()
+    if openrouter_input:
+        OPENROUTER_API_KEY = openrouter_input
+        LLM_ENABLED = True
+    
+    # Save if any keys provided
+    if LLM_ENABLED:
+        save_api_keys()
+        print("\n✓ LLM Chat ENABLED")
+    else:
+        print("\n⚠️ No API keys provided - LLM Chat DISABLED")
+        print("  Heroes can still chat with each other, but NPCs won't respond.")
+    
+    print("="*60 + "\n")
+
+def init_api_keys():
+    """Initialize API keys - load from file or prompt"""
+    if not load_api_keys():
+        prompt_for_api_keys()
 
 try:
     import websockets
@@ -77,6 +170,458 @@ class GameHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             return 'video/mp4'
         
         return mimetype or 'application/octet-stream'
+    
+    def do_OPTIONS(self):
+        """Handle CORS preflight requests"""
+        self.send_response(200)
+        self.end_headers()
+    
+    def do_POST(self):
+        """Handle POST requests for chat API"""
+        if self.path == '/api/chat':
+            return self.handle_chat_api()
+        elif self.path == '/api/generate-encounter':
+            return self.handle_generate_encounter()
+        elif self.path == '/api/llm-status':
+            return self.handle_llm_status()
+        else:
+            self.send_error(404, "Not found")
+    
+    def handle_llm_status(self):
+        """Return LLM availability status"""
+        self.send_response(200)
+        self.send_header('Content-Type', 'application/json')
+        self.end_headers()
+        self.wfile.write(json.dumps({
+            'enabled': LLM_ENABLED,
+            'hasGroq': bool(GROQ_API_KEY),
+            'hasOpenRouter': bool(OPENROUTER_API_KEY)
+        }).encode('utf-8'))
+    
+    def handle_chat_api(self):
+        """Handle chat API request - Groq (1-5) or OpenRouter (6-10)"""
+        
+        # Check if LLM is enabled
+        if not LLM_ENABLED:
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps({
+                'success': False,
+                'error': 'LLM disabled - no API keys configured',
+                'llmDisabled': True
+            }).encode('utf-8'))
+            return
+        
+        # Models 1-5: Groq (FAST), Models 6-10: OpenRouter
+        # Exception: Model 1 is OpenRouter Mistral Nemo for comparison
+        MODEL_OPTIONS = {
+            # OpenRouter (for comparison)
+            1: ('openrouter', 'mistralai/mistral-nemo'),   # Mistral Nemo - OpenRouter
+            # Groq models (fast)
+            2: ('groq', 'llama-3.1-8b-instant'),           # Llama 3.1 8B - fastest
+            3: ('groq', 'llama-3.3-70b-versatile'),        # Llama 3.3 70B - smartest
+            4: ('groq', 'gemma2-9b-it'),                   # Gemma 2 9B
+            5: ('groq', 'mixtral-8x7b-32768'),             # Mixtral 8x7B
+            # OpenRouter models
+            6: ('openrouter', 'meta-llama/llama-3.1-8b-instruct'),  # Llama 3.1 8B
+            7: ('openrouter', 'google/gemma-2-9b-it'),     # Gemma 2 9B
+            8: ('openrouter', 'qwen/qwen2.5-coder-7b-instruct'),    # Qwen 2.5 7B
+            9: ('openrouter', 'mistralai/ministral-3b'),   # Ministral 3B
+            10: ('openrouter', 'sao10k/l3-lunaris-8b')     # L3 Lunaris 8B
+        }
+        
+        # Costs per million tokens (input, output)
+        MODEL_COSTS = {
+            1: (0.02, 0.04),    # Mistral Nemo
+            2: (0.05, 0.08),    # Llama 3.1 8B
+            3: (0.59, 0.79),    # Llama 3.3 70B
+            4: (0.20, 0.20),    # Gemma 2 9B
+            5: (0.24, 0.24),    # Mixtral 8x7B
+            6: (0.02, 0.03),    # Llama 3.1 8B
+            7: (0.03, 0.09),    # Gemma 2 9B
+            8: (0.03, 0.09),    # Qwen 2.5 7B
+            9: (0.04, 0.04),    # Ministral 3B
+            10: (0.04, 0.05)    # L3 Lunaris 8B
+        }
+        
+        try:
+            # Read request body
+            content_length = int(self.headers.get('Content-Length', 0))
+            body = self.rfile.read(content_length)
+            data = json.loads(body.decode('utf-8'))
+            
+            npc_name = data.get('npcName', 'Unknown')
+            npc_backstory = data.get('backstory', '')
+            npc_type = data.get('npcType', 'mob')  # mob, boss, npc
+            conversation = data.get('conversation', [])  # Previous messages
+            player_message = data.get('message', '')
+            player_name = data.get('playerName', 'Hero')
+            model_id = data.get('modelId', 1)  # Default to model 1
+            
+            # Get selected model (provider, model_name)
+            provider, selected_model = MODEL_OPTIONS.get(model_id, MODEL_OPTIONS[1])
+            print(f"[Chat API] Using {provider} model {model_id}: {selected_model}")
+            
+            import time
+            timing = {}
+            t_start = time.time()
+            
+            # Build system prompt
+            system_prompt = f"""You are {npc_name}, a {npc_type} in a dungeon crawler RPG called 'Tunnels of Privacy'.
+
+Backstory: {npc_backstory}
+
+You are in combat with a party of heroes. Stay in character. Keep responses SHORT (1-3 sentences max). Be dramatic but concise. You can be hostile, friendly, or neutral based on your nature.
+
+If you have nothing interesting to say or don't want to talk, respond with just: *silence* or *growls*
+
+Do not break character. Do not mention being an AI."""
+            
+            # Build messages array
+            messages = [{'role': 'system', 'content': system_prompt}]
+            
+            # Add conversation history
+            for msg in conversation[-10:]:  # Last 10 messages for context
+                role = 'assistant' if msg.get('isNpc') else 'user'
+                messages.append({'role': role, 'content': msg.get('text', '')})
+            
+            # Add current message
+            messages.append({'role': 'user', 'content': f"{player_name}: {player_message}"})
+            
+            timing['build_request'] = time.time() - t_start
+            t_api_start = time.time()
+            
+            # Build API request
+            api_request = {
+                'model': selected_model,
+                'messages': messages,
+                'max_tokens': 150,
+                'temperature': 0.8
+            }
+            
+            # Choose API based on provider
+            if provider == 'groq':
+                api_url = 'https://api.groq.com/openai/v1/chat/completions'
+                headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': f'Bearer {GROQ_API_KEY}'
+                }
+            else:  # openrouter
+                api_url = 'https://openrouter.ai/api/v1/chat/completions'
+                headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': f'Bearer {OPENROUTER_API_KEY}',
+                    'HTTP-Referer': 'http://localhost:4243',
+                    'X-Title': 'Tunnels of Privacy'
+                }
+            
+            req = urllib.request.Request(
+                api_url,
+                data=json.dumps(api_request).encode('utf-8'),
+                headers=headers
+            )
+            
+            timing['build_http'] = time.time() - t_api_start
+            t_network_start = time.time()
+            
+            with urllib.request.urlopen(req, timeout=60) as response:
+                timing['network_wait'] = time.time() - t_network_start
+                t_parse_start = time.time()
+                
+                result = json.loads(response.read().decode('utf-8'))
+                npc_response = result['choices'][0]['message']['content']
+                
+                # Extract token usage
+                usage = result.get('usage', {})
+                prompt_tokens = usage.get('prompt_tokens', 0)
+                completion_tokens = usage.get('completion_tokens', 0)
+                
+                # Calculate cost
+                input_cost_per_m, output_cost_per_m = MODEL_COSTS.get(model_id, (0, 0))
+                cost = (prompt_tokens * input_cost_per_m / 1000000) + (completion_tokens * output_cost_per_m / 1000000)
+                
+                timing['parse_response'] = time.time() - t_parse_start
+                timing['total'] = time.time() - t_start
+                
+            # Print timing breakdown
+            print(f"[Chat API] TIMING: build_req={timing['build_request']:.3f}s | build_http={timing['build_http']:.3f}s | NETWORK={timing['network_wait']:.2f}s | parse={timing['parse_response']:.3f}s | TOTAL={timing['total']:.2f}s")
+            
+            # Send response
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps({
+                'success': True,
+                'response': npc_response,
+                'npcName': npc_name,
+                'usage': {
+                    'promptTokens': prompt_tokens,
+                    'completionTokens': completion_tokens,
+                    'cost': cost
+                },
+                'timing': {
+                    'networkWait': round(timing['network_wait'], 2),
+                    'total': round(timing['total'], 2)
+                }
+            }).encode('utf-8'))
+            
+        except urllib.error.HTTPError as e:
+            error_body = e.read().decode('utf-8') if e.fp else str(e)
+            print(f"[Chat API] OpenRouter error: {e.code} - {error_body}")
+            self.send_response(500)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps({
+                'success': False,
+                'error': f'OpenRouter API error: {e.code}'
+            }).encode('utf-8'))
+            
+        except Exception as e:
+            print(f"[Chat API] Error: {e}")
+            self.send_response(500)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps({
+                'success': False,
+                'error': str(e)
+            }).encode('utf-8'))
+    
+    def handle_generate_encounter(self):
+        """Dungeon Master LLM generates unique encounter data"""
+        
+        # Check if LLM is enabled
+        if not LLM_ENABLED:
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps({
+                'success': False,
+                'error': 'LLM disabled - no API keys configured',
+                'llmDisabled': True
+            }).encode('utf-8'))
+            return
+        
+        try:
+            content_length = int(self.headers.get('Content-Length', 0))
+            body = self.rfile.read(content_length)
+            data = json.loads(body.decode('utf-8'))
+            
+            encounter_type = data.get('type', 'boss')  # boss, mob, npc, captive
+            base_data = data.get('baseData', {})  # Original JSON data as template
+            room_level = data.get('roomLevel', 1)
+            use_free_model = data.get('useFreeModel', True)
+            
+            # Check which API keys we have
+            if use_free_model and GROQ_API_KEY:
+                provider = 'groq'
+                model = 'llama-3.1-8b-instant'
+            elif GROQ_API_KEY:
+                provider = 'groq'
+                model = 'llama-3.3-70b-versatile'
+            elif OPENROUTER_API_KEY:
+                provider = 'openrouter'
+                model = 'mistralai/mistral-nemo'
+            else:
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    'success': False,
+                    'error': 'No API keys available',
+                    'llmDisabled': True
+                }).encode('utf-8'))
+                return
+            
+            print(f"[DM API] Generating {encounter_type} for level {room_level} using {model}")
+            
+            # World lore for context
+            world_lore = """
+TUNNELS OF PRIVACY - World Lore:
+The Tunnels of Privacy are ancient underground passages beneath a world where personal data has become currency. 
+Privacy is a treasure, and those who steal it become corrupted monsters. The heroes (Zooko, Nate, Zancas, CyberAxe) 
+fight to protect people's right to financial privacy using Zcash cryptocurrency and zero-knowledge proofs.
+
+Enemies are often manifestations of surveillance, data harvesting, or transparency zealots who believe all 
+information should be public. Some can be reasoned with, bribed, or befriended. Others are mindless beasts.
+
+Tone: Dark fantasy with cyberpunk elements. Mix medieval dungeon crawler with crypto/privacy themes.
+"""
+            
+            # Build generation prompt based on type
+            if encounter_type == 'boss':
+                system_prompt = f"""{world_lore}
+
+You are the Dungeon Master. Generate a UNIQUE boss encounter.
+Base template: {json.dumps(base_data, indent=2)}
+
+Generate a JSON response with:
+{{
+  "name": "A unique, evocative name (not generic like 'Boss' or the template name)",
+  "backstory": "2-3 sentences about their origin, motivation, and personality",
+  "personality": "brief personality traits: hostile/cunning/tragic/comedic/etc",
+  "negotiation": {{
+    "canNegotiate": true/false,
+    "bribeGold": 0-500 (gold needed to bribe, 0 if unbribeable),
+    "infoReward": "what info they might share if talked to nicely",
+    "angerTriggers": ["words or topics that enrage them"],
+    "friendshipPath": "how heroes could befriend them (or null if impossible)",
+    "surrenderChance": 0.0-0.5 (chance they give up if losing badly),
+    "outcomes": ["peace", "info", "gold", "item", "anger", "friendship", "fight"]
+  }},
+  "statModifiers": {{
+    "hpMod": -20 to +50 (modify base HP),
+    "damageMod": -5 to +10,
+    "acMod": -2 to +3
+  }},
+  "openingLine": "What they say when battle starts (1 sentence)"
+}}
+
+IMPORTANT: Return ONLY valid JSON, no markdown or explanation."""
+                
+            elif encounter_type == 'mob':
+                system_prompt = f"""{world_lore}
+
+You are the Dungeon Master. Generate a UNIQUE mob encounter.
+Base template: {json.dumps(base_data, indent=2)}
+
+Generate a JSON response with:
+{{
+  "name": "A unique name for this specific creature (not the species name)",
+  "backstory": "1-2 sentences about this individual creature",
+  "personality": "brief: feral/scared/hungry/territorial/etc",
+  "negotiation": {{
+    "canNegotiate": true/false (most mobs can't),
+    "bribeGold": 0-50,
+    "fleeChance": 0.0-0.8 (chance to flee if hurt)
+  }},
+  "statModifiers": {{
+    "hpMod": -5 to +10,
+    "damageMod": -2 to +3
+  }}
+}}
+
+Return ONLY valid JSON."""
+                
+            elif encounter_type == 'captive':
+                system_prompt = f"""{world_lore}
+
+You are the Dungeon Master. Generate a CAPTIVE NPC that heroes can rescue.
+Room level: {room_level}
+
+Generate a JSON response with:
+{{
+  "name": "A name for the captive",
+  "species": "human/elf/dwarf/gnome/etc",
+  "backstory": "2 sentences about who they are and how they got captured",
+  "personality": "grateful/suspicious/traumatized/cheerful/etc",
+  "rescueReward": {{
+    "gold": 10-100,
+    "item": "optional item name or null",
+    "info": "optional secret info they share or null"
+  }},
+  "dialogueOnRescue": "What they say when freed (1-2 sentences)"
+}}
+
+Return ONLY valid JSON."""
+            
+            else:  # Generic NPC
+                system_prompt = f"""{world_lore}
+
+You are the Dungeon Master. Generate an NPC encounter.
+Base template: {json.dumps(base_data, indent=2)}
+
+Generate a JSON response with:
+{{
+  "name": "Unique NPC name",
+  "backstory": "2 sentences about them",
+  "personality": "brief personality",
+  "dialogue": "What they say when approached"
+}}
+
+Return ONLY valid JSON."""
+            
+            messages = [
+                {'role': 'system', 'content': system_prompt},
+                {'role': 'user', 'content': f'Generate a {encounter_type} encounter for dungeon level {room_level}. Be creative and unique!'}
+            ]
+            
+            api_request = {
+                'model': model,
+                'messages': messages,
+                'max_tokens': 500,
+                'temperature': 0.9  # Higher creativity
+            }
+            
+            # Make API call
+            if provider == 'groq':
+                api_url = 'https://api.groq.com/openai/v1/chat/completions'
+                headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': f'Bearer {GROQ_API_KEY}'
+                }
+            else:
+                api_url = 'https://openrouter.ai/api/v1/chat/completions'
+                headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': f'Bearer {OPENROUTER_API_KEY}',
+                    'HTTP-Referer': 'http://localhost:4243',
+                    'X-Title': 'Tunnels of Privacy DM'
+                }
+            
+            req = urllib.request.Request(
+                api_url,
+                data=json.dumps(api_request).encode('utf-8'),
+                headers=headers
+            )
+            
+            with urllib.request.urlopen(req, timeout=30) as response:
+                result = json.loads(response.read().decode('utf-8'))
+                llm_response = result['choices'][0]['message']['content']
+                
+                # Try to parse JSON from response
+                try:
+                    # Clean up response - remove markdown if present
+                    cleaned = llm_response.strip()
+                    if cleaned.startswith('```json'):
+                        cleaned = cleaned[7:]
+                    if cleaned.startswith('```'):
+                        cleaned = cleaned[3:]
+                    if cleaned.endswith('```'):
+                        cleaned = cleaned[:-3]
+                    
+                    generated_data = json.loads(cleaned.strip())
+                    
+                    self.send_response(200)
+                    self.send_header('Content-Type', 'application/json')
+                    self.end_headers()
+                    self.wfile.write(json.dumps({
+                        'success': True,
+                        'data': generated_data,
+                        'raw': llm_response
+                    }).encode('utf-8'))
+                    
+                except json.JSONDecodeError as je:
+                    print(f"[DM API] JSON parse error: {je}")
+                    print(f"[DM API] Raw response: {llm_response}")
+                    self.send_response(200)
+                    self.send_header('Content-Type', 'application/json')
+                    self.end_headers()
+                    self.wfile.write(json.dumps({
+                        'success': False,
+                        'error': 'Failed to parse LLM response as JSON',
+                        'raw': llm_response
+                    }).encode('utf-8'))
+                    
+        except Exception as e:
+            print(f"[DM API] Error: {e}")
+            self.send_response(500)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps({
+                'success': False,
+                'error': str(e)
+            }).encode('utf-8'))
     
     def do_GET(self):
         """Override to handle Range requests for video streaming"""
@@ -501,6 +1046,26 @@ async def handle_websocket(websocket, path):
                         await client.send(message)
                     print(f"[WS] Host sent sync_state to room {client_room}")
             
+            # ANIMATION SYNC (host broadcasts animation changes to clients)
+            elif msg_type == 'animation_sync':
+                if client_room and client_room in rooms and client_role == 'host':
+                    # Broadcast animation to all clients
+                    for client in rooms[client_room]['clients']:
+                        await client.send(message)
+            
+            # CHAT MESSAGE (host broadcasts chat to clients)
+            elif msg_type == 'chat_message':
+                if client_room and client_room in rooms and client_role == 'host':
+                    # Broadcast chat message to all clients
+                    for client in rooms[client_room]['clients']:
+                        await client.send(message)
+            
+            # CHAT REQUEST (client sends to host for LLM processing)
+            elif msg_type == 'chat_request':
+                if client_room and client_room in rooms:
+                    # Forward chat request to host
+                    await rooms[client_room]['host'].send(message)
+            
             # CHANGE CODE (host only)
             elif msg_type == 'change_code':
                 if client_room and client_room in rooms and client_role == 'host':
@@ -572,11 +1137,18 @@ def run_websocket_server():
 # ===== END WEBSOCKET SERVER =====
 
 def main():
-    print(f"Starting ZLOCK Game Server on port {PORT}...")
+    # Initialize API keys (prompt if needed, load from file if exists)
+    init_api_keys()
+    
+    print(f"\nStarting ZLOCK Game Server on port {PORT}...")
     print(f"Binary MIME types configured for .glb, .gltf, audio files")
     print(f"Server URL: http://0.0.0.0:{PORT}/zlock_consensus.html")
     if websockets:
         print(f"WebSocket server will start on ws://0.0.0.0:{WS_PORT}")
+    if LLM_ENABLED:
+        print(f"LLM Chat: ENABLED (API keys loaded)")
+    else:
+        print(f"LLM Chat: DISABLED (no API keys - NPC chat will use fallback responses)")
     print(f"Press Ctrl+C to stop\n")
     
     # Start WebSocket server in separate thread

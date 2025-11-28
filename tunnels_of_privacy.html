@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.2.50</title>
+    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.2.61</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -193,6 +193,170 @@
         
         .battleEnemyCard.boss .battleEnemyName {
             color: #8B45FF;
+        }
+        
+        /* Chat Window Styles */
+        #battleChatWindow {
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            width: 350px;
+            height: 600px;
+            background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.95));
+            border: 2px solid #5865F2;
+            border-radius: 12px;
+            display: none;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+        }
+        
+        #chatHeader {
+            padding: 10px 15px;
+            background: linear-gradient(135deg, #5865F2, #4752C4);
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        #chatHeader span {
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        
+        #chatCloseBtn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0 5px;
+        }
+        
+        #chatMessages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .chatMessage {
+            display: flex;
+            gap: 8px;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+        
+        .chatAvatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            flex-shrink: 0;
+            border: 2px solid #444;
+        }
+        
+        .chatContent {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .chatName {
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+        
+        .chatName.hostile { color: #E74C3C; }
+        .chatName.questable { color: #F2C94C; }
+        .chatName.friendly { color: #27AE60; }
+        .chatName.player { color: #FFFFFF; }
+        
+        .chatText {
+            font-size: 13px;
+            color: #BFD1E0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: pre-wrap;
+        }
+        
+        #chatInputArea {
+            padding: 10px;
+            border-top: 1px solid #333;
+            display: flex;
+            gap: 8px;
+        }
+        
+        #chatInput {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: white;
+            font-size: 13px;
+            outline: none;
+        }
+        
+        #chatInput:focus {
+            border-color: #5865F2;
+        }
+        
+        #chatSendBtn {
+            background: #5865F2;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 15px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+#chatModelSelector {
+            display: flex;
+            gap: 3px;
+            padding: 5px 10px;
+            border-bottom: 1px solid #333;
+            flex-wrap: wrap;
+        }
+        
+        .modelBtn {
+            width: 24px;
+            height: 24px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.5);
+            color: #aaa;
+            font-size: 11px;
+            cursor: pointer;
+            padding: 0;
+        }
+        
+        .modelBtn:hover {
+            background: rgba(88, 101, 242, 0.3);
+            border-color: #5865F2;
+        }
+        
+        .modelBtn.active {
+            background: #5865F2;
+            color: white;
+            border-color: #5865F2;
+        }
+        
+        #chatSendBtn:hover {
+            background: #4752C4;
+        }
+        
+        #chatSendBtn:disabled {
+            background: #333;
+            cursor: not-allowed;
         }
         
         .battleEnemyStat {
@@ -1029,6 +1193,35 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Chat Window -->
+            <div id="battleChatWindow">
+                <div id="chatHeader">
+                    <span>💬 Battle Chat</span>
+                    <span id="chatStatus" style="font-size: 11px; color: #aaa;"></span>
+                    <button id="chatCloseBtn" onclick="toggleChatWindow()">✕</button>
+                </div>
+                <div id="chatModelSelector">
+                    <span style="font-size: 10px; color: #888; margin-right: 4px;">Free:</span>
+                    <button class="modelBtn" onclick="selectChatModel(2)" title="Groq Llama 3.1 8B (FREE)">2</button>
+                    <button class="modelBtn" onclick="selectChatModel(4)" title="Groq Gemma 2 9B (FREE)">4</button>
+                    <button class="modelBtn" onclick="selectChatModel(5)" title="Groq Mixtral 8x7B (FREE)">5</button>
+                    <span style="font-size: 10px; color: #F39C12; margin-left: 6px; margin-right: 4px;">Paid:</span>
+                    <button class="modelBtn active" onclick="selectChatModel(1)" title="OpenRouter Mistral Nemo ($)" style="border-color: #F39C12;">1</button>
+                    <button class="modelBtn" onclick="selectChatModel(3)" title="Groq Llama 3.3 70B ($)" style="border-color: #F39C12;">3</button>
+                    <button class="modelBtn" onclick="selectChatModel(6)" title="OpenRouter Llama 3.1 8B ($)" style="border-color: #F39C12;">6</button>
+                    <button class="modelBtn" onclick="selectChatModel(7)" title="OpenRouter Gemma 2 9B ($)" style="border-color: #F39C12;">7</button>
+                    <button class="modelBtn" onclick="selectChatModel(8)" title="OpenRouter Qwen 2.5 7B ($)" style="border-color: #F39C12;">8</button>
+                    <button class="modelBtn" onclick="selectChatModel(9)" title="OpenRouter Ministral 3B ($)" style="border-color: #F39C12;">9</button>
+                    <button class="modelBtn" onclick="selectChatModel(10)" title="OpenRouter L3 Lunaris 8B ($)" style="border-color: #F39C12;">10</button>
+                    <span id="chatCostDisplay" style="margin-left: 8px; font-size: 11px; color: #4CAF50;">$0.000000 | 0 tok</span>
+                </div>
+                <div id="chatMessages"></div>
+                <div id="chatInputArea">
+                    <input type="text" id="chatInput" placeholder="Say something..." onkeypress="if(event.key==='Enter')sendChatMessage()">
+                    <button id="chatSendBtn" onclick="sendChatMessage()">Send</button>
+                </div>
+            </div>
         </div>
         
         <div id="titleScreen">
@@ -1060,7 +1253,7 @@
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.2.56 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.2.62 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div style="
@@ -1308,6 +1501,25 @@
             <input type="checkbox" id="networkDebug" onchange="toggleNetworkDebug()">
         </div>
         
+        <!-- LLM Settings Section -->
+        <div style="margin: 15px 0 10px 0; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+            <span style="font-size: 14px; font-weight: bold; color: #2D9CDB;">🤖 AI Settings</span>
+        </div>
+        
+        <!-- LLM Free Will Toggle -->
+        <div class="settingRow" style="margin-bottom: 15px;">
+            <span class="settingLabel" style="font-size: 16px;">NPC Free Will Chat</span>
+            <input type="checkbox" id="llmFreeWill" onchange="updateSettings()">
+            <span style="font-size: 10px; color: #89A0B4; margin-left: 8px;">NPCs chat on their own</span>
+        </div>
+        
+        <!-- LLM Free vs Paid Toggle -->
+        <div class="settingRow" style="margin-bottom: 15px;">
+            <span class="settingLabel" style="font-size: 16px;">Use Paid LLM Models</span>
+            <input type="checkbox" id="llmUsePaid" onchange="updateSettings()">
+            <span style="font-size: 10px; color: #89A0B4; margin-left: 8px;">Better quality, costs $</span>
+        </div>
+        
         <div style="margin: 10px 0; padding: 10px; background: rgba(42, 157, 143, 0.1); border-radius: 5px; font-size: 11px; color: #89A0B4;">
             💡 Settings are saved independently for Tunnels of Privacy
         </div>
@@ -1316,7 +1528,7 @@
         <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         
         <div style="display: block; width: 100%; margin-top: 15px; padding: 10px 0; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A7A8F; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-            Tunnels of Privacy v0.2.47
+            Tunnels of Privacy v0.2.61
         </div>
     </div>
     
@@ -1377,7 +1589,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.2.56';
+        const GAME_VERSION = 'v0.2.62';
         
         // ===== MULTIPLAYER STATE =====
         let multiplayerState = {
@@ -1780,7 +1992,7 @@
         }
         
         // Change animation state (e.g., idle -> attack -> idle)
-        function setAnimationState(combatant, newState, playMode = 'pingpong', onComplete = null) {
+        function setAnimationState(combatant, newState, playMode = 'pingpong', onComplete = null, broadcastToClients = true) {
             const anim = combatant.anim;
             if (!anim) return;
             
@@ -1790,6 +2002,16 @@
             if (!paths || !paths[newState]) {
                 console.warn('No animation path for:', heroKey, newState);
                 return;
+            }
+            
+            // Broadcast animation to clients (only if host and broadcastToClients is true)
+            if (broadcastToClients && multiplayerState.enabled && multiplayerState.role === 'host') {
+                sendWebSocketMessage({
+                    type: 'animation_sync',
+                    combatantName: combatant.name,
+                    animState: newState,
+                    playMode: playMode
+                });
             }
             
             // Handle array of variants (random selection)
@@ -2016,7 +2238,9 @@
             musicEnabled: true,
             musicVolume: 75,
             showHitboxes: false,
-            playerName: ''
+            playerName: '',
+            llmFreeWill: false,      // NPCs chat autonomously
+            llmUsePaid: false        // Use paid LLM models
         };
         
         function showSettings() {
@@ -2028,6 +2252,8 @@
             document.getElementById('musicVolume').value = settings.musicVolume;
             document.getElementById('musicVolumeValue').textContent = settings.musicVolume;
             document.getElementById('showHitboxes').checked = settings.showHitboxes;
+            document.getElementById('llmFreeWill').checked = settings.llmFreeWill;
+            document.getElementById('llmUsePaid').checked = settings.llmUsePaid;
         }
         
         function showAbout() {
@@ -2040,6 +2266,8 @@
             settings.musicEnabled = document.getElementById('musicEnabled').checked;
             settings.musicVolume = parseInt(document.getElementById('musicVolume').value);
             settings.showHitboxes = document.getElementById('showHitboxes').checked;
+            settings.llmFreeWill = document.getElementById('llmFreeWill').checked;
+            settings.llmUsePaid = document.getElementById('llmUsePaid').checked;
             
             // Update display
             document.getElementById('musicVolumeValue').textContent = settings.musicVolume;
@@ -2368,6 +2596,368 @@
             swapInitiator: null
         };
         
+        // Chat state for battle
+        let chatState = {
+            visible: false,
+            messages: [],  // { id, senderName, senderType, senderAvatar, text, timestamp }
+            targetNpc: null,  // Currently selected NPC to chat with
+            selectedModel: 1,  // Model ID 1-10 for testing
+            totalCost: 0,      // Running cost tally in dollars
+            totalTokens: 0     // Running token count
+        };
+        
+        // Select chat model (1-10)
+        function selectChatModel(modelId) {
+            chatState.selectedModel = modelId;
+            // Update button visuals
+            document.querySelectorAll('.modelBtn').forEach((btn, i) => {
+                btn.classList.toggle('active', i + 1 === modelId);
+            });
+            console.log(`[Chat] Selected model ${modelId}`);
+        }
+        
+        // Toggle chat window visibility
+        function toggleChatWindow() {
+            chatState.visible = !chatState.visible;
+            const chatWindow = document.getElementById('battleChatWindow');
+            if (chatWindow) {
+                chatWindow.style.display = chatState.visible ? 'flex' : 'none';
+                if (chatState.visible) {
+                    document.getElementById('chatInput').focus();
+                }
+            }
+        }
+        
+        // Add message to chat
+        function addChatMessage(senderName, senderType, senderAvatar, text, isNpc = false) {
+            const message = {
+                id: Date.now(),
+                senderName,
+                senderType,  // 'hostile', 'questable', 'friendly', 'player'
+                senderAvatar,
+                text,
+                isNpc,
+                timestamp: new Date().toLocaleTimeString()
+            };
+            
+            // Add to front (newest first)
+            chatState.messages.unshift(message);
+            
+            // Keep last 50 messages
+            if (chatState.messages.length > 50) {
+                chatState.messages.pop();
+            }
+            
+            renderChatMessages();
+            
+            // Broadcast to other players if host
+            if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                sendWebSocketMessage({
+                    type: 'chat_message',
+                    message: message
+                });
+            }
+        }
+        
+        // Format chat text - convert *text* to italics, escape HTML
+        function formatChatText(text) {
+            // First escape HTML to prevent XSS
+            const escaped = text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+            // Convert *text* to italics (common roleplay notation)
+            return escaped.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+        }
+        
+        // Render chat messages
+        function renderChatMessages() {
+            const container = document.getElementById('chatMessages');
+            if (!container) return;
+            
+            container.innerHTML = chatState.messages.map(msg => `
+                <div class="chatMessage">
+                    <div class="chatAvatar" style="background-image: url('${msg.senderAvatar}');"></div>
+                    <div class="chatContent">
+                        <div class="chatName ${msg.senderType}">${msg.senderName}</div>
+                        <div class="chatText">${formatChatText(msg.text)}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Send chat message from player
+        async function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const sendBtn = document.getElementById('chatSendBtn');
+            const statusEl = document.getElementById('chatStatus');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Get player name
+            const playerName = multiplayerState.enabled ? 
+                (multiplayerState.playerName || 'Player') : 'Player';
+            
+            // Get current hero avatar (use first alive hero)
+            const currentHero = battleState.heroes.find(h => h.hp > 0);
+            const heroAvatar = currentHero ? 
+                `people/${currentHero.name.toLowerCase()}_a_head_compressed.png` : 
+                'people/zooko_a_head_compressed.png';
+            
+            // Add player message to chat
+            addChatMessage(playerName, 'player', heroAvatar, message, false);
+            
+            // Clear input
+            input.value = '';
+            
+            // In multiplayer, only host calls LLM
+            if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                // Send to host for LLM processing
+                if (statusEl) statusEl.textContent = 'Sending to host...';
+                sendWebSocketMessage({
+                    type: 'chat_request',
+                    playerName: playerName,
+                    message: message
+                });
+                setTimeout(() => { if (statusEl) statusEl.textContent = ''; }, 2000);
+                return;
+            }
+            
+            // Get NPC to respond (first alive enemy with backstory)
+            const respondingNpc = battleState.enemies.find(e => e.hp > 0 && e.backstory);
+            
+            if (!respondingNpc) {
+                // No NPC can respond
+                if (statusEl) statusEl.textContent = 'No one can talk';
+                addChatMessage('System', 'friendly', 'people/zooko_a_head_compressed.png', 
+                    '*No one responds...*', true);
+                setTimeout(() => { if (statusEl) statusEl.textContent = ''; }, 2000);
+                return;
+            }
+            
+            // Disable send while waiting
+            sendBtn.disabled = true;
+            sendBtn.textContent = '...';
+            
+            // Start response timer
+            const startTime = performance.now();
+            let timerInterval = setInterval(() => {
+                const elapsed = ((performance.now() - startTime) / 1000).toFixed(1);
+                if (statusEl) statusEl.textContent = `Model ${chatState.selectedModel} - ${elapsed}s...`;
+            }, 100);
+            
+            try {
+                // Call server LLM API
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        npcName: respondingNpc.name,
+                        backstory: respondingNpc.backstory || 'A mysterious creature.',
+                        npcType: respondingNpc.isBoss ? 'boss' : 'mob',
+                        conversation: chatState.messages.slice(0, 10).reverse(),
+                        message: message,
+                        playerName: playerName,
+                        modelId: chatState.selectedModel
+                    })
+                });
+                
+                // Stop timer
+                clearInterval(timerInterval);
+                const totalTime = ((performance.now() - startTime) / 1000).toFixed(2);
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    if (statusEl) statusEl.textContent = `Model ${chatState.selectedModel}: ${totalTime}s`;
+                    // Clear status after 5 seconds
+                    setTimeout(() => { if (statusEl && statusEl.textContent.includes(totalTime)) statusEl.textContent = ''; }, 5000);
+                    
+                    // Update cost tracking
+                    if (result.usage) {
+                        chatState.totalCost += result.usage.cost || 0;
+                        chatState.totalTokens += (result.usage.promptTokens || 0) + (result.usage.completionTokens || 0);
+                        const costDisplay = document.getElementById('chatCostDisplay');
+                        if (costDisplay) {
+                            costDisplay.textContent = `$${chatState.totalCost.toFixed(6)} | ${chatState.totalTokens} tok`;
+                        }
+                    }
+                    
+                    // Determine NPC type for color
+                    const npcType = respondingNpc.hostile ? 'hostile' : 
+                        (respondingNpc.questable ? 'questable' : 'friendly');
+                    
+                    // Add NPC response
+                    addChatMessage(
+                        respondingNpc.name,
+                        npcType,
+                        respondingNpc.spritePath || 'people/zooko_a_head_compressed.png',
+                        result.response,
+                        true
+                    );
+                } else {
+                    if (statusEl) statusEl.textContent = `Error (${totalTime}s): ` + (result.error || 'Unknown');
+                    console.error('Chat API error:', result.error);
+                }
+            } catch (error) {
+                clearInterval(timerInterval);
+                if (statusEl) statusEl.textContent = 'Connection error';
+                console.error('Chat fetch error:', error);
+            }
+            
+            sendBtn.disabled = false;
+            sendBtn.textContent = 'Send';
+        }
+        
+        // Clear chat when battle ends
+        function clearBattleChat() {
+            chatState.messages = [];
+            chatState.visible = false;
+            chatState.targetNpc = null;
+            const chatWindow = document.getElementById('battleChatWindow');
+            if (chatWindow) chatWindow.style.display = 'none';
+            renderChatMessages();
+        }
+        
+        // Generate unique encounter data via Dungeon Master LLM
+        async function generateEncounter(type, baseData, roomLevel) {
+            try {
+                const response = await fetch('/api/generate-encounter', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: type,
+                        baseData: baseData,
+                        roomLevel: roomLevel,
+                        useFreeModel: !settings.llmUsePaid
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success && result.data) {
+                    console.log(`[DM] Generated ${type}:`, result.data);
+                    return result.data;
+                } else {
+                    console.warn(`[DM] Failed to generate ${type}:`, result.error || result.raw);
+                    return null;
+                }
+            } catch (error) {
+                console.error('[DM] Encounter generation error:', error);
+                return null;
+            }
+        }
+        
+        // Apply generated data to boss/mob
+        function applyGeneratedData(enemy, generated) {
+            if (!generated) return;
+            
+            // Apply name
+            if (generated.name) {
+                enemy.name = generated.name;
+            }
+            
+            // Apply backstory
+            if (generated.backstory) {
+                enemy.backstory = generated.backstory;
+            }
+            
+            // Apply personality
+            if (generated.personality) {
+                enemy.personality = generated.personality;
+            }
+            
+            // Apply stat modifiers
+            if (generated.statModifiers) {
+                if (generated.statModifiers.hpMod) {
+                    enemy.hp = Math.max(1, enemy.hp + generated.statModifiers.hpMod);
+                    enemy.maxHp = Math.max(1, enemy.maxHp + generated.statModifiers.hpMod);
+                }
+                if (generated.statModifiers.damageMod) {
+                    enemy.attackDamage = Math.max(1, enemy.attackDamage + generated.statModifiers.damageMod);
+                }
+                if (generated.statModifiers.acMod) {
+                    enemy.ac = Math.max(1, enemy.ac + generated.statModifiers.acMod);
+                }
+            }
+            
+            // Apply negotiation options
+            if (generated.negotiation) {
+                enemy.negotiation = generated.negotiation;
+            }
+            
+            // Apply opening line
+            if (generated.openingLine) {
+                enemy.openingLine = generated.openingLine;
+            }
+        }
+        
+        // Trigger NPC free will chat (autonomous chat)
+        function triggerFreeWillChat(npc, trigger) {
+            if (!settings.llmFreeWill) return;
+            if (!npc || !npc.backstory) return;
+            
+            // Don't spam - check cooldown
+            if (npc.lastFreeWillChat && Date.now() - npc.lastFreeWillChat < 10000) return;
+            npc.lastFreeWillChat = Date.now();
+            
+            // Build a context-specific prompt
+            let contextPrompt = '';
+            switch (trigger) {
+                case 'battle_start':
+                    if (npc.openingLine) {
+                        addChatMessage(npc.name, npc.hostile ? 'hostile' : 'friendly', 
+                            npc.spritePath || 'people/zooko_a_head_compressed.png', npc.openingLine, true);
+                        return;
+                    }
+                    contextPrompt = 'The battle just started. Say something to intimidate or greet the heroes.';
+                    break;
+                case 'took_damage':
+                    contextPrompt = 'You just took damage! React with pain, anger, or determination.';
+                    break;
+                case 'dealt_damage':
+                    contextPrompt = 'You just hit a hero! Gloat, taunt, or comment on your attack.';
+                    break;
+                case 'low_health':
+                    contextPrompt = 'You are badly wounded. Express fear, defiance, or consider surrendering.';
+                    break;
+                case 'ally_died':
+                    contextPrompt = 'One of your allies just died. React with grief, rage, or indifference.';
+                    break;
+                default:
+                    return; // Unknown trigger, skip
+            }
+            
+            // Make async LLM call for free will response
+            (async () => {
+                try {
+                    const response = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            npcName: npc.name,
+                            backstory: npc.backstory,
+                            npcType: npc.isBoss ? 'boss' : 'mob',
+                            conversation: chatState.messages.slice(0, 5).reverse(),
+                            message: contextPrompt,
+                            playerName: 'System',
+                            modelId: settings.llmUsePaid ? 3 : 2  // Use Groq models for speed
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    if (result.success && result.response) {
+                        const npcType = npc.hostile ? 'hostile' : (npc.questable ? 'questable' : 'friendly');
+                        addChatMessage(npc.name, npcType, npc.spritePath || 'people/zooko_a_head_compressed.png', 
+                            result.response, true);
+                    }
+                } catch (error) {
+                    console.error('[Free Will] Chat error:', error);
+                }
+            })();
+        }
+        
         // Start a battle encounter
         async function startBattle() {
             // Multiplayer clients cannot start battles - only host
@@ -2499,46 +3089,86 @@
             
             // Setup enemies from loaded data (level 2 for testing)
             battleState.enemies = [];
+            battleState.captiveNpc = null;  // Captive NPC to rescue
+            const roomLevel = 2;  // TODO: Get from dungeon state
+            
+            // Show loading indicator for LLM generation
+            showDiceRoll('Dungeon Master is preparing the encounter...');
             
             // Add boss from level 2
-            const boss = bossesData.find(b => b.mainLevel === 2);
+            const boss = bossesData.find(b => b.mainLevel === roomLevel);
             if (boss) {
-                battleState.enemies.push({
+                const bossEnemy = {
                     name: boss.name,
-                    hp: 3,
-                    maxHp: 3,
+                    hp: boss.stats.hp || 50,
+                    maxHp: boss.stats.maxHp || 50,
                     ac: boss.stats.ac,
                     attackDamage: boss.stats.attackDamage,
                     speed: boss.stats.speed,
                     dex: boss.stats.initiative || 0,
                     hostile: boss.behavior?.hostile !== false,
+                    backstory: boss.backstory || null,
+                    isBoss: true,
                     color: '#8B45FF',
                     x: 0, y: 0, platform: null, facing: 'center',
                     sprite: new Image(),
                     spritePath: boss.spritePath,
                     isMob: false
-                });
+                };
+                
+                // Generate unique boss via LLM
+                const generatedBoss = await generateEncounter('boss', boss, roomLevel);
+                applyGeneratedData(bossEnemy, generatedBoss);
+                
+                battleState.enemies.push(bossEnemy);
             }
             
             // Add 2 random hostile mobs
             const hostileMobs = mobsData.filter(m => m.behavior?.hostile);
             for (let i = 0; i < 2 && i < hostileMobs.length; i++) {
                 const mob = hostileMobs[Math.floor(Math.random() * hostileMobs.length)];
-                battleState.enemies.push({
+                const mobEnemy = {
                     name: mob.name,
-                    hp: 3,
-                    maxHp: 3,
+                    hp: mob.stats.hp || 15,
+                    maxHp: mob.stats.maxHp || 15,
                     ac: mob.stats.ac,
                     attackDamage: mob.stats.attackDamage,
                     speed: mob.stats.speed,
                     dex: 0,
                     hostile: mob.behavior?.hostile !== false,
+                    backstory: mob.backstory || null,
+                    isBoss: false,
                     color: '#5C3317',
                     x: 0, y: 0, platform: null, facing: 'center',
                     sprite: new Image(),
                     spritePath: mob.spritePath,
                     isMob: true
-                });
+                };
+                
+                // Generate unique mob via LLM (50% chance to keep it fast)
+                if (Math.random() > 0.5) {
+                    const generatedMob = await generateEncounter('mob', mob, roomLevel);
+                    applyGeneratedData(mobEnemy, generatedMob);
+                }
+                
+                battleState.enemies.push(mobEnemy);
+            }
+            
+            // Generate captive NPC (50% chance per room)
+            if (Math.random() > 0.5) {
+                const captiveData = await generateEncounter('captive', {}, roomLevel);
+                if (captiveData) {
+                    battleState.captiveNpc = {
+                        name: captiveData.name || 'Mysterious Prisoner',
+                        species: captiveData.species || 'human',
+                        backstory: captiveData.backstory || 'A prisoner needing rescue.',
+                        personality: captiveData.personality || 'grateful',
+                        rescueReward: captiveData.rescueReward || { gold: 20 },
+                        dialogueOnRescue: captiveData.dialogueOnRescue || 'Thank you for saving me!',
+                        rescued: false
+                    };
+                    console.log('[DM] Captive NPC generated:', battleState.captiveNpc);
+                }
             }
             
             // Load enemy sprites
@@ -2599,6 +3229,19 @@
             
             // Render initial state (will re-render when bg loads)
             renderBattle();
+            
+            // Trigger free will chat for boss at battle start
+            const mainBoss = battleState.enemies.find(e => e.isBoss);
+            if (mainBoss) {
+                setTimeout(() => triggerFreeWillChat(mainBoss, 'battle_start'), 1000);
+            }
+            
+            // Show captive NPC notification if present
+            if (battleState.captiveNpc) {
+                setTimeout(() => {
+                    showBattleNotification(`A prisoner is here: ${battleState.captiveNpc.name}!`);
+                }, 2000);
+            }
             
             // Start battle animation loop for continuous updates (targeting highlights, etc.)
             function battleAnimationLoop() {
@@ -4092,6 +4735,12 @@
                 return;
             }
             
+            // Talk action - toggle chat window (no turn cost, can use anytime)
+            if (action === 'talk') {
+                toggleChatWindow();
+                return;
+            }
+            
             const currentCombatant = battleState.turnOrder[battleState.currentTurn];
             
             // Check if it's a hero's turn
@@ -4364,6 +5013,20 @@
                 
                 target.hp = Math.max(0, target.hp - damageRoll);
                 
+                // Trigger free will chat for damaged enemy
+                if (battleState.enemies.includes(target) && target.hp > 0) {
+                    if (target.hp < target.maxHp * 0.3) {
+                        triggerFreeWillChat(target, 'low_health');
+                    } else {
+                        triggerFreeWillChat(target, 'took_damage');
+                    }
+                }
+                
+                // Trigger free will chat for attacker if enemy dealt damage
+                if (battleState.enemies.includes(attacker)) {
+                    triggerFreeWillChat(attacker, 'dealt_damage');
+                }
+                
                 // Award 2 XP for hitting (total 3 including attempt)
                 attacker.xp += 2;
                 
@@ -4414,6 +5077,44 @@
                     updateBattleHeroCards();
                     
                     showBattleNotification('ROOM CLEARED!');
+                    
+                    // Rescue captive NPC if present
+                    if (battleState.captiveNpc && !battleState.captiveNpc.rescued) {
+                        battleState.captiveNpc.rescued = true;
+                        setTimeout(() => {
+                            // Show rescue dialogue
+                            addChatMessage(
+                                battleState.captiveNpc.name,
+                                'friendly',
+                                'people/zooko_a_head_compressed.png',
+                                battleState.captiveNpc.dialogueOnRescue,
+                                true
+                            );
+                            
+                            // Give reward
+                            const reward = battleState.captiveNpc.rescueReward;
+                            let rewardText = 'Rescued ' + battleState.captiveNpc.name + '!';
+                            if (reward.gold) {
+                                rewardText += ` +${reward.gold} gold`;
+                            }
+                            if (reward.item) {
+                                rewardText += ` +${reward.item}`;
+                            }
+                            if (reward.info) {
+                                setTimeout(() => {
+                                    addChatMessage(
+                                        battleState.captiveNpc.name,
+                                        'friendly',
+                                        'people/zooko_a_head_compressed.png',
+                                        `*whispers* ${reward.info}`,
+                                        true
+                                    );
+                                }, 2000);
+                            }
+                            showBattleNotification(rewardText);
+                        }, 1500);
+                    }
+                    
                     // Change retreat button to leave
                     const retreatBtn = document.querySelector('.battleButton.retreat');
                     if (retreatBtn) {
@@ -4682,6 +5383,9 @@
             // Move music controls and ticker back to center bottom
             document.getElementById('musicControls').classList.remove('battleActive');
             document.getElementById('musicTicker').classList.remove('battleActive');
+            
+            // Clear battle chat
+            clearBattleChat();
         }
         
         // ===== END BATTLE SYSTEM =====
@@ -5829,6 +6533,43 @@
                     }
                     break;
                 
+                case 'chat_message':
+                    // Receive chat message broadcast from host
+                    if (multiplayerState.role === 'client' && data.message) {
+                        // Skip if this is our own message (we already added it locally)
+                        const myName = multiplayerState.playerName || 'Player';
+                        if (data.message.senderName === myName && !data.message.isNpc) {
+                            break;
+                        }
+                        // Add to local chat without re-broadcasting
+                        chatState.messages.unshift(data.message);
+                        if (chatState.messages.length > 50) {
+                            chatState.messages.pop();
+                        }
+                        renderChatMessages();
+                    }
+                    break;
+                
+                case 'chat_request':
+                    // Host receives chat request from client - process LLM and broadcast
+                    if (multiplayerState.role === 'host') {
+                        handleClientChatRequest(data);
+                    }
+                    break;
+                
+                case 'animation_sync':
+                    // Client receives animation update from host
+                    if (multiplayerState.role === 'client' && data.combatantName && data.animState) {
+                        // Find the combatant by name
+                        const combatant = battleState.heroes.find(h => h.name === data.combatantName) ||
+                                          battleState.enemies.find(e => e.name === data.combatantName);
+                        if (combatant) {
+                            // Apply animation locally without re-broadcasting
+                            setAnimationState(combatant, data.animState, data.playMode || 'pingpong', null, false);
+                        }
+                    }
+                    break;
+                
                 default:
                     console.warn('[MP] Unhandled message type:', data.type, data);
                     break;
@@ -5837,6 +6578,59 @@
             // Log message to debug panel
             logDebugMessage(data.type, data, 'in');
             updateDebugStatus();
+        }
+        
+        // Handle chat request from client (host-only)
+        async function handleClientChatRequest(data) {
+            const playerName = data.playerName || 'Player';
+            const message = data.message || '';
+            
+            // Get player's hero avatar
+            const heroAvatar = 'people/zooko_a_head_compressed.png';
+            
+            // Add player message to chat (will broadcast)
+            addChatMessage(playerName, 'player', heroAvatar, message, false);
+            
+            // Get NPC to respond
+            const respondingNpc = battleState.enemies.find(e => e.hp > 0 && e.backstory);
+            
+            if (!respondingNpc) {
+                addChatMessage('System', 'friendly', 'people/zooko_a_head_compressed.png', 
+                    '*No one responds...*', true);
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        npcName: respondingNpc.name,
+                        backstory: respondingNpc.backstory || 'A mysterious creature.',
+                        npcType: respondingNpc.isBoss ? 'boss' : 'mob',
+                        conversation: chatState.messages.slice(0, 10).reverse(),
+                        message: message,
+                        playerName: playerName
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const npcType = respondingNpc.hostile ? 'hostile' : 
+                        (respondingNpc.questable ? 'questable' : 'friendly');
+                    
+                    addChatMessage(
+                        respondingNpc.name,
+                        npcType,
+                        respondingNpc.spritePath || 'people/zooko_a_head_compressed.png',
+                        result.response,
+                        true
+                    );
+                }
+            } catch (error) {
+                console.error('Chat fetch error:', error);
+            }
         }
         
         function sendWebSocketMessage(data) {
@@ -6596,7 +7390,9 @@
                     platform: e.platform,
                     facing: e.facing,
                     isMob: e.isMob,
+                    isBoss: e.isBoss,
                     spritePath: e.spritePath,
+                    backstory: e.backstory,
                     initiative: e.initiative
                 })),
                 currentTurn: battleState.currentTurn
@@ -6658,7 +7454,9 @@
                     existingEnemy.platform = enemyData.platform;
                     existingEnemy.facing = enemyData.facing;
                     existingEnemy.isMob = enemyData.isMob;
+                    existingEnemy.isBoss = enemyData.isBoss;
                     existingEnemy.spritePath = enemyData.spritePath;
+                    existingEnemy.backstory = enemyData.backstory;
                     existingEnemy.initiative = enemyData.initiative;
                     return existingEnemy;
                 } else {
@@ -6761,6 +7559,19 @@
                 };
                 hero.sprite.src = hero.spritePath + '?v=' + Date.now();
                 return hero;
+            });
+            
+            // Initialize animation controllers for heroes (so clients can receive animation_sync)
+            battleState.heroes.forEach(hero => {
+                const heroKey = hero.name.toLowerCase();
+                let idlePath = HERO_ANIM_PATHS[heroKey]?.idle;
+                // Handle array of idle variants - pick random one
+                if (Array.isArray(idlePath)) {
+                    idlePath = idlePath[Math.floor(Math.random() * idlePath.length)];
+                }
+                if (idlePath) {
+                    initAnimation(hero, idlePath, 'pingpong');
+                }
             });
             
             // Setup enemies with host's data
