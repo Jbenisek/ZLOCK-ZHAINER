@@ -2,6 +2,88 @@
 
 # Changelog
 
+## v0.2.56 - Complete Hero Animation Sets & New Animation Triggers (2025-11-28)
+- **Summary:**
+  - Added complete animation sets for Zancas and Nate
+  - Added heal, taunt, and myturn animation triggers
+  - All 4 heroes now have full animation support
+
+- **Zancas Complete Animation Set:**
+  - Idle variants: `zancas_idle.png`, `zancas_idle_a.png`, `zancas_idle_b.png`
+  - Attacks: `zancas_light_attack.png`, `zancas_heavy_attack.png`, `zancas_special_attack.png`
+  - Hit: `zancas_hit.png` - plays once, returns to idle
+  - Knockout: `zancas_knockout.png` - plays once, holds last frame
+  - Defend: `zancas_def.png` - pingpong while defending
+  - Heal: `zancas_heal.png` - plays once, returns to idle
+
+- **Nate Complete Animation Set:**
+  - Idle variants: `nate_idle.png`, `nate_idle_a.png`, `nate_idle_b.png`, `nate_idle_c.png` (4 variants!)
+  - Attacks: `nate_light_attack.png`, `nate_heavy_attack.png`
+  - Special Attack variants: `nate_special_attack.png`, `nate_special_attack_a.png` (random selection)
+  - Hit: `nate_hit.png` - plays once, returns to idle
+  - Knockout: `nate_knockout.png` - plays once, holds last frame
+  - Defend: `nate_def.png` - pingpong while defending
+  - Heal: `nate_heal.png` - plays once, returns to idle
+  - Taunt: `nate_taunt.png` - plays once on taunt action, returns to idle
+  - MyTurn: `nate_myturn.png` - plays once when Nate's turn starts, returns to idle
+
+- **New Animation Triggers:**
+  - **Heal Animation:** Triggered in heal action, plays once then returns to idle
+  - **Taunt Animation:** Triggered in taunt action, plays once then returns to idle
+  - **MyTurn Animation:** Triggered in `updateBattleTurnInfo()` when hero's turn starts
+  - All triggers check if hero has the animation state before playing
+
+- **Technical Details:**
+  - `HERO_ANIM_PATHS` now supports array format for special_attack variants (Nate)
+  - 14 new sprite sheets for Nate, 11 new sprite sheets for Zancas
+  - All sprite sheets added to preload list for instant playback
+  - MyTurn only triggers for heroes with hp > 0
+
+## v0.2.55 - Defend Animation & Zooko Full Animation Set (2025-11-28)
+- **Summary:**
+  - Added defend animation system for heroes
+  - Added complete animation set for Zooko (idle variants, attacks, hit, knockout, defend)
+
+- **Defend Animation System:**
+  - `cyberaxe_def.png`, `zooko_def.png` - Defense stance animations
+  - Triggered when hero selects Defend action
+  - Uses 'pingpong' mode - loops forward/backward while defending
+  - Resets to idle when:
+    - Hero is hit while defending (hit animation plays first)
+    - Hero's turn comes again (when taking any new action)
+  - Added `defend` state to `HERO_ANIM_PATHS` for both heroes
+
+- **Zooko Complete Animation Set:**
+  - Idle variants: `zooko_idle.png`, `zooko_idle_a.png`, `zooko_idle_b.png`
+  - Attacks: `zooko_light_attack.png`, `zooko_heavy_attack.png`, `zooko_special_attack.png`
+  - Hit: `zooko_hit.png` - plays once, returns to idle
+  - Knockout: `zooko_knockout.png` - plays once, holds last frame
+  - Defend: `zooko_def.png` - pingpong while defending
+
+- **Technical Details:**
+  - Defense reset in `handleBattleAction()` when `currentCombatant.defending` is true
+  - Animation triggered via `setAnimationState(combatant, 'defend', 'pingpong')`
+  - All new sprite sheets added to preload list
+  - Both Zooko and CyberAxe now have matching animation states
+
+## v0.2.54 - Knockout Animation (2025-11-27)
+- **Summary:**
+  - Added knockout animation for heroes when HP reaches 0
+  - Animation plays once and holds on final frame
+
+- **Knockout System:**
+  - `cyberaxe_knockout.png` - CyberAxe knockout animation
+  - Triggered when hero HP drops to 0 from enemy attack
+  - Uses 'once' play mode - plays all 81 frames then stops
+  - Holds on last frame (frame 80) indefinitely
+  - Added to preload list for instant playback
+
+- **Technical Details:**
+  - Added `knockout` state to `HERO_ANIM_PATHS.cyberaxe`
+  - Knockout triggered in AI attack damage check
+  - 'once' mode sets `anim.playing = false` at end
+  - Frame stays at `ANIM_TOTAL_FRAMES - 1` after completion
+
 ## v0.2.53 - Idle Variants & Sprite Preloading (2025-11-27)
 - **Summary:**
   - Added multiple idle animation variants with random cycling

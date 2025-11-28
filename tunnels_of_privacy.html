@@ -1060,7 +1060,7 @@
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.2.53 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.2.56 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div style="
@@ -1377,7 +1377,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.2.53';
+        const GAME_VERSION = 'v0.2.56';
         
         // ===== MULTIPLAYER STATE =====
         let multiplayerState = {
@@ -1547,9 +1547,53 @@
         // Animation state paths for heroes
         // States can be a single path (string) or array of variants for random selection
         const HERO_ANIM_PATHS = {
-            zooko: { idle: 'tunnelsofprivacy/heros/zooko_idle.png' },
-            nate: { idle: 'tunnelsofprivacy/heros/nate_idle.png' },
-            zancas: { idle: 'tunnelsofprivacy/heros/zancas_idle.png' },
+            zooko: { 
+                idle: [
+                    'tunnelsofprivacy/heros/zooko_idle.png',
+                    'tunnelsofprivacy/heros/zooko_idle_a.png',
+                    'tunnelsofprivacy/heros/zooko_idle_b.png'
+                ],
+                light_attack: 'tunnelsofprivacy/heros/zooko_light_attack.png',
+                heavy_attack: 'tunnelsofprivacy/heros/zooko_heavy_attack.png',
+                special_attack: 'tunnelsofprivacy/heros/zooko_special_attack.png',
+                knockout: 'tunnelsofprivacy/heros/zooko_knockout.png',
+                hit: 'tunnelsofprivacy/heros/zooko_hit.png',
+                defend: 'tunnelsofprivacy/heros/zooko_def.png'
+            },
+            nate: { 
+                idle: [
+                    'tunnelsofprivacy/heros/nate_idle.png',
+                    'tunnelsofprivacy/heros/nate_idle_a.png',
+                    'tunnelsofprivacy/heros/nate_idle_b.png',
+                    'tunnelsofprivacy/heros/nate_idle_c.png'
+                ],
+                light_attack: 'tunnelsofprivacy/heros/nate_light_attack.png',
+                heavy_attack: 'tunnelsofprivacy/heros/nate_heavy_attack.png',
+                special_attack: [
+                    'tunnelsofprivacy/heros/nate_special_attack.png',
+                    'tunnelsofprivacy/heros/nate_special_attack_a.png'
+                ],
+                knockout: 'tunnelsofprivacy/heros/nate_knockout.png',
+                hit: 'tunnelsofprivacy/heros/nate_hit.png',
+                defend: 'tunnelsofprivacy/heros/nate_def.png',
+                heal: 'tunnelsofprivacy/heros/nate_heal.png',
+                taunt: 'tunnelsofprivacy/heros/nate_taunt.png',
+                myturn: 'tunnelsofprivacy/heros/nate_myturn.png'
+            },
+            zancas: { 
+                idle: [
+                    'tunnelsofprivacy/heros/zancas_idle.png',
+                    'tunnelsofprivacy/heros/zancas_idle_a.png',
+                    'tunnelsofprivacy/heros/zancas_idle_b.png'
+                ],
+                light_attack: 'tunnelsofprivacy/heros/zancas_light_attack.png',
+                heavy_attack: 'tunnelsofprivacy/heros/zancas_heavy_attack.png',
+                special_attack: 'tunnelsofprivacy/heros/zancas_special_attack.png',
+                knockout: 'tunnelsofprivacy/heros/zancas_knockout.png',
+                hit: 'tunnelsofprivacy/heros/zancas_hit.png',
+                defend: 'tunnelsofprivacy/heros/zancas_def.png',
+                heal: 'tunnelsofprivacy/heros/zancas_heal.png'
+            },
             cyberaxe: { 
                 idle: [
                     'tunnelsofprivacy/heros/cyberaxe_idle.png',
@@ -1558,7 +1602,10 @@
                 ],
                 light_attack: 'tunnelsofprivacy/heros/cyberaxe_light_attack.png',
                 heavy_attack: 'tunnelsofprivacy/heros/cyberaxe_heavy_attack.png',
-                special_attack: 'tunnelsofprivacy/heros/cyberaxe_special_attack.png'
+                special_attack: 'tunnelsofprivacy/heros/cyberaxe_special_attack.png',
+                knockout: 'tunnelsofprivacy/heros/cyberaxe_knockout.png',
+                hit: 'tunnelsofprivacy/heros/cyberaxe_hit.png',
+                defend: 'tunnelsofprivacy/heros/cyberaxe_def.png'
             }
         };
         
@@ -3633,6 +3680,17 @@
             const activeCard = document.getElementById(`battleCard${currentHero.name}`);
             if (activeCard) activeCard.classList.add('active');
             
+            // Trigger myturn animation if hero has one (plays once, returns to idle)
+            if (battleState.heroes.includes(currentHero) && currentHero.hp > 0) {
+                const heroKey = currentHero.name.toLowerCase();
+                const paths = HERO_ANIM_PATHS[heroKey];
+                if (paths && paths.myturn) {
+                    setAnimationState(currentHero, 'myturn', 'once', () => {
+                        setAnimationState(currentHero, 'idle', 'pingpong');
+                    });
+                }
+            }
+            
             // Disable/enable buttons based on turn in multiplayer
             if (multiplayerState.enabled) {
                 const isMyTurn = multiplayerState.myHeroes.includes(currentHero.name.toLowerCase());
@@ -4059,6 +4117,17 @@
                 return;
             }
             
+            // Reset defending state when hero takes a new action
+            if (currentCombatant.defending) {
+                currentCombatant.defending = false;
+                // Reset from defend animation to idle
+                const heroKey = currentCombatant.name.toLowerCase();
+                const paths = HERO_ANIM_PATHS[heroKey];
+                if (paths && paths.defend) {
+                    setAnimationState(currentCombatant, 'idle', 'pingpong');
+                }
+            }
+            
             // Enter targeting mode for attacks
             if (action === 'light' || action === 'heavy' || action === 'special') {
                 // Multiplayer: Client enters targeting mode but won't execute until host confirms
@@ -4085,6 +4154,14 @@
                 }
                 
                 currentCombatant.defending = true;
+                
+                // Trigger defend animation (ping-pong while defending)
+                const heroKey = currentCombatant.name.toLowerCase();
+                const paths = HERO_ANIM_PATHS[heroKey];
+                if (paths && paths.defend) {
+                    setAnimationState(currentCombatant, 'defend', 'pingpong');
+                }
+                
                 showDiceRoll(`${currentCombatant.name} defends!`);
                 advanceTurn();
                 return;
@@ -4111,6 +4188,15 @@
                 currentCombatant.hp = Math.min(currentCombatant.maxHp, currentCombatant.hp + healAmount);
                 currentCombatant.healsRemaining--;
                 currentCombatant.usedHeal = true; // Mark that heal was used this turn
+                
+                // Trigger heal animation if hero has one (plays once, returns to idle)
+                const heroKey = currentCombatant.name.toLowerCase();
+                const paths = HERO_ANIM_PATHS[heroKey];
+                if (paths && paths.heal) {
+                    setAnimationState(currentCombatant, 'heal', 'once', () => {
+                        setAnimationState(currentCombatant, 'idle', 'pingpong');
+                    });
+                }
                 
                 showDiceRoll(`${currentCombatant.name} heals for ${healAmount} HP! (1 action used)`);
                 updateBattleHeroCards();
@@ -4155,6 +4241,15 @@
                 const chaModifier = calculateModifier(currentCombatant.stats?.cha || 10);
                 const tauntRoll = rollD20() + chaModifier;
                 const tauntDC = 12; // Base difficulty
+                
+                // Trigger taunt animation if hero has one (plays once, returns to idle)
+                const heroKey = currentCombatant.name.toLowerCase();
+                const paths = HERO_ANIM_PATHS[heroKey];
+                if (paths && paths.taunt) {
+                    setAnimationState(currentCombatant, 'taunt', 'once', () => {
+                        setAnimationState(currentCombatant, 'idle', 'pingpong');
+                    });
+                }
                 
                 if (tauntRoll >= tauntDC) {
                     currentCombatant.taunting = true;
@@ -4417,9 +4512,22 @@
                 if (target.defending) {
                     finalDamage = Math.floor(damage / 2);
                     target.defending = false;
+                    // Reset from defend animation (hit animation will play next)
                 }
                 
                 target.hp = Math.max(0, target.hp - finalDamage);
+                
+                // Trigger hit animation if hero has one (and not knocked out)
+                if (battleState.heroes.includes(target) && target.hp > 0) {
+                    const heroKey = target.name.toLowerCase();
+                    const paths = HERO_ANIM_PATHS[heroKey];
+                    if (paths && paths.hit) {
+                        setAnimationState(target, 'hit', 'once', () => {
+                            setAnimationState(target, 'idle', 'pingpong');
+                        });
+                    }
+                }
+                
                 showDiceRoll(`${combatant.name} attacks ${target.name}: HIT for ${finalDamage} damage!`);
             } else {
                 showDiceRoll(`${combatant.name} attacks ${target.name}: MISS!`);
@@ -4434,6 +4542,15 @@
             
             // Check if hero died
             if (target.hp <= 0) {
+                // Trigger knockout animation if available
+                if (battleState.heroes.includes(target)) {
+                    const heroKey = target.name.toLowerCase();
+                    const paths = HERO_ANIM_PATHS[heroKey];
+                    if (paths && paths.knockout) {
+                        setAnimationState(target, 'knockout', 'once');
+                    }
+                }
+                
                 const allHeroesDead = battleState.heroes.every(h => h.hp <= 0);
                 if (allHeroesDead) {
                     showBattleNotification('DEFEAT! ALL HEROES FALLEN!');
@@ -5116,14 +5233,47 @@
                 'people/cyberaxe_a_head_compressed.png',
                 // Hero sprite sheet animations
                 'tunnelsofprivacy/heros/zooko_idle.png',
+                'tunnelsofprivacy/heros/zooko_idle_a.png',
+                'tunnelsofprivacy/heros/zooko_idle_b.png',
+                'tunnelsofprivacy/heros/zooko_light_attack.png',
+                'tunnelsofprivacy/heros/zooko_heavy_attack.png',
+                'tunnelsofprivacy/heros/zooko_special_attack.png',
+                'tunnelsofprivacy/heros/zooko_knockout.png',
+                'tunnelsofprivacy/heros/zooko_hit.png',
+                'tunnelsofprivacy/heros/zooko_def.png',
                 'tunnelsofprivacy/heros/nate_idle.png',
+                'tunnelsofprivacy/heros/nate_idle_a.png',
+                'tunnelsofprivacy/heros/nate_idle_b.png',
+                'tunnelsofprivacy/heros/nate_idle_c.png',
+                'tunnelsofprivacy/heros/nate_light_attack.png',
+                'tunnelsofprivacy/heros/nate_heavy_attack.png',
+                'tunnelsofprivacy/heros/nate_special_attack.png',
+                'tunnelsofprivacy/heros/nate_special_attack_a.png',
+                'tunnelsofprivacy/heros/nate_knockout.png',
+                'tunnelsofprivacy/heros/nate_hit.png',
+                'tunnelsofprivacy/heros/nate_def.png',
+                'tunnelsofprivacy/heros/nate_heal.png',
+                'tunnelsofprivacy/heros/nate_taunt.png',
+                'tunnelsofprivacy/heros/nate_myturn.png',
                 'tunnelsofprivacy/heros/zancas_idle.png',
+                'tunnelsofprivacy/heros/zancas_idle_a.png',
+                'tunnelsofprivacy/heros/zancas_idle_b.png',
+                'tunnelsofprivacy/heros/zancas_light_attack.png',
+                'tunnelsofprivacy/heros/zancas_heavy_attack.png',
+                'tunnelsofprivacy/heros/zancas_special_attack.png',
+                'tunnelsofprivacy/heros/zancas_knockout.png',
+                'tunnelsofprivacy/heros/zancas_hit.png',
+                'tunnelsofprivacy/heros/zancas_def.png',
+                'tunnelsofprivacy/heros/zancas_heal.png',
                 'tunnelsofprivacy/heros/cyberaxe_idle.png',
                 'tunnelsofprivacy/heros/cyberaxe_idle_a.png',
                 'tunnelsofprivacy/heros/cyberaxe_idle_b.png',
                 'tunnelsofprivacy/heros/cyberaxe_light_attack.png',
                 'tunnelsofprivacy/heros/cyberaxe_heavy_attack.png',
-                'tunnelsofprivacy/heros/cyberaxe_special_attack.png'
+                'tunnelsofprivacy/heros/cyberaxe_special_attack.png',
+                'tunnelsofprivacy/heros/cyberaxe_knockout.png',
+                'tunnelsofprivacy/heros/cyberaxe_hit.png',
+                'tunnelsofprivacy/heros/cyberaxe_def.png'
             ];
             
             artTotal = imageList.length;
