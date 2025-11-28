@@ -195,6 +195,20 @@
             color: #8B45FF;
         }
         
+        .battleEnemyCard.captive {
+            border-color: #F2C94C;
+            box-shadow: 0 0 15px rgba(242, 201, 76, 0.4);
+        }
+        
+        .battleEnemyCard.captive .battleEnemyPortrait {
+            border-color: #F2C94C;
+            box-shadow: 0 0 10px rgba(242, 201, 76, 0.4);
+        }
+        
+        .battleEnemyCard.captive .battleEnemyName {
+            color: #F2C94C;
+        }
+        
         /* Chat Window Styles */
         #battleChatWindow {
             position: absolute;
@@ -287,9 +301,92 @@
             white-space: pre-wrap;
         }
         
+        .typingCursor {
+            color: #5865F2;
+            animation: cursorBlink 0.5s infinite;
+        }
+        
+        @keyframes cursorBlink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
         #chatInputArea {
             padding: 10px;
             border-top: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        #chatTargetSelector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            max-height: 80px;
+            overflow-y: auto;
+            padding: 4px 0;
+        }
+        
+        .chatTargetBtn {
+            padding: 3px 8px;
+            font-size: 10px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.5);
+            color: #aaa;
+            cursor: pointer;
+            white-space: nowrap;
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .chatTargetBtn:hover {
+            background: rgba(88, 101, 242, 0.3);
+            border-color: #5865F2;
+        }
+        
+        .chatTargetBtn.active {
+            background: #5865F2;
+            color: white;
+            border-color: #5865F2;
+        }
+        
+        .chatTargetBtn.hostile {
+            border-color: #E74C3C;
+        }
+        
+        .chatTargetBtn.hostile.active {
+            background: #E74C3C;
+        }
+        
+        .chatTargetBtn.friendly {
+            border-color: #F2C94C;
+        }
+        
+        .chatTargetBtn.friendly.active {
+            background: #F2C94C;
+            color: #000;
+        }
+        
+        .chatTargetBtn.boss {
+            border-color: #8B45FF;
+        }
+        
+        .chatTargetBtn.boss.active {
+            background: #8B45FF;
+        }
+        
+        .chatTargetBtn.broadcast {
+            border-color: #27AE60;
+        }
+        
+        .chatTargetBtn.broadcast.active {
+            background: #27AE60;
+        }
+        
+        #chatInputRow {
             display: flex;
             gap: 8px;
         }
@@ -1246,8 +1343,14 @@
                 </div>
                 <div id="chatMessages"></div>
                 <div id="chatInputArea">
-                    <input type="text" id="chatInput" placeholder="Say something..." onkeypress="if(event.key==='Enter')sendChatMessage()">
-                    <button id="chatSendBtn" onclick="sendChatMessage()">Send</button>
+                    <div id="chatTargetSelector">
+                        <button class="chatTargetBtn broadcast active" onclick="selectChatTarget(null)" title="Speak to everyone">📢 ALL</button>
+                        <!-- Entity buttons populated dynamically -->
+                    </div>
+                    <div id="chatInputRow">
+                        <input type="text" id="chatInput" placeholder="Say something..." onkeypress="if(event.key==='Enter')sendChatMessage()">
+                        <button id="chatSendBtn" onclick="sendChatMessage()">Send</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1281,7 +1384,7 @@
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.2.63 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.2.69 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div style="
@@ -1617,7 +1720,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.2.63';
+        const GAME_VERSION = 'v0.2.69';
         
         // ===== MULTIPLAYER STATE =====
         let multiplayerState = {
@@ -2628,12 +2731,79 @@
         let chatState = {
             visible: false,
             messages: [],  // { id, senderName, senderType, senderAvatar, text, timestamp }
-            targetNpc: null,  // Currently selected NPC to chat with
+            targetNpc: null,  // Currently selected NPC to chat with (deprecated - use targetEntity)
+            targetEntity: null,  // Current chat target: null = broadcast, or { type, index, name }
             selectedModel: 2,  // Model ID 1-10 (default to free model 2)
             exhaustedModels: [],  // Track rate-limited models
             totalCost: 0,      // Running cost tally in dollars
             totalTokens: 0     // Running token count
         };
+        
+        // Select chat target entity
+        function selectChatTarget(entity) {
+            chatState.targetEntity = entity;
+            
+            // Update button visuals
+            document.querySelectorAll('.chatTargetBtn').forEach(btn => {
+                const isActive = entity === null ? 
+                    btn.classList.contains('broadcast') : 
+                    btn.dataset.entityType === entity?.type && btn.dataset.entityIndex === String(entity?.index);
+                btn.classList.toggle('active', isActive);
+            });
+            
+            // Update input placeholder
+            const input = document.getElementById('chatInput');
+            if (input) {
+                if (entity === null) {
+                    input.placeholder = 'Say something to everyone...';
+                } else {
+                    input.placeholder = `Say something to ${entity.name}...`;
+                }
+            }
+            
+            console.log('[Chat] Target:', entity ? entity.name : 'BROADCAST');
+        }
+        
+        // Update chat target buttons based on current entities
+        function updateChatTargets() {
+            const container = document.getElementById('chatTargetSelector');
+            if (!container) return;
+            
+            // Clear existing buttons (except broadcast)
+            container.innerHTML = '<button class="chatTargetBtn broadcast' + (chatState.targetEntity === null ? ' active' : '') + '" onclick="selectChatTarget(null)" title="Speak to everyone">📢 ALL</button>';
+            
+            // Add boss/enemy buttons
+            battleState.enemies.forEach((enemy, index) => {
+                if (enemy.hp > 0) {
+                    const btnClass = enemy.isMob ? 'hostile' : 'boss';
+                    const isActive = chatState.targetEntity?.type === 'enemy' && chatState.targetEntity?.index === index;
+                    const shortName = enemy.name.length > 10 ? enemy.name.substring(0, 9) + '…' : enemy.name;
+                    const btn = document.createElement('button');
+                    btn.className = `chatTargetBtn ${btnClass}${isActive ? ' active' : ''}`;
+                    btn.dataset.entityType = 'enemy';
+                    btn.dataset.entityIndex = index;
+                    btn.onclick = () => selectChatTarget({ type: 'enemy', index, name: enemy.name, entity: enemy });
+                    btn.title = enemy.name;
+                    btn.textContent = `⚔️ ${shortName}`;
+                    container.appendChild(btn);
+                }
+            });
+            
+            // Add captive button if present
+            if (battleState.captiveNpc && !battleState.captiveNpc.rescued) {
+                const captive = battleState.captiveNpc;
+                const isActive = chatState.targetEntity?.type === 'captive';
+                const shortName = captive.name.length > 10 ? captive.name.substring(0, 9) + '…' : captive.name;
+                const btn = document.createElement('button');
+                btn.className = `chatTargetBtn friendly${isActive ? ' active' : ''}`;
+                btn.dataset.entityType = 'captive';
+                btn.dataset.entityIndex = '0';
+                btn.onclick = () => selectChatTarget({ type: 'captive', index: 0, name: captive.name, entity: captive });
+                btn.title = captive.name + ' (Captive)';
+                btn.textContent = `⛓️ ${shortName}`;
+                container.appendChild(btn);
+            }
+        }
         
         // Select chat model (1-10)
         function selectChatModel(modelId) {
@@ -2690,7 +2860,44 @@
                 chatWindow.style.display = chatState.visible ? 'flex' : 'none';
                 if (chatState.visible) {
                     document.getElementById('chatInput').focus();
+                    updateChatTargets();  // Refresh entity buttons when opening
                 }
+            }
+        }
+        
+        // Typewriter effect for NPC messages
+        function typewriterEffect(messageId, fullText, charIndex = 0) {
+            const container = document.getElementById('chatMessages');
+            if (!container) return;
+            
+            // Find the message element by data-id
+            const msgElement = container.querySelector(`[data-msg-id="${messageId}"] .chatText`);
+            if (!msgElement) return;
+            
+            // Also update the stored message text for consistency
+            const msg = chatState.messages.find(m => m.id === messageId);
+            if (msg) {
+                msg.displayText = fullText.substring(0, charIndex);
+            }
+            
+            // Update displayed text with cursor
+            const displayText = fullText.substring(0, charIndex);
+            msgElement.innerHTML = formatChatText(displayText) + (charIndex < fullText.length ? '<span class="typingCursor">▌</span>' : '');
+            
+            // Continue typing if not done
+            if (charIndex < fullText.length) {
+                // Variable speed: faster for spaces, slower for punctuation
+                const char = fullText[charIndex];
+                let delay = 25; // Base speed (ms per char)
+                if (char === ' ') delay = 15;
+                else if ('.!?'.includes(char)) delay = 150;
+                else if (',;:'.includes(char)) delay = 80;
+                
+                setTimeout(() => typewriterEffect(messageId, fullText, charIndex + 1), delay);
+            } else {
+                // Done typing - remove cursor
+                msgElement.innerHTML = formatChatText(fullText);
+                if (msg) msg.displayText = fullText;
             }
         }
         
@@ -2702,6 +2909,7 @@
                 senderType,  // 'hostile', 'questable', 'friendly', 'player'
                 senderAvatar,
                 text,
+                displayText: isNpc ? '' : text,  // For typewriter effect
                 isNpc,
                 timestamp: new Date().toLocaleTimeString()
             };
@@ -2716,11 +2924,16 @@
             
             renderChatMessages();
             
-            // Broadcast to other players if host
+            // Start typewriter effect for NPC messages
+            if (isNpc && text.length > 0) {
+                setTimeout(() => typewriterEffect(message.id, text, 0), 100);
+            }
+            
+            // Broadcast to other players if host (send full text, clients show instantly)
             if (multiplayerState.enabled && multiplayerState.role === 'host') {
                 sendWebSocketMessage({
                     type: 'chat_message',
-                    message: message
+                    message: { ...message, displayText: text }  // Send full text to clients
                 });
             }
         }
@@ -2743,11 +2956,11 @@
             if (!container) return;
             
             container.innerHTML = chatState.messages.map(msg => `
-                <div class="chatMessage">
+                <div class="chatMessage" data-msg-id="${msg.id}">
                     <div class="chatAvatar" style="background-image: url('${msg.senderAvatar}');"></div>
                     <div class="chatContent">
                         <div class="chatName ${msg.senderType}">${msg.senderName}</div>
-                        <div class="chatText">${formatChatText(msg.text)}</div>
+                        <div class="chatText">${formatChatText(msg.displayText !== undefined ? msg.displayText : msg.text)}</div>
                     </div>
                 </div>
             `).join('');
@@ -2791,17 +3004,35 @@
                 return;
             }
             
-            // Get NPC to respond (priority: captive if present, then first alive enemy with backstory)
+            // Get NPC to respond based on selected target
             let respondingNpc = null;
             
-            // Check captive first (friendly NPC who can chat)
-            if (battleState.captiveNpc && !battleState.captiveNpc.rescued && battleState.captiveNpc.canChat) {
-                respondingNpc = battleState.captiveNpc;
+            // If a specific target is selected, use that
+            if (chatState.targetEntity) {
+                if (chatState.targetEntity.type === 'captive') {
+                    respondingNpc = battleState.captiveNpc;
+                } else if (chatState.targetEntity.type === 'enemy') {
+                    respondingNpc = battleState.enemies[chatState.targetEntity.index];
+                }
+                
+                // Validate the target is still valid
+                if (respondingNpc && (respondingNpc.hp <= 0 || respondingNpc.rescued)) {
+                    respondingNpc = null;
+                    selectChatTarget(null);  // Reset to broadcast
+                }
             }
             
-            // If no captive, try enemies
+            // If broadcast mode or no valid target, pick first available NPC
             if (!respondingNpc) {
-                respondingNpc = battleState.enemies.find(e => e.hp > 0 && e.backstory);
+                // Check captive first (friendly NPC who can chat)
+                if (battleState.captiveNpc && !battleState.captiveNpc.rescued && battleState.captiveNpc.canChat) {
+                    respondingNpc = battleState.captiveNpc;
+                }
+                
+                // If no captive, try enemies
+                if (!respondingNpc) {
+                    respondingNpc = battleState.enemies.find(e => e.hp > 0 && e.backstory);
+                }
             }
             
             if (!respondingNpc) {
@@ -3195,7 +3426,8 @@
             const boss = bossesData.find(b => b.mainLevel === roomLevel);
             if (boss) {
                 const bossEnemy = {
-                    name: boss.name,
+                    name: boss.name,  // Will be replaced by LLM-generated unique name
+                    species: boss.name,  // Store original boss type as species
                     hp: boss.stats.hp || 50,
                     maxHp: boss.stats.maxHp || 50,
                     ac: boss.stats.ac,
@@ -3224,7 +3456,8 @@
             for (let i = 0; i < 2 && i < hostileMobs.length; i++) {
                 const mob = hostileMobs[Math.floor(Math.random() * hostileMobs.length)];
                 const mobEnemy = {
-                    name: mob.name,
+                    name: mob.name,  // Will be replaced by LLM-generated unique name
+                    species: mob.name,  // Store original mob type as species
                     hp: mob.stats.hp || 15,
                     maxHp: mob.stats.maxHp || 15,
                     ac: mob.stats.ac,
@@ -3241,11 +3474,9 @@
                     isMob: true
                 };
                 
-                // Generate unique mob via LLM (50% chance to keep it fast)
-                if (Math.random() > 0.5) {
-                    const generatedMob = await generateEncounter('mob', mob, roomLevel);
-                    applyGeneratedData(mobEnemy, generatedMob);
-                }
+                // Generate unique mob via LLM (always generate for unique name/backstory)
+                const generatedMob = await generateEncounter('mob', mob, roomLevel);
+                applyGeneratedData(mobEnemy, generatedMob);
                 
                 battleState.enemies.push(mobEnemy);
             }
@@ -3254,6 +3485,10 @@
             battleState.captiveNpc = null;
             if (Math.random() > 0.5) {
                 const captiveData = await generateEncounter('captive', {}, roomLevel);
+                
+                // Pick a random captive sprite (1-12)
+                const captiveSpriteNum = Math.floor(Math.random() * 12) + 1;
+                const captiveSpritePath = `tunnelsofprivacy/npcs/captives/prisoners (${captiveSpriteNum}).png`;
                 
                 battleState.captiveNpc = {
                     name: captiveData?.name || 'Mysterious Prisoner',
@@ -3267,26 +3502,26 @@
                     x: 0,
                     y: 0,
                     sprite: new Image(),
-                    spritePath: 'tunnelsofprivacy/mobs/captive.png',  // Will use fallback circle until sprite exists
+                    spritePath: captiveSpritePath,
                     color: '#F2C94C',  // Gold color for friendly
                     isCaptive: true,
-                    isMob: true,  // Render like a mob
+                    isMob: false,  // Static image, not mob sprite sheet
                     canChat: true,
                     hostile: false,
                     hp: 1,  // For display purposes
                     maxHp: 1
                 };
                 
-                // Try to load captive sprite (will fail gracefully to circle fallback)
+                // Load captive sprite
                 battleState.captiveNpc.sprite.onerror = () => {
-                    console.log('[DM] Captive sprite not found, using fallback circle');
+                    console.log('[DM] Captive sprite not found, using fallback circle:', captiveSpritePath);
                 };
                 battleState.captiveNpc.sprite.onload = () => {
                     renderBattle();
                 };
                 battleState.captiveNpc.sprite.src = battleState.captiveNpc.spritePath + '?v=' + Date.now();
                 
-                console.log('[DM] Captive NPC generated:', battleState.captiveNpc.name);
+                console.log('[DM] Captive NPC generated:', battleState.captiveNpc.name, 'sprite:', captiveSpritePath);
             }
             
             // Load enemy sprites
@@ -4189,32 +4424,34 @@
                     ctx.stroke();
                 }
                 
-                // Hero name
+                // HP bar with text inside (positioned above sprite)
+                const barWidth = 80 * depthScale;
+                const barHeight = 14 * depthScale;
+                const barX = hero.x - barWidth / 2;
+                const barY = hero.y - 175 * depthScale;
+                
+                // Hero name (just above HP bar)
                 ctx.fillStyle = '#FFFFFF';
                 ctx.font = `bold ${Math.floor(12 * depthScale)}px Inter`;
                 ctx.textAlign = 'center';
-                ctx.fillText(hero.name.toUpperCase(), hero.x, hero.y - 195 * depthScale);
-                
-                // HP bar (positioned above sprite, below name)
-                const barWidth = 80 * depthScale;
-                const barHeight = 10 * depthScale;
-                const barX = hero.x - barWidth / 2;
-                const barY = hero.y - 180 * depthScale;
-                
-                // HP text (centered on top of bar)
-                ctx.fillStyle = '#FFFFFF';
-                ctx.font = `bold ${Math.floor(10 * depthScale)}px JetBrains Mono`;
-                ctx.textAlign = 'center';
-                ctx.fillText(`${hero.hp}/${hero.maxHp}`, hero.x, barY - 3);
+                ctx.fillText(hero.name.toUpperCase(), hero.x, barY - 5 * depthScale);
                 
                 // Background
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
                 ctx.fillRect(barX, barY, barWidth, barHeight);
                 
                 // HP fill (GREEN -> YELLOW for heroes)
                 const hpPercent = hero.hp / hero.maxHp;
                 ctx.fillStyle = hpPercent > 0.5 ? '#27AE60' : hpPercent > 0.25 ? '#F39C12' : '#F1C40F';
                 ctx.fillRect(barX, barY, barWidth * hpPercent, barHeight);
+                
+                // HP text INSIDE bar (centered)
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = `bold ${Math.floor(10 * depthScale)}px JetBrains Mono`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(`${hero.hp}/${hero.maxHp}`, hero.x, barY + barHeight / 2);
+                ctx.textBaseline = 'alphabetic';  // Reset
             });
             
             // Draw enemies
@@ -4262,47 +4499,63 @@
                     ctx.stroke();
                 }
                 
-                // Enemy name (RED for enemies)
-                ctx.fillStyle = '#FF4444';
-                ctx.font = `bold ${Math.floor(14 * depthScale)}px Inter`;
-                ctx.textAlign = 'center';
-                
-                let nameOffsetY, barOffsetY;
+                // Calculate HP bar position first, then build labels above it
+                let barOffsetY;
                 if (enemy.isMob) {
-                    // For mobs, position above the sprite (which starts at enemy.y - spriteHeight)
                     const mobAspectRatio = 1344 / 768;
                     const baseHeight = 75;
                     const spriteHeight = baseHeight * depthScale;
-                    nameOffsetY = enemy.y - spriteHeight - (10 * depthScale);
-                    barOffsetY = enemy.y - spriteHeight - (30 * depthScale);
+                    barOffsetY = enemy.y - spriteHeight - (5 * depthScale);
                 } else {
                     // For bosses, position above centered sprite
-                    nameOffsetY = enemy.y - 195 * depthScale;
-                    barOffsetY = enemy.y - 180 * depthScale;
+                    barOffsetY = enemy.y - 165 * depthScale;
                 }
                 
-                ctx.fillText(enemy.name.toUpperCase(), enemy.x, nameOffsetY);
-                
-                // HP bar
+                // HP bar with text inside
                 const barWidth = 100 * depthScale;
-                const barHeight = 10 * depthScale;
+                const barHeight = 14 * depthScale;
                 const barX = enemy.x - barWidth / 2;
                 const barY = barOffsetY;
                 
-                // HP text (centered on top of bar)
-                ctx.fillStyle = '#FFFFFF';
-                ctx.font = `bold ${Math.floor(10 * depthScale)}px JetBrains Mono`;
+                // Calculate label positions (build upward from HP bar)
+                const speciesOffsetY = barY - (5 * depthScale);  // Species just above bar
+                const nameOffsetY = speciesOffsetY - (12 * depthScale);  // Name above species
+                
+                // Name (unique name - RED for enemies)
+                ctx.fillStyle = '#FF4444';
+                ctx.font = `bold ${Math.floor(14 * depthScale)}px Inter`;
                 ctx.textAlign = 'center';
-                ctx.fillText(`${enemy.hp}/${enemy.maxHp}`, enemy.x, barY - 3);
+                ctx.fillText(enemy.name.toUpperCase(), enemy.x, nameOffsetY);
+                
+                // Species/Type (smaller, between name and bar)
+                const hasSpecies = enemy.species && enemy.species !== enemy.name;
+                if (hasSpecies) {
+                    ctx.fillStyle = '#AAAAAA';
+                    ctx.font = `${Math.floor(10 * depthScale)}px Inter`;
+                    ctx.fillText(enemy.species, enemy.x, speciesOffsetY);
+                } else if (!enemy.isMob) {
+                    // Bosses without species - show "Boss" label
+                    ctx.fillStyle = '#8B45FF';
+                    ctx.font = `${Math.floor(10 * depthScale)}px Inter`;
+                    ctx.fillText('Boss', enemy.x, speciesOffsetY);
+                }
                 
                 // Background
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
                 ctx.fillRect(barX, barY, barWidth, barHeight);
                 
                 // HP fill (RED for enemies)
                 const hpPercent = enemy.hp / enemy.maxHp;
                 ctx.fillStyle = hpPercent > 0.5 ? '#E74C3C' : hpPercent > 0.25 ? '#C0392B' : '#A93226';
                 ctx.fillRect(barX, barY, barWidth * hpPercent, barHeight);
+                
+                // HP text INSIDE bar (centered)
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = `bold ${Math.floor(10 * depthScale)}px JetBrains Mono`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(`${enemy.hp}/${enemy.maxHp}`, enemy.x, barY + barHeight / 2);
+                ctx.textBaseline = 'alphabetic';  // Reset
                 
                 // Highlight clickable enemies in targeting mode
                 if (battleState.targetingMode && enemy.hostile) {
@@ -4344,15 +4597,19 @@
                 const captive = battleState.captiveNpc;
                 const depthScale = 0.6 + (captive.y / canvas.height) * 0.4;
                 
-                // Draw captive sprite like a mob, or fallback to colored circle
+                // Draw captive sprite (static image) or fallback to colored circle
                 if (captive.sprite && captive.sprite.complete && captive.sprite.naturalHeight !== 0) {
-                    // Render like a mob (1344x768 sprite scaled down)
-                    const mobAspectRatio = 1344 / 768;
-                    const baseHeight = 75;
+                    // Static captive image - use actual aspect ratio
+                    const imgWidth = captive.sprite.naturalWidth;
+                    const imgHeight = captive.sprite.naturalHeight;
+                    const aspectRatio = imgWidth / imgHeight;
+                    
+                    // Scale to reasonable size (base height ~200px at full scale - same as mobs)
+                    const baseHeight = 200;
                     const spriteHeight = baseHeight * depthScale;
-                    const spriteWidth = spriteHeight * mobAspectRatio;
+                    const spriteWidth = spriteHeight * aspectRatio;
                     const spriteX = captive.x - spriteWidth / 2;
-                    const spriteY = captive.y - spriteHeight;
+                    const spriteY = captive.y - spriteHeight;  // Bottom at captive.y
                     
                     ctx.save();
                     if (captive.facing === 'left') {
@@ -4380,10 +4637,12 @@
                     ctx.fillText('⛓️', captive.x, captive.y);
                 }
                 
-                // Captive name (GOLD for friendly) - positioned like mob names
-                const baseHeight = 75;
-                const spriteHeight = baseHeight * depthScale;
-                const nameOffsetY = captive.y - spriteHeight - (10 * depthScale);
+                // Captive name (GOLD for friendly) - positioned above sprite
+                const captiveBaseHeight = 200;
+                const spriteHeight = captiveBaseHeight * depthScale;
+                const nameOffsetY = captive.y - spriteHeight - (25 * depthScale);
+                const speciesOffsetY = captive.y - spriteHeight - (12 * depthScale);
+                const barOffsetY = captive.y - spriteHeight - (40 * depthScale);
                 
                 ctx.fillStyle = '#F2C94C';
                 ctx.font = `bold ${Math.floor(14 * depthScale)}px Inter`;
@@ -4391,10 +4650,35 @@
                 ctx.textBaseline = 'alphabetic';
                 ctx.fillText(captive.name.toUpperCase(), captive.x, nameOffsetY);
                 
-                // "CAPTIVE" label above name
+                // Species label below name
                 ctx.fillStyle = '#27AE60';
                 ctx.font = `${Math.floor(10 * depthScale)}px Inter`;
-                ctx.fillText('⛓️ CAPTIVE', captive.x, nameOffsetY - (15 * depthScale));
+                ctx.fillText(`⛓️ ${captive.species || 'Captive'}`, captive.x, speciesOffsetY);
+                
+                // HP bar with text inside (if captive has HP)
+                if (captive.hp && captive.maxHp) {
+                    const barWidth = 80 * depthScale;
+                    const barHeight = 14 * depthScale;
+                    const barX = captive.x - barWidth / 2;
+                    const barY = barOffsetY;
+                    
+                    // Background
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                    ctx.fillRect(barX, barY, barWidth, barHeight);
+                    
+                    // HP fill (GREEN for friendly)
+                    const hpPercent = captive.hp / captive.maxHp;
+                    ctx.fillStyle = '#27AE60';
+                    ctx.fillRect(barX, barY, barWidth * hpPercent, barHeight);
+                    
+                    // HP text INSIDE bar
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.font = `bold ${Math.floor(10 * depthScale)}px JetBrains Mono`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(`${captive.hp}/${captive.maxHp}`, captive.x, barY + barHeight / 2);
+                    ctx.textBaseline = 'alphabetic';
+                }
             }
             
             // Draw hitboxes if enabled
@@ -4687,6 +4971,49 @@
                 
                 container.appendChild(card);
             });
+            
+            // Add captive card if present and not rescued
+            if (battleState.captiveNpc && !battleState.captiveNpc.rescued) {
+                const captive = battleState.captiveNpc;
+                const card = document.createElement('div');
+                card.className = 'battleEnemyCard captive';
+                card.id = 'captiveCard';
+                
+                // Portrait
+                const portrait = document.createElement('div');
+                portrait.className = 'battleEnemyPortrait';
+                portrait.style.backgroundImage = `url('${captive.spritePath}')`;
+                card.appendChild(portrait);
+                
+                // Name with chain emoji
+                const name = document.createElement('div');
+                name.className = 'battleEnemyName';
+                name.textContent = `⛓️ ${captive.name.toUpperCase()}`;
+                card.appendChild(name);
+                
+                // HP stat
+                const hpStat = document.createElement('div');
+                hpStat.className = 'battleEnemyStat';
+                hpStat.style.color = '#27AE60';
+                hpStat.innerHTML = `HP: <span>${captive.hp || '?'}</span>/<span>${captive.maxHp || '?'}</span>`;
+                card.appendChild(hpStat);
+                
+                // AC stat
+                const acStat = document.createElement('div');
+                acStat.className = 'battleEnemyStat';
+                acStat.innerHTML = `AC: <span>${captive.ac || 10}</span>`;
+                card.appendChild(acStat);
+                
+                // "CAPTIVE" label
+                const label = document.createElement('div');
+                label.className = 'battleEnemyStat';
+                label.style.color = '#F2C94C';
+                label.style.fontWeight = 'bold';
+                label.textContent = 'CAPTIVE';
+                card.appendChild(label);
+                
+                container.appendChild(card);
+            }
         }
         
         // D&D modifier calculation
@@ -5267,6 +5594,7 @@
             renderBattle();
             updateBattleEnemyCards();
             updateBattleHeroCards();
+            updateChatTargets();  // Update chat target buttons
             
             // Check if target is dead
             if (target.hp <= 0) {
@@ -5448,6 +5776,7 @@
             renderBattle();
             updateBattleHeroCards();
             updateBattleEnemyCards();
+            updateChatTargets();  // Update chat target buttons
             
             // Broadcast AI action to clients
             broadcastGameState();

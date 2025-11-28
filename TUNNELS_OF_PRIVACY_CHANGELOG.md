@@ -2,6 +2,154 @@
 
 # Changelog
 
+## v0.2.69 - Entity Label Positioning Fixes (2025-11-28)
+- **Summary:**
+  - Fixed overlapping labels on mobs, bosses, and heroes
+  - Tightened spacing between name, species, and HP bar
+  - Bosses now show species type like mobs
+
+- **Positioning Fixes:**
+  - **Mobs**: Fixed name/species overlapping HP bar - now stacked correctly
+  - **Bosses**: Added species property, tightened label spacing
+  - **Heroes**: Moved name closer to HP bar (was 2 lines too high)
+
+- **Label Layout (top to bottom):**
+  - Name (bold, entity color)
+  - Species/Type (smaller, gray for mobs, purple "Boss" for bosses)
+  - HP Bar (with numbers inside)
+
+- **Technical:**
+  - Labels now build upward from HP bar position
+  - Species offset: 5px above bar
+  - Name offset: 12px above species
+  - Bosses get `species` property like mobs
+
+## v0.2.68 - Chat & Entity System Consolidation (2025-11-28)
+- **Summary:**
+  - Consolidated chat targeting, typewriter effects, and entity naming systems
+  - All battlefield entities now fully interactive with unique identities
+  - Stable release of LLM-powered NPC interaction system
+
+- **Chat System Features:**
+  - Typewriter effect on NPC responses (variable speed based on punctuation)
+  - Entity target selector with buttons for all creatures in room
+  - Direct targeting: Click any entity to address them specifically
+  - Broadcast mode: Speak to everyone, first available NPC responds
+  - Rate limit detection with auto-switch to available models
+
+- **Entity Identity System:**
+  - All mobs get unique LLM-generated names and backstories
+  - Entity labels: Name → Species → HP bar (with numbers inside)
+  - Captive NPCs with rescue mechanics and dialogue
+  - Character cards on left panel for all entities
+
+- **Chat Logic:**
+  - Direct target: Selected entity always responds
+  - Broadcast: Priority order is Captive → First enemy with backstory
+  - All LLM-generated mobs can chat (unique personalities)
+  - Fallback message if no one can respond
+
+## v0.2.67 - Entity Names, Species & HP Bar Redesign (2025-11-28)
+- **Summary:**
+  - All mobs now get unique LLM-generated names and backstories
+  - Entity labels now show: Name, Species/Type, HP bar
+  - HP numbers moved INSIDE the health bar for cleaner UI
+
+- **Mob Names & Backstories:**
+  - ALL mobs now get LLM-generated unique names (100% instead of 50%)
+  - Mobs store original type as `species` property
+  - Example: "Grimfang" (Cave Spider) instead of just "Cave Spider"
+  - Each mob gets unique personality and backstory for chat
+
+- **Entity Label Layout:**
+  - **Name** (top, bold, larger) - Unique name for entity
+  - **Species** (below name, smaller, gray) - What type of creature
+  - **HP Bar** (bottom) - With numbers centered inside
+
+- **HP Bar Redesign:**
+  - Taller bars (14px instead of 10px) to fit text
+  - HP numbers centered INSIDE the bar
+  - Darker background (0.7 opacity) for better contrast
+  - Consistent style across heroes, enemies, and captives
+
+- **Visual Examples:**
+  - Heroes: "ZOOKO" + green HP bar with "30/30"
+  - Enemies: "GRIMFANG" + "Cave Spider" + red HP bar with "15/15"
+  - Captives: "ELARA" + "⛓️ Human" + green HP bar
+
+## v0.2.66 - Chat Target Selector (2025-11-28)
+- **Summary:**
+  - Added entity target buttons above chat input
+  - Click any boss, mob, or captive to address them directly
+  - "📢 ALL" broadcast button for speaking to everyone
+
+- **Chat Target Selector:**
+  - Appears above chat input in battle chat window
+  - "📢 ALL" button - broadcast mode (default), any NPC can reply
+  - "⚔️ [Name]" buttons - red/purple for enemies (hostile/boss)
+  - "⛓️ [Name]" button - gold for captives (friendly)
+  - Selected target highlighted with color fill
+  - Names truncated to 10 chars with ellipsis
+  - Scrollable area supports 5-20+ entities
+
+- **Visual Styling:**
+  - Compact buttons (10px font, 3px-8px padding)
+  - Color-coded borders: red (hostile), purple (boss), gold (friendly), green (broadcast)
+  - Active state fills button with matching color
+  - Max height 80px with overflow scroll
+
+- **Technical:**
+  - `chatState.targetEntity` stores current target { type, index, name, entity }
+  - `selectChatTarget()` updates UI and input placeholder
+  - `updateChatTargets()` rebuilds buttons from current battle state
+  - Auto-updates when entities die or chat opens
+  - Falls back to broadcast if target becomes invalid
+
+## v0.2.65 - Typewriter Chat Effect (2025-11-28)
+- **Summary:**
+  - NPC chat responses now type out character by character
+  - Creates more natural, immersive conversation flow
+  - Variable typing speed based on punctuation
+
+- **Typewriter Effect:**
+  - Base speed: 25ms per character
+  - Faster for spaces (15ms)
+  - Slower for periods, exclamations, questions (150ms)
+  - Slower for commas, semicolons, colons (80ms)
+  - Blinking cursor during typing (Discord purple #5865F2)
+  - Cursor removed when message complete
+
+- **Technical Changes:**
+  - New `typewriterEffect()` function with recursive character reveal
+  - Messages track `displayText` separate from full `text`
+  - `data-msg-id` attribute on message elements for DOM targeting
+  - Multiplayer: Clients receive full text instantly (no double-typing)
+
+## v0.2.64 - Captive Character Card & Sprite Size Fix (2025-01-29)
+- **Summary:**
+  - Added captive character card to left-side battle UI (gold/friendly styling)
+  - Increased captive sprite size from 100px to 200px base height
+  - Captives now visually match other combatants in both card and sprite display
+
+- **Captive Character Card:**
+  - Gold border with glow effect (#F2C94C color scheme)
+  - Portrait showing captive sprite image
+  - Name with chain emoji (⛓️)
+  - HP and AC stats displayed
+  - "CAPTIVE" label at bottom
+  - Appears after enemy cards in left panel
+
+- **Captive Sprite Size Fix:**
+  - Increased base height from 100px to 200px
+  - Now properly visible alongside mobs and heroes
+  - Maintains aspect ratio from sprite image
+  - Depth scaling preserved for battlefield perspective
+
+- **CSS Additions:**
+  - `.battleEnemyCard.captive` - Gold border with glow
+  - `.battleEnemyCard.captive .battleEnemyPortrait` - Gold portrait border
+  - `.battleEnemyCard.captive .battleEnemyName` - Gold name text
+
 ## v0.2.63 - Captive NPC Visuals & Chat Model Improvements (2025-11-28)
 - **Summary:**
   - Captive NPCs now render as proper battlefield entities with fallback circles
