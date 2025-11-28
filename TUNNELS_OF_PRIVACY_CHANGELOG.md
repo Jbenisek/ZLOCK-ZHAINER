@@ -2,6 +2,36 @@
 
 # Changelog
 
+## v0.2.53 - Idle Variants & Sprite Preloading (2025-11-27)
+- **Summary:**
+  - Added multiple idle animation variants with random cycling
+  - All sprite sheets now preload during loading screen
+  - Instant variant switching via cached sprite sheets
+
+- **Idle Variants System:**
+  - States can be single path (string) or array of variants
+  - CyberAxe has 3 idle variants: `idle.png`, `idle_a.png`, `idle_b.png`
+  - On ping-pong cycle complete, picks different variant
+  - `pickNextIdleVariant()` - Selects random different idle on cycle end
+  - Filters current path to guarantee different animation each cycle
+
+- **Preloading Integration:**
+  - All hero sprite sheets added to `preloadAssets()` image list
+  - Sprite sheets cached in `spriteSheetCache` during preload
+  - Instant swap when switching variants (no async loading delay)
+  - Loading screen shows accurate progress including sprite sheets
+
+- **Preloaded Assets:**
+  - `zooko_idle.png`, `nate_idle.png`, `zancas_idle.png`
+  - `cyberaxe_idle.png`, `cyberaxe_idle_a.png`, `cyberaxe_idle_b.png`
+  - `cyberaxe_light_attack.png`, `cyberaxe_heavy_attack.png`, `cyberaxe_special_attack.png`
+
+- **Technical Details:**
+  - `HERO_ANIM_PATHS` supports array format for variants
+  - Preloader populates `spriteSheetCache` on image load
+  - `pickNextIdleVariant()` checks cache before async load
+  - Frame resets to 0 on variant switch for clean transition
+
 ## v0.2.52 - Sprite Sheet Animation System (2025-11-27)
 - **Summary:**
   - Added complete sprite sheet animation system for battle sprites
