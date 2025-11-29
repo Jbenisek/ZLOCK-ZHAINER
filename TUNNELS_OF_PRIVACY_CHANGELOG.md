@@ -2,6 +2,46 @@
 
 # Changelog
 
+## v0.2.92 - Hero Selection & Battle UI Polish (2025-11-28)
+- **Hero Selection Screen:**
+  - HP and AC now displayed on same row (HP red, AC blue)
+  - All stat text increased by 2px (base 16px, HP/AC/XP 17px)
+  - TAKEN label (left, rotated -90°) and Player label (right, rotated 90°) now vertically aligned with headshots
+  - Removed italics from player name labels
+  - Gold box moved to top info bar next to Players count
+  - Removed redundant gold display below hero grid
+
+- **Captive Portrait:**
+  - Captive character portraits now zoom in on face (250% scale, positioned at 15% from top)
+  - Shows headshot instead of full body for better character recognition
+
+- **Chat Window:**
+  - Added expand/shrink button to toggle between 600px (expanded) and 300px (compact) modes
+  - Compact mode hides model selector and target buttons for cleaner view
+  - Background changed to 50% alpha for better visibility
+
+## v0.2.91 - LLM Prompt Optimization (2025-11-28)
+- **API Token Reduction:**
+  - LLM generation prompts now send only essential data (name, hp, ac, damage, behavior flags)
+  - Removed full mob JSON objects that included unused loot/items/special abilities
+  - Prevents LLM from echoing back complex structures and hallucinating fake items
+  - Reduces API token usage and response times
+  - Fixes JSON parse errors from truncated responses
+
+- **Hero Selection UI:**
+  - Stats text centered instead of justified
+  - Increased font size from 10px to 13px for better readability
+
+## v0.2.90 - Hero Selection Stats Display (2025-01-28)
+- **Hero Selection Screen Enhancement:**
+  - Hero cards now display full character stats (HP, XP, Level, STR/DEX/CON/INT/WIS/CHA, AC)
+  - Party gold displayed prominently above hero selection grid
+  - If save exists: Shows current saved stats and gold with "(Saved Game)" indicator
+  - If no save: Shows default new game stats with "(New Game)" indicator
+  - Stats update automatically when hero selection modal opens
+  - Reduced portrait size and card padding for better stat visibility
+  - CSS styling for stat rows with proper color coding (HP red, XP gold)
+
 ## v0.2.89 - Multiplayer Reliability & UX Polish (2025-01-28)
 - **Multiplayer Sync Improvements:**
   - Added "Resync from Host" button in client pause menu for turn desync recovery

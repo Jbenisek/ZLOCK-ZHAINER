@@ -901,61 +901,68 @@ Tone: Dark fantasy with cyberpunk elements. Mix medieval dungeon crawler with cr
             
             # Build generation prompt based on type
             if encounter_type == 'boss':
-                # Extract template name to explicitly forbid it
-                template_name = base_data.get('name', 'Unknown') if base_data else 'Unknown'
+                # Extract useful info but NOT loot/items
+                template_name = base_data.get('name', 'Boss') if base_data else 'Boss'
+                stats = base_data.get('stats', {}) if base_data else {}
+                behavior = base_data.get('behavior', {}) if base_data else {}
+                
+                boss_info = {
+                    'name': template_name,
+                    'hp': stats.get('hp', 50),
+                    'attackDamage': stats.get('attackDamage', 10),
+                    'ac': stats.get('ac', 14),
+                    'canChat': behavior.get('canChat', True),
+                    'hostile': behavior.get('hostile', True)
+                }
+                
                 system_prompt = f"""{world_lore}
 
-You are the Dungeon Master. Generate a UNIQUE boss encounter.
-Base template: {json.dumps(base_data, indent=2)}
+You are the Dungeon Master. Generate a UNIQUE boss for dungeon level {room_level}.
+Base creature: {json.dumps(boss_info)}
 
-Generate a JSON response with:
+Return this JSON:
 {{
-  "name": "A UNIQUE personal name like 'Zyx\'tharion' or 'Lord Malachar' - NEVER use '{template_name}' or generic terms",
-  "backstory": "2-3 sentences about their origin, motivation, and personality",
-  "personality": "brief personality traits: hostile/cunning/tragic/comedic/etc",
-  "voiceType": "PREFER male_deep or monster for bosses (70% of the time). Only use female_mature for seductive/witch types. Options: male_deep/male_mature/male_young/monster/female_mature/ethereal",
-  "goldDrop": 50-500 (how much gold they carry based on their story - wealthy = more, feral beast = less),
-  "negotiation": {{
-    "canNegotiate": true/false,
-    "bribeGold": 0-500 (gold needed to bribe, 0 if unbribeable),
-    "infoReward": "what info they might share if talked to nicely",
-    "angerTriggers": ["words or topics that enrage them"],
-    "friendshipPath": "how heroes could befriend them (or null if impossible)",
-    "surrenderChance": 0.0-0.5 (chance they give up if losing badly),
-    "outcomes": ["peace", "info", "gold", "item", "anger", "friendship", "fight"]
-  }},
-  "statModifiers": {{
-    "hpMod": -20 to +50 (modify base HP),
-    "damageMod": -5 to +10,
-    "acMod": -2 to +3
-  }},
-  "openingLine": "What they say when battle starts (1 sentence)"
+  "name": "A unique personal name (NOT '{template_name}')",
+  "backstory": "2 sentences about their origin and motivation",
+  "personality": "hostile/cunning/tragic/comedic",
+  "voiceType": "male_deep/monster/female_mature/ethereal",
+  "goldDrop": 50-300 (wealth based on backstory),
+  "negotiation": {{"canNegotiate": true/false, "bribeGold": 50-200, "surrenderChance": 0.0-0.3}},
+  "statModifiers": {{"hpMod": -10 to +30, "damageMod": -3 to +5, "acMod": -2 to +2}},
+  "openingLine": "What they say when battle starts"
 }}
 
-IMPORTANT: Return ONLY valid JSON, no markdown or explanation."""
+Return ONLY valid JSON."""
                 
             elif encounter_type == 'mob':
+                # Extract useful info but NOT loot/items
+                mob_name = base_data.get('name', 'creature') if base_data else 'creature'
+                stats = base_data.get('stats', {}) if base_data else {}
+                behavior = base_data.get('behavior', {}) if base_data else {}
+                
+                mob_info = {
+                    'name': mob_name,
+                    'hp': stats.get('hp', 12),
+                    'attackDamage': stats.get('attackDamage', 4),
+                    'ac': stats.get('ac', 12),
+                    'canChat': behavior.get('canChat', False),
+                    'hostile': behavior.get('hostile', True)
+                }
+                
                 system_prompt = f"""{world_lore}
 
-You are the Dungeon Master. Generate a UNIQUE mob encounter.
-Base template: {json.dumps(base_data, indent=2)}
+You are the Dungeon Master. Generate a UNIQUE mob for dungeon level {room_level}.
+Base creature: {json.dumps(mob_info)}
 
-Generate a JSON response with:
+Return this JSON:
 {{
-  "name": "A unique name for this specific creature (not the species name)",
-  "backstory": "1-2 sentences about this individual creature",
-  "personality": "brief: feral/scared/hungry/territorial/etc",
-  "voiceType": "Choose based on creature: male_deep/male_young/female_mature/female_young/monster/ethereal",
-  "goldDrop": 5-50 (how much gold they carry - scavengers have more, beasts have less),
-  "negotiation": {{
-    "canNegotiate": true/false (most mobs can't),
-    "bribeGold": 0-50,
-    "fleeChance": 0.0-0.8 (chance to flee if hurt)
-  }},
-  "statModifiers": {{
-    "hpMod": -5 to +10,
-    "damageMod": -2 to +3
-  }}
+  "name": "A unique name for this {mob_name}",
+  "backstory": "1 sentence about this creature",
+  "personality": "feral/scared/hungry/territorial",
+  "voiceType": "monster/male_deep/ethereal",
+  "goldDrop": 5-40 (scavengers have more, beasts have less),
+  "negotiation": {{"canNegotiate": true/false, "bribeGold": 0-30, "fleeChance": 0.1-0.5}},
+  "statModifiers": {{"hpMod": -3 to +5, "damageMod": -1 to +2}}
 }}
 
 Return ONLY valid JSON."""
@@ -963,40 +970,36 @@ Return ONLY valid JSON."""
             elif encounter_type == 'captive':
                 system_prompt = f"""{world_lore}
 
-You are the Dungeon Master. Generate a CAPTIVE NPC that heroes can rescue.
-Room level: {room_level}
+You are the Dungeon Master. Generate a captive NPC for dungeon level {room_level}.
+They were captured by enemies and need rescue.
 
-Generate a JSON response with:
+Return this JSON:
 {{
-  "name": "A name for the captive",
-  "species": "human/elf/dwarf/gnome/etc",
-  "gender": "male/female/other",
-  "backstory": "2 sentences about who they are and how they got captured",
-  "personality": "grateful/suspicious/traumatized/cheerful/etc",
-  "voiceType": "Choose based on gender/species: male_deep/male_young/female_mature/female_young/ethereal",
-  "rescueReward": {{
-    "gold": 10-100,
-    "item": "optional item name or null",
-    "info": "optional secret info they share or null"
-  }},
-  "dialogueOnRescue": "What they say when freed (1-2 sentences)"
+  "name": "A unique name",
+  "species": "human/elf/dwarf/gnome",
+  "gender": "male/female",
+  "backstory": "1-2 sentences about who they are and how they got captured",
+  "personality": "grateful/suspicious/traumatized/cheerful",
+  "voiceType": "male_deep/male_young/female_mature/female_young",
+  "rescueReward": {{"gold": 10-80 based on their wealth}},
+  "dialogueOnRescue": "What they say when freed"
 }}
 
 Return ONLY valid JSON."""
             
             else:  # Generic NPC
+                npc_name = base_data.get('name', 'stranger') if base_data else 'stranger'
                 system_prompt = f"""{world_lore}
 
-You are the Dungeon Master. Generate an NPC encounter.
-Base template: {json.dumps(base_data, indent=2)}
+Generate an NPC named "{npc_name}".
 
-Generate a JSON response with:
+Return this JSON:
 {{
-  "name": "Unique NPC name",
-  "gender": "male/female/other",
-  "backstory": "2 sentences about them",
-  "personality": "brief personality",
-  "voiceType": "Choose based on character: male_deep/male_young/female_mature/female_young/ethereal",
+  "name": "Unique name",
+  "gender": "male/female",
+  "backstory": "1 sentence",
+  "personality": "friendly/mysterious/grumpy",
+  "voiceType": "male_deep/male_young/female_mature/female_young",
   "dialogue": "What they say when approached"
 }}
 
@@ -1004,14 +1007,14 @@ Return ONLY valid JSON."""
             
             messages = [
                 {'role': 'system', 'content': system_prompt},
-                {'role': 'user', 'content': f'Generate a {encounter_type} encounter for dungeon level {room_level}. Be creative and unique!'}
+                {'role': 'user', 'content': f'Generate for level {room_level}.'}
             ]
             
             api_request = {
                 'model': model,
                 'messages': messages,
-                'max_tokens': 500,
-                'temperature': 0.9  # Higher creativity
+                'max_tokens': 250,
+                'temperature': 0.8
             }
             
             # Make API call
@@ -1095,21 +1098,25 @@ Return ONLY valid JSON."""
                 cleaned = re.sub(r':\s*([a-zA-Z][a-zA-Z0-9_\s]*[a-zA-Z0-9])(\s*[,}\]])', r': "\1"\2', cleaned)
                 
                 # 3. Fix newlines inside strings (replace with space)
-                # This is tricky - we need to handle strings carefully
-                # Simple approach: replace literal newlines that aren't escaped
                 cleaned = re.sub(r'(?<!\\)\n', ' ', cleaned)
                 
                 # 4. Fix missing commas between fields (common LLM error)
-                # Pattern: "}\n{" or "]\n[" or value followed by key without comma
-                cleaned = re.sub(r'"\s*\n\s*"', '", "', cleaned)
-                cleaned = re.sub(r'(\d)\s*\n\s*"', r'\1, "', cleaned)
-                cleaned = re.sub(r'(true|false|null)\s*\n\s*"', r'\1, "', cleaned)
+                # Pattern: value followed by key without comma
+                cleaned = re.sub(r'"\s*"', '", "', cleaned)  # "value" "key" -> "value", "key"
+                cleaned = re.sub(r'(\d)\s+"', r'\1, "', cleaned)  # 123 "key" -> 123, "key"
+                cleaned = re.sub(r'(true|false|null)\s+"', r'\1, "', cleaned)
+                cleaned = re.sub(r'}\s*"', '}, "', cleaned)  # } "key" -> }, "key"
+                cleaned = re.sub(r']\s*"', '], "', cleaned)  # ] "key" -> ], "key"
                 
                 # 5. Remove any control characters
                 cleaned = re.sub(r'[\x00-\x1f\x7f]', ' ', cleaned)
                 
                 # 6. Fix double spaces
                 cleaned = re.sub(r'  +', ' ', cleaned)
+                
+                # 7. Fix missing commas after closing braces/brackets before new keys
+                cleaned = re.sub(r'}\s*([a-zA-Z])', r'}, \1', cleaned)
+                cleaned = re.sub(r']\s*([a-zA-Z])', r'], \1', cleaned)
                 
                 generated_data = json.loads(cleaned)
                 
