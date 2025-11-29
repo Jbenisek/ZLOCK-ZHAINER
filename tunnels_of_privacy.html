@@ -1758,7 +1758,7 @@
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.3.05 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.3.06 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div style="
@@ -2238,7 +2238,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.3.05';
+        const GAME_VERSION = 'v0.3.06';
         
         // ===== RANDOM PLAYER NAME GENERATOR =====
         const PLAYER_FIRST_NAMES = ['Crypto', 'Shadow', 'Pixel', 'Neon', 'Quantum', 'Cyber', 'Nova', 'Phoenix', 'Storm', 'Blaze'];
@@ -4831,6 +4831,9 @@
             if (usePreGenerated && preGeneratedEncounter.boss) {
                 // Use pre-generated boss
                 const boss = preGeneratedEncounter.boss.baseData;
+                // Use standardized sprite path based on boss level
+                const bossLevel = boss.mainLevel || preGeneratedEncounter.roomLevel;
+                const bossSpritePath = `tunnelsofprivacy/bosses/lvl${bossLevel}/boss_lvl${bossLevel}.png`;
                 const bossEnemy = {
                     name: boss.name,
                     species: boss.name,
@@ -4846,7 +4849,7 @@
                     color: '#8B45FF',
                     x: 0, y: 0, platform: null, facing: 'center',
                     sprite: new Image(),
-                    spritePath: boss.spritePath,
+                    spritePath: bossSpritePath,
                     isMob: false
                 };
                 applyGeneratedData(bossEnemy, preGeneratedEncounter.boss.generated);
@@ -4860,6 +4863,9 @@
                 // Generate boss on-the-fly (fallback)
                 const boss = bossesData.find(b => b.mainLevel === roomLevel);
                 if (boss) {
+                    // Use standardized sprite path based on boss level
+                    const bossLevel = boss.mainLevel || roomLevel;
+                    const bossSpritePath = `tunnelsofprivacy/bosses/lvl${bossLevel}/boss_lvl${bossLevel}.png`;
                     const bossEnemy = {
                         name: boss.name,
                         species: boss.name,
@@ -4875,7 +4881,7 @@
                         color: '#8B45FF',
                         x: 0, y: 0, platform: null, facing: 'center',
                         sprite: new Image(),
-                        spritePath: boss.spritePath,
+                        spritePath: bossSpritePath,
                         isMob: false
                     };
                     const generatedBoss = await generateEncounter('boss', boss, roomLevel);

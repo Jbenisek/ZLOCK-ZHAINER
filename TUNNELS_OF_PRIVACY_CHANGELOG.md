@@ -2,6 +2,18 @@
 
 # Changelog
 
+## v0.3.06 - Boss Sprite Loading Fix (2025-11-29)
+- **Boss Sprite Standardization:**
+  - Renamed all boss sprites to `boss_lvl{n}.png` format (levels 1-26)
+  - Dynamic sprite path generation: `tunnelsofprivacy/bosses/lvl{n}/boss_lvl{n}.png`
+  - Code no longer relies on `spritePath` from `bosses_data.json`
+  - Boss sprites now load correctly for all levels instead of showing fallback circles
+
+- **Technical Changes:**
+  - Pre-generated boss and on-the-fly boss both use dynamic path based on `boss.mainLevel`
+  - Sprite path constructed at runtime: `tunnelsofprivacy/bosses/lvl${bossLevel}/boss_lvl${bossLevel}.png`
+  - Works with fallback boss selection (nearest level or random for 100+)
+
 ## v0.3.05 - Level-Based Boss Selection (2025-11-29)
 - **Boss Selection by Level:**
   - Boss now selected based on current dungeon level from `bosses_data.json`
