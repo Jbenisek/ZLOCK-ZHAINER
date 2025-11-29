@@ -207,6 +207,9 @@
         
         .battleEnemyCard.captive .battleEnemyName {
             color: #F2C94C;
+            margin-top: -8px;
+            position: relative;
+            z-index: 10;
         }
         
         /* Chat Window Styles */
@@ -248,6 +251,29 @@
             font-size: 18px;
             cursor: pointer;
             padding: 0 5px;
+        }
+        
+        #ttsToggleLabel {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            color: white;
+            margin-left: auto;
+            margin-right: 8px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.1);
+        }
+        
+        #ttsToggleLabel:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        #ttsToggle {
+            width: 14px;
+            height: 14px;
+            cursor: pointer;
         }
         
         #chatMessages {
@@ -1233,6 +1259,7 @@
                 <div style="text-align: center; padding: 15px; background: linear-gradient(135deg, rgba(139, 69, 255, 0.2), rgba(75, 0, 130, 0.2)); border: 2px solid #8B45FF; border-radius: 10px; width: 380px; backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); margin-bottom: 10px;">
                     <div style="color: #BFD1E0; font-size: 14px; margin-bottom: 5px;">Dungeon Menu</div>
                     <div style="color: #F2C94C; font-size: 28px; font-weight: 900; text-shadow: 0 0 20px rgba(242, 201, 76, 0.5);">LEVEL <span id="dungeonMenuLevel">1</span></div>
+                    <div style="color: #FFD700; font-size: 16px; font-weight: 700; margin-top: 5px;">💰 <span id="dungeonMenuGold">0</span> Gold</div>
                 </div>
                 
                 <button class="menuButton" id="exploreLevelBtn" onclick="startBattle()">EXPLORE LEVEL</button>
@@ -1249,6 +1276,12 @@
             
             <!-- Battle Notification Banner -->
             <div id="battleNotification">ROOM CLEARED!</div>
+            
+            <!-- Gold Display (Top Center) -->
+            <div id="battleGoldDisplay" style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(30, 30, 30, 0.8)); border: 2px solid #FFD700; border-radius: 8px; padding: 8px 20px; z-index: 100; display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 20px;">💰</span>
+                <span id="battleGold" style="color: #FFD700; font-size: 18px; font-weight: 700; font-family: 'JetBrains Mono', monospace;">0</span>
+            </div>
             
             <!-- Enemy Cards (Left Side) -->
             <div id="battleEnemyCards">
@@ -1324,6 +1357,10 @@
                 <div id="chatHeader">
                     <span>💬 Battle Chat</span>
                     <span id="chatStatus" style="font-size: 11px; color: #aaa;"></span>
+                    <label id="ttsToggleLabel" title="Enable text-to-speech for NPC responses">
+                        <input type="checkbox" id="ttsToggle" checked onchange="toggleTTS()">
+                        <span style="font-size: 11px;">🔊</span>
+                    </label>
                     <button id="chatCloseBtn" onclick="toggleChatWindow()">✕</button>
                 </div>
                 <div id="chatModelSelector">
@@ -1384,7 +1421,7 @@
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.2.69 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.2.79 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div style="
@@ -1720,7 +1757,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.2.69';
+        const GAME_VERSION = 'v0.2.82';
         
         // ===== MULTIPLAYER STATE =====
         let multiplayerState = {
@@ -2690,6 +2727,7 @@
             
             // Update dungeon menu with save data
             updateDungeonMenuHeroes();
+            updateGoldDisplay();
             
             // Apply client UI restrictions
             applyClientUIRestrictions();
@@ -2736,8 +2774,137 @@
             selectedModel: 2,  // Model ID 1-10 (default to free model 2)
             exhaustedModels: [],  // Track rate-limited models
             totalCost: 0,      // Running cost tally in dollars
-            totalTokens: 0     // Running token count
+            totalTokens: 0,    // Running token count
+            ttsEnabled: true,  // TTS on by default
+            ttsAvailable: false // Set by server check
         };
+        
+        // TTS audio queue and current audio
+        let ttsAudioQueue = [];
+        let ttsCurrentAudio = null;
+        
+        // Toggle TTS on/off
+        function toggleTTS() {
+            const checkbox = document.getElementById('ttsToggle');
+            chatState.ttsEnabled = checkbox?.checked ?? false;
+            console.log('[TTS] Enabled:', chatState.ttsEnabled);
+        }
+        
+        // Check TTS availability on page load
+        async function checkTTSAvailability() {
+            try {
+                const response = await fetch('/api/tts-status', { method: 'POST' });
+                const data = await response.json();
+                chatState.ttsAvailable = data.enabled;
+                console.log('[TTS] Server availability:', data.enabled);
+                
+                // Update UI if TTS not available
+                if (!data.enabled) {
+                    const toggle = document.getElementById('ttsToggle');
+                    const label = document.getElementById('ttsToggleLabel');
+                    if (toggle) toggle.disabled = true;
+                    if (label) label.title = 'TTS not available - piper-tts not installed on server';
+                }
+            } catch (e) {
+                console.log('[TTS] Server check failed:', e);
+                chatState.ttsAvailable = false;
+            }
+        }
+        
+        // Get voice type based on entity
+        function getTTSVoiceType(senderType, senderName, entityVoiceType) {
+            // If entity has LLM-assigned voice type, use that first
+            if (entityVoiceType) {
+                return entityVoiceType;
+            }
+            
+            // Check if it's a hero name
+            const heroNames = ['zooko', 'nate', 'zancas', 'cyberaxe'];
+            const lowerName = (senderName || '').toLowerCase();
+            if (heroNames.includes(lowerName)) {
+                return lowerName;
+            }
+            
+            // Map sender types to voice types (fallback)
+            switch (senderType) {
+                case 'boss': return 'boss';
+                case 'mob': case 'enemy': return 'mob';
+                case 'captive': return 'captive';
+                case 'npc': return 'npc';
+                case 'narrator': case 'system': return 'narrator';
+                default: return 'default';
+            }
+        }
+        
+        // Play TTS for a message
+        async function playTTS(text, senderType, senderName, entityVoiceType) {
+            if (!chatState.ttsEnabled || !chatState.ttsAvailable) return;
+            
+            // Skip empty or very short text
+            if (!text || text.length < 2) return;
+            
+            // Skip action-only messages like *silence* or *growls*
+            if (text.trim().startsWith('*') && text.trim().endsWith('*') && text.length < 30) {
+                return;
+            }
+            
+            try {
+                const voiceType = getTTSVoiceType(senderType, senderName, entityVoiceType);
+                console.log(`[TTS] Generating audio for "${text.substring(0, 30)}..." with voice: ${voiceType}`);
+                
+                const response = await fetch('/api/tts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text, voiceType })
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    console.error('[TTS] Error:', error);
+                    return;
+                }
+                
+                // Get audio blob and play it
+                const audioBlob = await response.blob();
+                const audioUrl = URL.createObjectURL(audioBlob);
+                
+                // Queue audio playback
+                ttsAudioQueue.push({ url: audioUrl, text: text.substring(0, 30) });
+                playNextTTSAudio();
+                
+            } catch (e) {
+                console.error('[TTS] Playback error:', e);
+            }
+        }
+        
+        // Play next audio in queue
+        function playNextTTSAudio() {
+            if (ttsCurrentAudio || ttsAudioQueue.length === 0) return;
+            
+            const { url, text } = ttsAudioQueue.shift();
+            console.log(`[TTS] Playing: "${text}..."`);
+            
+            ttsCurrentAudio = new Audio(url);
+            ttsCurrentAudio.volume = 0.8;
+            
+            ttsCurrentAudio.onended = () => {
+                URL.revokeObjectURL(url);
+                ttsCurrentAudio = null;
+                playNextTTSAudio(); // Play next in queue
+            };
+            
+            ttsCurrentAudio.onerror = (e) => {
+                console.error('[TTS] Audio playback error:', e);
+                URL.revokeObjectURL(url);
+                ttsCurrentAudio = null;
+                playNextTTSAudio();
+            };
+            
+            ttsCurrentAudio.play().catch(e => {
+                console.log('[TTS] Autoplay blocked, user interaction needed');
+                ttsCurrentAudio = null;
+            });
+        }
         
         // Select chat target entity
         function selectChatTarget(entity) {
@@ -2902,15 +3069,16 @@
         }
         
         // Add message to chat
-        function addChatMessage(senderName, senderType, senderAvatar, text, isNpc = false) {
+        function addChatMessage(senderName, senderType, senderAvatar, text, isNpc = false, voiceType = null) {
             const message = {
                 id: Date.now(),
                 senderName,
-                senderType,  // 'hostile', 'questable', 'friendly', 'player'
+                senderType,  // 'hostile', 'questable', 'friendly', 'player', 'boss', 'mob', 'captive'
                 senderAvatar,
                 text,
                 displayText: isNpc ? '' : text,  // For typewriter effect
                 isNpc,
+                voiceType,  // LLM-assigned voice type
                 timestamp: new Date().toLocaleTimeString()
             };
             
@@ -2927,6 +3095,9 @@
             // Start typewriter effect for NPC messages
             if (isNpc && text.length > 0) {
                 setTimeout(() => typewriterEffect(message.id, text, 0), 100);
+                
+                // Play TTS for NPC responses (pass entity's voiceType if available)
+                playTTS(text, senderType, senderName, voiceType);
             }
             
             // Broadcast to other players if host (send full text, clients show instantly)
@@ -3100,14 +3271,18 @@
                         (respondingNpc.hostile ? 'hostile' : 
                         (respondingNpc.questable ? 'questable' : 'friendly'));
                     
-                    // Add NPC response
+                    // Add NPC response (include LLM-assigned voiceType)
                     addChatMessage(
                         respondingNpc.name,
                         chatNpcType,
                         respondingNpc.spritePath || 'people/zooko_a_head_compressed.png',
                         result.response,
-                        true
+                        true,
+                        respondingNpc.voiceType  // Pass entity's voice type
                     );
+                    
+                    // Process negotiation outcomes (betrayal, retreat, rage)
+                    processNegotiation(respondingNpc, message, result.response);
                 } else {
                     // Check for rate limit error
                     const errorMsg = result.error || 'Unknown';
@@ -3148,8 +3323,292 @@
             renderChatMessages();
         }
         
+        // ============================================
+        // NEGOTIATION SYSTEM - Mob Betrayal & Boss Retreat
+        // ============================================
+        
+        // Initialize negotiation state for an enemy
+        function initNegotiationState(enemy) {
+            if (!enemy.negotiationState) {
+                enemy.negotiationState = {
+                    // Mob betrayal tracking
+                    goldOffered: 0,           // Total gold offered so far
+                    betrayalThreshold: enemy.isBoss ? 999999 : (50 + Math.floor(Math.random() * 150)),  // 50-200 gold for mobs
+                    lowOfferCount: 0,         // Number of insultingly low offers
+                    rageStacks: 0,            // Rage buildup (each stack = +10% HP)
+                    
+                    // Boss morale tracking
+                    morale: 100,              // Boss morale (0-100)
+                    insultCount: 0,           // Times insulted/threatened
+                    failedAttacks: 0,         // Consecutive missed attacks
+                    
+                    // State flags
+                    betrayed: false,          // Mob switched sides
+                    retreated: false,         // Boss fled
+                    enraged: false            // Currently enraged (double attack)
+                };
+            }
+            return enemy.negotiationState;
+        }
+        
+        // Process negotiation after each chat exchange
+        function processNegotiation(npc, playerMessage, npcResponse) {
+            if (!npc || npc.hp <= 0) return;
+            
+            const state = initNegotiationState(npc);
+            const msgLower = playerMessage.toLowerCase();
+            const responseLower = npcResponse.toLowerCase();
+            
+            // === MOB BETRAYAL LOGIC ===
+            if (!npc.isBoss && npc.hostile) {
+                // Check for gold offers in player message
+                const goldMatch = msgLower.match(/(\d+)\s*(gold|coins?|gp|money)/i);
+                if (goldMatch) {
+                    const offeredGold = parseInt(goldMatch[1]);
+                    
+                    // Check if player actually HAS this gold
+                    const sharedSave = loadSharedSave();
+                    const currentGold = sharedSave?.dungeonState?.gold || 0;
+                    
+                    if (offeredGold > currentGold) {
+                        // Player tried to offer gold they don't have - instant rage!
+                        addChatMessage('System', 'system', null, `❌ You only have ${currentGold} gold! ${npc.name} sees through your empty promise!`, false);
+                        triggerRage(npc, 'Your LIES have enraged');
+                        return;
+                    }
+                    
+                    state.goldOffered += offeredGold;
+                    state.lastOfferAmount = offeredGold;  // Track last offer for deduction on success
+                    
+                    // Check if offer is insulting (less than 10% of threshold)
+                    if (offeredGold < state.betrayalThreshold * 0.1) {
+                        state.lowOfferCount++;
+                        
+                        // After 3 low offers, mob gets enraged
+                        if (state.lowOfferCount >= 3 && !state.enraged) {
+                            triggerRage(npc, 'Your pathetic offers have enraged');
+                        }
+                    }
+                    
+                    // Check for betrayal - roll with modifier based on offer
+                    const offerRatio = state.goldOffered / state.betrayalThreshold;
+                    if (offerRatio >= 0.5) {  // At least 50% of threshold to have a chance
+                        const betrayalRoll = rollD20();
+                        const dc = Math.max(5, 20 - Math.floor(offerRatio * 15));  // DC 5-20 based on offer
+                        
+                        console.log(`[Negotiation] ${npc.name} betrayal check: d20(${betrayalRoll}) vs DC ${dc}, offer ratio: ${(offerRatio * 100).toFixed(0)}%`);
+                        
+                        if (betrayalRoll >= dc || state.goldOffered >= state.betrayalThreshold) {
+                            triggerBetrayal(npc, state.goldOffered);
+                            return;
+                        } else if (betrayalRoll <= 3) {
+                            // Critical fail - mob gets angry
+                            triggerRage(npc, 'Your bribe attempt has angered');
+                        }
+                    }
+                    
+                    // Show offer progress
+                    const progress = Math.min(100, (state.goldOffered / state.betrayalThreshold) * 100);
+                    showDiceRoll(`💰 ${npc.name} considers your offer... (${progress.toFixed(0)}% convinced)`);
+                }
+                
+                // Check for threats/insults making mob angry
+                if (msgLower.match(/threat|kill|destroy|die|weak|pathetic|coward/i)) {
+                    state.lowOfferCount++;
+                    if (state.lowOfferCount >= 2 && !state.enraged) {
+                        triggerRage(npc, 'Your threats have enraged');
+                    }
+                }
+            }
+            
+            // === BOSS RETREAT/RAGE LOGIC ===
+            if (npc.isBoss) {
+                // Check for insults/threats
+                if (msgLower.match(/weak|pathetic|coward|afraid|scared|flee|run away|give up/i)) {
+                    state.insultCount++;
+                    state.morale -= 10;
+                    console.log(`[Negotiation] ${npc.name} morale: ${state.morale} (insulted)`);
+                }
+                
+                // Check for intimidation in NPC response (they're worried)
+                if (responseLower.match(/perhaps|maybe.*wrong|reconsider|mercy|spare|retreat|flee/i)) {
+                    state.morale -= 5;
+                }
+                
+                // Check morale + HP for retreat/rage
+                const hpPercent = (npc.hp / npc.maxHp) * 100;
+                if (hpPercent < 30 && state.morale < 50) {
+                    // Boss is low HP and demoralized - roll for retreat or rage
+                    const retreatRoll = rollD20();
+                    console.log(`[Negotiation] ${npc.name} retreat check: d20(${retreatRoll}), HP: ${hpPercent.toFixed(0)}%, Morale: ${state.morale}`);
+                    
+                    if (retreatRoll <= 8) {
+                        // Boss retreats!
+                        triggerBossRetreat(npc);
+                    } else if (retreatRoll >= 17 && !state.enraged) {
+                        // Boss gets enraged instead!
+                        triggerRage(npc, 'Cornered and desperate,');
+                        state.enraged = true;
+                    }
+                }
+            }
+        }
+        
+        // Trigger mob betrayal - switch sides!
+        function triggerBetrayal(mob, goldPaid) {
+            const state = mob.negotiationState;
+            state.betrayed = true;
+            mob.hostile = false;
+            
+            // Deduct gold from player
+            if (goldPaid > 0) {
+                const sharedSave = JSON.parse(localStorage.getItem('top_shared_save') || '{}');
+                if (!sharedSave.dungeonState) sharedSave.dungeonState = {};
+                sharedSave.dungeonState.gold = Math.max(0, (sharedSave.dungeonState.gold || 0) - goldPaid);
+                localStorage.setItem('top_shared_save', JSON.stringify(sharedSave));
+                
+                addChatMessage('System', 'system', null, `💸 Paid ${goldPaid} gold to ${mob.name}!`, false);
+                updateGoldDisplay();
+            }
+            
+            // Visual/audio feedback
+            showDiceRoll(`⚔️➡️🤝 ${mob.name} BETRAYS THE BOSS!`);
+            showBattleNotification(`${mob.name} switches sides!`);
+            
+            // Add chat message
+            addChatMessage(mob.name, 'friendly', mob.spritePath, 
+                `*${mob.name} turns against their former master!* "You've convinced me. Let's take down that tyrant together!"`, 
+                true, mob.voiceType);
+            
+            // Change color to friendly
+            mob.color = '#00FF00';
+            
+            renderBattle();
+            updateBattleEnemyCards();
+            
+            console.log(`[Negotiation] ${mob.name} has betrayed the boss!`);
+        }
+        
+        // Trigger boss retreat - they flee!
+        function triggerBossRetreat(boss) {
+            const state = boss.negotiationState;
+            state.retreated = true;
+            
+            // Visual/audio feedback
+            showDiceRoll(`🏃 ${boss.name} RETREATS!`);
+            showBattleNotification(`${boss.name} flees in terror!`);
+            
+            // Add chat message
+            addChatMessage(boss.name, 'hostile', boss.spritePath,
+                `*${boss.name} staggers back, fear in their eyes* "This isn't over! I'll return stronger!" *vanishes into the shadows*`,
+                true, boss.voiceType);
+            
+            // Remove boss from battle (set HP to 0 but mark as retreated)
+            boss.hp = 0;
+            boss.retreated = true;
+            
+            // Award partial XP for retreat
+            const partialXP = Math.floor((boss.stats?.experience || 100) * 0.5);
+            battleState.heroes.forEach(h => {
+                if (h.hp > 0) h.xp = (h.xp || 0) + Math.floor(partialXP / battleState.heroes.filter(x => x.hp > 0).length);
+            });
+            showDiceRoll(`📜 Gained ${partialXP} XP from boss retreat!`);
+            
+            renderBattle();
+            updateBattleEnemyCards();
+            checkBattleEnd();
+            
+            console.log(`[Negotiation] ${boss.name} has retreated!`);
+        }
+        
+        // Trigger rage - enemy gets stronger!
+        function triggerRage(enemy, reason) {
+            const state = enemy.negotiationState;
+            state.rageStacks++;
+            state.enraged = true;
+            
+            // Boost HP by 10% per rage stack
+            const hpBoost = Math.floor(enemy.maxHp * 0.1);
+            enemy.hp = Math.min(enemy.maxHp, enemy.hp + hpBoost);
+            enemy.maxHp += hpBoost;
+            
+            // Boost damage slightly
+            enemy.attackDamage = Math.floor(enemy.attackDamage * 1.1);
+            
+            // Visual/audio feedback
+            const emoji = enemy.isBoss ? '👿' : '😤';
+            showDiceRoll(`${emoji} ${reason} ${enemy.name}! (+${hpBoost} HP, +10% damage)`);
+            showBattleNotification(`${enemy.name} enters a RAGE!`);
+            
+            // Add chat message
+            addChatMessage(enemy.name, 'hostile', enemy.spritePath,
+                `*${enemy.name}'s eyes glow with fury* "ENOUGH! You will PAY for this!"`,
+                true, enemy.voiceType);
+            
+            // Change color to indicate rage
+            enemy.color = '#FF0000';
+            
+            renderBattle();
+            updateBattleEnemyCards();
+            
+            console.log(`[Negotiation] ${enemy.name} has entered a rage! (stack ${state.rageStacks})`);
+        }
+        
+        // Update boss morale when they take damage or miss attacks
+        function updateBossMorale(boss, event) {
+            if (!boss || !boss.isBoss) return;
+            
+            const state = initNegotiationState(boss);
+            
+            switch (event) {
+                case 'took_damage':
+                    state.morale -= 5;
+                    break;
+                case 'missed_attack':
+                    state.failedAttacks++;
+                    state.morale -= 3 * state.failedAttacks;  // Gets worse with consecutive misses
+                    break;
+                case 'hit_attack':
+                    state.failedAttacks = 0;  // Reset on successful hit
+                    state.morale = Math.min(100, state.morale + 5);  // Slight morale boost
+                    break;
+                case 'ally_died':
+                    state.morale -= 15;
+                    break;
+            }
+            
+            state.morale = Math.max(0, Math.min(100, state.morale));
+            
+            // Check for retreat/rage at critical morale
+            const hpPercent = (boss.hp / boss.maxHp) * 100;
+            if (state.morale < 30 && hpPercent < 40 && !state.retreated && !state.enraged) {
+                const crisisRoll = rollD20();
+                console.log(`[Negotiation] ${boss.name} crisis check: d20(${crisisRoll}), HP: ${hpPercent.toFixed(0)}%, Morale: ${state.morale}`);
+                
+                if (crisisRoll <= 10) {
+                    triggerBossRetreat(boss);
+                } else if (crisisRoll >= 16) {
+                    triggerRage(boss, 'Pushed to the brink,');
+                }
+            }
+        }
+        
+        // Check for enraged double attack
+        function shouldDoDoubleAttack(enemy) {
+            if (!enemy.negotiationState?.enraged) return false;
+            
+            // 30% chance for double attack when enraged
+            const doubleRoll = rollD20();
+            if (doubleRoll >= 15) {
+                showDiceRoll(`⚡ ${enemy.name}'s rage fuels a DOUBLE ATTACK!`);
+                return true;
+            }
+            return false;
+        }
+
         // Generate unique encounter data via Dungeon Master LLM
-        async function generateEncounter(type, baseData, roomLevel) {
+        async function generateEncounter(type, baseData, roomLevel, retryCount = 0) {
+            const maxRetries = 2;
             try {
                 const response = await fetch('/api/generate-encounter', {
                     method: 'POST',
@@ -3168,6 +3627,11 @@
                     return result.data;
                 } else {
                     console.warn(`[DM] Failed to generate ${type}:`, result.error || result.raw);
+                    // Retry on JSON parse failure
+                    if (retryCount < maxRetries && result.error && result.error.includes('JSON')) {
+                        console.log(`[DM] Retrying ${type} generation (attempt ${retryCount + 2}/${maxRetries + 1})...`);
+                        return generateEncounter(type, baseData, roomLevel, retryCount + 1);
+                    }
                     return null;
                 }
             } catch (error) {
@@ -3195,6 +3659,16 @@
                 enemy.personality = generated.personality;
             }
             
+            // Apply voice type (LLM-chosen based on gender/nature)
+            if (generated.voiceType) {
+                enemy.voiceType = generated.voiceType;
+            }
+            
+            // Apply gender
+            if (generated.gender) {
+                enemy.gender = generated.gender;
+            }
+            
             // Apply stat modifiers
             if (generated.statModifiers) {
                 if (generated.statModifiers.hpMod) {
@@ -3212,6 +3686,14 @@
             // Apply negotiation options
             if (generated.negotiation) {
                 enemy.negotiation = generated.negotiation;
+            }
+            
+            // Apply gold drop amount (LLM-determined based on backstory)
+            if (generated.goldDrop !== undefined) {
+                enemy.goldDrop = generated.goldDrop;
+            } else {
+                // Default gold based on enemy type
+                enemy.goldDrop = enemy.isBoss ? (50 + Math.floor(Math.random() * 100)) : (5 + Math.floor(Math.random() * 20));
             }
             
             // Apply opening line
@@ -3235,7 +3717,7 @@
                 case 'battle_start':
                     if (npc.openingLine) {
                         addChatMessage(npc.name, npc.hostile ? 'hostile' : 'friendly', 
-                            npc.spritePath || 'people/zooko_a_head_compressed.png', npc.openingLine, true);
+                            npc.spritePath || 'people/zooko_a_head_compressed.png', npc.openingLine, true, npc.voiceType);
                         return;
                     }
                     contextPrompt = 'The battle just started. Say something to intimidate or greet the heroes.';
@@ -3277,7 +3759,7 @@
                     if (result.success && result.response) {
                         const npcType = npc.hostile ? 'hostile' : (npc.questable ? 'questable' : 'friendly');
                         addChatMessage(npc.name, npcType, npc.spritePath || 'people/zooko_a_head_compressed.png', 
-                            result.response, true);
+                            result.response, true, npc.voiceType);
                     }
                 } catch (error) {
                     console.error('[Free Will] Chat error:', error);
@@ -3306,6 +3788,9 @@
             // Move music controls and ticker to bottom left during battle
             document.getElementById('musicControls').classList.add('battleActive');
             document.getElementById('musicTicker').classList.add('battleActive');
+            
+            // Update gold display for battle screen
+            updateGoldDisplay();
             
             // Start dice roll ticker
             startDiceRollTicker();
@@ -3493,6 +3978,8 @@
                 battleState.captiveNpc = {
                     name: captiveData?.name || 'Mysterious Prisoner',
                     species: captiveData?.species || 'human',
+                    gender: captiveData?.gender || 'unknown',
+                    voiceType: captiveData?.voiceType || null,  // LLM-assigned voice type
                     backstory: captiveData?.backstory || 'A prisoner needing rescue.',
                     personality: captiveData?.personality || 'grateful',
                     rescueReward: captiveData?.rescueReward || { gold: 20 },
@@ -4424,34 +4911,59 @@
                     ctx.stroke();
                 }
                 
-                // HP bar with text inside (positioned above sprite)
-                const barWidth = 80 * depthScale;
-                const barHeight = 14 * depthScale;
+                // Ground-plane nameplate (at hero's feet, tilted for 3D perspective)
+                ctx.save();
+                
+                // Position at hero's feet (bottom of sprite area)
+                const groundY = hero.y + 160 * depthScale;  // Below hero sprite (moved down)
+                
+                // Apply perspective transform - squish vertically for ground plane effect
+                // 5 degree tilt = cos(5°) ≈ 0.996, sin(5°) ≈ 0.087
+                // 50% taller than original 35% = 52.5% scale
+                ctx.translate(hero.x, groundY);
+                ctx.transform(1, 0.087, 0, 0.525, 0, 0);  // 5° tilt + 52.5% vertical scale
+                ctx.translate(-hero.x, -groundY);
+                
+                const barWidth = 100 * depthScale;
+                const barHeight = 20 * depthScale;  // Taller since it gets squished
                 const barX = hero.x - barWidth / 2;
-                const barY = hero.y - 175 * depthScale;
+                const barY = groundY;
                 
-                // Hero name (just above HP bar)
+                // Shadow/glow under the nameplate
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+                ctx.beginPath();
+                ctx.ellipse(hero.x, barY + barHeight + 10 * depthScale, barWidth * 0.6, 8 * depthScale, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Hero name (above HP bar on ground)
                 ctx.fillStyle = '#FFFFFF';
-                ctx.font = `bold ${Math.floor(12 * depthScale)}px Inter`;
+                ctx.font = `bold ${Math.floor(16 * depthScale)}px Inter`;
                 ctx.textAlign = 'center';
-                ctx.fillText(hero.name.toUpperCase(), hero.x, barY - 5 * depthScale);
+                ctx.textBaseline = 'bottom';
+                ctx.fillText(hero.name.toUpperCase(), hero.x, barY - 2 * depthScale);
                 
-                // Background
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                // HP bar background
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
                 ctx.fillRect(barX, barY, barWidth, barHeight);
+                
+                // HP bar border
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(barX, barY, barWidth, barHeight);
                 
                 // HP fill (GREEN -> YELLOW for heroes)
                 const hpPercent = hero.hp / hero.maxHp;
                 ctx.fillStyle = hpPercent > 0.5 ? '#27AE60' : hpPercent > 0.25 ? '#F39C12' : '#F1C40F';
-                ctx.fillRect(barX, barY, barWidth * hpPercent, barHeight);
+                ctx.fillRect(barX + 2, barY + 2, (barWidth - 4) * hpPercent, barHeight - 4);
                 
                 // HP text INSIDE bar (centered)
                 ctx.fillStyle = '#FFFFFF';
-                ctx.font = `bold ${Math.floor(10 * depthScale)}px JetBrains Mono`;
+                ctx.font = `bold ${Math.floor(14 * depthScale)}px JetBrains Mono`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(`${hero.hp}/${hero.maxHp}`, hero.x, barY + barHeight / 2);
-                ctx.textBaseline = 'alphabetic';  // Reset
+                
+                ctx.restore();  // Restore normal transform
             });
             
             // Draw enemies
@@ -4527,17 +5039,16 @@
                 ctx.textAlign = 'center';
                 ctx.fillText(enemy.name.toUpperCase(), enemy.x, nameOffsetY);
                 
-                // Species/Type (smaller, between name and bar)
-                const hasSpecies = enemy.species && enemy.species !== enemy.name;
-                if (hasSpecies) {
-                    ctx.fillStyle = '#AAAAAA';
+                // Species/Type (smaller, between name and bar) - ALWAYS show
+                ctx.fillStyle = '#AAAAAA';
+                if (enemy.isMob) {
+                    // Mobs: species in gray, normal weight
                     ctx.font = `${Math.floor(10 * depthScale)}px Inter`;
-                    ctx.fillText(enemy.species, enemy.x, speciesOffsetY);
-                } else if (!enemy.isMob) {
-                    // Bosses without species - show "Boss" label
-                    ctx.fillStyle = '#8B45FF';
-                    ctx.font = `${Math.floor(10 * depthScale)}px Inter`;
-                    ctx.fillText('Boss', enemy.x, speciesOffsetY);
+                    ctx.fillText(enemy.species || 'Creature', enemy.x, speciesOffsetY);
+                } else {
+                    // Bosses: species in gray but BOLD
+                    ctx.font = `bold ${Math.floor(10 * depthScale)}px Inter`;
+                    ctx.fillText(enemy.species || 'Boss', enemy.x, speciesOffsetY);
                 }
                 
                 // Background
@@ -4604,8 +5115,8 @@
                     const imgHeight = captive.sprite.naturalHeight;
                     const aspectRatio = imgWidth / imgHeight;
                     
-                    // Scale to reasonable size (base height ~200px at full scale - same as mobs)
-                    const baseHeight = 200;
+                    // Scale to reasonable size (base height ~250px at full scale - 25% larger)
+                    const baseHeight = 250;
                     const spriteHeight = baseHeight * depthScale;
                     const spriteWidth = spriteHeight * aspectRatio;
                     const spriteX = captive.x - spriteWidth / 2;
@@ -4841,6 +5352,17 @@
             }
         }
         
+        // Update gold display in both dungeon menu and battle screen
+        function updateGoldDisplay() {
+            const sharedSave = loadSharedSave();
+            const gold = sharedSave?.dungeonState?.gold || 0;
+            const dungeonMenuGold = document.getElementById('dungeonMenuGold');
+            const battleGold = document.getElementById('battleGold');
+            
+            if (dungeonMenuGold) dungeonMenuGold.textContent = gold;
+            if (battleGold) battleGold.textContent = gold;
+        }
+        
         // Update battle hero card stats
         function updateBattleHeroCards() {
             // Include all heroes from original selection (alive or dead)
@@ -4917,12 +5439,22 @@
                 card.id = `enemyCard${index}`;
                 card.dataset.enemyIndex = battleState.enemies.indexOf(enemy);
                 
+                // Check if this mob has betrayed and is now friendly
+                const isBetrayed = enemy.negotiationState?.betrayed || !enemy.hostile;
+                
                 if (!enemy.isMob) {
                     card.classList.add('boss');
                 }
                 
                 if (enemy.hp <= 0) {
                     card.classList.add('dead');
+                }
+                
+                // Style betrayed mobs as friendly (green)
+                if (isBetrayed && !enemy.isBoss) {
+                    card.classList.add('friendly');
+                    card.style.borderColor = '#00FF00';
+                    card.style.boxShadow = '0 0 15px rgba(0, 255, 0, 0.4)';
                 }
                 
                 // Add targetable class if in targeting mode and hostile
@@ -4934,18 +5466,27 @@
                 const portrait = document.createElement('div');
                 portrait.className = 'battleEnemyPortrait';
                 portrait.style.backgroundImage = `url('${enemy.spritePath}')`;
+                // Green border for betrayed mobs
+                if (isBetrayed && !enemy.isBoss) {
+                    portrait.style.borderColor = '#00FF00';
+                }
                 card.appendChild(portrait);
                 
-                // Name
+                // Name - add ally indicator for betrayed mobs
                 const name = document.createElement('div');
                 name.className = 'battleEnemyName';
-                name.textContent = enemy.name.toUpperCase();
+                if (isBetrayed && !enemy.isBoss) {
+                    name.innerHTML = `🤝 ${enemy.name.toUpperCase()}`;
+                    name.style.color = '#00FF00';
+                } else {
+                    name.textContent = enemy.name.toUpperCase();
+                }
                 card.appendChild(name);
                 
-                // HP stat
+                // HP stat - green for betrayed mobs
                 const hpStat = document.createElement('div');
                 hpStat.className = 'battleEnemyStat';
-                hpStat.style.color = '#ff6b6b';
+                hpStat.style.color = isBetrayed && !enemy.isBoss ? '#00FF00' : '#ff6b6b';
                 hpStat.innerHTML = `HP: <span>${enemy.hp}</span>/<span>${enemy.maxHp}</span>`;
                 card.appendChild(hpStat);
                 
@@ -5551,6 +6092,11 @@
                 
                 target.hp = Math.max(0, target.hp - damageRoll);
                 
+                // Update boss morale when they take damage
+                if (target.isBoss) {
+                    updateBossMorale(target, 'took_damage');
+                }
+                
                 // Trigger free will chat for damaged enemy
                 if (battleState.enemies.includes(target) && target.hp > 0) {
                     if (target.hp < target.maxHp * 0.3) {
@@ -5600,7 +6146,24 @@
             if (target.hp <= 0) {
                 // Award 10 XP for killing blow
                 attacker.xp += 10;
+                
+                // Award gold from enemy
+                const goldDrop = target.goldDrop || (target.isBoss ? 100 : 10);
+                const sharedSave = JSON.parse(localStorage.getItem('top_shared_save') || '{}');
+                if (!sharedSave.dungeonState) sharedSave.dungeonState = {};
+                sharedSave.dungeonState.gold = (sharedSave.dungeonState.gold || 0) + goldDrop;
+                localStorage.setItem('top_shared_save', JSON.stringify(sharedSave));
+                
+                addChatMessage('System', 'system', null, `💰 ${attacker.name} looted ${goldDrop} gold from ${target.name}!`, false);
+                updateGoldDisplay();
                 updateBattleHeroCards();
+                
+                // Update boss morale when ally dies
+                const boss = battleState.enemies.find(e => e.isBoss && e.hp > 0);
+                if (boss && target !== boss) {
+                    updateBossMorale(boss, 'ally_died');
+                }
+                
                 // Remove from battle
                 battleState.enemies = battleState.enemies.filter(e => e !== target);
                 battleState.turnOrder = battleState.turnOrder.filter(c => c !== target);
@@ -5627,7 +6190,8 @@
                                 'friendly',
                                 'people/zooko_a_head_compressed.png',
                                 battleState.captiveNpc.dialogueOnRescue,
-                                true
+                                true,
+                                battleState.captiveNpc.voiceType
                             );
                             
                             // Give reward
@@ -5646,7 +6210,8 @@
                                         'friendly',
                                         'people/zooko_a_head_compressed.png',
                                         `*whispers* ${reward.info}`,
-                                        true
+                                        true,
+                                        battleState.captiveNpc.voiceType
                                     );
                                 }, 2000);
                             }
@@ -5678,6 +6243,38 @@
         // Process AI turn
         function processAITurn(combatant) {
             if (!combatant.hostile) {
+                // Check if this is a betrayed mob that should attack enemies
+                if (combatant.negotiationState?.betrayed) {
+                    // Betrayed mob attacks hostile enemies (prioritize boss)
+                    const hostileEnemies = battleState.enemies.filter(e => e.hostile && e.hp > 0 && e !== combatant);
+                    if (hostileEnemies.length > 0) {
+                        // Prioritize boss
+                        const boss = hostileEnemies.find(e => e.isBoss);
+                        const target = boss || hostileEnemies[0];
+                        
+                        const attackRoll = rollD20();
+                        const damage = combatant.attackDamage || rollD6(1);
+                        
+                        if (attackRoll >= (target.ac || 10)) {
+                            target.hp = Math.max(0, target.hp - damage);
+                            showDiceRoll(`🤝 ${combatant.name} BETRAYS! Attacks ${target.name} for ${damage} damage!`);
+                            
+                            if (target.hp <= 0) {
+                                showBattleNotification(`${target.name} defeated by betrayal!`);
+                                battleState.enemies = battleState.enemies.filter(e => e !== target);
+                                battleState.turnOrder = battleState.turnOrder.filter(c => c !== target);
+                            }
+                        } else {
+                            showDiceRoll(`🤝 ${combatant.name} attacks ${target.name}: MISS!`);
+                        }
+                        
+                        renderBattle();
+                        updateBattleEnemyCards();
+                        advanceTurn();
+                        return;
+                    }
+                }
+                
                 // Friendly/neutral NPCs skip turn
                 showDiceRoll(`${combatant.name} waits...`);
                 advanceTurn();
@@ -5769,8 +6366,18 @@
                 }
                 
                 showDiceRoll(`${combatant.name} attacks ${target.name}: HIT for ${finalDamage} damage!`);
+                
+                // Update boss morale on successful hit
+                if (combatant.isBoss) {
+                    updateBossMorale(combatant, 'hit_attack');
+                }
             } else {
                 showDiceRoll(`${combatant.name} attacks ${target.name}: MISS!`);
+                
+                // Update boss morale on missed attack
+                if (combatant.isBoss) {
+                    updateBossMorale(combatant, 'missed_attack');
+                }
             }
             
             renderBattle();
@@ -5813,6 +6420,47 @@
                     }, 2000);
                     return;
                 }
+            }
+            
+            // Check for enraged double attack
+            if (shouldDoDoubleAttack(combatant)) {
+                // Do a second attack after a short delay
+                setTimeout(() => {
+                    if (combatant.hp > 0 && battleState.active) {
+                        const stillAliveHeroes = battleState.heroes.filter(h => h.hp > 0);
+                        if (stillAliveHeroes.length > 0) {
+                            const secondTarget = findClosestHero(combatant, stillAliveHeroes);
+                            const secondRoll = rollD20();
+                            const secondDamage = combatant.attackDamage || rollD6(1);
+                            
+                            if (secondRoll >= (secondTarget.stats?.ac || 10)) {
+                                let finalDmg = secondDamage;
+                                if (secondTarget.defending) {
+                                    finalDmg = Math.floor(secondDamage / 2);
+                                    secondTarget.defending = false;
+                                }
+                                secondTarget.hp = Math.max(0, secondTarget.hp - finalDmg);
+                                showDiceRoll(`⚡ ${combatant.name} RAGE ATTACK: ${finalDmg} damage to ${secondTarget.name}!`);
+                            } else {
+                                showDiceRoll(`⚡ ${combatant.name} rage attack MISSES ${secondTarget.name}!`);
+                            }
+                            renderBattle();
+                            updateBattleHeroCards();
+                            
+                            // Check for hero death
+                            if (secondTarget.hp <= 0) {
+                                const allDead = battleState.heroes.every(h => h.hp <= 0);
+                                if (allDead) {
+                                    showBattleNotification('DEFEAT!');
+                                    setTimeout(() => endBattle(), 2000);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                    advanceTurn();
+                }, 800);
+                return;  // Don't advance turn yet - wait for double attack
             }
             
             advanceTurn();
@@ -5919,6 +6567,7 @@
             
             // Update dungeon menu hero displays with saved stats
             updateDungeonMenuHeroes();
+            updateGoldDisplay();
             
             // Move music controls and ticker back to center bottom
             document.getElementById('musicControls').classList.remove('battleActive');
@@ -7165,7 +7814,8 @@
                         npcType,
                         respondingNpc.spritePath || 'people/zooko_a_head_compressed.png',
                         result.response,
-                        true
+                        true,
+                        respondingNpc.voiceType
                     );
                 }
             } catch (error) {
@@ -8320,6 +8970,9 @@
             // Load settings
             loadSettings();
             console.log('Settings loaded:', settings);
+            
+            // Check TTS availability
+            checkTTSAvailability();
             
             // ===== GAMEPAD SUPPORT =====
             // Handle gamepad connections

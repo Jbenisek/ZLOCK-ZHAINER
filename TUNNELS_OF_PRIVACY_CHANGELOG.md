@@ -2,6 +2,303 @@
 
 # Changelog
 
+## v0.2.82 - UI Polish & Bribe Gold Deduction (2025-11-28)
+- **Gold Bribe System:**
+  - Bribing mobs now deducts gold from player's total
+  - If player offers more gold than they have, mob sees through the lie and becomes instantly enraged
+  - System message shows: "💸 Paid X gold to [Mob]!"
+
+- **Betrayed Mob Visual Feedback:**
+  - Betrayed mobs now display with green styling in enemy HUD
+  - Green border and glow on card
+  - Green portrait border
+  - Name shows "🤝 MOB NAME" in green
+  - HP bar changes from red to green
+
+- **Captive NPC Improvements:**
+  - Captive sprite size increased 25% (200 → 250 base height)
+  - Captive name moved up in HUD card to avoid overlap with health bar
+  - Captive portrait in HUD increased to 80x80px
+
+## v0.2.81 - Boss Voice Tuning (2025-11-28)
+- **Boss Voice Selection:**
+  - LLM now prefers male_deep or monster voices for bosses (70% of time)
+  - Female voices only for seductive/witch-type bosses
+  - Boss fallback voice changed to deep male (bryce)
+
+- **Voice Parameters:**
+  - Boss voices: Rougher, more aggressive (faster, higher noise)
+  - Male_deep: Commanding tone with higher expression
+  - Monster: Very rough, growly with max noise variation
+  - Male_mature: Gruff, weathered sound
+
+## v0.2.80 - Gold Economy System (2025-11-28)
+- **Summary:**
+  - Enemies now drop gold when killed
+  - LLM determines gold drops based on enemy backstory
+  - Gold displayed in dungeon menu and battle HUD
+  - Foundation for future shop/inventory systems
+
+- **Gold Drop System:**
+  - LLM assigns `goldDrop` value (5-50 for mobs, 50-500 for bosses)
+  - Wealthy enemies drop more, feral beasts drop less
+  - Fallback values: 100 gold for bosses, 10 for mobs
+  - Chat message shows loot: "💰 Hero looted X gold from Enemy!"
+
+- **Gold Display UI:**
+  - Dungeon Menu: Gold shown below level indicator
+  - Battle Screen: Gold counter at top center with treasure emoji
+  - Both displays update in real-time when gold is earned
+
+- **Technical Changes:**
+  - Added `goldDrop` field to LLM prompts (zlock_server.py)
+  - `applyGeneratedData()` applies goldDrop to enemy objects
+  - `updateGoldDisplay()` function updates all gold UI elements
+  - Gold stored in `sharedSave.dungeonState.gold`
+
+## v0.2.79 - Negotiation System: Betrayal & Retreat (2025-11-28)
+- **Summary:**
+  - Mobs can be bribed to betray the boss and switch sides
+  - Bosses can retreat or rage when demoralized
+  - Enraged enemies get +10% HP and chance for double attacks
+  - Chat interactions now have strategic consequences
+
+- **Mob Betrayal System:**
+  - Each mob has a hidden `betrayalThreshold` (50-200 gold)
+  - Offer gold in chat: "I'll give you 100 gold to join us"
+  - Progress shown: "💰 Name considers your offer... (X% convinced)"
+  - When threshold reached, roll d20 vs DC (lower DC = higher offer)
+  - Success: Mob switches sides, attacks boss on their turn
+  - Low offers (< 10% of threshold) anger mob → rage after 3 attempts
+  - Threats also increase anger
+
+- **Boss Morale System:**
+  - Bosses have `morale` (0-100) that decreases with:
+    - Taking damage (-5)
+    - Missing attacks (-3, stacks with consecutive misses)
+    - Allies dying (-15)
+    - Being insulted in chat (-10)
+  - Low morale + low HP triggers crisis roll:
+    - Roll 1-10: Boss RETREATS (flees, 50% XP awarded)
+    - Roll 16-20: Boss RAGES (enraged, double attack chance)
+
+- **Rage Mechanic:**
+  - Triggered by: low morale, failed bribe attempts, threats
+  - Effects: +10% max HP restored, +10% damage, red color
+  - 30% chance for double attack each turn (d20 >= 15)
+  - Stacks: Each rage = another +10% HP
+
+- **Betrayed Mob Behavior:**
+  - Turns green (friendly color)
+  - On their turn, attacks hostile enemies (prioritizes boss)
+  - Shows: "🤝 Name BETRAYS! Attacks Boss for X damage!"
+
+- **Battle Notifications:**
+  - "Name switches sides!" - mob betrayal
+  - "Name flees in terror!" - boss retreat
+  - "Name enters a RAGE!" - rage triggered
+  - "⚡ Name's rage fuels a DOUBLE ATTACK!" - double attack
+  - Dice roll ticker shows negotiation progress
+
+- **Technical:**
+  - `initNegotiationState(enemy)` - initializes tracking
+  - `processNegotiation(npc, playerMsg, npcResponse)` - after each chat
+  - `updateBossMorale(boss, event)` - on combat events
+  - `shouldDoDoubleAttack(enemy)` - 30% chance when enraged
+  - Gold parsing regex: `/(\d+)\s*(gold|coins?|gp|money)/i`
+
+## v0.2.78 - TTS AudioChunk Fix (2025-11-28)
+- **Bug Fix:**
+  - Fixed `'AudioChunk' object has no attribute 'audio_bytes'` error
+  - Correct attribute is `audio_int16_bytes` (16-bit PCM audio data)
+  - TTS with SynthesisConfig now works correctly
+
+- **Technical:**
+  - Piper's `synthesize()` returns `AudioChunk` objects with:
+    - `audio_int16_bytes`: Raw 16-bit PCM audio (used for WAV)
+    - `audio_int16_array`: NumPy array of samples
+    - `audio_float_array`: Float32 audio data
+  - Voice parameters (length_scale, noise_scale, noise_w_scale) now applied correctly
+
+## v0.2.77 - Voice Synthesis Parameters (2025-11-28)
+- **Summary:**
+  - Each voice type now has unique speech parameters for character personality
+  - Bosses speak slow and menacing, captives speak fast and nervous
+  - Uses Piper's SynthesisConfig for real-time voice tweaking
+  - No additional voice files needed - same 17 voices, more variety
+
+- **Synthesis Parameters:**
+  - `length_scale`: Speech speed (<1=faster, >1=slower)
+  - `noise_scale`: Expressiveness/emotion variation
+  - `noise_w_scale`: Phoneme duration (rhythm variation)
+
+- **Voice Personalities:**
+  | Voice Type | Speed | Notes |
+  |------------|-------|-------|
+  | narrator | 1.1x slower | Smooth, measured, clarity |
+  | boss | 1.25x slower | Menacing, dramatic pauses |
+  | monster | 1.4x slower | Very slow, growly, rough |
+  | captive | 0.85x faster | Nervous, shaky, desperate |
+  | ethereal | 1.3x slower | Dreamy, smooth, otherworldly |
+  | nate | 0.9x faster | Quick, energetic |
+  | cyberaxe | 1.05x slower | Steady, deliberate |
+
+- **Technical:**
+  - `VOICE_PARAMS` dict maps voice types to synthesis parameters
+  - Uses `SynthesisConfig` from `piper.config`
+  - Parameters applied per-generation, not per-model
+  - Same voice model can sound different based on params
+
+## v0.2.76 - Voice Pools & Action Stripping (2025-11-28)
+- **Summary:**
+  - Expanded to 17 unique voices with randomized pools per voice type
+  - Asterisk actions (*laughs menacingly*) now stripped from TTS - not read literally
+  - Each voice type has 3-4 variants for variety
+
+- **17 Voices Available:**
+  - British: alba, jenny_dioco, cori, alan, northern_english_male, aru
+  - American: amy, kristin, hfc_female, ljspeech, joe, ryan, bryce, hfc_male, norman, lessac, kusal
+
+- **Voice Pools (randomized selection):**
+  - `female_mature`: alba, jenny_dioco, hfc_female
+  - `female_young`: kristin, amy, cori, ljspeech
+  - `male_deep`: bryce, northern_english_male, norman
+  - `male_young`: ryan, aru, kusal
+  - `male_mature`: joe, alan, kusal
+  - `monster`: hfc_male, northern_english_male, norman
+  - `ethereal`: lessac, ljspeech, alba
+
+- **Action Stripping:**
+  - Server now strips `*action*` text before TTS
+  - "Hello there *laughs menacingly*" → TTS only says "Hello there"
+  - Prevents awkward literal reading of roleplay actions
+  - Uses regex: `re.sub(r'\*[^*]+\*', '', text)`
+
+- **Fixed Voices (heroes/narrator):**
+  - Heroes keep consistent voices for recognizability
+  - Narrator always uses British alba (sexy sophisticated)
+
+## v0.2.75 - LLM-Driven Voice Type Selection (2025-01-29)
+- **Summary:**
+  - LLM now intelligently assigns voiceType when generating entity responses
+  - Voices selected based on entity gender, age, and species (male/female/monster)
+  - Enhanced prompts guide LLM to pick appropriate voice for each entity
+
+- **Voice Type Options for LLM:**
+  - `male_deep`: Deep authoritative male voice (CyberAxe-like)
+  - `male_young`: Youthful energetic male voice (Nate-like)
+  - `male_mature`: Seasoned experienced male voice (Zooko-like)
+  - `female_mature`: Confident mature female voice (Zancas-like)
+  - `female_young`: Youthful female voice (Captive-like)
+  - `monster`: Menacing creature voice (Boss/mob)
+  - `ethereal`: Mysterious otherworldly voice (NPCs)
+
+- **Technical Implementation:**
+  - `voiceType` field added to entity chat response JSON
+  - LLM picks voice based on entity's `gender` and `species` fields
+  - Voice flows through: generateEntityResponse → addChatMessage → playTTS
+  - Server maps voiceType to specific Piper voice model
+
+- **JSON Generation Improvements:**
+  - Retry logic (3 attempts) for failed JSON parsing
+  - Trailing comma removal before parsing
+  - Better JSON extraction from LLM responses
+
+## v0.2.74 - Piper TTS Voice System (2025-01-28)
+- **Summary:**
+  - Added local neural text-to-speech for NPC/entity chat responses
+  - Uses Piper TTS (fast, local, no API needed)
+  - Self-contained: auto-installs piper-tts and downloads voice models
+  - Voice toggle in chat window (default ON)
+
+- **Server (zlock_server.py):**
+  - `ensure_piper_installed()`: Auto-installs piper-tts via pip if missing
+  - `ensure_voice_models()`: Downloads voice models from HuggingFace on first run
+  - `/api/tts` endpoint: Accepts text + voiceType, returns audio/wav
+  - `/api/tts-status` endpoint: Returns TTS availability
+  - Voice models stored in `piper_voices/` directory
+
+- **Voice Assignments:**
+  - Narrator: British female (en_GB-alba-medium) - "sexy sophisticated"
+  - Zooko: American male mature (en_US-joe-medium)
+  - Nate: American male young (en_US-ryan-medium)
+  - Zancas: American female (en_US-kristin-medium)
+  - CyberAxe: American male deep (en_US-bryce-medium)
+  - Boss: British male menacing (en_GB-northern_english_male-medium)
+  - Mob: American generic male (en_US-hfc_male-medium)
+  - Captive: American female desperate (en_US-amy-medium)
+  - NPC: American neutral (en_US-lessac-medium)
+
+- **Client (tunnels_of_privacy.html):**
+  - TTS toggle checkbox in chat header (🔊 icon)
+  - `checkTTSAvailability()`: Checks server for TTS support on load
+  - `playTTS()`: Queues audio generation and playback
+  - `getTTSVoiceType()`: Maps entity type/name to voice
+  - Audio queue system for sequential playback
+  - Skips action-only messages like "*silence*" or "*growls*"
+
+- **One-Click Setup:**
+  - Running `python zlock_server.py` automatically:
+    1. Checks if piper-tts installed → installs if missing
+    2. Checks if voice models exist → downloads from HuggingFace
+  - Total ~100MB download for all voices on first run
+
+## v0.2.73 - Ground-Plane Hero Nameplates (2025-11-28)
+- **Summary:**
+  - Hero names and HP bars now render at their feet on the "ground"
+  - Perspective transform makes them look like they're lying on the floor
+  - Similar to Splinter Cell / Diablo style ground nameplates
+
+- **Visual Effect:**
+  - Nameplates positioned below hero sprites (at feet)
+  - Vertically squished to 35% (simulates ~70° viewing angle)
+  - Shadow ellipse under nameplate for grounding effect
+  - Larger text (16px name, 14px HP) to compensate for squish
+
+- **Technical:**
+  - Uses `ctx.scale(1, 0.35)` for perspective foreshortening
+  - `ctx.save()`/`ctx.restore()` to isolate transform
+  - HP bar has border for better visibility when squished
+  - Ground shadow adds depth
+
+## v0.2.72 - Boss Type Readability (2025-11-28)
+- **Summary:**
+  - Boss type text changed from purple to gray (same as mobs)
+  - Boss type is now BOLD to distinguish from mobs
+  - Improved readability
+
+- **Display:**
+  - Mobs: gray type, normal weight
+  - Bosses: gray type, **bold** weight
+
+## v0.2.71 - Always Show Entity Type (2025-11-28)
+- **Summary:**
+  - Mobs now ALWAYS show their species/type (gray text)
+  - Bosses now ALWAYS show their species/type (purple text)
+  - Fixed Floating Orb and other mobs missing type label
+
+- **Display Fix:**
+  - Removed "hide if same as name" logic
+  - All enemies now show: Name → Type → HP bar
+  - Mobs: type in gray (#AAAAAA)
+  - Bosses: type in purple (#8B45FF)
+
+## v0.2.70 - Boss Name & Type Display Fix (2025-11-28)
+- **Summary:**
+  - Bosses now always show their species/type label (in purple)
+  - Improved LLM prompt to generate truly unique boss names
+  - Fixed "Floating Orb" showing no type issue
+
+- **Display Fix:**
+  - Bosses always show species type below name (purple text)
+  - Example: "LORD MALACHAR" + "Floating Orb" (type in purple)
+  - Mobs still only show species if different from name
+
+- **LLM Prompt Improvement:**
+  - Explicitly forbids using template name in generated name
+  - Examples: "Zyx'tharion" or "Lord Malachar" instead of "Floating Orb"
+  - Should generate more unique/creative boss names
+
 ## v0.2.69 - Entity Label Positioning Fixes (2025-11-28)
 - **Summary:**
   - Fixed overlapping labels on mobs, bosses, and heroes

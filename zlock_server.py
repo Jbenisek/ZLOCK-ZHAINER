@@ -118,6 +118,229 @@ except ImportError:
     print("Multiplayer features will be disabled.\n")
     websockets = None
 
+# TTS with Piper - auto-install and setup
+TTS_ENABLED = False
+PIPER_VOICE_DIR = Path(__file__).parent / 'piper_voices'
+
+# Voice pools for randomization
+# Format: (language, speaker_name, quality)
+# Each category has multiple voices to pick from randomly
+
+# All available voices to download (verified working)
+ALL_VOICES = [
+    # British voices
+    ('en_GB', 'alba', 'medium'),              # Female, sophisticated
+    ('en_GB', 'jenny_dioco', 'medium'),       # Female, clear
+    ('en_GB', 'cori', 'medium'),              # Female
+    ('en_GB', 'alan', 'medium'),              # Male
+    ('en_GB', 'northern_english_male', 'medium'),    # Male, gruff
+    ('en_GB', 'aru', 'medium'),               # Male
+    # American voices
+    ('en_US', 'amy', 'medium'),               # Female
+    ('en_US', 'kristin', 'medium'),           # Female
+    ('en_US', 'hfc_female', 'medium'),        # Female
+    ('en_US', 'ljspeech', 'medium'),          # Female (Linda Johnson)
+    ('en_US', 'joe', 'medium'),               # Male, mature
+    ('en_US', 'ryan', 'medium'),              # Male, young
+    ('en_US', 'bryce', 'medium'),             # Male, deep
+    ('en_US', 'hfc_male', 'medium'),          # Male
+    ('en_US', 'norman', 'medium'),            # Male
+    ('en_US', 'lessac', 'medium'),            # Neutral/androgynous
+    ('en_US', 'kusal', 'medium'),             # Male, accented
+]
+
+# Voice pools by type - will pick randomly from these
+VOICE_POOLS = {
+    # Female voices
+    'female_mature': [
+        ('en_GB', 'alba', 'medium'),
+        ('en_GB', 'jenny_dioco', 'medium'),
+        ('en_US', 'hfc_female', 'medium'),
+    ],
+    'female_young': [
+        ('en_US', 'kristin', 'medium'),
+        ('en_US', 'amy', 'medium'),
+        ('en_GB', 'cori', 'medium'),
+        ('en_US', 'ljspeech', 'medium'),
+    ],
+    # Male voices  
+    'male_deep': [
+        ('en_US', 'bryce', 'medium'),
+        ('en_GB', 'northern_english_male', 'medium'),
+        ('en_US', 'norman', 'medium'),
+    ],
+    'male_young': [
+        ('en_US', 'ryan', 'medium'),
+        ('en_GB', 'aru', 'medium'),
+        ('en_US', 'kusal', 'medium'),
+    ],
+    'male_mature': [
+        ('en_US', 'joe', 'medium'),
+        ('en_GB', 'alan', 'medium'),
+        ('en_US', 'kusal', 'medium'),
+    ],
+    # Special types
+    'monster': [
+        ('en_US', 'hfc_male', 'medium'),
+        ('en_GB', 'northern_english_male', 'medium'),
+        ('en_US', 'norman', 'medium'),
+    ],
+    'ethereal': [
+        ('en_US', 'lessac', 'medium'),
+        ('en_US', 'ljspeech', 'medium'),
+        ('en_GB', 'alba', 'medium'),
+    ],
+}
+
+# Fixed voice assignments (not randomized)
+VOICE_ASSIGNMENTS = {
+    # Narrator - always British female (sexy sophisticated)
+    'narrator': ('en_GB', 'alba', 'medium'),
+    # Heroes - fixed voices for consistency
+    'zooko': ('en_US', 'joe', 'medium'),
+    'nate': ('en_US', 'ryan', 'medium'),
+    'zancas': ('en_US', 'kristin', 'medium'),
+    'cyberaxe': ('en_US', 'bryce', 'medium'),
+    # Entity type fallbacks (if LLM doesn't specify voiceType)
+    'boss': ('en_US', 'bryce', 'medium'),  # Deep male voice for bosses
+    'mob': ('en_US', 'hfc_male', 'medium'),
+    'captive': ('en_US', 'amy', 'medium'),
+    'npc': ('en_US', 'lessac', 'medium'),
+    'default': ('en_US', 'lessac', 'medium'),
+}
+
+# Speech synthesis parameters per voice type
+# length_scale: <1 = faster, >1 = slower
+# noise_scale: higher = more expressive/emotional variation
+# noise_w_scale: phoneme duration variation (rhythm)
+VOICE_PARAMS = {
+    # Narrator - smooth, measured, slightly slow for clarity
+    'narrator': {'length_scale': 1.1, 'noise_scale': 0.5, 'noise_w_scale': 0.7},
+    
+    # Heroes - each with distinct speech patterns
+    'zooko': {'length_scale': 1.0, 'noise_scale': 0.65, 'noise_w_scale': 0.8},      # Calm, wise
+    'nate': {'length_scale': 0.9, 'noise_scale': 0.75, 'noise_w_scale': 0.9},       # Quick, energetic
+    'zancas': {'length_scale': 0.95, 'noise_scale': 0.7, 'noise_w_scale': 0.85},    # Confident, sharp
+    'cyberaxe': {'length_scale': 1.05, 'noise_scale': 0.6, 'noise_w_scale': 0.75},  # Steady, deliberate
+    
+    # Voice type pools - character archetypes
+    'female_mature': {'length_scale': 1.0, 'noise_scale': 0.65, 'noise_w_scale': 0.8},
+    'female_young': {'length_scale': 0.92, 'noise_scale': 0.75, 'noise_w_scale': 0.9},
+    'male_deep': {'length_scale': 0.9, 'noise_scale': 0.85, 'noise_w_scale': 0.95},    # Rougher, commanding
+    'male_young': {'length_scale': 0.9, 'noise_scale': 0.75, 'noise_w_scale': 0.85},
+    'male_mature': {'length_scale': 0.95, 'noise_scale': 0.8, 'noise_w_scale': 0.9},   # Gruff, weathered
+    
+    # Entity types - dramatic characterization
+    'boss': {'length_scale': 0.95, 'noise_scale': 0.9, 'noise_w_scale': 1.0},       # Rough, aggressive, intimidating
+    'mob': {'length_scale': 1.0, 'noise_scale': 0.7, 'noise_w_scale': 0.8},         # Generic enemy
+    'monster': {'length_scale': 0.85, 'noise_scale': 1.0, 'noise_w_scale': 1.1},    # Fast, growly, very rough
+    'captive': {'length_scale': 0.85, 'noise_scale': 0.85, 'noise_w_scale': 1.0},   # Fast, nervous, shaky
+    'ethereal': {'length_scale': 1.3, 'noise_scale': 0.4, 'noise_w_scale': 0.6},    # Slow, dreamy, smooth
+    'npc': {'length_scale': 1.0, 'noise_scale': 0.65, 'noise_w_scale': 0.8},        # Normal
+    
+    # Default fallback
+    'default': {'length_scale': 1.0, 'noise_scale': 0.667, 'noise_w_scale': 0.8},
+}
+
+def ensure_piper_installed():
+    """Install piper-tts if not already installed"""
+    global TTS_ENABLED
+    
+    try:
+        import piper
+        print("✓ piper-tts is installed")
+        TTS_ENABLED = True
+        return True
+    except ImportError:
+        print("\n📦 Installing piper-tts (first-time setup)...")
+        import subprocess
+        try:
+            subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'piper-tts', '-q'])
+            print("✓ piper-tts installed successfully")
+            TTS_ENABLED = True
+            return True
+        except subprocess.CalledProcessError as e:
+            print(f"⚠️ Failed to install piper-tts: {e}")
+            print("  TTS features will be disabled.")
+            return False
+
+def get_voice_model_path(language, speaker, quality):
+    """Get path to voice model files (.onnx and .onnx.json)"""
+    # Piper voice naming: en_GB-alba-medium.onnx
+    model_name = f"{language}-{speaker}-{quality}"
+    model_path = PIPER_VOICE_DIR / f"{model_name}.onnx"
+    config_path = PIPER_VOICE_DIR / f"{model_name}.onnx.json"
+    return model_path, config_path, model_name
+
+def download_voice_model(language, speaker, quality):
+    """Download voice model from HuggingFace if not present"""
+    model_path, config_path, model_name = get_voice_model_path(language, speaker, quality)
+    
+    if model_path.exists() and config_path.exists():
+        return True  # Already downloaded
+    
+    # Create voice directory if needed
+    PIPER_VOICE_DIR.mkdir(exist_ok=True)
+    
+    # HuggingFace URL pattern for piper voices
+    # Example: https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_GB/alba/medium/en_GB-alba-medium.onnx
+    lang_region = language.split('_')[0]  # en_GB -> en
+    base_url = f"https://huggingface.co/rhasspy/piper-voices/resolve/main/{lang_region}/{language}/{speaker}/{quality}"
+    
+    print(f"  📥 Downloading {model_name}...")
+    
+    try:
+        # Download .onnx model
+        onnx_url = f"{base_url}/{model_name}.onnx"
+        urllib.request.urlretrieve(onnx_url, model_path)
+        
+        # Download .onnx.json config
+        json_url = f"{base_url}/{model_name}.onnx.json"
+        urllib.request.urlretrieve(json_url, config_path)
+        
+        print(f"  ✓ Downloaded {model_name}")
+        return True
+    except Exception as e:
+        print(f"  ⚠️ Failed to download {model_name}: {e}")
+        return False
+
+def ensure_voice_models():
+    """Download all required voice models"""
+    if not TTS_ENABLED:
+        return False
+    
+    print("\n🎤 Checking TTS voice models...")
+    print(f"   (20 voices for variety - ~200MB total on first run)")
+    
+    # Download ALL voices for maximum variety
+    all_success = True
+    
+    for language, speaker, quality in ALL_VOICES:
+        model_path, config_path, model_name = get_voice_model_path(language, speaker, quality)
+        
+        if model_path.exists() and config_path.exists():
+            print(f"  ✓ {model_name} (already downloaded)")
+        else:
+            if not download_voice_model(language, speaker, quality):
+                all_success = False
+    
+    return all_success
+
+def init_tts():
+    """Initialize TTS system - install piper and download voices"""
+    global TTS_ENABLED
+    
+    print("\n" + "="*60)
+    print("🔊 TTS SETUP (Piper Neural TTS)")
+    print("="*60)
+    
+    if ensure_piper_installed():
+        ensure_voice_models()
+        if TTS_ENABLED:
+            print("✓ TTS system ready\n")
+    else:
+        print("⚠️ TTS disabled - piper-tts not available\n")
+
 PORT = 4243
 WS_PORT = 8765
 
@@ -184,8 +407,140 @@ class GameHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             return self.handle_generate_encounter()
         elif self.path == '/api/llm-status':
             return self.handle_llm_status()
+        elif self.path == '/api/tts':
+            return self.handle_tts()
+        elif self.path == '/api/tts-status':
+            return self.handle_tts_status()
         else:
             self.send_error(404, "Not found")
+    
+    def handle_tts_status(self):
+        """Return TTS availability status"""
+        self.send_response(200)
+        self.send_header('Content-Type', 'application/json')
+        self.end_headers()
+        self.wfile.write(json.dumps({
+            'enabled': TTS_ENABLED,
+            'fixedVoices': list(VOICE_ASSIGNMENTS.keys()),
+            'voicePools': list(VOICE_POOLS.keys()),
+            'totalVoices': len(ALL_VOICES)
+        }).encode('utf-8'))
+    
+    def handle_tts(self):
+        """Generate speech audio from text using Piper TTS"""
+        if not TTS_ENABLED:
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps({
+                'success': False,
+                'error': 'TTS disabled - piper-tts not installed',
+                'ttsDisabled': True
+            }).encode('utf-8'))
+            return
+        
+        try:
+            import io
+            import wave
+            import re
+            from piper import PiperVoice
+            from piper.config import SynthesisConfig
+            
+            # Read request body
+            content_length = int(self.headers.get('Content-Length', 0))
+            body = self.rfile.read(content_length)
+            data = json.loads(body.decode('utf-8'))
+            
+            text = data.get('text', '')
+            voice_type = data.get('voiceType', 'default').lower()  # narrator, hero name, boss, mob, etc.
+            
+            # Strip asterisk actions like *laughs menacingly* from text
+            # These are roleplay actions that shouldn't be read literally
+            text = re.sub(r'\*[^*]+\*', '', text).strip()
+            
+            if not text:
+                self.send_response(400)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    'success': False,
+                    'error': 'No text provided (or text was all actions)'
+                }).encode('utf-8'))
+                return
+            
+            # Get voice configuration - check pools first, then fixed assignments
+            if voice_type in VOICE_POOLS:
+                # Random selection from pool for variety
+                voice_config = random.choice(VOICE_POOLS[voice_type])
+            elif voice_type in VOICE_ASSIGNMENTS:
+                voice_config = VOICE_ASSIGNMENTS[voice_type]
+            else:
+                voice_config = VOICE_ASSIGNMENTS['default']
+            
+            language, speaker, quality = voice_config
+            
+            model_path, config_path, model_name = get_voice_model_path(language, speaker, quality)
+            
+            # Check if model exists
+            if not model_path.exists():
+                # Try to download it
+                if not download_voice_model(language, speaker, quality):
+                    self.send_response(500)
+                    self.send_header('Content-Type', 'application/json')
+                    self.end_headers()
+                    self.wfile.write(json.dumps({
+                        'success': False,
+                        'error': f'Voice model {model_name} not available'
+                    }).encode('utf-8'))
+                    return
+            
+            # Generate speech
+            print(f"[TTS] Generating speech for '{text[:50]}...' using {model_name} ({voice_type})")
+            
+            voice = PiperVoice.load(str(model_path), str(config_path))
+            
+            # Get voice parameters for this voice type
+            params = VOICE_PARAMS.get(voice_type, VOICE_PARAMS['default'])
+            
+            # Create synthesis config with character-specific parameters
+            syn_config = SynthesisConfig(
+                length_scale=params.get('length_scale', 1.0),
+                noise_scale=params.get('noise_scale', 0.667),
+                noise_w_scale=params.get('noise_w_scale', 0.8)
+            )
+            
+            # Generate audio to WAV bytes using the custom config
+            audio_bytes = io.BytesIO()
+            with wave.open(audio_bytes, 'wb') as wav_file:
+                # Use synthesize() with config, then write to WAV
+                wav_file.setnchannels(1)
+                wav_file.setsampwidth(2)  # 16-bit
+                wav_file.setframerate(voice.config.sample_rate)
+                for audio_chunk in voice.synthesize(text, syn_config):
+                    wav_file.writeframes(audio_chunk.audio_int16_bytes)
+            
+            audio_data = audio_bytes.getvalue()
+            
+            # Send WAV audio response
+            self.send_response(200)
+            self.send_header('Content-Type', 'audio/wav')
+            self.send_header('Content-Length', str(len(audio_data)))
+            self.end_headers()
+            self.wfile.write(audio_data)
+            
+            print(f"[TTS] Generated {len(audio_data)} bytes of audio")
+            
+        except Exception as e:
+            print(f"[TTS] Error: {e}")
+            import traceback
+            traceback.print_exc()
+            self.send_response(500)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps({
+                'success': False,
+                'error': str(e)
+            }).encode('utf-8'))
     
     def handle_llm_status(self):
         """Return LLM availability status"""
@@ -450,6 +805,8 @@ Tone: Dark fantasy with cyberpunk elements. Mix medieval dungeon crawler with cr
             
             # Build generation prompt based on type
             if encounter_type == 'boss':
+                # Extract template name to explicitly forbid it
+                template_name = base_data.get('name', 'Unknown') if base_data else 'Unknown'
                 system_prompt = f"""{world_lore}
 
 You are the Dungeon Master. Generate a UNIQUE boss encounter.
@@ -457,9 +814,11 @@ Base template: {json.dumps(base_data, indent=2)}
 
 Generate a JSON response with:
 {{
-  "name": "A unique, evocative name (not generic like 'Boss' or the template name)",
+  "name": "A UNIQUE personal name like 'Zyx\'tharion' or 'Lord Malachar' - NEVER use '{template_name}' or generic terms",
   "backstory": "2-3 sentences about their origin, motivation, and personality",
   "personality": "brief personality traits: hostile/cunning/tragic/comedic/etc",
+  "voiceType": "PREFER male_deep or monster for bosses (70% of the time). Only use female_mature for seductive/witch types. Options: male_deep/male_mature/male_young/monster/female_mature/ethereal",
+  "goldDrop": 50-500 (how much gold they carry based on their story - wealthy = more, feral beast = less),
   "negotiation": {{
     "canNegotiate": true/false,
     "bribeGold": 0-500 (gold needed to bribe, 0 if unbribeable),
@@ -490,6 +849,8 @@ Generate a JSON response with:
   "name": "A unique name for this specific creature (not the species name)",
   "backstory": "1-2 sentences about this individual creature",
   "personality": "brief: feral/scared/hungry/territorial/etc",
+  "voiceType": "Choose based on creature: male_deep/male_young/female_mature/female_young/monster/ethereal",
+  "goldDrop": 5-50 (how much gold they carry - scavengers have more, beasts have less),
   "negotiation": {{
     "canNegotiate": true/false (most mobs can't),
     "bribeGold": 0-50,
@@ -513,8 +874,10 @@ Generate a JSON response with:
 {{
   "name": "A name for the captive",
   "species": "human/elf/dwarf/gnome/etc",
+  "gender": "male/female/other",
   "backstory": "2 sentences about who they are and how they got captured",
   "personality": "grateful/suspicious/traumatized/cheerful/etc",
+  "voiceType": "Choose based on gender/species: male_deep/male_young/female_mature/female_young/ethereal",
   "rescueReward": {{
     "gold": 10-100,
     "item": "optional item name or null",
@@ -534,8 +897,10 @@ Base template: {json.dumps(base_data, indent=2)}
 Generate a JSON response with:
 {{
   "name": "Unique NPC name",
+  "gender": "male/female/other",
   "backstory": "2 sentences about them",
   "personality": "brief personality",
+  "voiceType": "Choose based on character: male_deep/male_young/female_mature/female_young/ethereal",
   "dialogue": "What they say when approached"
 }}
 
@@ -589,8 +954,24 @@ Return ONLY valid JSON."""
                         cleaned = cleaned[3:]
                     if cleaned.endswith('```'):
                         cleaned = cleaned[:-3]
+                    cleaned = cleaned.strip()
                     
-                    generated_data = json.loads(cleaned.strip())
+                    # Try to extract JSON object if there's extra text
+                    # Find the first { and last } to extract just the JSON
+                    first_brace = cleaned.find('{')
+                    last_brace = cleaned.rfind('}')
+                    if first_brace != -1 and last_brace != -1 and last_brace > first_brace:
+                        cleaned = cleaned[first_brace:last_brace+1]
+                    
+                    # Fix common LLM JSON errors:
+                    # 1. Trailing commas before closing braces
+                    cleaned = re.sub(r',\s*}', '}', cleaned)
+                    cleaned = re.sub(r',\s*]', ']', cleaned)
+                    # 2. Single quotes instead of double quotes (be careful with apostrophes)
+                    # Only replace if it looks like a key-value pattern
+                    # 3. Unquoted keys - harder to fix reliably
+                    
+                    generated_data = json.loads(cleaned)
                     
                     self.send_response(200)
                     self.send_header('Content-Type', 'application/json')
@@ -603,13 +984,14 @@ Return ONLY valid JSON."""
                     
                 except json.JSONDecodeError as je:
                     print(f"[DM API] JSON parse error: {je}")
-                    print(f"[DM API] Raw response: {llm_response}")
+                    print(f"[DM API] Raw response (first 500 chars): {llm_response[:500]}")
+                    print(f"[DM API] Cleaned response (first 500 chars): {cleaned[:500] if 'cleaned' in dir() else 'N/A'}")
                     self.send_response(200)
                     self.send_header('Content-Type', 'application/json')
                     self.end_headers()
                     self.wfile.write(json.dumps({
                         'success': False,
-                        'error': 'Failed to parse LLM response as JSON',
+                        'error': f'Failed to parse LLM response as JSON: {str(je)}',
                         'raw': llm_response
                     }).encode('utf-8'))
                     
@@ -1140,6 +1522,9 @@ def main():
     # Initialize API keys (prompt if needed, load from file if exists)
     init_api_keys()
     
+    # Initialize TTS (auto-install piper, download voices)
+    init_tts()
+    
     print(f"\nStarting ZLOCK Game Server on port {PORT}...")
     print(f"Binary MIME types configured for .glb, .gltf, audio files")
     print(f"Server URL: http://0.0.0.0:{PORT}/zlock_consensus.html")
@@ -1149,6 +1534,10 @@ def main():
         print(f"LLM Chat: ENABLED (API keys loaded)")
     else:
         print(f"LLM Chat: DISABLED (no API keys - NPC chat will use fallback responses)")
+    if TTS_ENABLED:
+        print(f"TTS Voice: ENABLED (piper neural TTS)")
+    else:
+        print(f"TTS Voice: DISABLED (piper-tts not available)")
     print(f"Press Ctrl+C to stop\n")
     
     # Start WebSocket server in separate thread
