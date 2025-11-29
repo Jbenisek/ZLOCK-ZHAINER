@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.2.87</title>
+    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.2.89</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -219,7 +219,7 @@
             bottom: 10px;
             right: 20px;
             width: 350px;
-            height: 600px;
+            height: 300px;
             background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.95));
             border: 2px solid #5865F2;
             border-radius: 12px;
@@ -641,7 +641,7 @@
             font-family: 'Inter', sans-serif;
             font-size: 10px;
             font-weight: 600;
-            padding: 6px 4px;
+            padding: 4px 4px;
             border-radius: 6px;
             cursor: pointer;
             pointer-events: all;
@@ -1289,7 +1289,7 @@
             </div>
             
             <!-- Center Menu -->
-            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 12px;">
+            <div style="position: absolute; top: 42%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 12px;">
                 <div style="text-align: center; padding: 15px; background: linear-gradient(135deg, rgba(139, 69, 255, 0.2), rgba(75, 0, 130, 0.2)); border: 2px solid #8B45FF; border-radius: 10px; width: 380px; backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); margin-bottom: 10px;">
                     <div style="color: #BFD1E0; font-size: 14px; margin-bottom: 5px;">Dungeon Menu</div>
                     <div style="color: #F2C94C; font-size: 28px; font-weight: 900; text-shadow: 0 0 20px rgba(242, 201, 76, 0.5);">LEVEL <span id="dungeonMenuLevel">1</span></div>
@@ -1563,6 +1563,7 @@
         <button class="menuButton" onclick="saveGameFromPause()" style="background: linear-gradient(135deg, rgba(46, 134, 222, 0.4), rgba(46, 134, 222, 0.3)); border-color: #3498DB;">SAVE GAME<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">💾</span></button>
         <button class="menuButton" onclick="downloadSaveFile()" style="background: linear-gradient(135deg, rgba(39, 174, 96, 0.4), rgba(39, 174, 96, 0.3)); border-color: #27AE60;">SAVE GAME FILE<span style="display: inline-block; width: 26px; height: 26px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">⬇</span></button>
         <button class="menuButton" onclick="showSettingsFromPause()">SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">Y</span></button>
+        <button class="menuButton" id="resyncBtn" onclick="requestResync()" style="display: none; background: linear-gradient(135deg, rgba(155, 89, 182, 0.4), rgba(155, 89, 182, 0.3)); border-color: #9B59B6;">🔄 RESYNC FROM HOST<span style="display: inline-block; width: 26px; height: 26px; background: #9B59B6; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">↻</span></button>
         <button class="menuButton" id="hostControlsBtn" onclick="showHostControls()" style="display: none; background: linear-gradient(135deg, rgba(42, 157, 143, 0.4), rgba(42, 157, 143, 0.3)); border-color: #2A9D8F;">HOST CONTROLS<span style="display: inline-block; width: 26px; height: 26px; background: #2A9D8F; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">🎮</span></button>
         <button class="menuButton" onclick="quitToMenu()">QUIT TO MENU<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 10px; font-weight: bold; color: white; font-size: 12px;">◀</span></button>
     </div>
@@ -1808,7 +1809,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.2.87';
+        const GAME_VERSION = 'v0.2.89';
         
         // ===== MULTIPLAYER STATE =====
         let multiplayerState = {
@@ -1828,7 +1829,9 @@
                 nate: null,
                 zancas: null,
                 cyberaxe: null
-            }
+            },
+            // Client-only: Cache of gold from host
+            goldCache: 0
         };
         
         // ===== GAMEPAD SUPPORT =====
@@ -2581,6 +2584,9 @@
                         if (saveData.heroes.zancas) updateHeroDisplay('zancas', saveData.heroes.zancas);
                         if (saveData.heroes.cyberaxe) updateHeroDisplay('cyberaxe', saveData.heroes.cyberaxe);
                         
+                        // Update gold display
+                        updateGoldDisplay();
+                        
                         // Update dungeon level if arcade state exists
                         if (saveData.arcadeState && saveData.arcadeState.level) {
                             document.getElementById('dungeonLevel').textContent = saveData.arcadeState.level;
@@ -2884,6 +2890,7 @@
                     };
                     console.log('[PreGen] Boss generated:', generatedBoss?.name || boss.name);
                     updateExploreLoadingBar(40);
+                    await new Promise(r => setTimeout(r, 500));  // Brief delay to avoid rate limits
                 }
                 
                 // Generate 2 mobs (progress: 40% -> 70%)
@@ -2898,6 +2905,7 @@
                     });
                     console.log('[PreGen] Mob generated:', generatedMob?.name || mob.name);
                     updateExploreLoadingBar(40 + (i + 1) * 15);  // 55%, 70%
+                    await new Promise(r => setTimeout(r, 500));  // Brief delay to avoid rate limits
                 }
                 
                 // Generate captive (50% chance) (progress: 70% -> 90%)
@@ -5720,8 +5728,8 @@
             if (multiplayerState.enabled) {
                 const isMyTurn = multiplayerState.myHeroes.includes(currentHero.name.toLowerCase());
                 document.querySelectorAll('.battleButton').forEach(btn => {
-                    // Always allow retreat/leave button
-                    if (btn.textContent.includes('RETREAT') || btn.textContent.includes('LEAVE')) return;
+                    // Always allow retreat/leave and talk buttons
+                    if (btn.textContent.includes('RETREAT') || btn.textContent.includes('LEAVE') || btn.textContent.includes('TALK')) return;
                     btn.disabled = !isMyTurn;
                     btn.style.opacity = isMyTurn ? '1' : '0.3';
                 });
@@ -5730,8 +5738,16 @@
         
         // Update gold display in both dungeon menu and battle screen
         function updateGoldDisplay() {
-            const sharedSave = loadSharedSave();
-            const gold = sharedSave?.dungeonState?.gold || 0;
+            let gold = 0;
+            
+            // Clients use cached gold from host, host/single-player use localStorage
+            if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                gold = multiplayerState.goldCache || 0;
+            } else {
+                const sharedSave = loadSharedSave();
+                gold = sharedSave?.dungeonState?.gold || 0;
+            }
+            
             const dungeonMenuGold = document.getElementById('dungeonMenuGold');
             const battleGold = document.getElementById('battleGold');
             
@@ -7190,6 +7206,24 @@
             isPaused = true;
             const pauseScreen = document.getElementById('pauseScreen');
             if (pauseScreen) pauseScreen.style.display = 'flex';
+            
+            // Show resync button only for clients in multiplayer
+            const resyncBtn = document.getElementById('resyncBtn');
+            if (resyncBtn) {
+                resyncBtn.style.display = (multiplayerState.enabled && multiplayerState.role === 'client') ? 'block' : 'none';
+            }
+        }
+        
+        // Request resync from host (client only)
+        function requestResync() {
+            if (!multiplayerState.enabled || multiplayerState.role !== 'client') {
+                showNotification('Resync only available for clients', 'error');
+                return;
+            }
+            
+            multiplayerState.awaitingResync = true;
+            sendWebSocketMessage({ type: 'request_resync' });
+            showNotification('Requesting resync from host...', 'info');
         }
         
         // Resume game
@@ -7850,6 +7884,18 @@
                     }
                     break;
                 
+                case 'request_resync':
+                    // Client is requesting a full state resync
+                    if (multiplayerState.role === 'host') {
+                        console.log('[HOST] Client requested resync');
+                        if (battleState.active) {
+                            // Send full battle state
+                            broadcastGameState();
+                            showNotification('Resync sent to clients', 'info');
+                        }
+                    }
+                    break;
+                
                 case 'state_update':
                     // Client receives state from host
                     if (multiplayerState.role === 'client') {
@@ -7893,6 +7939,7 @@
                             
                             // Update dungeon menu from cached stats (already updated from state_update broadcasts)
                             updateDungeonMenuHeroes();
+                            updateGoldDisplay();
                         }, 2000);
                     }
                     break;
@@ -8063,6 +8110,11 @@
                                     }
                                 });
                             }
+                            
+                            // Cache gold from saveData for client display
+                            if (data.saveData.dungeonState) {
+                                multiplayerState.goldCache = data.saveData.dungeonState.gold || 0;
+                            }
                         }
                         
                         document.getElementById('titleScreen').style.display = 'none';
@@ -8080,6 +8132,7 @@
                             
                             // Load hero stats from save
                             updateDungeonMenuHeroes();
+                            updateGoldDisplay();
                             
                             // Apply client UI restrictions
                             applyClientUIRestrictions();
@@ -8113,6 +8166,7 @@
                             document.getElementById('dungeonMenuScreen').style.display = 'block';
                             currentScreen = 'dungeonMenu';
                             updateDungeonMenuHeroes();
+                            updateGoldDisplay();
                             applyClientUIRestrictions();
                         }
                         showNotification('Host started the game!', 'success');
@@ -9004,7 +9058,9 @@
                     x: battleState.captiveNpc.x / canvas.width,
                     y: battleState.captiveNpc.y / canvas.height
                 } : null,
-                currentTurn: battleState.currentTurn
+                currentTurn: battleState.currentTurn,
+                // Sync gold to clients
+                gold: loadSharedSave()?.dungeonState?.gold || 0
             };
             
             sendWebSocketMessage({ type: 'state_update', state });
@@ -9124,6 +9180,18 @@
                 if (retreatBtn) {
                     retreatBtn.textContent = '🚪 LEAVE';
                 }
+            }
+            
+            // Update gold cache for clients
+            if (state.gold !== undefined) {
+                multiplayerState.goldCache = state.gold;
+                updateGoldDisplay();
+            }
+            
+            // Check if this was a resync response
+            if (multiplayerState.awaitingResync) {
+                multiplayerState.awaitingResync = false;
+                showNotification('✅ Resynced with host!', 'success');
             }
             
             // Re-render
@@ -9290,6 +9358,13 @@
             updateBattleHeroCards();
             updateBattleEnemyCards();
             renderBattle();
+            
+            // Show captive NPC notification if present (same as host)
+            if (battleState.captiveNpc) {
+                setTimeout(() => {
+                    showBattleNotification(`A prisoner is here: ${battleState.captiveNpc.name}!`);
+                }, 2000);
+            }
             
             // Start battle animation loop for continuous updates
             function battleAnimationLoop() {

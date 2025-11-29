@@ -16,6 +16,7 @@ import asyncio
 import json
 import random
 import string
+import time
 import urllib.request
 import urllib.error
 import socket
@@ -855,16 +856,21 @@ Don't mention being an AI."""
             encounter_type = data.get('type', 'boss')  # boss, mob, npc, captive
             base_data = data.get('baseData', {})  # Original JSON data as template
             room_level = data.get('roomLevel', 1)
-            use_free_model = data.get('useFreeModel', True)
             
-            # Check which API keys we have
-            if use_free_model and GROQ_API_KEY:
-                provider = 'groq'
-                model = 'llama-3.1-8b-instant'
+            # SMART API ROUTING: Split work between APIs to avoid rate limits
+            # - OpenRouter: Bosses (complex, need quality, 1 per encounter)
+            # - Groq: Mobs & Captives (simpler, more frequent, use fast model)
+            
+            if encounter_type == 'boss' and OPENROUTER_API_KEY:
+                # Bosses go to OpenRouter (better quality, less rate limited)
+                provider = 'openrouter'
+                model = 'mistralai/mistral-nemo'  # Free tier model
             elif GROQ_API_KEY:
+                # Mobs, captives, NPCs go to Groq (fast, good for simple tasks)
                 provider = 'groq'
-                model = 'llama-3.3-70b-versatile'
+                model = 'llama-3.1-8b-instant'  # Fast free model
             elif OPENROUTER_API_KEY:
+                # Fallback to OpenRouter if Groq unavailable
                 provider = 'openrouter'
                 model = 'mistralai/mistral-nemo'
             else:
@@ -878,7 +884,7 @@ Don't mention being an AI."""
                 }).encode('utf-8'))
                 return
             
-            print(f"[DM API] Generating {encounter_type} for level {room_level} using {model}")
+            print(f"[DM API] Generating {encounter_type} for level {room_level} using {provider}/{model}")
             
             # World lore for context
             world_lore = """
@@ -1030,60 +1036,104 @@ Return ONLY valid JSON."""
                 headers=headers
             )
             
-            with urllib.request.urlopen(req, timeout=30) as response:
-                result = json.loads(response.read().decode('utf-8'))
-                llm_response = result['choices'][0]['message']['content']
-                
-                # Try to parse JSON from response
+            # Retry logic for rate limits
+            max_retries = 3
+            retry_delay = 2  # seconds
+            last_error = None
+            
+            for attempt in range(max_retries):
                 try:
-                    # Clean up response - remove markdown if present
-                    cleaned = llm_response.strip()
-                    if cleaned.startswith('```json'):
-                        cleaned = cleaned[7:]
-                    if cleaned.startswith('```'):
-                        cleaned = cleaned[3:]
-                    if cleaned.endswith('```'):
-                        cleaned = cleaned[:-3]
-                    cleaned = cleaned.strip()
-                    
-                    # Try to extract JSON object if there's extra text
-                    # Find the first { and last } to extract just the JSON
-                    first_brace = cleaned.find('{')
-                    last_brace = cleaned.rfind('}')
-                    if first_brace != -1 and last_brace != -1 and last_brace > first_brace:
-                        cleaned = cleaned[first_brace:last_brace+1]
-                    
-                    # Fix common LLM JSON errors:
-                    # 1. Trailing commas before closing braces
-                    cleaned = re.sub(r',\s*}', '}', cleaned)
-                    cleaned = re.sub(r',\s*]', ']', cleaned)
-                    # 2. Single quotes instead of double quotes (be careful with apostrophes)
-                    # Only replace if it looks like a key-value pattern
-                    # 3. Unquoted keys - harder to fix reliably
-                    
-                    generated_data = json.loads(cleaned)
-                    
-                    self.send_response(200)
-                    self.send_header('Content-Type', 'application/json')
-                    self.end_headers()
-                    self.wfile.write(json.dumps({
-                        'success': True,
-                        'data': generated_data,
-                        'raw': llm_response
-                    }).encode('utf-8'))
-                    
-                except json.JSONDecodeError as je:
-                    print(f"[DM API] JSON parse error: {je}")
-                    print(f"[DM API] Raw response (first 500 chars): {llm_response[:500]}")
-                    print(f"[DM API] Cleaned response (first 500 chars): {cleaned[:500] if 'cleaned' in dir() else 'N/A'}")
-                    self.send_response(200)
-                    self.send_header('Content-Type', 'application/json')
-                    self.end_headers()
-                    self.wfile.write(json.dumps({
-                        'success': False,
-                        'error': f'Failed to parse LLM response as JSON: {str(je)}',
-                        'raw': llm_response
-                    }).encode('utf-8'))
+                    with urllib.request.urlopen(req, timeout=30) as response:
+                        result = json.loads(response.read().decode('utf-8'))
+                        llm_response = result['choices'][0]['message']['content']
+                        break  # Success, exit retry loop
+                except urllib.error.HTTPError as http_err:
+                    last_error = http_err
+                    if http_err.code == 429:
+                        # Rate limited - wait and retry
+                        wait_time = retry_delay * (attempt + 1)
+                        print(f"[DM API] Rate limited (429), waiting {wait_time}s before retry {attempt + 1}/{max_retries}")
+                        time.sleep(wait_time)
+                        # Recreate request since it may have been consumed
+                        req = urllib.request.Request(
+                            api_url,
+                            data=json.dumps(api_request).encode('utf-8'),
+                            headers=headers
+                        )
+                    else:
+                        raise  # Re-raise non-429 errors immediately
+            else:
+                # All retries exhausted
+                raise last_error if last_error else Exception("Max retries exceeded")
+            
+            # Try to parse JSON from response
+            try:
+                # Clean up response - remove markdown if present
+                cleaned = llm_response.strip()
+                if cleaned.startswith('```json'):
+                    cleaned = cleaned[7:]
+                if cleaned.startswith('```'):
+                    cleaned = cleaned[3:]
+                if cleaned.endswith('```'):
+                    cleaned = cleaned[:-3]
+                cleaned = cleaned.strip()
+                
+                # Try to extract JSON object if there's extra text
+                # Find the first { and last } to extract just the JSON
+                first_brace = cleaned.find('{')
+                last_brace = cleaned.rfind('}')
+                if first_brace != -1 and last_brace != -1 and last_brace > first_brace:
+                    cleaned = cleaned[first_brace:last_brace+1]
+                
+                # Fix common LLM JSON errors:
+                # 1. Trailing commas before closing braces/brackets
+                cleaned = re.sub(r',\s*}', '}', cleaned)
+                cleaned = re.sub(r',\s*]', ']', cleaned)
+                
+                # 2. Fix unquoted string values (but not numbers/booleans/null)
+                # Match ": value" where value doesn't start with " { [ or digit
+                cleaned = re.sub(r':\s*([a-zA-Z][a-zA-Z0-9_\s]*[a-zA-Z0-9])(\s*[,}\]])', r': "\1"\2', cleaned)
+                
+                # 3. Fix newlines inside strings (replace with space)
+                # This is tricky - we need to handle strings carefully
+                # Simple approach: replace literal newlines that aren't escaped
+                cleaned = re.sub(r'(?<!\\)\n', ' ', cleaned)
+                
+                # 4. Fix missing commas between fields (common LLM error)
+                # Pattern: "}\n{" or "]\n[" or value followed by key without comma
+                cleaned = re.sub(r'"\s*\n\s*"', '", "', cleaned)
+                cleaned = re.sub(r'(\d)\s*\n\s*"', r'\1, "', cleaned)
+                cleaned = re.sub(r'(true|false|null)\s*\n\s*"', r'\1, "', cleaned)
+                
+                # 5. Remove any control characters
+                cleaned = re.sub(r'[\x00-\x1f\x7f]', ' ', cleaned)
+                
+                # 6. Fix double spaces
+                cleaned = re.sub(r'  +', ' ', cleaned)
+                
+                generated_data = json.loads(cleaned)
+                
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    'success': True,
+                    'data': generated_data,
+                    'raw': llm_response
+                }).encode('utf-8'))
+                
+            except json.JSONDecodeError as je:
+                print(f"[DM API] JSON parse error: {je}")
+                print(f"[DM API] Raw response (first 500 chars): {llm_response[:500]}")
+                print(f"[DM API] Cleaned response (first 500 chars): {cleaned[:500] if 'cleaned' in dir() else 'N/A'}")
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    'success': False,
+                    'error': f'Failed to parse LLM response as JSON: {str(je)}',
+                    'raw': llm_response
+                }).encode('utf-8'))
                     
         except Exception as e:
             print(f"[DM API] Error: {e}")

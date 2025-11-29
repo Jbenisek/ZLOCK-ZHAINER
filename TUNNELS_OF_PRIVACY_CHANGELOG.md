@@ -2,6 +2,37 @@
 
 # Changelog
 
+## v0.2.89 - Multiplayer Reliability & UX Polish (2025-01-28)
+- **Multiplayer Sync Improvements:**
+  - Added "Resync from Host" button in client pause menu for turn desync recovery
+  - New `request_resync` / `force_state_update` WebSocket messages for manual resync
+  - Confirmation notification shown when resync completes
+
+- **API Rate Limit Handling:**
+  - Split LLM API load: OpenRouter for bosses, Groq for mobs/captives
+  - Added retry logic with exponential backoff (2s, 4s, 6s delays) for 429 errors
+  - Pre-generation calls now have 500ms delays between requests
+  - Improved JSON parsing for malformed LLM responses (trailing commas, unquoted values, control characters)
+
+- **Battle UI Improvements:**
+  - TALK button now always enabled regardless of turn (allows anytime negotiation)
+  - Battle button height reduced 25% (padding 6px → 4px)
+  - Chat window height halved (600px → 300px)
+  - Prisoner notification now shows for clients, not just host
+
+- **Dungeon Menu:**
+  - Menu content moved up (top 50% → 42%) for better visibility
+
+## v0.2.88 - Client Gold Display Fix (2025-11-28)
+- **Client Gold Sync Fix:**
+  - Added `goldCache` to `multiplayerState` for client gold display
+  - `updateGoldDisplay()` now reads from `goldCache` for clients
+  - Gold now included in `broadcastGameState()` state updates
+  - `updateGameStateFromHost()` updates `goldCache` and calls `updateGoldDisplay()`
+  - Gold cached from `saveData.dungeonState` when client receives `game_start`
+  - Gold now shows properly in dungeon menu AND battle screen for clients
+  - Gold updates in real-time whenever host gold changes (enemy death, bribe, rescue)
+
 ## v0.2.87 - Multiplayer Sync Fixes (2025-11-28)
 - **Gold Sync Fix:**
   - `goldDrop` now included in enemy state broadcasts
