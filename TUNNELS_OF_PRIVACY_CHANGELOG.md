@@ -2,6 +2,31 @@
 
 # Changelog
 
+## v0.2.83 - TTS Natural Speech & UI Polish (2025-11-28)
+- **TTS Natural Speech Improvements:**
+  - All voices slowed down 10-15% for better comprehension
+  - Text preprocessing adds natural pauses after sentences (`. ` → `... `)
+  - Pauses added after exclamations, questions, and colons
+  - Dramatic words (but, however, suddenly, etc.) get pause before them
+  - Personality-based voice adjustments:
+    - Aggressive/angry: 10% faster, more expressive
+    - Calm/wise: 15% slower, measured tone
+    - Nervous/scared: 8% faster, varied rhythm
+    - Cunning/sly: 5% slower, expressive
+    - Sad/melancholy: 20% slower
+    - Excited/energetic: 12% faster
+
+- **UI Improvements:**
+  - Hero HP bar tilt now dynamic based on screen position:
+    - Left third: -5° tilt
+    - Middle third: 0° (flat)
+    - Right third: +5° tilt
+  - Chat window now opens by default when entering battle
+  - Captive NPC canvas labels fixed (name/species/HP bar ordering)
+
+- **Misc:**
+  - Added favicon.svg with Zcash Ⓩ symbol
+
 ## v0.2.82 - UI Polish & Bribe Gold Deduction (2025-11-28)
 - **Gold Bribe System:**
   - Bribing mobs now deducts gold from player's total

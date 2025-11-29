@@ -215,31 +215,31 @@ VOICE_ASSIGNMENTS = {
 # noise_w_scale: phoneme duration variation (rhythm)
 VOICE_PARAMS = {
     # Narrator - smooth, measured, slightly slow for clarity
-    'narrator': {'length_scale': 1.1, 'noise_scale': 0.5, 'noise_w_scale': 0.7},
+    'narrator': {'length_scale': 1.2, 'noise_scale': 0.55, 'noise_w_scale': 0.75},
     
-    # Heroes - each with distinct speech patterns
-    'zooko': {'length_scale': 1.0, 'noise_scale': 0.65, 'noise_w_scale': 0.8},      # Calm, wise
-    'nate': {'length_scale': 0.9, 'noise_scale': 0.75, 'noise_w_scale': 0.9},       # Quick, energetic
-    'zancas': {'length_scale': 0.95, 'noise_scale': 0.7, 'noise_w_scale': 0.85},    # Confident, sharp
-    'cyberaxe': {'length_scale': 1.05, 'noise_scale': 0.6, 'noise_w_scale': 0.75},  # Steady, deliberate
+    # Heroes - each with distinct speech patterns (slowed down for clarity)
+    'zooko': {'length_scale': 1.1, 'noise_scale': 0.65, 'noise_w_scale': 0.85},      # Calm, wise
+    'nate': {'length_scale': 1.0, 'noise_scale': 0.75, 'noise_w_scale': 0.9},        # Quick, energetic
+    'zancas': {'length_scale': 1.05, 'noise_scale': 0.7, 'noise_w_scale': 0.85},     # Confident, sharp
+    'cyberaxe': {'length_scale': 1.15, 'noise_scale': 0.6, 'noise_w_scale': 0.8},    # Steady, deliberate
     
     # Voice type pools - character archetypes
-    'female_mature': {'length_scale': 1.0, 'noise_scale': 0.65, 'noise_w_scale': 0.8},
-    'female_young': {'length_scale': 0.92, 'noise_scale': 0.75, 'noise_w_scale': 0.9},
-    'male_deep': {'length_scale': 0.9, 'noise_scale': 0.85, 'noise_w_scale': 0.95},    # Rougher, commanding
-    'male_young': {'length_scale': 0.9, 'noise_scale': 0.75, 'noise_w_scale': 0.85},
-    'male_mature': {'length_scale': 0.95, 'noise_scale': 0.8, 'noise_w_scale': 0.9},   # Gruff, weathered
+    'female_mature': {'length_scale': 1.1, 'noise_scale': 0.65, 'noise_w_scale': 0.85},
+    'female_young': {'length_scale': 1.02, 'noise_scale': 0.75, 'noise_w_scale': 0.9},
+    'male_deep': {'length_scale': 1.05, 'noise_scale': 0.85, 'noise_w_scale': 0.95},    # Rougher, commanding
+    'male_young': {'length_scale': 1.0, 'noise_scale': 0.75, 'noise_w_scale': 0.85},
+    'male_mature': {'length_scale': 1.1, 'noise_scale': 0.8, 'noise_w_scale': 0.9},     # Gruff, weathered
     
     # Entity types - dramatic characterization
-    'boss': {'length_scale': 0.95, 'noise_scale': 0.9, 'noise_w_scale': 1.0},       # Rough, aggressive, intimidating
-    'mob': {'length_scale': 1.0, 'noise_scale': 0.7, 'noise_w_scale': 0.8},         # Generic enemy
-    'monster': {'length_scale': 0.85, 'noise_scale': 1.0, 'noise_w_scale': 1.1},    # Fast, growly, very rough
-    'captive': {'length_scale': 0.85, 'noise_scale': 0.85, 'noise_w_scale': 1.0},   # Fast, nervous, shaky
-    'ethereal': {'length_scale': 1.3, 'noise_scale': 0.4, 'noise_w_scale': 0.6},    # Slow, dreamy, smooth
-    'npc': {'length_scale': 1.0, 'noise_scale': 0.65, 'noise_w_scale': 0.8},        # Normal
+    'boss': {'length_scale': 1.1, 'noise_scale': 0.9, 'noise_w_scale': 1.0},        # Rough, aggressive, intimidating
+    'mob': {'length_scale': 1.05, 'noise_scale': 0.7, 'noise_w_scale': 0.85},       # Generic enemy
+    'monster': {'length_scale': 1.0, 'noise_scale': 1.0, 'noise_w_scale': 1.1},     # Growly, rough
+    'captive': {'length_scale': 0.95, 'noise_scale': 0.85, 'noise_w_scale': 1.0},   # Nervous, shaky (still a bit fast)
+    'ethereal': {'length_scale': 1.4, 'noise_scale': 0.45, 'noise_w_scale': 0.65},  # Slow, dreamy, smooth
+    'npc': {'length_scale': 1.1, 'noise_scale': 0.65, 'noise_w_scale': 0.85},       # Normal
     
     # Default fallback
-    'default': {'length_scale': 1.0, 'noise_scale': 0.667, 'noise_w_scale': 0.8},
+    'default': {'length_scale': 1.1, 'noise_scale': 0.667, 'noise_w_scale': 0.85},
 }
 
 def ensure_piper_installed():
@@ -453,10 +453,44 @@ class GameHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             
             text = data.get('text', '')
             voice_type = data.get('voiceType', 'default').lower()  # narrator, hero name, boss, mob, etc.
+            personality = data.get('personality', '').lower()  # emotional context from NPC
             
             # Strip asterisk actions like *laughs menacingly* from text
             # These are roleplay actions that shouldn't be read literally
             text = re.sub(r'\*[^*]+\*', '', text).strip()
+            
+            # === TEXT PREPROCESSING FOR NATURAL SPEECH ===
+            # Add breathing pauses and natural rhythm
+            
+            # Normalize multiple spaces
+            text = re.sub(r'\s+', ' ', text)
+            
+            # Add pause after sentences (period followed by space)
+            # Using comma + space creates a natural breath pause
+            text = re.sub(r'\.\s+', '... ', text)
+            
+            # Add slight pause after exclamations and questions
+            text = re.sub(r'!\s+', '!.. ', text)
+            text = re.sub(r'\?\s+', '?.. ', text)
+            
+            # Add pause after colons (before explanations)
+            text = re.sub(r':\s+', ':.. ', text)
+            
+            # Add micro-pause after commas if not already present
+            text = re.sub(r',\s*(?!\.)', ', ', text)
+            
+            # Handle ellipsis - ensure proper spacing
+            text = re.sub(r'\.{3,}', '... ', text)
+            
+            # Add pause before dramatic words (when preceded by space)
+            dramatic_words = ['but', 'however', 'yet', 'now', 'then', 'suddenly', 'finally', 'alas', 'behold']
+            for word in dramatic_words:
+                text = re.sub(rf'\s+({word})\b', rf', \1', text, flags=re.IGNORECASE)
+            
+            # Clean up any double commas or spaces we created
+            text = re.sub(r',\s*,', ',', text)
+            text = re.sub(r'\s+', ' ', text)
+            text = text.strip()
             
             if not text:
                 self.send_response(400)
@@ -500,7 +534,39 @@ class GameHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             voice = PiperVoice.load(str(model_path), str(config_path))
             
             # Get voice parameters for this voice type
-            params = VOICE_PARAMS.get(voice_type, VOICE_PARAMS['default'])
+            params = VOICE_PARAMS.get(voice_type, VOICE_PARAMS['default']).copy()
+            
+            # === DYNAMIC PERSONALITY ADJUSTMENTS ===
+            # Modify voice params based on emotional context from NPC personality
+            if personality:
+                # Aggressive/angry = faster, more expressive
+                if any(word in personality for word in ['aggressive', 'angry', 'hostile', 'furious', 'rage', 'violent']):
+                    params['length_scale'] = params.get('length_scale', 1.0) * 0.9
+                    params['noise_scale'] = min(1.0, params.get('noise_scale', 0.667) * 1.2)
+                
+                # Calm/wise/thoughtful = slower, more measured
+                elif any(word in personality for word in ['calm', 'wise', 'thoughtful', 'contemplative', 'serene', 'patient']):
+                    params['length_scale'] = params.get('length_scale', 1.0) * 1.15
+                    params['noise_scale'] = params.get('noise_scale', 0.667) * 0.85
+                
+                # Nervous/scared = faster, more varied rhythm
+                elif any(word in personality for word in ['nervous', 'scared', 'anxious', 'fearful', 'timid', 'coward']):
+                    params['length_scale'] = params.get('length_scale', 1.0) * 0.92
+                    params['noise_w_scale'] = min(1.2, params.get('noise_w_scale', 0.8) * 1.15)
+                
+                # Cunning/sly = moderate pace, expressive
+                elif any(word in personality for word in ['cunning', 'sly', 'devious', 'scheming', 'manipulative']):
+                    params['length_scale'] = params.get('length_scale', 1.0) * 1.05
+                    params['noise_scale'] = min(1.0, params.get('noise_scale', 0.667) * 1.1)
+                
+                # Sad/melancholy = slower, less expressive
+                elif any(word in personality for word in ['sad', 'melancholy', 'tragic', 'mournful', 'depressed']):
+                    params['length_scale'] = params.get('length_scale', 1.0) * 1.2
+                    params['noise_scale'] = params.get('noise_scale', 0.667) * 0.8
+                
+                # Excited/energetic = faster
+                elif any(word in personality for word in ['excited', 'energetic', 'manic', 'enthusiastic', 'hyper']):
+                    params['length_scale'] = params.get('length_scale', 1.0) * 0.88
             
             # Create synthesis config with character-specific parameters
             syn_config = SynthesisConfig(

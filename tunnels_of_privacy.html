@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.2.61</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.2.83</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -1757,7 +1758,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.2.82';
+        const GAME_VERSION = 'v0.2.83';
         
         // ===== MULTIPLAYER STATE =====
         let multiplayerState = {
@@ -2837,7 +2838,7 @@
         }
         
         // Play TTS for a message
-        async function playTTS(text, senderType, senderName, entityVoiceType) {
+        async function playTTS(text, senderType, senderName, entityVoiceType, entityPersonality) {
             if (!chatState.ttsEnabled || !chatState.ttsAvailable) return;
             
             // Skip empty or very short text
@@ -2850,12 +2851,12 @@
             
             try {
                 const voiceType = getTTSVoiceType(senderType, senderName, entityVoiceType);
-                console.log(`[TTS] Generating audio for "${text.substring(0, 30)}..." with voice: ${voiceType}`);
+                console.log(`[TTS] Generating audio for "${text.substring(0, 30)}..." with voice: ${voiceType}, personality: ${entityPersonality || 'none'}`);
                 
                 const response = await fetch('/api/tts', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text, voiceType })
+                    body: JSON.stringify({ text, voiceType, personality: entityPersonality || '' })
                 });
                 
                 if (!response.ok) {
@@ -3069,7 +3070,7 @@
         }
         
         // Add message to chat
-        function addChatMessage(senderName, senderType, senderAvatar, text, isNpc = false, voiceType = null) {
+        function addChatMessage(senderName, senderType, senderAvatar, text, isNpc = false, voiceType = null, personality = null) {
             const message = {
                 id: Date.now(),
                 senderName,
@@ -3079,6 +3080,7 @@
                 displayText: isNpc ? '' : text,  // For typewriter effect
                 isNpc,
                 voiceType,  // LLM-assigned voice type
+                personality,  // For TTS emotional adjustment
                 timestamp: new Date().toLocaleTimeString()
             };
             
@@ -3096,8 +3098,8 @@
             if (isNpc && text.length > 0) {
                 setTimeout(() => typewriterEffect(message.id, text, 0), 100);
                 
-                // Play TTS for NPC responses (pass entity's voiceType if available)
-                playTTS(text, senderType, senderName, voiceType);
+                // Play TTS for NPC responses (pass entity's voiceType and personality)
+                playTTS(text, senderType, senderName, voiceType, personality);
             }
             
             // Broadcast to other players if host (send full text, clients show instantly)
@@ -3271,14 +3273,15 @@
                         (respondingNpc.hostile ? 'hostile' : 
                         (respondingNpc.questable ? 'questable' : 'friendly'));
                     
-                    // Add NPC response (include LLM-assigned voiceType)
+                    // Add NPC response (include LLM-assigned voiceType and personality)
                     addChatMessage(
                         respondingNpc.name,
                         chatNpcType,
                         respondingNpc.spritePath || 'people/zooko_a_head_compressed.png',
                         result.response,
                         true,
-                        respondingNpc.voiceType  // Pass entity's voice type
+                        respondingNpc.voiceType,  // Pass entity's voice type
+                        respondingNpc.personality  // Pass entity's personality for TTS
                     );
                     
                     // Process negotiation outcomes (betrayal, retreat, rage)
@@ -3717,7 +3720,7 @@
                 case 'battle_start':
                     if (npc.openingLine) {
                         addChatMessage(npc.name, npc.hostile ? 'hostile' : 'friendly', 
-                            npc.spritePath || 'people/zooko_a_head_compressed.png', npc.openingLine, true, npc.voiceType);
+                            npc.spritePath || 'people/zooko_a_head_compressed.png', npc.openingLine, true, npc.voiceType, npc.personality);
                         return;
                     }
                     contextPrompt = 'The battle just started. Say something to intimidate or greet the heroes.';
@@ -3759,7 +3762,7 @@
                     if (result.success && result.response) {
                         const npcType = npc.hostile ? 'hostile' : (npc.questable ? 'questable' : 'friendly');
                         addChatMessage(npc.name, npcType, npc.spritePath || 'people/zooko_a_head_compressed.png', 
-                            result.response, true, npc.voiceType);
+                            result.response, true, npc.voiceType, npc.personality);
                     }
                 } catch (error) {
                     console.error('[Free Will] Chat error:', error);
@@ -4066,6 +4069,11 @@
             updateBattleTurnInfo();
             updateBattleHeroCards();
             updateBattleEnemyCards();
+            
+            // Open chat window by default when entering battle
+            chatState.visible = true;
+            const chatWindow = document.getElementById('battleChatWindow');
+            if (chatWindow) chatWindow.style.display = 'flex';
             
             // Render initial state (will re-render when bg loads)
             renderBattle();
@@ -4917,11 +4925,26 @@
                 // Position at hero's feet (bottom of sprite area)
                 const groundY = hero.y + 160 * depthScale;  // Below hero sprite (moved down)
                 
+                // Calculate tilt based on screen position (left=-5°, middle=0°, right=+5°)
+                const screenThird = canvas.width / 3;
+                let tiltAngle = 0;
+                if (hero.x < screenThird) {
+                    // Left third: -5 degrees
+                    tiltAngle = -5;
+                } else if (hero.x > screenThird * 2) {
+                    // Right third: +5 degrees
+                    tiltAngle = 5;
+                }
+                // Middle third: 0 degrees (no tilt)
+                
+                // Convert degrees to radians for sin calculation
+                const tiltRadians = tiltAngle * Math.PI / 180;
+                const tiltSkew = Math.sin(tiltRadians);  // sin(5°) ≈ 0.087, sin(-5°) ≈ -0.087, sin(0°) = 0
+                
                 // Apply perspective transform - squish vertically for ground plane effect
-                // 5 degree tilt = cos(5°) ≈ 0.996, sin(5°) ≈ 0.087
                 // 50% taller than original 35% = 52.5% scale
                 ctx.translate(hero.x, groundY);
-                ctx.transform(1, 0.087, 0, 0.525, 0, 0);  // 5° tilt + 52.5% vertical scale
+                ctx.transform(1, tiltSkew, 0, 0.525, 0, 0);  // Dynamic tilt + 52.5% vertical scale
                 ctx.translate(-hero.x, -groundY);
                 
                 const barWidth = 100 * depthScale;
@@ -5148,13 +5171,22 @@
                     ctx.fillText('⛓️', captive.x, captive.y);
                 }
                 
-                // Captive name (GOLD for friendly) - positioned above sprite
-                const captiveBaseHeight = 200;
+                // Captive name and HP bar - positioned above sprite (same as enemies)
+                const captiveBaseHeight = 250;
                 const spriteHeight = captiveBaseHeight * depthScale;
-                const nameOffsetY = captive.y - spriteHeight - (25 * depthScale);
-                const speciesOffsetY = captive.y - spriteHeight - (12 * depthScale);
-                const barOffsetY = captive.y - spriteHeight - (40 * depthScale);
+                const barOffsetY = captive.y - spriteHeight - (5 * depthScale);
                 
+                // HP bar with text inside (if captive has HP)
+                const barWidth = 80 * depthScale;
+                const barHeight = 14 * depthScale;
+                const barX = captive.x - barWidth / 2;
+                const barY = barOffsetY;
+                
+                // Calculate label positions (build upward from HP bar - same as enemies)
+                const speciesOffsetY = barY - (5 * depthScale);  // Species just above bar
+                const nameOffsetY = speciesOffsetY - (12 * depthScale);  // Name above species
+                
+                // Name (GOLD for friendly)
                 ctx.fillStyle = '#F2C94C';
                 ctx.font = `bold ${Math.floor(14 * depthScale)}px Inter`;
                 ctx.textAlign = 'center';
@@ -5166,13 +5198,8 @@
                 ctx.font = `${Math.floor(10 * depthScale)}px Inter`;
                 ctx.fillText(`⛓️ ${captive.species || 'Captive'}`, captive.x, speciesOffsetY);
                 
-                // HP bar with text inside (if captive has HP)
+                // Draw HP bar
                 if (captive.hp && captive.maxHp) {
-                    const barWidth = 80 * depthScale;
-                    const barHeight = 14 * depthScale;
-                    const barX = captive.x - barWidth / 2;
-                    const barY = barOffsetY;
-                    
                     // Background
                     ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
                     ctx.fillRect(barX, barY, barWidth, barHeight);
