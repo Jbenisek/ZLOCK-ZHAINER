@@ -2,6 +2,61 @@
 
 # Changelog
 
+## v0.3.02 - Save System & Debug Cleanup (2025-11-29)
+- **Save System Fix:**
+  - Game now properly saves after rolling stats and launching in single player
+  - CONTINUE button correctly enabled after first game launch
+  - Verified save flow: launchNewGame() → createDefaultSharedSave() → saveSharedSave()
+
+- **Code Cleanup:**
+  - Removed debug console.log statements from launchNewGame()
+
+## v0.3.01 - Single Player Dice Rolling & Backpack Gear (2025-11-29)
+- **Single Player Stat Rolling:**
+  - START ADVENTURE now shows hero selection modal for single player
+  - Single player goes directly to roll phase (skips CONTINUE/NEW GAME buttons)
+  - All 4 heroes are pre-selected as "You" in single player
+  - Roll stats for each hero using 3d6 system before starting
+  - LAUNCH GAME button enables after all 4 heroes have rolled
+  - Clicking hero cards in single player shows "All heroes are yours!" message
+  - Fixed LAUNCH GAME button staying grey by allowing single player mode check
+
+- **Hero Selection UI Improvements:**
+  - Single player hides: PLAYERS count, Connected Players list, Room Code, Player Name input
+  - Title changes to "ROLL HERO STATS" in single player, "SELECT YOUR HERO" in multiplayer
+  - Message updates to "All heroes are yours! Roll stats for each hero."
+  - All multiplayer-only UI elements restored when returning to title screen
+
+- **Backpack Gear Sprites:**
+  - Added backpack sprites at each hero's feet during battle
+  - Each hero has unique backpack: zooko_backpack.png, nate_backpack.png, etc.
+  - Backpacks positioned 60px left and 60px down from hero center
+  - Size: 80x80 pixels scaled by depth
+  - Drop shadow for depth (black 50% opacity, 12px blur, 4px offset)
+  - Backpacks render in front of heroes
+
+- **Explore Dungeon Button Fix:**
+  - Fixed button not loading/working on first dungeon menu entry
+  - Added `preGenerateNextEncounter()` call to `proceedWithNewAdventure()`
+  - Pre-generation now triggers properly for new single player games
+
+## v0.3.00 - Stability & Cleanup Release (2025-11-28)
+- **LLM Model Changes:**
+  - Removed Ministral 3B model (model 9) which was causing frequent JSON parse failures
+  - Moved L3 Lunaris 8B from slot 10 to slot 9
+  - Now 9 models available (1-9) instead of 10
+
+- **JSON Parse Improvements:**
+  - Added fix for `+number` syntax (e.g., `+1` → `1`) which is invalid JSON
+  - Added fix for string booleans (`"false"` → `false`, `"true"` → `true`)
+  - Reduces mob generation failures from malformed LLM responses
+
+- **Console Log Cleanup:**
+  - Removed all `[DICE]` debug logs (7 instances)
+  - Removed verbose `[WS]` send/receive logs
+  - Removed `[REJOIN]`, `[HOST]`, `[CLIENT]` debug logs
+  - Kept useful logs: `[MP]`, `[PreGen]`, `[Battle]`, `[TTS]`, `[Chat]`, `[DM]`
+
 ## v0.2.96 - Roll Stats Broadcast Fix (2025-11-28)
 - **Critical Bug Fix:**
   - Fixed rolled stats not being broadcast to other players in multiplayer

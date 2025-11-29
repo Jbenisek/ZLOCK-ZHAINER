@@ -1704,8 +1704,7 @@
                     <button class="modelBtn" onclick="selectChatModel(6)" title="OpenRouter Llama 3.1 8B ($)" style="border-color: #F39C12;">6</button>
                     <button class="modelBtn" onclick="selectChatModel(7)" title="OpenRouter Gemma 2 9B ($)" style="border-color: #F39C12;">7</button>
                     <button class="modelBtn" onclick="selectChatModel(8)" title="OpenRouter Qwen 2.5 7B ($)" style="border-color: #F39C12;">8</button>
-                    <button class="modelBtn" onclick="selectChatModel(9)" title="OpenRouter Ministral 3B ($)" style="border-color: #F39C12;">9</button>
-                    <button class="modelBtn" onclick="selectChatModel(10)" title="OpenRouter L3 Lunaris 8B ($)" style="border-color: #F39C12;">10</button>
+                    <button class="modelBtn" onclick="selectChatModel(9)" title="OpenRouter L3 Lunaris 8B ($)" style="border-color: #F39C12;">9</button>
                     <span id="chatCostDisplay" style="margin-left: 8px; font-size: 11px; color: #4CAF50;">$0.000000 | 0 tok</span>
                 </div>
                 <div id="chatMessages"></div>
@@ -1751,7 +1750,7 @@
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.2.79 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.3.02 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div style="
@@ -1864,7 +1863,7 @@
     <!-- Hero Selection Modal (Multiplayer) -->
     <div id="heroSelectionModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 300; pointer-events: all;">
         <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; max-width: 1000px; width: 95%;">
-            <div style="color: #2A9D8F; font-size: 32px; font-weight: 900; margin-bottom: 15px; text-shadow: 0 0 20px rgba(42, 157, 143, 0.5);">SELECT YOUR HERO</div>
+            <div id="heroSelectionTitle" style="color: #2A9D8F; font-size: 32px; font-weight: 900; margin-bottom: 15px; text-shadow: 0 0 20px rgba(42, 157, 143, 0.5);">SELECT YOUR HERO</div>
             
             <!-- Player Name Input -->
             <div style="margin-bottom: 15px;">
@@ -1878,7 +1877,7 @@
                     <span id="heroSelectionCode" style="color: #F2C94C; font-size: 18px; font-weight: bold; letter-spacing: 3px; font-family: 'JetBrains Mono', monospace;">------</span>
                     <button onclick="toggleRoomCodeVisibility()" style="background: none; border: none; color: #2A9D8F; cursor: pointer; font-size: 14px; margin-left: 8px; padding: 0;">👁</button>
                 </div>
-                <div style="background: rgba(42, 157, 143, 0.2); padding: 8px 16px; border-radius: 8px; border: 2px solid #2A9D8F;">
+                <div id="playerCountBox" style="background: rgba(42, 157, 143, 0.2); padding: 8px 16px; border-radius: 8px; border: 2px solid #2A9D8F;">
                     <span style="color: #89A0B4; font-size: 11px; margin-right: 8px;">PLAYERS:</span>
                     <span id="playerCountDisplay" style="color: #F2C94C; font-size: 18px; font-weight: bold;">1/4</span>
                 </div>
@@ -2231,7 +2230,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.2.96';
+        const GAME_VERSION = 'v0.3.02';
         
         // ===== RANDOM PLAYER NAME GENERATOR =====
         const PLAYER_FIRST_NAMES = ['Crypto', 'Shadow', 'Pixel', 'Neon', 'Quantum', 'Cyber', 'Nova', 'Phoenix', 'Storm', 'Blaze'];
@@ -3139,12 +3138,10 @@
         function createDefaultSharedSave() {
             // Get rolled stats if any were set during hero selection
             const rolledStats = multiplayerState.rolledHeroStats || {};
-            console.log('[DICE] createDefaultSharedSave called, rolledStats:', rolledStats);
             
             // Helper to merge rolled stats with defaults
             function getHeroStats(heroKey, defaultStats) {
                 if (rolledStats[heroKey]) {
-                    console.log(`[DICE] Using rolled stats for ${heroKey}:`, rolledStats[heroKey]);
                     return {
                         name: defaultStats.name,
                         str: rolledStats[heroKey].str,
@@ -3250,6 +3247,19 @@
                 alert('No save game found! Start a new adventure first.');
                 return;
             }
+            
+            // Hide hero selection modal if open (for single player flow)
+            document.getElementById('heroSelectionModal').style.display = 'none';
+            document.getElementById('musicControls').classList.remove('heroSelectionActive');
+            document.getElementById('musicTicker').classList.remove('battleActive');
+            
+            // Restore hidden elements (in case coming from single player hero selection)
+            const codeDisplay = document.getElementById('heroSelectionCode');
+            if (codeDisplay) codeDisplay.parentElement.style.display = '';
+            const playerNameInput = document.getElementById('playerNameInput');
+            if (playerNameInput) playerNameInput.parentElement.style.display = '';
+            const backBtn = document.getElementById('heroSelectionBackBtn');
+            if (backBtn) backBtn.style.display = '';
             
             // Center music controls for dungeon menu
             document.getElementById('musicControls').classList.add('dungeonMenuActive');
@@ -4550,7 +4560,9 @@
                     color: '#F2C94C',
                     x: 0, y: 0, platform: null, facing: 'center',
                     sprite: new Image(),
-                    spritePath: 'tunnelsofprivacy/heros/zooko.png'
+                    spritePath: 'tunnelsofprivacy/heros/zooko.png',
+                    backpackSprite: new Image(),
+                    backpackPath: 'tunnelsofprivacy/gear/zooko_backpack.png'
                 },
                 { 
                     name: 'Nate', 
@@ -4562,7 +4574,9 @@
                     color: '#E74C3C',
                     x: 0, y: 0, platform: null, facing: 'center',
                     sprite: new Image(),
-                    spritePath: 'tunnelsofprivacy/heros/nate.png'
+                    spritePath: 'tunnelsofprivacy/heros/nate.png',
+                    backpackSprite: new Image(),
+                    backpackPath: 'tunnelsofprivacy/gear/nate_backpack.png'
                 },
                 { 
                     name: 'Zancas', 
@@ -4574,7 +4588,9 @@
                     color: '#27AE60',
                     x: 0, y: 0, platform: null, facing: 'center',
                     sprite: new Image(),
-                    spritePath: 'tunnelsofprivacy/heros/zancas.png'
+                    spritePath: 'tunnelsofprivacy/heros/zancas.png',
+                    backpackSprite: new Image(),
+                    backpackPath: 'tunnelsofprivacy/gear/zancas_backpack.png'
                 },
                 { 
                     name: 'CyberAxe', 
@@ -4586,7 +4602,9 @@
                     color: '#2E86DE',
                     x: 0, y: 0, platform: null, facing: 'center',
                     sprite: new Image(),
-                    spritePath: 'tunnelsofprivacy/heros/cyberaxe.png'
+                    spritePath: 'tunnelsofprivacy/heros/cyberaxe.png',
+                    backpackSprite: new Image(),
+                    backpackPath: 'tunnelsofprivacy/gear/cyberaxe_backpack.png'
                 }
             ];
             
@@ -4610,6 +4628,14 @@
                 };
                 // Add timestamp to prevent caching
                 hero.sprite.src = hero.spritePath + '?v=' + Date.now();
+                
+                // Load backpack gear sprites
+                if (hero.backpackPath) {
+                    hero.backpackSprite.onload = () => {
+                        renderBattle(); // Re-render when backpack loads
+                    };
+                    hero.backpackSprite.src = hero.backpackPath + '?v=' + Date.now();
+                }
             });
             
             // Setup enemies from loaded data (level 2 for testing)
@@ -5733,6 +5759,24 @@
                 
                 const flipX = hero.facing === 'left';
                 drawAnimatedSprite(ctx, hero, spriteX, spriteY, spriteWidth, spriteHeight, flipX);
+                
+                // Draw backpack at hero's feet (in front of the hero)
+                if (hero.backpackSprite && hero.backpackSprite.complete && hero.backpackSprite.naturalHeight > 0) {
+                    const backpackWidth = 80 * depthScale;
+                    const backpackHeight = 80 * depthScale;
+                    // Position backpack at feet (lower left of hero)
+                    const backpackX = hero.x - backpackWidth / 2 - (60 * depthScale);
+                    const backpackY = hero.y + (60 * depthScale); // At feet level
+                    
+                    // Draw shadow behind backpack for depth
+                    ctx.save();
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+                    ctx.shadowBlur = 12 * depthScale;
+                    ctx.shadowOffsetX = 4 * depthScale;
+                    ctx.shadowOffsetY = 4 * depthScale;
+                    ctx.drawImage(hero.backpackSprite, backpackX, backpackY, backpackWidth, backpackHeight);
+                    ctx.restore();
+                }
                 
                 // Fallback check - if no animation and no static sprite loaded
                 if ((!hero.anim || !hero.anim.sheet) && (!hero.sprite || !hero.sprite.complete || hero.sprite.naturalHeight === 0)) {
@@ -7621,14 +7665,95 @@
                     'This will replace your current save game. Save to file first if you want to keep your progress!',
                     (confirmed) => {
                         if (!confirmed) return;
-                        proceedWithNewAdventure();
+                        showSinglePlayerHeroSelection();
                     }
                 );
                 return;
             }
             
-            // No save exists, proceed directly
-            proceedWithNewAdventure();
+            // No save exists, show hero selection for rolling stats
+            showSinglePlayerHeroSelection();
+        }
+        
+        // Show hero selection modal for single player mode
+        function showSinglePlayerHeroSelection() {
+            // Mark as single player mode (not multiplayer)
+            multiplayerState.enabled = false;
+            multiplayerState.role = 'host'; // Act as host for single player
+            multiplayerState.myHeroes = ['zooko', 'nate', 'zancas', 'cyberaxe']; // Own all heroes
+            multiplayerState.playerHeroes = {
+                zooko: { playerName: 'You' },
+                nate: { playerName: 'You' },
+                zancas: { playerName: 'You' },
+                cyberaxe: { playerName: 'You' }
+            };
+            multiplayerState.playerName = 'Adventurer';
+            
+            // Show hero selection modal
+            document.getElementById('heroSelectionModal').style.display = 'block';
+            document.getElementById('musicControls').classList.add('heroSelectionActive');
+            document.getElementById('musicTicker').classList.add('battleActive');
+            
+            // Hide room code section for single player
+            const codeDisplay = document.getElementById('heroSelectionCode');
+            if (codeDisplay) codeDisplay.parentElement.style.display = 'none';
+            
+            // Hide player name input row for single player
+            const playerNameInput = document.getElementById('playerNameInput');
+            if (playerNameInput) playerNameInput.parentElement.style.display = 'none';
+            
+            // Hide PLAYERS count box for single player
+            const playerCountBox = document.getElementById('playerCountBox');
+            if (playerCountBox) playerCountBox.style.display = 'none';
+            
+            // Hide Connected Players list for single player
+            const connectedPlayersList = document.getElementById('connectedPlayersList');
+            if (connectedPlayersList) connectedPlayersList.style.display = 'none';
+            
+            // Change title to ROLL HERO STATS for single player
+            const heroSelectionTitle = document.getElementById('heroSelectionTitle');
+            if (heroSelectionTitle) heroSelectionTitle.textContent = 'ROLL HERO STATS';
+            
+            // Update waiting message for single player
+            const waitingMsg = document.getElementById('heroWaitingMessage');
+            if (waitingMsg) waitingMsg.textContent = 'All heroes are yours! Roll stats for each hero.';
+            
+            // Mark all heroes as selected by this player
+            document.querySelectorAll('.heroSelectCard').forEach(card => {
+                card.classList.add('selected');
+                card.style.borderWidth = '5px';
+                const playerLabel = card.querySelector('.heroPlayerLabel');
+                if (playerLabel) {
+                    playerLabel.textContent = 'You';
+                    playerLabel.style.display = 'block';
+                }
+            });
+            
+            // Hide reconnect options, show game start options
+            const reconnectOptions = document.getElementById('reconnectOptions');
+            const gameStartOptions = document.getElementById('gameStartOptions');
+            const backBtn = document.getElementById('heroSelectionBackBtn');
+            if (reconnectOptions) reconnectOptions.style.display = 'none';
+            if (gameStartOptions) gameStartOptions.style.display = 'block';
+            if (backBtn) backBtn.style.display = 'none';
+            
+            // Update hero stats display first
+            updateHeroSelectionStats();
+            
+            // Go directly to roll phase (phase 2) for single player
+            inRollPhase = true;
+            heroSelectionHasSave = false; // Force allowing rolls
+            document.getElementById('gameStartPhase1').style.display = 'none';
+            document.getElementById('gameStartPhase2').style.display = 'block';
+            
+            // Show roll buttons for all heroes
+            showAllRollButtons();
+            
+            // Clear any previous rolled stats
+            multiplayerState.rolledHeroStats = {};
+            
+            // Update status
+            updateRollPhaseStatus();
         }
         
         function proceedWithNewAdventure() {
@@ -7661,6 +7786,9 @@
             
             // Apply client UI restrictions
             applyClientUIRestrictions();
+            
+            // Pre-generate next encounter while player is in dungeon menu
+            preGenerateNextEncounter();
             
             // If multiplayer host, notify clients to start and send save data
             if (multiplayerState.enabled && multiplayerState.role === 'host') {
@@ -7842,6 +7970,9 @@
                 // Hide hero party when no save exists
                 if (heroStatsEl) heroStatsEl.style.display = 'none';
             }
+            
+            // Update CONTINUE button state based on save existence
+            updateTitleScreenButtons();
         }
         
         // ESC key listener
@@ -8504,10 +8635,6 @@
                 
                 case 'request_sync':
                     // Client requesting full sync after reconnection
-                    console.log('[HOST] Received request_sync from client');
-                    console.log('[HOST] multiplayerState.role:', multiplayerState.role);
-                    console.log('[HOST] currentScreen:', currentScreen);
-                    
                     if (multiplayerState.role === 'host') {
                         // Transfer heroes back from host to reconnecting player
                         if (data.heroes && Array.isArray(data.heroes)) {
@@ -8523,10 +8650,8 @@
                         }
                         
                         const sharedSave = loadSharedSave();
-                        console.log('[HOST] sharedSave exists:', !!sharedSave);
                         
                         if (sharedSave) {
-                            console.log('[HOST] Sending sync_state to client');
                             // Send current save state to rejoining client
                             sendWebSocketMessage({ 
                                 type: 'sync_state', 
@@ -8545,10 +8670,6 @@
                     break;
                 
                 case 'sync_state':
-                    console.log('[CLIENT] Received sync_state');
-                    console.log('[CLIENT] data.screen:', data.screen);
-                    console.log('[CLIENT] multiplayerState.role:', multiplayerState.role);
-                    
                     // Client receiving sync after reconnection
                     if (multiplayerState.role === 'client') {
                         // Save host's save data
@@ -8844,10 +8965,8 @@
         }
         
         function sendWebSocketMessage(data) {
-            console.log('[WS] Attempting to send:', data.type);
             if (multiplayerState.ws && multiplayerState.ws.readyState === WebSocket.OPEN) {
                 multiplayerState.ws.send(JSON.stringify(data));
-                console.log('[WS] Sent successfully:', data.type);
                 logDebugMessage(data.type, data, 'out');
                 updateDebugStatus();
             } else {
@@ -8993,6 +9112,44 @@
         }
         
         function cancelHeroSelection() {
+            // For single player, just go back without confirm
+            if (!multiplayerState.enabled) {
+                document.getElementById('heroSelectionModal').style.display = 'none';
+                document.getElementById('musicControls').classList.remove('heroSelectionActive');
+                document.getElementById('musicTicker').classList.remove('battleActive');
+                
+                // Restore hidden elements
+                const codeDisplay = document.getElementById('heroSelectionCode');
+                if (codeDisplay) codeDisplay.parentElement.style.display = '';
+                const playerNameInput = document.getElementById('playerNameInput');
+                if (playerNameInput) playerNameInput.parentElement.style.display = '';
+                const backBtn = document.getElementById('heroSelectionBackBtn');
+                if (backBtn) backBtn.style.display = '';
+                const playerCountBox = document.getElementById('playerCountBox');
+                if (playerCountBox) playerCountBox.style.display = '';
+                const connectedPlayersList = document.getElementById('connectedPlayersList');
+                if (connectedPlayersList) connectedPlayersList.style.display = '';
+                const heroSelectionTitle = document.getElementById('heroSelectionTitle');
+                if (heroSelectionTitle) heroSelectionTitle.textContent = 'SELECT YOUR HERO';
+                const waitingMsg = document.getElementById('heroWaitingMessage');
+                if (waitingMsg) waitingMsg.textContent = 'Click heroes to select. Players can select multiple heroes.';
+                
+                // Reset hero card selections
+                document.querySelectorAll('.heroSelectCard').forEach(card => {
+                    card.classList.remove('selected', 'taken');
+                    card.style.borderWidth = '3px';
+                    card.style.opacity = '1';
+                    const playerLabel = card.querySelector('.heroPlayerLabel');
+                    if (playerLabel) playerLabel.style.display = 'none';
+                });
+                
+                // Reset multiplayer state
+                multiplayerState.myHeroes = [];
+                multiplayerState.playerHeroes = {};
+                multiplayerState.role = null;
+                return;
+            }
+            
             if (confirm('Leave multiplayer session?')) {
                 document.getElementById('heroSelectionModal').style.display = 'none';
                 // Move music controls back to center
@@ -9321,9 +9478,6 @@
                 level: 1
             };
             
-            console.log(`[DICE] Accepted stats for ${heroKey}:`, multiplayerState.rolledHeroStats[heroKey]);
-            console.log('[DICE] All rolledHeroStats:', multiplayerState.rolledHeroStats);
-            
             // In multiplayer, broadcast rolled stats to other players
             if (multiplayerState.ws && multiplayerState.ws.readyState === WebSocket.OPEN) {
                 sendWebSocketMessage({
@@ -9358,6 +9512,13 @@
         }
         
         function selectHero(heroName) {
+            // In single player mode, heroes cannot be selected/deselected
+            if (!multiplayerState.enabled) {
+                // Just show a message if they try to click
+                showNotification('All heroes are yours in single player!', 'info');
+                return;
+            }
+            
             const card = document.querySelector(`[data-hero="${heroName}"]`);
             
             // If clicking own hero, deselect it
@@ -9633,12 +9794,16 @@
         
         // Enter roll phase - show roll buttons and wait for all rolls
         function enterRollPhase() {
-            if (multiplayerState.role !== 'host') {
+            // Allow host OR single player (not enabled = single player)
+            if (multiplayerState.enabled && multiplayerState.role !== 'host') {
                 showNotification('Only host can start new game', 'error');
                 return;
             }
             
             inRollPhase = true;
+            
+            // Force heroSelectionHasSave to false since we're starting a NEW game
+            heroSelectionHasSave = false;
             
             // Switch to phase 2 UI
             document.getElementById('gameStartPhase1').style.display = 'none';
@@ -9653,10 +9818,12 @@
             // Update status
             updateRollPhaseStatus();
             
-            // Broadcast to clients that roll phase has started
-            sendWebSocketMessage({
-                type: 'roll_phase_start'
-            });
+            // Broadcast to clients that roll phase has started (only in multiplayer)
+            if (multiplayerState.enabled) {
+                sendWebSocketMessage({
+                    type: 'roll_phase_start'
+                });
+            }
             
             showNotification('Roll phase started! Roll stats for your heroes.', 'info');
         }
@@ -9675,10 +9842,12 @@
             // Clear rolled stats
             multiplayerState.rolledHeroStats = {};
             
-            // Broadcast to clients
-            sendWebSocketMessage({
-                type: 'roll_phase_cancel'
-            });
+            // Broadcast to clients (only in multiplayer)
+            if (multiplayerState.enabled) {
+                sendWebSocketMessage({
+                    type: 'roll_phase_cancel'
+                });
+            }
         }
         
         // Show roll buttons for all heroes (during roll phase)
@@ -9709,7 +9878,8 @@
             const totalHeroes = claimedHeroes.length;
             const rolledCount = claimedHeroes.filter(h => multiplayerState.rolledHeroStats[h]).length;
             
-            console.log('[DICE] Roll phase status - claimed:', claimedHeroes, 'rolled:', rolledCount, 'total:', totalHeroes);
+            // In single player OR as host, we can launch
+            const canLaunch = !multiplayerState.enabled || multiplayerState.role === 'host';
             
             const statusEl = document.getElementById('rollPhaseStatus');
             const launchBtn = document.getElementById('launchGameBtn');
@@ -9728,7 +9898,7 @@
             }
             
             if (launchBtn) {
-                if (totalHeroes > 0 && rolledCount === totalHeroes && multiplayerState.role === 'host') {
+                if (totalHeroes > 0 && rolledCount === totalHeroes && canLaunch) {
                     launchBtn.disabled = false;
                     launchBtn.style.color = '#fff';
                     launchBtn.style.cursor = 'pointer';
@@ -9744,7 +9914,8 @@
         
         // Launch the game with rolled stats
         function launchNewGame() {
-            if (multiplayerState.role !== 'host') {
+            // Allow host OR single player
+            if (multiplayerState.enabled && multiplayerState.role !== 'host') {
                 showNotification('Only host can launch the game', 'error');
                 return;
             }
@@ -9758,18 +9929,24 @@
                 return;
             }
             
-            console.log('[DICE] Launching game with rolled stats:', multiplayerState.rolledHeroStats);
-            
             // Hide hero selection
             document.getElementById('heroSelectionModal').style.display = 'none';
             document.getElementById('musicControls').classList.remove('heroSelectionActive');
             document.getElementById('musicTicker').classList.remove('battleActive');
             
+            // Restore hidden elements for single player (in case they go back)
+            if (!multiplayerState.enabled) {
+                const codeDisplay = document.getElementById('heroSelectionCode');
+                if (codeDisplay) codeDisplay.parentElement.style.display = '';
+                const playerNameInput = document.getElementById('playerNameInput');
+                if (playerNameInput) playerNameInput.parentElement.style.display = '';
+                const backBtn = document.getElementById('heroSelectionBackBtn');
+                if (backBtn) backBtn.style.display = '';
+            }
+            
             // Create fresh save with rolled stats
             const newSave = createDefaultSharedSave();
             saveSharedSave(newSave);
-            
-            console.log('[DICE] New save created:', newSave.heroes);
             
             // Update dungeon menu with new save data
             updateDungeonMenuHeroes();
@@ -9785,13 +9962,15 @@
             document.getElementById('musicTicker').classList.remove('battleActive');
             document.getElementById('musicTicker').classList.add('dungeonMenuActive');
             
-            // Notify all clients to start WITH save data
-            sendWebSocketMessage({ 
-                type: 'game_start', 
-                screen: 'dungeonMenu', 
-                mode: 'new',
-                saveData: newSave
-            });
+            // Notify all clients to start WITH save data (only in multiplayer)
+            if (multiplayerState.enabled) {
+                sendWebSocketMessage({ 
+                    type: 'game_start', 
+                    screen: 'dungeonMenu', 
+                    mode: 'new',
+                    saveData: newSave
+                });
+            }
             
             showNotification('Adventure begins!', 'success');
             
@@ -9850,10 +10029,6 @@
         }
         
         function rejoinGame() {
-            console.log('[REJOIN] rejoinGame() called');
-            console.log('[REJOIN] multiplayerState.role:', multiplayerState.role);
-            console.log('[REJOIN] multiplayerState.myHeroes:', multiplayerState.myHeroes);
-            
             if (multiplayerState.role !== 'client') {
                 showNotification('Only clients can rejoin', 'error');
                 return;
@@ -9863,8 +10038,6 @@
                 showNotification('Please select at least one hero', 'warning');
                 return;
             }
-            
-            console.log('[REJOIN] Sending request_sync');
             
             // Request current game state from host
             sendWebSocketMessage({ 

@@ -635,7 +635,7 @@ class GameHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             }).encode('utf-8'))
             return
         
-        # Models 1-5: Groq (FAST), Models 6-10: OpenRouter
+        # Models 1-5: Groq (FAST), Models 6-9: OpenRouter
         # Exception: Model 1 is OpenRouter Mistral Nemo for comparison
         MODEL_OPTIONS = {
             # OpenRouter (for comparison)
@@ -649,8 +649,7 @@ class GameHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             6: ('openrouter', 'meta-llama/llama-3.1-8b-instruct'),  # Llama 3.1 8B
             7: ('openrouter', 'google/gemma-2-9b-it'),     # Gemma 2 9B
             8: ('openrouter', 'qwen/qwen2.5-coder-7b-instruct'),    # Qwen 2.5 7B
-            9: ('openrouter', 'mistralai/ministral-3b'),   # Ministral 3B
-            10: ('openrouter', 'sao10k/l3-lunaris-8b')     # L3 Lunaris 8B
+            9: ('openrouter', 'sao10k/l3-lunaris-8b')      # L3 Lunaris 8B
         }
         
         # Costs per million tokens (input, output)
@@ -663,8 +662,7 @@ class GameHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             6: (0.02, 0.03),    # Llama 3.1 8B
             7: (0.03, 0.09),    # Gemma 2 9B
             8: (0.03, 0.09),    # Qwen 2.5 7B
-            9: (0.04, 0.04),    # Ministral 3B
-            10: (0.04, 0.05)    # L3 Lunaris 8B
+            9: (0.04, 0.05)     # L3 Lunaris 8B
         }
         
         try:
@@ -1093,14 +1091,21 @@ Return ONLY valid JSON."""
                 cleaned = re.sub(r',\s*}', '}', cleaned)
                 cleaned = re.sub(r',\s*]', ']', cleaned)
                 
-                # 2. Fix unquoted string values (but not numbers/booleans/null)
+                # 2. Fix +number to just number (e.g., +1 -> 1)
+                cleaned = re.sub(r':\s*\+(\d)', r': \1', cleaned)
+                
+                # 3. Fix string booleans to actual booleans ("false" -> false, "true" -> true)
+                cleaned = re.sub(r':\s*"false"', ': false', cleaned)
+                cleaned = re.sub(r':\s*"true"', ': true', cleaned)
+                
+                # 4. Fix unquoted string values (but not numbers/booleans/null)
                 # Match ": value" where value doesn't start with " { [ or digit
                 cleaned = re.sub(r':\s*([a-zA-Z][a-zA-Z0-9_\s]*[a-zA-Z0-9])(\s*[,}\]])', r': "\1"\2', cleaned)
                 
-                # 3. Fix newlines inside strings (replace with space)
+                # 5. Fix newlines inside strings (replace with space)
                 cleaned = re.sub(r'(?<!\\)\n', ' ', cleaned)
                 
-                # 4. Fix missing commas between fields (common LLM error)
+                # 6. Fix missing commas between fields (common LLM error)
                 # Pattern: value followed by key without comma
                 cleaned = re.sub(r'"\s*"', '", "', cleaned)  # "value" "key" -> "value", "key"
                 cleaned = re.sub(r'(\d)\s+"', r'\1, "', cleaned)  # 123 "key" -> 123, "key"
@@ -1108,13 +1113,13 @@ Return ONLY valid JSON."""
                 cleaned = re.sub(r'}\s*"', '}, "', cleaned)  # } "key" -> }, "key"
                 cleaned = re.sub(r']\s*"', '], "', cleaned)  # ] "key" -> ], "key"
                 
-                # 5. Remove any control characters
+                # 7. Remove any control characters
                 cleaned = re.sub(r'[\x00-\x1f\x7f]', ' ', cleaned)
                 
-                # 6. Fix double spaces
+                # 8. Fix double spaces
                 cleaned = re.sub(r'  +', ' ', cleaned)
                 
-                # 7. Fix missing commas after closing braces/brackets before new keys
+                # 9. Fix missing commas after closing braces/brackets before new keys
                 cleaned = re.sub(r'}\s*([a-zA-Z])', r'}, \1', cleaned)
                 cleaned = re.sub(r']\s*([a-zA-Z])', r'], \1', cleaned)
                 
