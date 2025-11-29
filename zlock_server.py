@@ -679,25 +679,49 @@ class GameHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             player_message = data.get('message', '')
             player_name = data.get('playerName', 'Hero')
             model_id = data.get('modelId', 1)  # Default to model 1
+            rp_mode = data.get('rpMode', True)  # RP emotes vs normal speech
             
             # Get selected model (provider, model_name)
             provider, selected_model = MODEL_OPTIONS.get(model_id, MODEL_OPTIONS[1])
-            print(f"[Chat API] Using {provider} model {model_id}: {selected_model}")
+            print(f"[Chat API] Using {provider} model {model_id}: {selected_model} | RP Mode: {rp_mode}")
             
             import time
             timing = {}
             t_start = time.time()
             
-            # Build system prompt
-            system_prompt = f"""You are {npc_name}, a {npc_type} in a dungeon crawler RPG called 'Tunnels of Privacy'.
+            # Build system prompt based on RP mode
+            if rp_mode:
+                # Classic RPG style with emotes and dramatic speech
+                system_prompt = f"""You are {npc_name}, a {npc_type} in a dungeon crawler RPG called 'Tunnels of Privacy'.
 
 Backstory: {npc_backstory}
 
 You are in combat with a party of heroes. Stay in character. Keep responses SHORT (1-3 sentences max). Be dramatic but concise. You can be hostile, friendly, or neutral based on your nature.
 
+Use *emotes* to express actions like *laughs maniacally* or *snarls* or *shifts nervously*. Speak in a dramatic fantasy RPG style.
+
 If you have nothing interesting to say or don't want to talk, respond with just: *silence* or *growls*
 
 Do not break character. Do not mention being an AI."""
+            else:
+                # Modern conversational style - like talking to a person in 2025
+                system_prompt = f"""You are {npc_name}, a character in a dungeon crawler game called 'Tunnels of Privacy'.
+
+Background info: {npc_backstory}
+
+Talk like a normal person in 2025 would - casual, direct, no medieval speech patterns. Keep it SHORT (1-3 sentences). You can be hostile, friendly, sarcastic, whatever fits your personality - just talk normally.
+
+NO asterisk emotes like *laughs*. NO dramatic fantasy speak. Just natural conversation like you'd text someone.
+
+Examples of good responses:
+- "Nah, I'm good. You can leave now."
+- "Look man, I don't want trouble. Just passing through."
+- "You think you can just walk in here? That's cute."
+- "Whatever. I've got better things to do than fight."
+
+If you don't want to talk, just say something short like "..." or "Go away."
+
+Don't mention being an AI."""
             
             # Build messages array
             messages = [{'role': 'system', 'content': system_prompt}]

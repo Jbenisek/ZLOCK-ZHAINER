@@ -2,6 +2,77 @@
 
 # Changelog
 
+## v0.2.87 - Multiplayer Sync Fixes (2025-11-28)
+- **Gold Sync Fix:**
+  - `goldDrop` now included in enemy state broadcasts
+  - `species` field synced for proper enemy HUD display
+  - Clients now see correct gold amounts on enemy HUD cards
+
+- **Captive HP Fix:**
+  - `hp` and `maxHp` now sent in battle init and state updates
+  - Captive HUD card no longer shows "?/?" for HP
+  - `goldReward` synced for captive rescue reward display
+
+- **Captive Removal Fix:**
+  - When room is cleared, captive now properly removed from:
+    - Host chat target buttons
+    - Client chat target buttons
+    - Host/client enemy HUD cards
+  - `updateChatTargets()` and `updateBattleEnemyCards()` called after rescue
+  - Captive `rescued` state now broadcast to clients
+
+- **Battle Init Improvements:**
+  - `isBoss` flag now synced to clients
+  - `backstory` synced for proper chat context
+  - Captive `isMob` corrected to `false` (static sprite, not animated)
+
+## v0.2.86 - Encounter Pre-Generation & UI Improvements (2025-11-28)
+- **Encounter Pre-Generation System:**
+  - Encounters now generate in background while on dungeon menu
+  - Boss, mobs, captive, and background all pre-generated via LLM
+  - Clicking "Explore Level" starts battle instantly when ready
+  - Falls back to on-the-fly generation if not ready yet
+  - Pre-generation starts automatically when entering dungeon menu
+  - Resets and regenerates after each battle
+
+- **Explore Level Button Loading Bar:**
+  - Visual loading bar fills from left to right as encounter generates
+  - Shows "PREPARING... X%" during generation
+  - Progress: 10% data, 40% boss, 55%/70% mobs, 90% captive, 100% ready
+  - Button turns green with glow when encounter is ready
+  - Text changes to "⚔️ EXPLORE LEVEL" when ready to go
+
+- **Diagnostic Mode:**
+  - New setting: "Diag Mode (5 HP)" for quick testing
+  - All enemies spawn with 5 HP when enabled
+  - LLM still generates full stats, only HP overridden
+
+- **Multiplayer Fix:**
+  - Chat target buttons now update on clients when enemies die
+  - Added `updateChatTargets()` to `updateGameStateFromHost()`
+
+- **Chat Window Fix:**
+  - Chat target buttons now populate immediately on battle start
+  - Fixed issue where names didn't show until reopening chat
+
+## v0.2.85 - Roleplay Mode Toggle (2025-11-28)
+- **Roleplay Mode Setting:**
+  - New toggle in Settings: "Roleplay Mode" (ON by default)
+  - **RP Mode ON:** NPCs speak in dramatic fantasy style with *emotes* like `*laughs maniacally*`
+  - **RP Mode OFF:** NPCs talk like normal people in 2025 - casual, direct, no medieval speech
+  - Examples of non-RP responses: "Nah, I'm good", "Look man, I don't want trouble", "That's cute"
+  - Setting persists in localStorage
+  - Applies to all chat requests (player chat, free will, multiplayer)
+
+## v0.2.84 - Public Gold Display (Bitcoin vs Zcash Theme) (2025-11-28)
+- **Public Gold Display for Enemies/NPCs:**
+  - Enemies and captive NPCs now display their gold publicly (thematic: Bitcoin/gold transparency)
+  - Gold shown with 💰 icon on canvas below HP bar
+  - Gold stat added to enemy HUD cards after AC
+  - Gold stat added to captive HUD cards
+  - Bitcoin ₿ symbol used on canvas renders, gold bag 💰 in HUD
+  - Reinforces privacy theme: enemies use transparent ledger, players use Zcash (private)
+
 ## v0.2.83 - TTS Natural Speech & UI Polish (2025-11-28)
 - **TTS Natural Speech Improvements:**
   - All voices slowed down 10-15% for better comprehension

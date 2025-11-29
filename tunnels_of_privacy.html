@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.2.83</title>
+    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.2.87</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -823,6 +823,39 @@
             cursor: not-allowed;
         }
         
+        /* Explore Level Button with loading bar */
+        #exploreLevelBtn {
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        #exploreLevelBtn .loadingBar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, rgba(42, 157, 143, 0.4), rgba(78, 205, 196, 0.5));
+            transition: width 0.3s ease-out;
+            z-index: -1;
+            border-radius: 6px;
+        }
+        
+        #exploreLevelBtn.ready {
+            border-color: #27AE60;
+            box-shadow: 0 0 15px rgba(39, 174, 96, 0.5);
+        }
+        
+        #exploreLevelBtn.ready .loadingBar {
+            background: linear-gradient(90deg, rgba(39, 174, 96, 0.4), rgba(46, 204, 113, 0.5));
+        }
+        
+        #exploreLevelBtn .btnText {
+            position: relative;
+            z-index: 2;
+        }
+        
         .portalButton {
             background: linear-gradient(135deg, rgba(139, 69, 255, 0.4), rgba(139, 69, 255, 0.3));
             border-color: #8B45FF;
@@ -1263,7 +1296,10 @@
                     <div style="color: #FFD700; font-size: 16px; font-weight: 700; margin-top: 5px;">💰 <span id="dungeonMenuGold">0</span> Gold</div>
                 </div>
                 
-                <button class="menuButton" id="exploreLevelBtn" onclick="startBattle()">EXPLORE LEVEL</button>
+                <button class="menuButton" id="exploreLevelBtn" onclick="startBattle()">
+                    <div class="loadingBar" id="exploreLoadingBar"></div>
+                    <span class="btnText">EXPLORE LEVEL</span>
+                </button>
                 <button class="menuButton comingSoon" disabled>ENTER LEVEL STORE<br><span style="font-size: 12px; font-weight: 400;">(If Found)</span></button>
                 <button class="menuButton">INVENTORY</button>
                 <button class="menuButton">REST / SLEEP</button>
@@ -1689,6 +1725,20 @@
             <span style="font-size: 10px; color: #89A0B4; margin-left: 8px;">Better quality, costs $</span>
         </div>
         
+        <!-- RP Mode Toggle -->
+        <div class="settingRow" style="margin-bottom: 15px;">
+            <span class="settingLabel" style="font-size: 16px;">Roleplay Mode</span>
+            <input type="checkbox" id="rpMode" onchange="updateSettings()" checked>
+            <span style="font-size: 10px; color: #89A0B4; margin-left: 8px;">*dramatic emotes* vs normal speech</span>
+        </div>
+        
+        <!-- Diagnostic Mode Toggle -->
+        <div class="settingRow" style="margin-bottom: 15px;">
+            <span class="settingLabel" style="font-size: 16px;">Diag Mode (5 HP)</span>
+            <input type="checkbox" id="diagMode" onchange="updateSettings()">
+            <span style="font-size: 10px; color: #EB5757; margin-left: 8px;">Enemies have 5 HP for testing</span>
+        </div>
+        
         <div style="margin: 10px 0; padding: 10px; background: rgba(42, 157, 143, 0.1); border-radius: 5px; font-size: 11px; color: #89A0B4;">
             💡 Settings are saved independently for Tunnels of Privacy
         </div>
@@ -1758,7 +1808,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.2.83';
+        const GAME_VERSION = 'v0.2.87';
         
         // ===== MULTIPLAYER STATE =====
         let multiplayerState = {
@@ -2409,7 +2459,9 @@
             showHitboxes: false,
             playerName: '',
             llmFreeWill: false,      // NPCs chat autonomously
-            llmUsePaid: false        // Use paid LLM models
+            llmUsePaid: false,       // Use paid LLM models
+            rpMode: true,            // RP emotes/dramatic speech vs normal 2025 talk
+            diagMode: false          // Diagnostic mode - enemies have 5 HP
         };
         
         function showSettings() {
@@ -2423,6 +2475,8 @@
             document.getElementById('showHitboxes').checked = settings.showHitboxes;
             document.getElementById('llmFreeWill').checked = settings.llmFreeWill;
             document.getElementById('llmUsePaid').checked = settings.llmUsePaid;
+            document.getElementById('rpMode').checked = settings.rpMode !== false; // Default true
+            document.getElementById('diagMode').checked = settings.diagMode === true;
         }
         
         function showAbout() {
@@ -2437,6 +2491,8 @@
             settings.showHitboxes = document.getElementById('showHitboxes').checked;
             settings.llmFreeWill = document.getElementById('llmFreeWill').checked;
             settings.llmUsePaid = document.getElementById('llmUsePaid').checked;
+            settings.rpMode = document.getElementById('rpMode').checked;
+            settings.diagMode = document.getElementById('diagMode').checked;
             
             // Update display
             document.getElementById('musicVolumeValue').textContent = settings.musicVolume;
@@ -2732,6 +2788,9 @@
             
             // Apply client UI restrictions
             applyClientUIRestrictions();
+            
+            // Pre-generate next encounter while player is in dungeon menu
+            preGenerateNextEncounter();
         }
         
         // Router: Determine which continue function to call
@@ -2765,6 +2824,156 @@
             swapTargetingMode: false,
             swapInitiator: null
         };
+        
+        // Pre-generated encounter data (prepared while in dungeon menu)
+        let preGeneratedEncounter = {
+            ready: false,
+            generating: false,
+            boss: null,
+            mobs: [],
+            captive: null,
+            background: null,
+            roomLevel: 2
+        };
+        
+        // Pre-generate the next encounter while player is in dungeon menu
+        async function preGenerateNextEncounter() {
+            // Don't regenerate if already ready or currently generating
+            if (preGeneratedEncounter.ready || preGeneratedEncounter.generating) {
+                return;
+            }
+            
+            // Only host generates encounters
+            if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                return;
+            }
+            
+            preGeneratedEncounter.generating = true;
+            console.log('[PreGen] Starting encounter pre-generation...');
+            
+            // Reset loading bar
+            updateExploreLoadingBar(0);
+            
+            try {
+                // Load enemy data
+                let bossesData = [];
+                let mobsData = [];
+                try {
+                    const bossResponse = await fetch('tunnelsofprivacy/bosses/bosses_data.json');
+                    bossesData = await bossResponse.json();
+                    const mobResponse = await fetch('tunnelsofprivacy/mobs/mobs_data.json');
+                    const mobObj = await mobResponse.json();
+                    mobsData = mobObj.mobs || [];
+                    updateExploreLoadingBar(10);  // Data loaded
+                } catch(e) {
+                    console.error('[PreGen] Failed to load enemy data:', e);
+                    preGeneratedEncounter.generating = false;
+                    updateExploreLoadingBar(0);
+                    return;
+                }
+                
+                const roomLevel = preGeneratedEncounter.roomLevel;
+                
+                // Generate boss (progress: 10% -> 40%)
+                const boss = bossesData.find(b => b.mainLevel === roomLevel);
+                if (boss) {
+                    const generatedBoss = await generateEncounter('boss', boss, roomLevel);
+                    preGeneratedEncounter.boss = {
+                        baseData: boss,
+                        generated: generatedBoss
+                    };
+                    console.log('[PreGen] Boss generated:', generatedBoss?.name || boss.name);
+                    updateExploreLoadingBar(40);
+                }
+                
+                // Generate 2 mobs (progress: 40% -> 70%)
+                preGeneratedEncounter.mobs = [];
+                const hostileMobs = mobsData.filter(m => m.behavior?.hostile);
+                for (let i = 0; i < 2 && i < hostileMobs.length; i++) {
+                    const mob = hostileMobs[Math.floor(Math.random() * hostileMobs.length)];
+                    const generatedMob = await generateEncounter('mob', mob, roomLevel);
+                    preGeneratedEncounter.mobs.push({
+                        baseData: mob,
+                        generated: generatedMob
+                    });
+                    console.log('[PreGen] Mob generated:', generatedMob?.name || mob.name);
+                    updateExploreLoadingBar(40 + (i + 1) * 15);  // 55%, 70%
+                }
+                
+                // Generate captive (50% chance) (progress: 70% -> 90%)
+                preGeneratedEncounter.captive = null;
+                if (Math.random() > 0.5) {
+                    const captiveData = await generateEncounter('captive', {}, roomLevel);
+                    const captiveSpriteNum = Math.floor(Math.random() * 12) + 1;
+                    preGeneratedEncounter.captive = {
+                        generated: captiveData,
+                        spriteNum: captiveSpriteNum
+                    };
+                    console.log('[PreGen] Captive generated:', captiveData?.name);
+                }
+                updateExploreLoadingBar(90);
+                
+                // Pre-select background
+                const backgroundOptions = [
+                    'backgrounds_lvl1 (8).png',
+                    'backgrounds_lvl1 (10).png',
+                    'backgrounds_lvl1 (12).png',
+                    'backgrounds_lvl1 (14).png',
+                    'backgrounds_lvl1 (15).png',
+                    'backgrounds_lvl1 (16).png'
+                ];
+                preGeneratedEncounter.background = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
+                
+                preGeneratedEncounter.ready = true;
+                preGeneratedEncounter.generating = false;
+                updateExploreLoadingBar(100);  // Complete!
+                console.log('[PreGen] ✓ Encounter ready! Click Explore Dungeon to start instantly.');
+                
+            } catch (error) {
+                console.error('[PreGen] Error during pre-generation:', error);
+                preGeneratedEncounter.generating = false;
+                updateExploreLoadingBar(0);
+            }
+        }
+        
+        // Update the Explore Level button loading bar
+        function updateExploreLoadingBar(percent) {
+            const loadingBar = document.getElementById('exploreLoadingBar');
+            const exploreBtn = document.getElementById('exploreLevelBtn');
+            const btnText = exploreBtn?.querySelector('.btnText');
+            
+            if (loadingBar) {
+                loadingBar.style.width = percent + '%';
+            }
+            
+            if (exploreBtn) {
+                if (percent >= 100) {
+                    exploreBtn.classList.add('ready');
+                    if (btnText) btnText.textContent = '⚔️ EXPLORE LEVEL';
+                } else if (percent > 0) {
+                    exploreBtn.classList.remove('ready');
+                    if (btnText) btnText.textContent = `PREPARING... ${percent}%`;
+                } else {
+                    exploreBtn.classList.remove('ready');
+                    if (btnText) btnText.textContent = 'EXPLORE LEVEL';
+                }
+            }
+        }
+        
+        // Reset pre-generated encounter (call after battle ends)
+        function resetPreGeneratedEncounter() {
+            preGeneratedEncounter = {
+                ready: false,
+                generating: false,
+                boss: null,
+                mobs: [],
+                captive: null,
+                background: null,
+                roomLevel: 2
+            };
+            // Reset loading bar UI
+            updateExploreLoadingBar(0);
+        }
         
         // Chat state for battle
         let chatState = {
@@ -3243,7 +3452,8 @@
                         conversation: chatState.messages.slice(0, 10).reverse(),
                         message: message,
                         playerName: playerName,
-                        modelId: chatState.selectedModel
+                        modelId: chatState.selectedModel,
+                        rpMode: settings.rpMode !== false  // Default true for RP style
                     })
                 });
                 
@@ -3754,7 +3964,8 @@
                             conversation: chatState.messages.slice(0, 5).reverse(),
                             message: contextPrompt,
                             playerName: 'System',
-                            modelId: settings.llmUsePaid ? 3 : 2  // Use Groq models for speed
+                            modelId: settings.llmUsePaid ? 3 : 2,  // Use Groq models for speed
+                            rpMode: settings.rpMode !== false
                         })
                     });
                     
@@ -3812,17 +4023,22 @@
                 return; // Don't generate battle - wait for host's battle_init message
             }
             
-            // Load enemy data
+            // Check if we have pre-generated encounter ready
+            const usePreGenerated = preGeneratedEncounter.ready;
+            
+            // Load enemy data (only if not pre-generated)
             let bossesData = [];
             let mobsData = [];
-            try {
-                const bossResponse = await fetch('tunnelsofprivacy/bosses/bosses_data.json');
-                bossesData = await bossResponse.json();
-                const mobResponse = await fetch('tunnelsofprivacy/mobs/mobs_data.json');
-                const mobObj = await mobResponse.json();
-                mobsData = mobObj.mobs || [];
-            } catch(e) {
-                console.error('Failed to load enemy data:', e);
+            if (!usePreGenerated) {
+                try {
+                    const bossResponse = await fetch('tunnelsofprivacy/bosses/bosses_data.json');
+                    bossesData = await bossResponse.json();
+                    const mobResponse = await fetch('tunnelsofprivacy/mobs/mobs_data.json');
+                    const mobObj = await mobResponse.json();
+                    mobsData = mobObj.mobs || [];
+                } catch(e) {
+                    console.error('Failed to load enemy data:', e);
+                }
             }
             
             // Load shared save to get hero stats
@@ -3905,17 +4121,19 @@
             // Setup enemies from loaded data (level 2 for testing)
             battleState.enemies = [];
             battleState.captiveNpc = null;  // Captive NPC to rescue
-            const roomLevel = 2;  // TODO: Get from dungeon state
+            const roomLevel = usePreGenerated ? preGeneratedEncounter.roomLevel : 2;
             
-            // Show loading indicator for LLM generation
-            showDiceRoll('Dungeon Master is preparing the encounter...');
+            // Show loading indicator for LLM generation (only if not pre-generated)
+            if (!usePreGenerated) {
+                showDiceRoll('Dungeon Master is preparing the encounter...');
+            }
             
-            // Add boss from level 2
-            const boss = bossesData.find(b => b.mainLevel === roomLevel);
-            if (boss) {
+            if (usePreGenerated && preGeneratedEncounter.boss) {
+                // Use pre-generated boss
+                const boss = preGeneratedEncounter.boss.baseData;
                 const bossEnemy = {
-                    name: boss.name,  // Will be replaced by LLM-generated unique name
-                    species: boss.name,  // Store original boss type as species
+                    name: boss.name,
+                    species: boss.name,
                     hp: boss.stats.hp || 50,
                     maxHp: boss.stats.maxHp || 50,
                     ac: boss.stats.ac,
@@ -3931,78 +4149,138 @@
                     spritePath: boss.spritePath,
                     isMob: false
                 };
-                
-                // Generate unique boss via LLM
-                const generatedBoss = await generateEncounter('boss', boss, roomLevel);
-                applyGeneratedData(bossEnemy, generatedBoss);
-                
+                applyGeneratedData(bossEnemy, preGeneratedEncounter.boss.generated);
+                if (settings.diagMode) {
+                    bossEnemy.hp = 5;
+                    bossEnemy.maxHp = 5;
+                }
                 battleState.enemies.push(bossEnemy);
+                console.log('[Battle] Using pre-generated boss:', bossEnemy.name);
+            } else {
+                // Generate boss on-the-fly (fallback)
+                const boss = bossesData.find(b => b.mainLevel === roomLevel);
+                if (boss) {
+                    const bossEnemy = {
+                        name: boss.name,
+                        species: boss.name,
+                        hp: boss.stats.hp || 50,
+                        maxHp: boss.stats.maxHp || 50,
+                        ac: boss.stats.ac,
+                        attackDamage: boss.stats.attackDamage,
+                        speed: boss.stats.speed,
+                        dex: boss.stats.initiative || 0,
+                        hostile: boss.behavior?.hostile !== false,
+                        backstory: boss.backstory || null,
+                        isBoss: true,
+                        color: '#8B45FF',
+                        x: 0, y: 0, platform: null, facing: 'center',
+                        sprite: new Image(),
+                        spritePath: boss.spritePath,
+                        isMob: false
+                    };
+                    const generatedBoss = await generateEncounter('boss', boss, roomLevel);
+                    applyGeneratedData(bossEnemy, generatedBoss);
+                    if (settings.diagMode) {
+                        bossEnemy.hp = 5;
+                        bossEnemy.maxHp = 5;
+                    }
+                    battleState.enemies.push(bossEnemy);
+                }
             }
             
-            // Add 2 random hostile mobs
-            const hostileMobs = mobsData.filter(m => m.behavior?.hostile);
-            for (let i = 0; i < 2 && i < hostileMobs.length; i++) {
-                const mob = hostileMobs[Math.floor(Math.random() * hostileMobs.length)];
-                const mobEnemy = {
-                    name: mob.name,  // Will be replaced by LLM-generated unique name
-                    species: mob.name,  // Store original mob type as species
-                    hp: mob.stats.hp || 15,
-                    maxHp: mob.stats.maxHp || 15,
-                    ac: mob.stats.ac,
-                    attackDamage: mob.stats.attackDamage,
-                    speed: mob.stats.speed,
-                    dex: 0,
-                    hostile: mob.behavior?.hostile !== false,
-                    backstory: mob.backstory || null,
-                    isBoss: false,
-                    color: '#5C3317',
-                    x: 0, y: 0, platform: null, facing: 'center',
-                    sprite: new Image(),
-                    spritePath: mob.spritePath,
-                    isMob: true
-                };
-                
-                // Generate unique mob via LLM (always generate for unique name/backstory)
-                const generatedMob = await generateEncounter('mob', mob, roomLevel);
-                applyGeneratedData(mobEnemy, generatedMob);
-                
-                battleState.enemies.push(mobEnemy);
+            if (usePreGenerated && preGeneratedEncounter.mobs.length > 0) {
+                // Use pre-generated mobs
+                for (const mobData of preGeneratedEncounter.mobs) {
+                    const mob = mobData.baseData;
+                    const mobEnemy = {
+                        name: mob.name,
+                        species: mob.name,
+                        hp: mob.stats.hp || 15,
+                        maxHp: mob.stats.maxHp || 15,
+                        ac: mob.stats.ac,
+                        attackDamage: mob.stats.attackDamage,
+                        speed: mob.stats.speed,
+                        dex: 0,
+                        hostile: mob.behavior?.hostile !== false,
+                        backstory: mob.backstory || null,
+                        isBoss: false,
+                        color: '#5C3317',
+                        x: 0, y: 0, platform: null, facing: 'center',
+                        sprite: new Image(),
+                        spritePath: mob.spritePath,
+                        isMob: true
+                    };
+                    applyGeneratedData(mobEnemy, mobData.generated);
+                    if (settings.diagMode) {
+                        mobEnemy.hp = 5;
+                        mobEnemy.maxHp = 5;
+                    }
+                    battleState.enemies.push(mobEnemy);
+                    console.log('[Battle] Using pre-generated mob:', mobEnemy.name);
+                }
+            } else if (!usePreGenerated) {
+                // Generate mobs on-the-fly (fallback)
+                const hostileMobs = mobsData.filter(m => m.behavior?.hostile);
+                for (let i = 0; i < 2 && i < hostileMobs.length; i++) {
+                    const mob = hostileMobs[Math.floor(Math.random() * hostileMobs.length)];
+                    const mobEnemy = {
+                        name: mob.name,
+                        species: mob.name,
+                        hp: mob.stats.hp || 15,
+                        maxHp: mob.stats.maxHp || 15,
+                        ac: mob.stats.ac,
+                        attackDamage: mob.stats.attackDamage,
+                        speed: mob.stats.speed,
+                        dex: 0,
+                        hostile: mob.behavior?.hostile !== false,
+                        backstory: mob.backstory || null,
+                        isBoss: false,
+                        color: '#5C3317',
+                        x: 0, y: 0, platform: null, facing: 'center',
+                        sprite: new Image(),
+                        spritePath: mob.spritePath,
+                        isMob: true
+                    };
+                    const generatedMob = await generateEncounter('mob', mob, roomLevel);
+                    applyGeneratedData(mobEnemy, generatedMob);
+                    if (settings.diagMode) {
+                        mobEnemy.hp = 5;
+                        mobEnemy.maxHp = 5;
+                    }
+                    battleState.enemies.push(mobEnemy);
+                }
             }
             
-            // Generate captive NPC (50% chance per room)
-            battleState.captiveNpc = null;
-            if (Math.random() > 0.5) {
-                const captiveData = await generateEncounter('captive', {}, roomLevel);
-                
-                // Pick a random captive sprite (1-12)
-                const captiveSpriteNum = Math.floor(Math.random() * 12) + 1;
-                const captiveSpritePath = `tunnelsofprivacy/npcs/captives/prisoners (${captiveSpriteNum}).png`;
+            // Setup captive NPC
+            if (usePreGenerated && preGeneratedEncounter.captive) {
+                // Use pre-generated captive
+                const captiveData = preGeneratedEncounter.captive.generated;
+                const captiveSpritePath = `tunnelsofprivacy/npcs/captives/prisoners (${preGeneratedEncounter.captive.spriteNum}).png`;
                 
                 battleState.captiveNpc = {
                     name: captiveData?.name || 'Mysterious Prisoner',
                     species: captiveData?.species || 'human',
                     gender: captiveData?.gender || 'unknown',
-                    voiceType: captiveData?.voiceType || null,  // LLM-assigned voice type
+                    voiceType: captiveData?.voiceType || null,
                     backstory: captiveData?.backstory || 'A prisoner needing rescue.',
                     personality: captiveData?.personality || 'grateful',
                     rescueReward: captiveData?.rescueReward || { gold: 20 },
+                    goldReward: captiveData?.rescueReward?.gold || captiveData?.goldReward || 20,
                     dialogueOnRescue: captiveData?.dialogueOnRescue || 'Thank you for saving me!',
                     rescued: false,
-                    // Visual properties - like a mob
                     x: 0,
                     y: 0,
                     sprite: new Image(),
                     spritePath: captiveSpritePath,
-                    color: '#F2C94C',  // Gold color for friendly
+                    color: '#F2C94C',
                     isCaptive: true,
-                    isMob: false,  // Static image, not mob sprite sheet
+                    isMob: false,
                     canChat: true,
                     hostile: false,
-                    hp: 1,  // For display purposes
+                    hp: 1,
                     maxHp: 1
                 };
                 
-                // Load captive sprite
                 battleState.captiveNpc.sprite.onerror = () => {
                     console.log('[DM] Captive sprite not found, using fallback circle:', captiveSpritePath);
                 };
@@ -4010,7 +4288,44 @@
                     renderBattle();
                 };
                 battleState.captiveNpc.sprite.src = battleState.captiveNpc.spritePath + '?v=' + Date.now();
+                console.log('[Battle] Using pre-generated captive:', battleState.captiveNpc.name);
+            } else if (!usePreGenerated && Math.random() > 0.5) {
+                // Generate captive on-the-fly (fallback)
+                const captiveData = await generateEncounter('captive', {}, roomLevel);
+                const captiveSpriteNum = Math.floor(Math.random() * 12) + 1;
+                const captiveSpritePath = `tunnelsofprivacy/npcs/captives/prisoners (${captiveSpriteNum}).png`;
                 
+                battleState.captiveNpc = {
+                    name: captiveData?.name || 'Mysterious Prisoner',
+                    species: captiveData?.species || 'human',
+                    gender: captiveData?.gender || 'unknown',
+                    voiceType: captiveData?.voiceType || null,
+                    backstory: captiveData?.backstory || 'A prisoner needing rescue.',
+                    personality: captiveData?.personality || 'grateful',
+                    rescueReward: captiveData?.rescueReward || { gold: 20 },
+                    goldReward: captiveData?.rescueReward?.gold || captiveData?.goldReward || 20,
+                    dialogueOnRescue: captiveData?.dialogueOnRescue || 'Thank you for saving me!',
+                    rescued: false,
+                    x: 0,
+                    y: 0,
+                    sprite: new Image(),
+                    spritePath: captiveSpritePath,
+                    color: '#F2C94C',
+                    isCaptive: true,
+                    isMob: false,
+                    canChat: true,
+                    hostile: false,
+                    hp: 1,
+                    maxHp: 1
+                };
+                
+                battleState.captiveNpc.sprite.onerror = () => {
+                    console.log('[DM] Captive sprite not found, using fallback circle:', captiveSpritePath);
+                };
+                battleState.captiveNpc.sprite.onload = () => {
+                    renderBattle();
+                };
+                battleState.captiveNpc.sprite.src = battleState.captiveNpc.spritePath + '?v=' + Date.now();
                 console.log('[DM] Captive NPC generated:', battleState.captiveNpc.name, 'sprite:', captiveSpritePath);
             }
             
@@ -4022,17 +4337,22 @@
                 enemy.sprite.src = enemy.spritePath + '?v=' + Date.now();
             });
             
-            // Load random background from lvl1-10
-            const backgroundOptions = [
-                'backgrounds_lvl1 (8).png',
-                'backgrounds_lvl1 (10).png',
-                'backgrounds_lvl1 (12).png',
-                'backgrounds_lvl1 (14).png',
-                'backgrounds_lvl1 (15).png',
-                'backgrounds_lvl1 (16).png'
-            ];
-            const randomBg = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
-            battleState.backgroundPath = `tunnelsofprivacy/backgrounds/lvl1-10/${randomBg}`;
+            // Load background (use pre-generated or pick random)
+            let selectedBg;
+            if (usePreGenerated && preGeneratedEncounter.background) {
+                selectedBg = preGeneratedEncounter.background;
+            } else {
+                const backgroundOptions = [
+                    'backgrounds_lvl1 (8).png',
+                    'backgrounds_lvl1 (10).png',
+                    'backgrounds_lvl1 (12).png',
+                    'backgrounds_lvl1 (14).png',
+                    'backgrounds_lvl1 (15).png',
+                    'backgrounds_lvl1 (16).png'
+                ];
+                selectedBg = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
+            }
+            battleState.backgroundPath = `tunnelsofprivacy/backgrounds/lvl1-10/${selectedBg}`;
             battleState.backgroundImage = new Image();
             battleState.backgroundImage.onload = () => {
                 // Only host runs floor scanning
@@ -4049,6 +4369,11 @@
                 renderBattle();
             };
             battleState.backgroundImage.src = battleState.backgroundPath;
+            
+            // Reset pre-generated encounter after using it
+            if (usePreGenerated) {
+                resetPreGeneratedEncounter();
+            }
             
             // Calculate initiative for all combatants
             const allCombatants = [...battleState.heroes, ...battleState.enemies];
@@ -4074,6 +4399,7 @@
             chatState.visible = true;
             const chatWindow = document.getElementById('battleChatWindow');
             if (chatWindow) chatWindow.style.display = 'flex';
+            updateChatTargets();  // Refresh entity buttons with enemy names
             
             // Render initial state (will re-render when bg loads)
             renderBattle();
@@ -4129,6 +4455,7 @@
                 })),
                 enemies: battleState.enemies.map(e => ({
                     name: e.name,
+                    species: e.species,
                     hp: e.hp,
                     maxHp: e.maxHp,
                     ac: e.ac,
@@ -4141,7 +4468,10 @@
                     platform: e.platform,
                     initiative: e.initiative,
                     spritePath: e.spritePath,
-                    isMob: e.isMob
+                    isMob: e.isMob,
+                    isBoss: e.isBoss,
+                    goldDrop: e.goldDrop || 0,
+                    backstory: e.backstory
                 })),
                 // Include captive NPC data for clients (full mob-like data)
                 captiveNpc: battleState.captiveNpc ? {
@@ -4150,14 +4480,17 @@
                     backstory: battleState.captiveNpc.backstory,
                     personality: battleState.captiveNpc.personality,
                     rescueReward: battleState.captiveNpc.rescueReward,
+                    goldReward: battleState.captiveNpc.goldReward || battleState.captiveNpc.rescueReward?.gold || 0,
                     dialogueOnRescue: battleState.captiveNpc.dialogueOnRescue,
                     rescued: battleState.captiveNpc.rescued,
+                    hp: battleState.captiveNpc.hp || 1,
+                    maxHp: battleState.captiveNpc.maxHp || 1,
                     x: battleState.captiveNpc.x / canvas.width,
                     y: battleState.captiveNpc.y / canvas.height,
                     spritePath: battleState.captiveNpc.spritePath,
                     color: battleState.captiveNpc.color,
                     isCaptive: true,
-                    isMob: true,
+                    isMob: false,
                     canChat: true,
                     hostile: false,
                     facing: battleState.captiveNpc.facing || 'center'
@@ -5091,6 +5424,14 @@
                 ctx.fillText(`${enemy.hp}/${enemy.maxHp}`, enemy.x, barY + barHeight / 2);
                 ctx.textBaseline = 'alphabetic';  // Reset
                 
+                // Gold display BELOW HP bar (public ledger - they use Bitcoin/gold, not Zcash!)
+                const goldAmount = enemy.goldDrop || 0;
+                const goldY = barY + barHeight + (12 * depthScale);
+                ctx.fillStyle = '#FFD700';  // Gold color
+                ctx.font = `bold ${Math.floor(10 * depthScale)}px JetBrains Mono`;
+                ctx.textAlign = 'center';
+                ctx.fillText(`💰 ${goldAmount}`, enemy.x, goldY);
+                
                 // Highlight clickable enemies in targeting mode
                 if (battleState.targetingMode && enemy.hostile) {
                     const depthScale = 0.6 + (enemy.y / canvas.height) * 0.4;
@@ -5216,6 +5557,14 @@
                     ctx.textBaseline = 'middle';
                     ctx.fillText(`${captive.hp}/${captive.maxHp}`, captive.x, barY + barHeight / 2);
                     ctx.textBaseline = 'alphabetic';
+                    
+                    // Gold display BELOW HP bar (public ledger - NPCs also on transparent chain)
+                    const goldAmount = captive.goldDrop || 0;
+                    const goldY = barY + barHeight + (12 * depthScale);
+                    ctx.fillStyle = '#FFD700';
+                    ctx.font = `bold ${Math.floor(10 * depthScale)}px JetBrains Mono`;
+                    ctx.textAlign = 'center';
+                    ctx.fillText(`💰 ${goldAmount}`, captive.x, goldY);
                 }
             }
             
@@ -5523,6 +5872,13 @@
                 acStat.innerHTML = `AC: <span>${enemy.ac || 10}</span>`;
                 card.appendChild(acStat);
                 
+                // Gold stat (public ledger - enemies use Bitcoin/gold, not Zcash!)
+                const goldStat = document.createElement('div');
+                goldStat.className = 'battleEnemyStat';
+                goldStat.style.color = '#FFD700';
+                goldStat.innerHTML = `💰 <span>${enemy.goldDrop || 0}</span>`;
+                card.appendChild(goldStat);
+                
                 // Click handler for targeting
                 card.addEventListener('click', () => {
                     if (battleState.targetingMode && enemy.hostile && enemy.hp > 0) {
@@ -5571,6 +5927,13 @@
                 acStat.className = 'battleEnemyStat';
                 acStat.innerHTML = `AC: <span>${captive.ac || 10}</span>`;
                 card.appendChild(acStat);
+                
+                // Gold stat (captive's reward - public on Bitcoin/gold network!)
+                const goldStat = document.createElement('div');
+                goldStat.className = 'battleEnemyStat';
+                goldStat.style.color = '#FFD700';
+                goldStat.innerHTML = `💰 <span>${captive.goldReward || 0}</span>`;
+                card.appendChild(goldStat);
                 
                 // "CAPTIVE" label
                 const label = document.createElement('div');
@@ -6243,6 +6606,10 @@
                                 }, 2000);
                             }
                             showBattleNotification(rewardText);
+                            
+                            // Update UI to remove captive from chat targets and HUD
+                            updateChatTargets();
+                            updateBattleEnemyCards();
                         }, 1500);
                     }
                     
@@ -6251,7 +6618,7 @@
                     if (retreatBtn) {
                         retreatBtn.textContent = '🚪 LEAVE';
                     }
-                    // Broadcast final state
+                    // Broadcast final state (includes captive.rescued = true)
                     if (multiplayerState.enabled && multiplayerState.role === 'host') {
                         broadcastGameState();
                     }
@@ -6602,6 +6969,9 @@
             
             // Clear battle chat
             clearBattleChat();
+            
+            // Pre-generate next encounter while player is in dungeon menu
+            preGenerateNextEncounter();
         }
         
         // ===== END BATTLE SYSTEM =====
@@ -7826,7 +8196,8 @@
                         npcType: respondingNpc.isBoss ? 'boss' : 'mob',
                         conversation: chatState.messages.slice(0, 10).reverse(),
                         message: message,
-                        playerName: playerName
+                        playerName: playerName,
+                        rpMode: settings.rpMode !== false
                     })
                 });
                 
@@ -8238,6 +8609,9 @@
             });
             
             showNotification('Continuing from last save...', 'success');
+            
+            // Pre-generate next encounter while in dungeon menu (host only)
+            preGenerateNextEncounter();
         }
         
         function loadSaveGame() {
@@ -8277,6 +8651,9 @@
             });
             
             showNotification('Load game functionality - showing dungeon menu', 'info');
+            
+            // Pre-generate next encounter while in dungeon menu (host only)
+            preGenerateNextEncounter();
         }
         
         function startNewAdventure() {
@@ -8322,6 +8699,9 @@
                     });
                     
                     showNotification('Starting new adventure...', 'success');
+                    
+                    // Pre-generate next encounter while in dungeon menu (host only)
+                    preGenerateNextEncounter();
                 }
             );
         }
@@ -8595,6 +8975,7 @@
                 })),
                 enemies: battleState.enemies.map(e => ({
                     name: e.name,
+                    species: e.species,
                     hp: e.hp,
                     maxHp: e.maxHp,
                     ac: e.ac,
@@ -8610,8 +8991,19 @@
                     isBoss: e.isBoss,
                     spritePath: e.spritePath,
                     backstory: e.backstory,
-                    initiative: e.initiative
+                    initiative: e.initiative,
+                    goldDrop: e.goldDrop || 0
                 })),
+                // Include captive state for sync
+                captiveNpc: battleState.captiveNpc ? {
+                    name: battleState.captiveNpc.name,
+                    rescued: battleState.captiveNpc.rescued,
+                    hp: battleState.captiveNpc.hp || 1,
+                    maxHp: battleState.captiveNpc.maxHp || 1,
+                    goldReward: battleState.captiveNpc.goldReward || 0,
+                    x: battleState.captiveNpc.x / canvas.width,
+                    y: battleState.captiveNpc.y / canvas.height
+                } : null,
                 currentTurn: battleState.currentTurn
             };
             
@@ -8675,6 +9067,8 @@
                     existingEnemy.spritePath = enemyData.spritePath;
                     existingEnemy.backstory = enemyData.backstory;
                     existingEnemy.initiative = enemyData.initiative;
+                    existingEnemy.goldDrop = enemyData.goldDrop || 0;
+                    existingEnemy.species = enemyData.species;
                     return existingEnemy;
                 } else {
                     // This shouldn't happen in normal gameplay, but handle it
@@ -8682,6 +9076,18 @@
                     return null;
                 }
             }).filter(e => e !== null);
+            
+            // Update captive NPC state from host
+            if (state.captiveNpc && battleState.captiveNpc) {
+                battleState.captiveNpc.rescued = state.captiveNpc.rescued;
+                battleState.captiveNpc.hp = state.captiveNpc.hp;
+                battleState.captiveNpc.maxHp = state.captiveNpc.maxHp;
+                battleState.captiveNpc.goldReward = state.captiveNpc.goldReward;
+                if (state.captiveNpc.x !== undefined) {
+                    battleState.captiveNpc.x = state.captiveNpc.x * canvas.width;
+                    battleState.captiveNpc.y = state.captiveNpc.y * canvas.height;
+                }
+            }
             
             // Rebuild turn order to match host
             battleState.turnOrder = state.turnOrder.map(combatantData => {
@@ -8725,6 +9131,7 @@
             updateBattleHeroCards();
             updateBattleEnemyCards();
             updateBattleTurnInfo();
+            updateChatTargets();  // Refresh chat buttons when enemies die
         }
         
         function initializeBattleFromHost(battleData) {
@@ -8795,6 +9202,7 @@
             battleState.enemies = battleData.enemies.map(eData => {
                 const enemy = {
                     name: eData.name,
+                    species: eData.species,
                     hp: eData.hp,
                     maxHp: eData.maxHp,
                     ac: eData.ac,
@@ -8810,7 +9218,10 @@
                     facing: 'center',
                     sprite: new Image(),
                     spritePath: eData.spritePath,
-                    isMob: eData.isMob
+                    isMob: eData.isMob,
+                    isBoss: eData.isBoss,
+                    goldDrop: eData.goldDrop || 0,
+                    backstory: eData.backstory
                 };
                 enemy.sprite.onload = () => {
                     renderBattle();
@@ -8840,15 +9251,18 @@
                     backstory: battleData.captiveNpc.backstory,
                     personality: battleData.captiveNpc.personality,
                     rescueReward: battleData.captiveNpc.rescueReward,
+                    goldReward: battleData.captiveNpc.goldReward || battleData.captiveNpc.rescueReward?.gold || 0,
                     dialogueOnRescue: battleData.captiveNpc.dialogueOnRescue,
                     rescued: battleData.captiveNpc.rescued,
+                    hp: battleData.captiveNpc.hp || 1,
+                    maxHp: battleData.captiveNpc.maxHp || 1,
                     x: battleData.captiveNpc.x * canvas.width,
                     y: battleData.captiveNpc.y * canvas.height,
                     spritePath: battleData.captiveNpc.spritePath,
                     color: battleData.captiveNpc.color || '#F2C94C',
                     sprite: new Image(),
                     isCaptive: true,
-                    isMob: true,
+                    isMob: false,
                     canChat: true,
                     hostile: false,
                     facing: battleData.captiveNpc.facing || 'center'
