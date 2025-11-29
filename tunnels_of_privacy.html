@@ -1040,6 +1040,201 @@
             z-index: 10;
         }
         
+        /* Dice Rolling System */
+        .heroRollButton {
+            display: none;
+            margin-top: 8px;
+            padding: 6px 12px;
+            background: linear-gradient(135deg, rgba(242, 201, 76, 0.4), rgba(242, 201, 76, 0.2));
+            border: 2px solid #F2C94C;
+            border-radius: 6px;
+            color: #F2C94C;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .heroRollButton:hover {
+            background: linear-gradient(135deg, rgba(242, 201, 76, 0.6), rgba(242, 201, 76, 0.4));
+            transform: scale(1.05);
+        }
+        
+        .heroRollButton.visible {
+            display: inline-block;
+        }
+        
+        #diceRollModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 400;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #diceRollModal.visible {
+            display: flex;
+        }
+        
+        .diceRollContainer {
+            background: linear-gradient(135deg, #1a1f25, #0d1117);
+            border: 3px solid #F2C94C;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+        
+        .diceRollTitle {
+            color: #F2C94C;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .diceStatRow {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+        
+        .diceStatName {
+            color: #89A0B4;
+            font-size: 16px;
+            font-weight: bold;
+            width: 50px;
+            text-align: left;
+        }
+        
+        .diceGroup {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .die {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #fff, #ddd);
+            border: 2px solid #333;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: #111;
+            font-family: 'JetBrains Mono', monospace;
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .die.rolling {
+            animation: diceRoll 0.1s infinite;
+        }
+        
+        @keyframes diceRoll {
+            0% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(10deg) scale(1.1); }
+            50% { transform: rotate(0deg) scale(1); }
+            75% { transform: rotate(-10deg) scale(1.1); }
+            100% { transform: rotate(0deg) scale(1); }
+        }
+        
+        .diceStatTotal {
+            color: #F2C94C;
+            font-size: 20px;
+            font-weight: bold;
+            width: 40px;
+            text-align: right;
+        }
+        
+        .diceRollActions {
+            margin-top: 25px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        .diceRollBtn {
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .diceRollBtn.roll {
+            background: linear-gradient(135deg, rgba(242, 201, 76, 0.5), rgba(242, 201, 76, 0.3));
+            border: 2px solid #F2C94C;
+            color: #F2C94C;
+        }
+        
+        .diceRollBtn.roll:hover {
+            background: linear-gradient(135deg, rgba(242, 201, 76, 0.7), rgba(242, 201, 76, 0.5));
+            transform: scale(1.05);
+        }
+        
+        .diceRollBtn.accept {
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.5), rgba(39, 174, 96, 0.3));
+            border: 2px solid #27AE60;
+            color: #27AE60;
+        }
+        
+        .diceRollBtn.accept:hover {
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.7), rgba(39, 174, 96, 0.5));
+            transform: scale(1.05);
+        }
+        
+        .diceRollBtn.cancel {
+            background: linear-gradient(135deg, rgba(235, 87, 87, 0.5), rgba(235, 87, 87, 0.3));
+            border: 2px solid #EB5757;
+            color: #EB5757;
+        }
+        
+        .diceRollBtn.cancel:hover {
+            background: linear-gradient(135deg, rgba(235, 87, 87, 0.7), rgba(235, 87, 87, 0.5));
+            transform: scale(1.05);
+        }
+        
+        .derivedStats {
+            margin-top: 15px;
+            padding: 12px;
+            background: rgba(242, 201, 76, 0.1);
+            border: 1px solid rgba(242, 201, 76, 0.3);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .derivedStats span {
+            font-size: 16px;
+        }
+        
+        .derivedStats .hp-value {
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+        
+        .derivedStats .ac-value {
+            color: #6bb3ff;
+            font-weight: bold;
+        }
+        
         #versionDisplay {
             position: absolute;
             bottom: 20px;
@@ -1714,6 +1909,7 @@
                         <div class="stat-row"><span class="stat-label">STR:</span><span id="sel-zooko-str">8</span> <span class="stat-label">INT:</span><span id="sel-zooko-int">15</span></div>
                         <div class="stat-row"><span class="stat-label">DEX:</span><span id="sel-zooko-dex">11</span> <span class="stat-label">WIS:</span><span id="sel-zooko-wis">13</span></div>
                         <div class="stat-row"><span class="stat-label">CON:</span><span id="sel-zooko-con">10</span> <span class="stat-label">CHA:</span><span id="sel-zooko-cha">9</span></div>
+                        <button class="heroRollButton" data-hero="zooko" onclick="event.stopPropagation(); openDiceRollModal('zooko')">🎲 ROLL STATS</button>
                     </div>
                 </div>
                 <!-- Nate -->
@@ -1728,6 +1924,7 @@
                         <div class="stat-row"><span class="stat-label">STR:</span><span id="sel-nate-str">14</span> <span class="stat-label">INT:</span><span id="sel-nate-int">10</span></div>
                         <div class="stat-row"><span class="stat-label">DEX:</span><span id="sel-nate-dex">12</span> <span class="stat-label">WIS:</span><span id="sel-nate-wis">9</span></div>
                         <div class="stat-row"><span class="stat-label">CON:</span><span id="sel-nate-con">13</span> <span class="stat-label">CHA:</span><span id="sel-nate-cha">11</span></div>
+                        <button class="heroRollButton" data-hero="nate" onclick="event.stopPropagation(); openDiceRollModal('nate')">🎲 ROLL STATS</button>
                     </div>
                 </div>
                 <!-- Zancas -->
@@ -1742,6 +1939,7 @@
                         <div class="stat-row"><span class="stat-label">STR:</span><span id="sel-zancas-str">10</span> <span class="stat-label">INT:</span><span id="sel-zancas-int">12</span></div>
                         <div class="stat-row"><span class="stat-label">DEX:</span><span id="sel-zancas-dex">15</span> <span class="stat-label">WIS:</span><span id="sel-zancas-wis">14</span></div>
                         <div class="stat-row"><span class="stat-label">CON:</span><span id="sel-zancas-con">11</span> <span class="stat-label">CHA:</span><span id="sel-zancas-cha">8</span></div>
+                        <button class="heroRollButton" data-hero="zancas" onclick="event.stopPropagation(); openDiceRollModal('zancas')">🎲 ROLL STATS</button>
                     </div>
                 </div>
                 <!-- CyberAxe -->
@@ -1756,6 +1954,7 @@
                         <div class="stat-row"><span class="stat-label">STR:</span><span id="sel-cyberaxe-str">16</span> <span class="stat-label">INT:</span><span id="sel-cyberaxe-int">8</span></div>
                         <div class="stat-row"><span class="stat-label">DEX:</span><span id="sel-cyberaxe-dex">10</span> <span class="stat-label">WIS:</span><span id="sel-cyberaxe-wis">11</span></div>
                         <div class="stat-row"><span class="stat-label">CON:</span><span id="sel-cyberaxe-con">14</span> <span class="stat-label">CHA:</span><span id="sel-cyberaxe-cha">10</span></div>
+                        <button class="heroRollButton" data-hero="cyberaxe" onclick="event.stopPropagation(); openDiceRollModal('cyberaxe')">🎲 ROLL STATS</button>
                     </div>
                 </div>
             </div>
@@ -1768,17 +1967,109 @@
                 </div>
             </div>
             <div id="gameStartOptions" style="display: none; margin-bottom: 15px;">
-                <div style="color: #F2C94C; font-size: 14px; margin-bottom: 10px; font-weight: bold;">All heroes selected!</div>
-                <div style="display: flex; gap: 8px; justify-content: center;">
-                    <button onclick="cancelHeroSelection()" style="width: 110px; padding: 10px 0; font-size: 12px; background: linear-gradient(135deg, rgba(235, 87, 87, 0.5), rgba(235, 87, 87, 0.3)); border: 2px solid #EB5757; border-radius: 6px; color: #fff; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600;">BACK</button>
-                    <button onclick="continueGame()" style="width: 110px; padding: 10px 0; font-size: 12px; background: linear-gradient(135deg, rgba(42, 157, 143, 0.5), rgba(42, 157, 143, 0.3)); border: 2px solid #2A9D8F; border-radius: 6px; color: #fff; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600;">CONTINUE</button>
-                    <button onclick="loadSaveGame()" style="width: 110px; padding: 10px 0; font-size: 12px; background: linear-gradient(135deg, rgba(46, 134, 222, 0.5), rgba(46, 134, 222, 0.3)); border: 2px solid #2E86DE; border-radius: 6px; color: #fff; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600;">LOAD SAVE</button>
-                    <button onclick="startNewAdventure()" style="width: 110px; padding: 10px 0; font-size: 12px; background: linear-gradient(135deg, rgba(242, 201, 76, 0.5), rgba(242, 201, 76, 0.3)); border: 2px solid #F2C94C; border-radius: 6px; color: #fff; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600;">NEW GAME</button>
+                <div id="gameStartPhase1" style="display: block;">
+                    <div style="color: #F2C94C; font-size: 14px; margin-bottom: 10px; font-weight: bold;">All heroes selected!</div>
+                    <div style="display: flex; gap: 8px; justify-content: center;">
+                        <button onclick="cancelHeroSelection()" style="width: 110px; padding: 10px 0; font-size: 12px; background: linear-gradient(135deg, rgba(235, 87, 87, 0.5), rgba(235, 87, 87, 0.3)); border: 2px solid #EB5757; border-radius: 6px; color: #fff; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600;">BACK</button>
+                        <button onclick="continueGame()" style="width: 110px; padding: 10px 0; font-size: 12px; background: linear-gradient(135deg, rgba(42, 157, 143, 0.5), rgba(42, 157, 143, 0.3)); border: 2px solid #2A9D8F; border-radius: 6px; color: #fff; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600;">CONTINUE</button>
+                        <button onclick="loadSaveGame()" style="width: 110px; padding: 10px 0; font-size: 12px; background: linear-gradient(135deg, rgba(46, 134, 222, 0.5), rgba(46, 134, 222, 0.3)); border: 2px solid #2E86DE; border-radius: 6px; color: #fff; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600;">LOAD SAVE</button>
+                        <button onclick="enterRollPhase()" style="width: 110px; padding: 10px 0; font-size: 12px; background: linear-gradient(135deg, rgba(242, 201, 76, 0.5), rgba(242, 201, 76, 0.3)); border: 2px solid #F2C94C; border-radius: 6px; color: #fff; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600;">NEW GAME</button>
+                    </div>
+                    <div style="color: #EB5757; font-size: 10px; font-style: italic; margin-top: 6px;">⚠ NEW GAME replaces local save</div>
                 </div>
-                <div style="color: #EB5757; font-size: 10px; font-style: italic; margin-top: 6px;">⚠ NEW GAME replaces local save</div>
+                <div id="gameStartPhase2" style="display: none;">
+                    <div style="color: #F2C94C; font-size: 14px; margin-bottom: 6px; font-weight: bold;">🎲 ROLL YOUR STATS!</div>
+                    <div id="rollPhaseStatus" style="color: #89A0B4; font-size: 12px; margin-bottom: 10px;">Waiting for all players to roll stats...</div>
+                    <div style="display: flex; gap: 8px; justify-content: center;">
+                        <button onclick="cancelRollPhase()" style="width: 110px; padding: 10px 0; font-size: 12px; background: linear-gradient(135deg, rgba(235, 87, 87, 0.5), rgba(235, 87, 87, 0.3)); border: 2px solid #EB5757; border-radius: 6px; color: #fff; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600;">BACK</button>
+                        <button id="launchGameBtn" onclick="launchNewGame()" disabled style="width: 130px; padding: 10px 0; font-size: 12px; background: linear-gradient(135deg, rgba(39, 174, 96, 0.3), rgba(39, 174, 96, 0.2)); border: 2px solid #27AE60; border-radius: 6px; color: #666; cursor: not-allowed; font-family: 'Inter', sans-serif; font-weight: 600;">🚀 LAUNCH GAME</button>
+                    </div>
+                </div>
             </div>
             <div id="heroSelectionBackBtn" style="display: flex; gap: 15px; justify-content: center;">
                 <button onclick="cancelHeroSelection()" style="width: 110px; padding: 10px 0; font-size: 12px; background: linear-gradient(135deg, rgba(235, 87, 87, 0.5), rgba(235, 87, 87, 0.3)); border: 2px solid #EB5757; border-radius: 6px; color: #fff; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600;">BACK</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Dice Roll Modal -->
+    <div id="diceRollModal">
+        <div class="diceRollContainer">
+            <div class="diceRollTitle">🎲 ROLL STATS FOR <span id="diceRollHeroName">HERO</span></div>
+            
+            <div id="diceStatRows">
+                <!-- STR -->
+                <div class="diceStatRow" data-stat="str">
+                    <div class="diceStatName">STR</div>
+                    <div class="diceGroup">
+                        <div class="die" data-die="1">-</div>
+                        <div class="die" data-die="2">-</div>
+                        <div class="die" data-die="3">-</div>
+                    </div>
+                    <div class="diceStatTotal">-</div>
+                </div>
+                <!-- DEX -->
+                <div class="diceStatRow" data-stat="dex">
+                    <div class="diceStatName">DEX</div>
+                    <div class="diceGroup">
+                        <div class="die" data-die="1">-</div>
+                        <div class="die" data-die="2">-</div>
+                        <div class="die" data-die="3">-</div>
+                    </div>
+                    <div class="diceStatTotal">-</div>
+                </div>
+                <!-- CON -->
+                <div class="diceStatRow" data-stat="con">
+                    <div class="diceStatName">CON</div>
+                    <div class="diceGroup">
+                        <div class="die" data-die="1">-</div>
+                        <div class="die" data-die="2">-</div>
+                        <div class="die" data-die="3">-</div>
+                    </div>
+                    <div class="diceStatTotal">-</div>
+                </div>
+                <!-- INT -->
+                <div class="diceStatRow" data-stat="int">
+                    <div class="diceStatName">INT</div>
+                    <div class="diceGroup">
+                        <div class="die" data-die="1">-</div>
+                        <div class="die" data-die="2">-</div>
+                        <div class="die" data-die="3">-</div>
+                    </div>
+                    <div class="diceStatTotal">-</div>
+                </div>
+                <!-- WIS -->
+                <div class="diceStatRow" data-stat="wis">
+                    <div class="diceStatName">WIS</div>
+                    <div class="diceGroup">
+                        <div class="die" data-die="1">-</div>
+                        <div class="die" data-die="2">-</div>
+                        <div class="die" data-die="3">-</div>
+                    </div>
+                    <div class="diceStatTotal">-</div>
+                </div>
+                <!-- CHA -->
+                <div class="diceStatRow" data-stat="cha">
+                    <div class="diceStatName">CHA</div>
+                    <div class="diceGroup">
+                        <div class="die" data-die="1">-</div>
+                        <div class="die" data-die="2">-</div>
+                        <div class="die" data-die="3">-</div>
+                    </div>
+                    <div class="diceStatTotal">-</div>
+                </div>
+            </div>
+            
+            <div class="derivedStats">
+                <span><span class="hp-value">HP: <span id="diceRollHP">-</span></span></span>
+                <span><span class="ac-value">AC: <span id="diceRollAC">-</span></span></span>
+                <span style="color: #F2C94C; font-weight: bold;">TOTAL: <span id="diceRollTotal">-</span>/108</span>
+            </div>
+            
+            <div class="diceRollActions">
+                <button class="diceRollBtn cancel" onclick="closeDiceRollModal()">CANCEL</button>
+                <button class="diceRollBtn roll" onclick="rollAllDice()">🎲 ROLL</button>
+                <button class="diceRollBtn accept" onclick="acceptRolledStats()">✓ ACCEPT</button>
             </div>
         </div>
     </div>
@@ -1940,7 +2231,17 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.2.92';
+        const GAME_VERSION = 'v0.2.96';
+        
+        // ===== RANDOM PLAYER NAME GENERATOR =====
+        const PLAYER_FIRST_NAMES = ['Crypto', 'Shadow', 'Pixel', 'Neon', 'Quantum', 'Cyber', 'Nova', 'Phoenix', 'Storm', 'Blaze'];
+        const PLAYER_LAST_NAMES = ['Wolf', 'Hawk', 'Dragon', 'Knight', 'Hunter', 'Blade', 'Rider', 'Walker', 'Guard', 'Seeker'];
+        
+        function generateRandomPlayerName() {
+            const first = PLAYER_FIRST_NAMES[Math.floor(Math.random() * PLAYER_FIRST_NAMES.length)];
+            const last = PLAYER_LAST_NAMES[Math.floor(Math.random() * PLAYER_LAST_NAMES.length)];
+            return `${first}${last}`;
+        }
         
         // ===== MULTIPLAYER STATE =====
         let multiplayerState = {
@@ -1950,7 +2251,7 @@
             ws: null,
             myHeroes: [], // Array of hero names this player controls
             myPlayerId: null,
-            playerName: 'Player',
+            playerName: generateRandomPlayerName(),
             playerHeroes: {}, // { hero_name: { playerId, playerName } }
             connectedPlayers: [], // [ { id, hero, name } ]
             isReconnecting: false,
@@ -1962,7 +2263,9 @@
                 cyberaxe: null
             },
             // Client-only: Cache of gold from host
-            goldCache: 0
+            goldCache: 0,
+            // Rolled hero stats from dice rolling (new game only)
+            rolledHeroStats: {}
         };
         
         // ===== GAMEPAD SUPPORT =====
@@ -2778,12 +3081,24 @@
                     
                     // Populate player name input field
                     const playerNameInput = document.getElementById('multiplayerPlayerName');
-                    if (playerNameInput && settings.playerName) {
-                        playerNameInput.value = settings.playerName;
+                    if (playerNameInput) {
+                        if (settings.playerName) {
+                            playerNameInput.value = settings.playerName;
+                            multiplayerState.playerName = settings.playerName;
+                        } else {
+                            // Use random name as default
+                            playerNameInput.value = multiplayerState.playerName;
+                        }
                     }
                 }
             } catch (e) {
                 console.error('Failed to load settings:', e);
+            }
+            
+            // Ensure player name input has a value even if settings load failed
+            const playerNameInput = document.getElementById('multiplayerPlayerName');
+            if (playerNameInput && !playerNameInput.value) {
+                playerNameInput.value = multiplayerState.playerName;
             }
         }
         
@@ -2822,6 +3137,32 @@
         
         // Creates default shared save with initial hero stats
         function createDefaultSharedSave() {
+            // Get rolled stats if any were set during hero selection
+            const rolledStats = multiplayerState.rolledHeroStats || {};
+            console.log('[DICE] createDefaultSharedSave called, rolledStats:', rolledStats);
+            
+            // Helper to merge rolled stats with defaults
+            function getHeroStats(heroKey, defaultStats) {
+                if (rolledStats[heroKey]) {
+                    console.log(`[DICE] Using rolled stats for ${heroKey}:`, rolledStats[heroKey]);
+                    return {
+                        name: defaultStats.name,
+                        str: rolledStats[heroKey].str,
+                        dex: rolledStats[heroKey].dex,
+                        con: rolledStats[heroKey].con,
+                        int: rolledStats[heroKey].int,
+                        wis: rolledStats[heroKey].wis,
+                        cha: rolledStats[heroKey].cha,
+                        hp: rolledStats[heroKey].hp,
+                        maxHp: rolledStats[heroKey].maxHp,
+                        ac: rolledStats[heroKey].ac,
+                        xp: 0,
+                        level: 1
+                    };
+                }
+                return defaultStats;
+            }
+            
             return {
                 saveVersion: 1,
                 lastPlayed: Date.now(),
@@ -2837,26 +3178,26 @@
                     }
                 },
                 heroes: {
-                    zooko: {
+                    zooko: getHeroStats('zooko', {
                         name: 'Zooko',
                         str: 8, dex: 11, con: 10, int: 15, wis: 13, cha: 9,
                         hp: 22, maxHp: 25, ac: 12, xp: 0, level: 1
-                    },
-                    nate: {
+                    }),
+                    nate: getHeroStats('nate', {
                         name: 'Nate',
                         str: 14, dex: 12, con: 13, int: 10, wis: 9, cha: 11,
                         hp: 28, maxHp: 30, ac: 14, xp: 0, level: 1
-                    },
-                    zancas: {
+                    }),
+                    zancas: getHeroStats('zancas', {
                         name: 'Zancas',
                         str: 10, dex: 15, con: 11, int: 12, wis: 14, cha: 8,
                         hp: 24, maxHp: 26, ac: 13, xp: 0, level: 1
-                    },
-                    cyberaxe: {
+                    }),
+                    cyberaxe: getHeroStats('cyberaxe', {
                         name: 'CyberAxe',
                         str: 16, dex: 10, con: 14, int: 8, wis: 11, cha: 10,
                         hp: 32, maxHp: 35, ac: 15, xp: 0, level: 1
-                    }
+                    })
                 }
             };
         }
@@ -7995,6 +8336,25 @@
                     showNotification(data.message, 'error');
                     break;
                 
+                case 'name_taken':
+                    // Name is already in use - prompt to change
+                    showNotification(data.message, 'error');
+                    // Generate a new random name and show it to user
+                    const newRandomName = generateRandomPlayerName();
+                    multiplayerState.playerName = newRandomName;
+                    const nameInput = document.getElementById('multiplayerPlayerName');
+                    if (nameInput) {
+                        nameInput.value = newRandomName;
+                        nameInput.focus();
+                        nameInput.select();
+                    }
+                    // Close WebSocket since we were rejected
+                    if (multiplayerState.ws) {
+                        multiplayerState.ws.close();
+                        multiplayerState.ws = null;
+                    }
+                    break;
+                
                 case 'players_update':
                     // Update connected players list
                     if (data.players) {
@@ -8018,8 +8378,41 @@
                     if (data.players) {
                         multiplayerState.connectedPlayers = data.players;
                     }
+                    // Store heroes data for roll phase tracking
+                    if (data.heroes) {
+                        multiplayerState.playerHeroes = data.heroes;
+                    }
                     // Update hero selections
                     updateHeroSelection(data);
+                    break;
+                
+                case 'hero_stats_rolled':
+                    // Another player rolled stats for their hero - update display
+                    if (data.hero && data.stats) {
+                        const heroKey = data.hero;
+                        const stats = data.stats;
+                        
+                        // Update the hero card display
+                        const fields = ['str', 'dex', 'con', 'int', 'wis', 'cha', 'hp', 'ac'];
+                        fields.forEach(field => {
+                            const el = document.getElementById(`sel-${heroKey}-${field}`);
+                            if (el && stats[field] !== undefined) el.textContent = stats[field];
+                        });
+                        const maxHpEl = document.getElementById(`sel-${heroKey}-maxhp`);
+                        if (maxHpEl && stats.maxHp !== undefined) maxHpEl.textContent = stats.maxHp;
+                        
+                        // Store in multiplayerState so host can use it
+                        if (!multiplayerState.rolledHeroStats) {
+                            multiplayerState.rolledHeroStats = {};
+                        }
+                        multiplayerState.rolledHeroStats[heroKey] = stats;
+                        
+                        // Update roll phase status (to check if all have rolled)
+                        updateRollPhaseStatus();
+                        
+                        const heroName = heroKey.charAt(0).toUpperCase() + heroKey.slice(1);
+                        showNotification(`${heroName}'s stats rolled by player`, 'info');
+                    }
                     break;
                 
                 case 'player_action':
@@ -8226,6 +8619,36 @@
                 case 'skip_turn':
                     // Advance turn (force skip)
                     advanceTurn();
+                    break;
+                
+                case 'roll_phase_start':
+                    // Host started roll phase - clients show roll buttons
+                    if (multiplayerState.role === 'client') {
+                        inRollPhase = true;
+                        // This is a new game, not reconnecting
+                        multiplayerState.isReconnecting = false;
+                        showAllRollButtons();
+                        // Show phase 2 UI
+                        document.getElementById('gameStartPhase1').style.display = 'none';
+                        document.getElementById('gameStartPhase2').style.display = 'block';
+                        // Hide reconnect options since this is a new game
+                        const reconnectOpts = document.getElementById('reconnectOptions');
+                        if (reconnectOpts) reconnectOpts.style.display = 'none';
+                        updateRollPhaseStatus();
+                        showNotification('Roll phase started! Roll stats for your hero.', 'info');
+                    }
+                    break;
+                
+                case 'roll_phase_cancel':
+                    // Host cancelled roll phase - clients hide roll buttons
+                    if (multiplayerState.role === 'client') {
+                        inRollPhase = false;
+                        hideAllRollButtons();
+                        // Show phase 1 UI
+                        document.getElementById('gameStartPhase1').style.display = 'block';
+                        document.getElementById('gameStartPhase2').style.display = 'none';
+                        showNotification('Roll phase cancelled by host.', 'info');
+                    }
                     break;
                 
                 case 'game_start':
@@ -8435,11 +8858,15 @@
         function createMultiplayerRoom() {
             // Get player name
             const playerNameInput = document.getElementById('multiplayerPlayerName');
-            const playerName = playerNameInput.value.trim() || 'Player';
-            multiplayerState.playerName = playerName;
+            const playerName = playerNameInput ? playerNameInput.value.trim() : '';
+            if (!playerName) {
+                multiplayerState.playerName = generateRandomPlayerName();
+            } else {
+                multiplayerState.playerName = playerName;
+            }
             
             // Save player name to settings
-            settings.playerName = playerName;
+            settings.playerName = multiplayerState.playerName;
             saveSettings();
             
             // Close settings panel
@@ -8458,9 +8885,22 @@
                 return;
             }
             
+            // Get player name
+            const playerNameInput = document.getElementById('multiplayerPlayerName');
+            const playerName = playerNameInput ? playerNameInput.value.trim() : '';
+            if (!playerName) {
+                multiplayerState.playerName = generateRandomPlayerName();
+            } else {
+                multiplayerState.playerName = playerName;
+            }
+            
+            // Save player name to settings
+            settings.playerName = multiplayerState.playerName;
+            saveSettings();
+            
             connectWebSocket();
             setTimeout(() => {
-                sendWebSocketMessage({ type: 'join_room', code });
+                sendWebSocketMessage({ type: 'join_room', code, player_name: multiplayerState.playerName });
             }, 100);
         }
         
@@ -8473,16 +8913,20 @@
             
             // Get player name
             const playerNameInput = document.getElementById('multiplayerPlayerName');
-            const playerName = playerNameInput.value.trim() || 'Player';
-            multiplayerState.playerName = playerName;
+            const playerName = playerNameInput ? playerNameInput.value.trim() : '';
+            if (!playerName) {
+                multiplayerState.playerName = generateRandomPlayerName();
+            } else {
+                multiplayerState.playerName = playerName;
+            }
             
             // Save player name to settings
-            settings.playerName = playerName;
+            settings.playerName = multiplayerState.playerName;
             saveSettings();
             
             connectWebSocket();
             setTimeout(() => {
-                sendWebSocketMessage({ type: 'join_room', code, player_name: playerName });
+                sendWebSocketMessage({ type: 'join_room', code, player_name: multiplayerState.playerName });
             }, 100);
         }
         
@@ -8586,6 +9030,11 @@
                 if (gameStartOptions) gameStartOptions.style.display = 'none';
             } else {
                 if (reconnectOptions) reconnectOptions.style.display = 'none';
+                // Also ensure gameStartOptions shows phase 1 and hides phase 2 on fresh start
+                if (gameStartOptions) {
+                    document.getElementById('gameStartPhase1').style.display = 'block';
+                    document.getElementById('gameStartPhase2').style.display = 'none';
+                }
             }
             
             // Update hero selection cards with current stats
@@ -8617,7 +9066,7 @@
             
             // If no save, use default values
             if (!heroes) {
-                heroes = getDefaultSharedSave().heroes;
+                heroes = createDefaultSharedSave().heroes;
                 gold = 0;
             }
             
@@ -8650,6 +9099,250 @@
             // Update party gold display (now in top bar)
             const goldEl = document.getElementById('sel-party-gold-top');
             if (goldEl) goldEl.textContent = gold;
+            
+            // Show/hide roll buttons based on new game status
+            updateRollButtonsVisibility(hasSave);
+        }
+        
+        // Track if we have a saved game (affects roll button visibility)
+        let heroSelectionHasSave = false;
+        
+        // Current dice roll state
+        let currentDiceRollHero = null;
+        let rolledStats = { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0 };
+        let rolledDice = {}; // Store individual die values for display
+        
+        // Update roll button visibility - only show for claimed heroes on new game
+        function updateRollButtonsVisibility(hasSave) {
+            heroSelectionHasSave = hasSave;
+            const heroNames = ['zooko', 'nate', 'zancas', 'cyberaxe'];
+            
+            heroNames.forEach(heroKey => {
+                const rollBtn = document.querySelector(`.heroRollButton[data-hero="${heroKey}"]`);
+                if (rollBtn) {
+                    // Show roll button only if: no save AND this player owns this hero
+                    const isMyHero = multiplayerState.myHeroes.includes(heroKey);
+                    if (!hasSave && isMyHero) {
+                        rollBtn.classList.add('visible');
+                    } else {
+                        rollBtn.classList.remove('visible');
+                    }
+                }
+            });
+        }
+        
+        // Open the dice roll modal for a specific hero
+        function openDiceRollModal(heroName) {
+            // Verify this player owns this hero
+            if (!multiplayerState.myHeroes.includes(heroName)) {
+                showNotification('You can only roll stats for your own heroes', 'error');
+                return;
+            }
+            
+            // Verify it's a new game (no save)
+            if (heroSelectionHasSave) {
+                showNotification('Can only roll stats for new games', 'error');
+                return;
+            }
+            
+            currentDiceRollHero = heroName;
+            
+            // Set hero name in modal title
+            const heroDisplayName = heroName.charAt(0).toUpperCase() + heroName.slice(1);
+            document.getElementById('diceRollHeroName').textContent = heroDisplayName.toUpperCase();
+            
+            // Reset dice display
+            const stats = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+            stats.forEach(stat => {
+                const row = document.querySelector(`.diceStatRow[data-stat="${stat}"]`);
+                if (row) {
+                    row.querySelectorAll('.die').forEach(die => {
+                        die.textContent = '-';
+                        die.classList.remove('rolling');
+                    });
+                    row.querySelector('.diceStatTotal').textContent = '-';
+                }
+            });
+            
+            document.getElementById('diceRollHP').textContent = '-';
+            document.getElementById('diceRollAC').textContent = '-';
+            document.getElementById('diceRollTotal').textContent = '-';
+            
+            // Show modal
+            document.getElementById('diceRollModal').classList.add('visible');
+        }
+        
+        // Close the dice roll modal without accepting
+        function closeDiceRollModal() {
+            document.getElementById('diceRollModal').classList.remove('visible');
+            currentDiceRollHero = null;
+        }
+        
+        // Roll a single d6
+        function rollD6() {
+            return Math.floor(Math.random() * 6) + 1;
+        }
+        
+        // Roll 3d6 and return { dice: [d1, d2, d3], total: sum }
+        function roll3d6() {
+            const dice = [rollD6(), rollD6(), rollD6()];
+            return { dice, total: dice[0] + dice[1] + dice[2] };
+        }
+        
+        // Calculate HP from CON: 10 + CON modifier (CON - 10) / 2
+        function calculateHP(con) {
+            const modifier = Math.floor((con - 10) / 2);
+            return Math.max(1, 10 + modifier);
+        }
+        
+        // Calculate AC from DEX: 10 + DEX modifier
+        function calculateAC(dex) {
+            const modifier = Math.floor((dex - 10) / 2);
+            return 10 + modifier;
+        }
+        
+        // Roll all dice with animation
+        function rollAllDice() {
+            const stats = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+            
+            // Start rolling animation on all dice
+            stats.forEach(stat => {
+                const row = document.querySelector(`.diceStatRow[data-stat="${stat}"]`);
+                if (row) {
+                    row.querySelectorAll('.die').forEach(die => {
+                        die.classList.add('rolling');
+                    });
+                }
+            });
+            
+            // Animate dice for 1 second with random values
+            let animationFrames = 0;
+            const maxFrames = 20;
+            
+            const animateInterval = setInterval(() => {
+                animationFrames++;
+                
+                // Show random values during animation
+                stats.forEach(stat => {
+                    const row = document.querySelector(`.diceStatRow[data-stat="${stat}"]`);
+                    if (row) {
+                        row.querySelectorAll('.die').forEach(die => {
+                            die.textContent = rollD6();
+                        });
+                    }
+                });
+                
+                if (animationFrames >= maxFrames) {
+                    clearInterval(animateInterval);
+                    
+                    // Final roll - these are the real values
+                    stats.forEach(stat => {
+                        const result = roll3d6();
+                        rolledStats[stat] = result.total;
+                        rolledDice[stat] = result.dice;
+                        
+                        const row = document.querySelector(`.diceStatRow[data-stat="${stat}"]`);
+                        if (row) {
+                            const dice = row.querySelectorAll('.die');
+                            dice[0].textContent = result.dice[0];
+                            dice[1].textContent = result.dice[1];
+                            dice[2].textContent = result.dice[2];
+                            dice.forEach(die => die.classList.remove('rolling'));
+                            
+                            const totalEl = row.querySelector('.diceStatTotal');
+                            totalEl.textContent = result.total;
+                            
+                            // Color code the total based on value
+                            if (result.total >= 18) {
+                                totalEl.style.color = '#9B59B6'; // Purple for 18
+                            } else if (result.total >= 13) {
+                                totalEl.style.color = '#27AE60'; // Green for 13-17
+                            } else if (result.total < 8) {
+                                totalEl.style.color = '#E74C3C'; // Red for <8
+                            } else {
+                                totalEl.style.color = '#F2C94C'; // Default gold for 8-12
+                            }
+                        }
+                    });
+                    
+                    // Calculate and display derived stats
+                    const hp = calculateHP(rolledStats.con);
+                    const ac = calculateAC(rolledStats.dex);
+                    const total = rolledStats.str + rolledStats.dex + rolledStats.con + rolledStats.int + rolledStats.wis + rolledStats.cha;
+                    document.getElementById('diceRollHP').textContent = hp;
+                    document.getElementById('diceRollAC').textContent = ac;
+                    document.getElementById('diceRollTotal').textContent = total;
+                }
+            }, 50);
+        }
+        
+        // Accept the rolled stats and apply them to the hero
+        function acceptRolledStats() {
+            if (!currentDiceRollHero) return;
+            
+            // Verify we have rolled (check if any stat is non-zero)
+            if (rolledStats.str === 0) {
+                showNotification('Roll the dice first!', 'error');
+                return;
+            }
+            
+            const heroKey = currentDiceRollHero;
+            
+            // Calculate derived stats
+            const hp = calculateHP(rolledStats.con);
+            const ac = calculateAC(rolledStats.dex);
+            
+            // Update the hero card display
+            document.getElementById(`sel-${heroKey}-str`).textContent = rolledStats.str;
+            document.getElementById(`sel-${heroKey}-dex`).textContent = rolledStats.dex;
+            document.getElementById(`sel-${heroKey}-con`).textContent = rolledStats.con;
+            document.getElementById(`sel-${heroKey}-int`).textContent = rolledStats.int;
+            document.getElementById(`sel-${heroKey}-wis`).textContent = rolledStats.wis;
+            document.getElementById(`sel-${heroKey}-cha`).textContent = rolledStats.cha;
+            document.getElementById(`sel-${heroKey}-hp`).textContent = hp;
+            document.getElementById(`sel-${heroKey}-maxhp`).textContent = hp;
+            document.getElementById(`sel-${heroKey}-ac`).textContent = ac;
+            
+            // Store in multiplayerState for when game starts
+            if (!multiplayerState.rolledHeroStats) {
+                multiplayerState.rolledHeroStats = {};
+            }
+            multiplayerState.rolledHeroStats[heroKey] = {
+                str: rolledStats.str,
+                dex: rolledStats.dex,
+                con: rolledStats.con,
+                int: rolledStats.int,
+                wis: rolledStats.wis,
+                cha: rolledStats.cha,
+                hp: hp,
+                maxHp: hp,
+                ac: ac,
+                xp: 0,
+                level: 1
+            };
+            
+            console.log(`[DICE] Accepted stats for ${heroKey}:`, multiplayerState.rolledHeroStats[heroKey]);
+            console.log('[DICE] All rolledHeroStats:', multiplayerState.rolledHeroStats);
+            
+            // In multiplayer, broadcast rolled stats to other players
+            if (multiplayerState.ws && multiplayerState.ws.readyState === WebSocket.OPEN) {
+                sendWebSocketMessage({
+                    type: 'hero_stats_rolled',
+                    hero: heroKey,
+                    stats: multiplayerState.rolledHeroStats[heroKey]
+                });
+            }
+            
+            showNotification(`${heroKey.charAt(0).toUpperCase() + heroKey.slice(1)}'s stats accepted!`, 'success');
+            
+            // Close modal
+            closeDiceRollModal();
+            
+            // Update roll phase status (check if all heroes rolled)
+            updateRollPhaseStatus();
+            
+            // Reset rolled stats for next roll
+            rolledStats = { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0 };
         }
         
         function updatePlayerName() {
@@ -8674,6 +9367,11 @@
                 card.style.borderWidth = '3px';
                 sendWebSocketMessage({ type: 'deselect_hero', hero: heroName });
                 showNotification('Hero deselected', 'info');
+                
+                // Hide roll button when deselected
+                const rollBtn = card.querySelector('.heroRollButton');
+                if (rollBtn) rollBtn.classList.remove('visible');
+                
                 return;
             }
             
@@ -8688,6 +9386,12 @@
             card.classList.add('selected');
             card.style.borderWidth = '5px';
             
+            // Show roll button only if in roll phase
+            if (inRollPhase) {
+                const rollBtn = card.querySelector('.heroRollButton');
+                if (rollBtn) rollBtn.classList.add('visible');
+            }
+            
             // Get player name from input, or use current playerName from state
             const nameInput = document.getElementById('playerNameInput');
             const playerName = nameInput.value.trim() || multiplayerState.playerName;
@@ -8701,6 +9405,9 @@
         }
         
         function updateHeroSelection(data) {
+            // Store heroes data in multiplayerState for roll phase tracking
+            multiplayerState.playerHeroes = data.heroes || {};
+            
             // Reset all cards first
             document.querySelectorAll('.heroSelectCard').forEach(card => {
                 card.classList.remove('taken');
@@ -8918,6 +9625,177 @@
             showNotification('Load game functionality - showing dungeon menu', 'info');
             
             // Pre-generate next encounter while in dungeon menu (host only)
+            preGenerateNextEncounter();
+        }
+        
+        // Track if we're in roll phase
+        let inRollPhase = false;
+        
+        // Enter roll phase - show roll buttons and wait for all rolls
+        function enterRollPhase() {
+            if (multiplayerState.role !== 'host') {
+                showNotification('Only host can start new game', 'error');
+                return;
+            }
+            
+            inRollPhase = true;
+            
+            // Switch to phase 2 UI
+            document.getElementById('gameStartPhase1').style.display = 'none';
+            document.getElementById('gameStartPhase2').style.display = 'block';
+            
+            // Show roll buttons for all claimed heroes
+            showAllRollButtons();
+            
+            // Clear any previous rolled stats
+            multiplayerState.rolledHeroStats = {};
+            
+            // Update status
+            updateRollPhaseStatus();
+            
+            // Broadcast to clients that roll phase has started
+            sendWebSocketMessage({
+                type: 'roll_phase_start'
+            });
+            
+            showNotification('Roll phase started! Roll stats for your heroes.', 'info');
+        }
+        
+        // Cancel roll phase and go back to phase 1
+        function cancelRollPhase() {
+            inRollPhase = false;
+            
+            // Switch back to phase 1 UI
+            document.getElementById('gameStartPhase1').style.display = 'block';
+            document.getElementById('gameStartPhase2').style.display = 'none';
+            
+            // Hide all roll buttons
+            hideAllRollButtons();
+            
+            // Clear rolled stats
+            multiplayerState.rolledHeroStats = {};
+            
+            // Broadcast to clients
+            sendWebSocketMessage({
+                type: 'roll_phase_cancel'
+            });
+        }
+        
+        // Show roll buttons for all heroes (during roll phase)
+        function showAllRollButtons() {
+            const heroNames = ['zooko', 'nate', 'zancas', 'cyberaxe'];
+            heroNames.forEach(heroKey => {
+                const rollBtn = document.querySelector(`.heroRollButton[data-hero="${heroKey}"]`);
+                if (rollBtn) {
+                    // Show button only for heroes this player owns
+                    if (multiplayerState.myHeroes.includes(heroKey)) {
+                        rollBtn.classList.add('visible');
+                    }
+                }
+            });
+        }
+        
+        // Hide all roll buttons
+        function hideAllRollButtons() {
+            document.querySelectorAll('.heroRollButton').forEach(btn => {
+                btn.classList.remove('visible');
+            });
+        }
+        
+        // Update roll phase status message
+        function updateRollPhaseStatus() {
+            // Get list of CLAIMED heroes (from playerHeroes which tracks all claimed heroes)
+            const claimedHeroes = Object.keys(multiplayerState.playerHeroes || {});
+            const totalHeroes = claimedHeroes.length;
+            const rolledCount = claimedHeroes.filter(h => multiplayerState.rolledHeroStats[h]).length;
+            
+            console.log('[DICE] Roll phase status - claimed:', claimedHeroes, 'rolled:', rolledCount, 'total:', totalHeroes);
+            
+            const statusEl = document.getElementById('rollPhaseStatus');
+            const launchBtn = document.getElementById('launchGameBtn');
+            
+            if (statusEl) {
+                if (totalHeroes === 0) {
+                    statusEl.textContent = 'Waiting for heroes to be claimed...';
+                    statusEl.style.color = '#89A0B4';
+                } else if (rolledCount === totalHeroes) {
+                    statusEl.textContent = '✓ All heroes have rolled! Ready to launch.';
+                    statusEl.style.color = '#27AE60';
+                } else {
+                    statusEl.textContent = `Rolling stats... (${rolledCount}/${totalHeroes} heroes ready)`;
+                    statusEl.style.color = '#89A0B4';
+                }
+            }
+            
+            if (launchBtn) {
+                if (totalHeroes > 0 && rolledCount === totalHeroes && multiplayerState.role === 'host') {
+                    launchBtn.disabled = false;
+                    launchBtn.style.color = '#fff';
+                    launchBtn.style.cursor = 'pointer';
+                    launchBtn.style.background = 'linear-gradient(135deg, rgba(39, 174, 96, 0.5), rgba(39, 174, 96, 0.3))';
+                } else {
+                    launchBtn.disabled = true;
+                    launchBtn.style.color = '#666';
+                    launchBtn.style.cursor = 'not-allowed';
+                    launchBtn.style.background = 'linear-gradient(135deg, rgba(39, 174, 96, 0.3), rgba(39, 174, 96, 0.2))';
+                }
+            }
+        }
+        
+        // Launch the game with rolled stats
+        function launchNewGame() {
+            if (multiplayerState.role !== 'host') {
+                showNotification('Only host can launch the game', 'error');
+                return;
+            }
+            
+            // Verify all CLAIMED heroes have rolled
+            const claimedHeroes = Object.keys(multiplayerState.playerHeroes || {});
+            const allRolled = claimedHeroes.every(h => multiplayerState.rolledHeroStats[h]);
+            
+            if (!allRolled || claimedHeroes.length === 0) {
+                showNotification('Not all heroes have rolled yet!', 'error');
+                return;
+            }
+            
+            console.log('[DICE] Launching game with rolled stats:', multiplayerState.rolledHeroStats);
+            
+            // Hide hero selection
+            document.getElementById('heroSelectionModal').style.display = 'none';
+            document.getElementById('musicControls').classList.remove('heroSelectionActive');
+            document.getElementById('musicTicker').classList.remove('battleActive');
+            
+            // Create fresh save with rolled stats
+            const newSave = createDefaultSharedSave();
+            saveSharedSave(newSave);
+            
+            console.log('[DICE] New save created:', newSave.heroes);
+            
+            // Update dungeon menu with new save data
+            updateDungeonMenuHeroes();
+            
+            inRollPhase = false;
+            currentScreen = 'dungeonMenu';
+            document.getElementById('titleScreen').style.display = 'none';
+            document.getElementById('dungeonMenuScreen').style.display = 'block';
+            
+            // Center music controls
+            document.getElementById('musicControls').classList.remove('heroSelectionActive');
+            document.getElementById('musicControls').classList.add('dungeonMenuActive');
+            document.getElementById('musicTicker').classList.remove('battleActive');
+            document.getElementById('musicTicker').classList.add('dungeonMenuActive');
+            
+            // Notify all clients to start WITH save data
+            sendWebSocketMessage({ 
+                type: 'game_start', 
+                screen: 'dungeonMenu', 
+                mode: 'new',
+                saveData: newSave
+            });
+            
+            showNotification('Adventure begins!', 'success');
+            
+            // Pre-generate next encounter
             preGenerateNextEncounter();
         }
         

@@ -1294,17 +1294,45 @@ async def handle_websocket(websocket, path):
                         'message': 'Room full - cannot join'
                     }))
                 else:
-                    rooms[room_code]['clients'].append(websocket)
                     player_id = id(websocket)
                     
-                    # Check if this is a reconnection (same name as existing player)
-                    is_reconnect = False
-                    old_player_id = None
+                    # Check if this name already exists in the room
+                    existing_player = None
                     for pid, pdata in rooms[room_code]['players'].items():
                         if pdata['name'] == player_name:
-                            is_reconnect = True
-                            old_player_id = pid
+                            existing_player = pdata
                             break
+                    
+                    # Check if the existing player is still connected
+                    is_duplicate = False
+                    is_reconnect = False
+                    old_player_id = None
+                    
+                    if existing_player:
+                        old_player_id = existing_player['id']
+                        old_ws = existing_player.get('ws')
+                        
+                        # Check if old websocket is still connected
+                        if old_ws and old_ws.open:
+                            # Still connected - this is a duplicate name
+                            is_duplicate = True
+                        else:
+                            # Disconnected - this is a reconnection
+                            is_reconnect = True
+                    
+                    if is_duplicate:
+                        # Reject with duplicate name error
+                        await websocket.send(json.dumps({
+                            'type': 'name_taken',
+                            'message': f'Name "{player_name}" is already in use. Please choose a different name.'
+                        }))
+                        # Remove from clients list if we added them
+                        if websocket in rooms[room_code]['clients']:
+                            rooms[room_code]['clients'].remove(websocket)
+                        continue
+                    
+                    # Add to clients list
+                    rooms[room_code]['clients'].append(websocket)
                     
                     if is_reconnect:
                         # Reconnection: reassign hero to new player_id
@@ -1473,6 +1501,38 @@ async def handle_websocket(websocket, path):
                         'heroes': rooms[client_room]['heroes']
                     })
                     await rooms[client_room]['host'].send(msg)
+                    for client in rooms[client_room]['clients']:
+                        await client.send(msg)
+            
+            # HERO STATS ROLLED (broadcast to all players)
+            elif msg_type == 'hero_stats_rolled':
+                if client_room and client_room in rooms:
+                    hero = data.get('hero')
+                    stats = data.get('stats')
+                    if hero and stats:
+                        # Broadcast to all players (including sender for confirmation)
+                        msg = json.dumps({
+                            'type': 'hero_stats_rolled',
+                            'hero': hero,
+                            'stats': stats
+                        })
+                        await rooms[client_room]['host'].send(msg)
+                        for client in rooms[client_room]['clients']:
+                            await client.send(msg)
+            
+            # ROLL PHASE START (host broadcasts to clients)
+            elif msg_type == 'roll_phase_start':
+                if client_room and client_room in rooms and client_role == 'host':
+                    # Broadcast to all clients
+                    msg = json.dumps({'type': 'roll_phase_start'})
+                    for client in rooms[client_room]['clients']:
+                        await client.send(msg)
+            
+            # ROLL PHASE CANCEL (host broadcasts to clients)
+            elif msg_type == 'roll_phase_cancel':
+                if client_room and client_room in rooms and client_role == 'host':
+                    # Broadcast to all clients
+                    msg = json.dumps({'type': 'roll_phase_cancel'})
                     for client in rooms[client_room]['clients']:
                         await client.send(msg)
             

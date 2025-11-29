@@ -2,6 +2,84 @@
 
 # Changelog
 
+## v0.2.96 - Roll Stats Broadcast Fix (2025-11-28)
+- **Critical Bug Fix:**
+  - Fixed rolled stats not being broadcast to other players in multiplayer
+  - Changed `multiplayerState.connected` (undefined) to proper WebSocket check
+  - Now uses `multiplayerState.ws && multiplayerState.ws.readyState === WebSocket.OPEN`
+  - Host now receives client rolled stats, enabling LAUNCH GAME button when all heroes roll
+
+## v0.2.95 - Random Player Names & Server-Side Duplicate Check (2025-11-28)
+- **Random Default Player Names:**
+  - New players now get a random name like "CryptoWolf", "NeonDragon", "QuantumHunter" etc.
+  - 10 first names × 10 last names = 100 possible combinations
+  - Prevents accidental name collisions that cause reconnection bugs
+  - First names: Crypto, Shadow, Pixel, Neon, Quantum, Cyber, Nova, Phoenix, Storm, Blaze
+  - Last names: Wolf, Hawk, Dragon, Knight, Hunter, Blade, Rider, Walker, Guard, Seeker
+  - Player name input now pre-populated with random name on page load
+
+- **Server-Side Duplicate Name Check:**
+  - Server checks if player name is already in use by an active connection when joining
+  - If name is taken by connected player: rejects with "Name is already in use" error
+  - If name was used by disconnected player: allows reconnection (existing behavior)
+  - Client automatically generates new random name when rejected and focuses input field
+
+- **Bug Fixes:**
+  - Fixed player name input being empty on start screen
+  - Fixed `joinMultiplayerRoom()` not sending player name to server
+  - Fixed all join functions to use random name as fallback instead of "Player"
+  - Fixed `multiplayerState.playerHeroes` not being populated from WebSocket data
+  - Fixed roll phase status showing "0/0 heroes" because claimed heroes weren't tracked
+  - Fixed LAUNCH GAME button staying disabled even when all heroes rolled
+  - Fixed clients seeing REJOIN GAME button during new game (now hidden when roll phase starts)
+  - Roll buttons now correctly only appear after host clicks NEW GAME (not on hero selection)
+
+## v0.2.94 - Roll Phase Flow Redesign (2025-11-28)
+- **New Roll Phase Workflow:**
+  - Roll buttons now only appear AFTER host clicks "NEW GAME"
+  - Host clicking "NEW GAME" enters "Roll Phase" showing roll buttons for all players
+  - Once all 4 heroes have rolled and accepted stats, "LAUNCH GAME" button enables
+  - "BACK" button in roll phase cancels and returns to hero selection options
+  - Clear separation between hero selection and stat rolling phases
+
+- **Two-Phase UI:**
+  - Phase 1: BACK, CONTINUE GAME, LOAD SAVE, NEW GAME buttons
+  - Phase 2 (Roll Phase): BACK button + Roll status display + LAUNCH GAME button
+  - Roll status shows how many heroes have rolled (e.g., "2/4 heroes rolled")
+  
+- **WebSocket Sync:**
+  - `roll_phase_start` message broadcast when host enters roll phase
+  - `roll_phase_cancel` message broadcast when host cancels roll phase
+  - Clients automatically show/hide roll buttons based on host's phase
+  - `updateRollPhaseStatus()` called when receiving rolled stats from other players
+
+- **Technical Details:**
+  - `inRollPhase` state variable tracks current phase
+  - `enterRollPhase()`, `cancelRollPhase()`, `launchNewGame()` functions for phase control
+  - `showAllRollButtons()`, `hideAllRollButtons()` for roll button visibility
+  - `updateRollPhaseStatus()` checks if all heroes have rolled and enables launch button
+  - Server handlers added for `roll_phase_start` and `roll_phase_cancel` messages
+
+## v0.2.93 - Character Stat Rolling (2025-11-28)
+- **Dice Rolling System for New Games:**
+  - When starting a new game, players can roll stats for their claimed heroes
+  - Classic 3d6 rolling for each stat (STR, DEX, CON, INT, WIS, CHA)
+  - Visual dice rolling modal with animated dice that tumble and show final values
+  - HP calculated from CON: 10 + CON modifier
+  - AC calculated from DEX: 10 + DEX modifier
+  - Players can re-roll unlimited times until they accept their stats
+  - "ROLL STATS" button appears on hero cards only when:
+    - Player has claimed the hero
+    - No saved game exists (new game only)
+  - Rolled stats persist when game starts and are saved to localStorage
+  - Multiplayer support: Other players see stat changes in real-time via WebSocket broadcast
+
+- **Technical Details:**
+  - `heroSelectionHasSave` flag tracks saved game status
+  - `multiplayerState.rolledHeroStats` stores rolled stats per hero
+  - `hero_stats_rolled` WebSocket message broadcasts rolls to all players
+  - `createDefaultSharedSave()` now uses rolled stats when available
+
 ## v0.2.92 - Hero Selection & Battle UI Polish (2025-11-28)
 - **Hero Selection Screen:**
   - HP and AC now displayed on same row (HP red, AC blue)
