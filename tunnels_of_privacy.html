@@ -1595,7 +1595,15 @@
                 <button class="menuButton comingSoon" disabled>ENTER LEVEL STORE<br><span style="font-size: 12px; font-weight: 400;">(If Found)</span></button>
                 <button class="menuButton">INVENTORY</button>
                 <button class="menuButton">REST / SLEEP</button>
-                <button class="menuButton" onclick="refreshGameData()" style="background: linear-gradient(135deg, #2A9D8F, #1B7368); border-color: #2A9D8F;">🔄 REFRESH DATA</button>
+                
+                <!-- Stairs Section -->
+                <div style="text-align: center; margin-top: 5px;">
+                    <div style="color: #BFD1E0; font-size: 14px; font-weight: 700; margin-bottom: 8px; text-shadow: 0 0 10px rgba(139, 69, 255, 0.5);">STAIRS</div>
+                    <div style="display: flex; gap: 10px; justify-content: center;">
+                        <button class="menuButton" onclick="changeLevel(-1)" style="width: 120px; padding: 10px 15px; font-size: 14px;">⬆️ UP</button>
+                        <button class="menuButton" onclick="changeLevel(1)" style="width: 120px; padding: 10px 15px; font-size: 14px;">⬇️ DOWN</button>
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -1750,7 +1758,7 @@
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.3.02 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.3.05 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div style="
@@ -2230,7 +2238,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.3.02';
+        const GAME_VERSION = 'v0.3.05';
         
         // ===== RANDOM PLAYER NAME GENERATOR =====
         const PLAYER_FIRST_NAMES = ['Crypto', 'Shadow', 'Pixel', 'Neon', 'Quantum', 'Cyber', 'Nova', 'Phoenix', 'Storm', 'Blaze'];
@@ -3361,9 +3369,34 @@
                 }
                 
                 const roomLevel = preGeneratedEncounter.roomLevel;
+                console.log('[PreGen] Generating encounter for level:', roomLevel);
                 
                 // Generate boss (progress: 10% -> 40%)
-                const boss = bossesData.find(b => b.mainLevel === roomLevel);
+                // Level 1 has no boss (casual intro level)
+                let boss = null;
+                if (roomLevel >= 2) {
+                    boss = bossesData.find(b => b.mainLevel === roomLevel);
+                    
+                    // Fallback for levels without exact boss match
+                    if (!boss) {
+                        if (roomLevel > 100) {
+                            // After level 100, pick a random boss
+                            boss = bossesData[Math.floor(Math.random() * bossesData.length)];
+                            console.log(`[PreGen] Level ${roomLevel} > 100, random boss: ${boss.name}`);
+                        } else {
+                            // For levels 2-100 without exact match, find nearest available boss
+                            console.warn(`[PreGen] No boss found for level ${roomLevel}, finding nearest...`);
+                            const sortedBosses = [...bossesData].sort((a, b) => 
+                                Math.abs(a.mainLevel - roomLevel) - Math.abs(b.mainLevel - roomLevel)
+                            );
+                            boss = sortedBosses[0];
+                            if (boss) {
+                                console.log(`[PreGen] Using fallback boss from level ${boss.mainLevel}: ${boss.name}`);
+                            }
+                        }
+                    }
+                }
+                
                 if (boss) {
                     const generatedBoss = await generateEncounter('boss', boss, roomLevel);
                     preGeneratedEncounter.boss = {
@@ -3452,6 +3485,10 @@
         
         // Reset pre-generated encounter (call after battle ends)
         function resetPreGeneratedEncounter() {
+            // Get current level from UI
+            const dungeonLevelEl = document.getElementById('dungeonMenuLevel');
+            const currentLevel = parseInt(dungeonLevelEl?.textContent) || 1;
+            
             preGeneratedEncounter = {
                 ready: false,
                 generating: false,
@@ -3459,10 +3496,60 @@
                 mobs: [],
                 captive: null,
                 background: null,
-                roomLevel: 2
+                roomLevel: currentLevel
             };
             // Reset loading bar UI
             updateExploreLoadingBar(0);
+        }
+        
+        // Change dungeon level (stairs up/down)
+        function changeLevel(direction) {
+            // Get current level from UI
+            const dungeonLevelEl = document.getElementById('dungeonMenuLevel');
+            let currentLevel = parseInt(dungeonLevelEl?.textContent) || 1;
+            
+            // Calculate new level (minimum 1)
+            const newLevel = Math.max(1, currentLevel + direction);
+            
+            // Don't do anything if level didn't change
+            if (newLevel === currentLevel) {
+                console.log('[Stairs] Already at minimum level');
+                return;
+            }
+            
+            console.log(`[Stairs] Moving from level ${currentLevel} to level ${newLevel}`);
+            
+            // Update UI
+            if (dungeonLevelEl) {
+                dungeonLevelEl.textContent = newLevel;
+            }
+            
+            // Save to shared save
+            const sharedSave = loadSharedSave();
+            if (sharedSave) {
+                if (!sharedSave.dungeonState) {
+                    sharedSave.dungeonState = {};
+                }
+                sharedSave.dungeonState.currentLevel = newLevel;
+                sharedSave.lastPlayed = Date.now();
+                saveSharedSave(sharedSave);
+                console.log('[Stairs] Game saved at level', newLevel);
+            }
+            
+            // Reset and regenerate encounter for new level
+            preGeneratedEncounter = {
+                ready: false,
+                generating: false,
+                boss: null,
+                mobs: [],
+                captive: null,
+                background: null,
+                roomLevel: newLevel
+            };
+            updateExploreLoadingBar(0);
+            
+            // Start generating the new encounter
+            preGenerateNextEncounter();
         }
         
         // Chat state for battle
@@ -3879,12 +3966,13 @@
             
             // In multiplayer, only host calls LLM
             if (multiplayerState.enabled && multiplayerState.role === 'client') {
-                // Send to host for LLM processing
+                // Send to host for LLM processing, including target selection
                 if (statusEl) statusEl.textContent = 'Sending to host...';
                 sendWebSocketMessage({
                     type: 'chat_request',
                     playerName: playerName,
-                    message: message
+                    message: message,
+                    targetEntity: chatState.targetEntity  // Include client's selected target
                 });
                 setTimeout(() => { if (statusEl) statusEl.textContent = ''; }, 2000);
                 return;
@@ -3908,17 +3996,37 @@
                 }
             }
             
-            // If broadcast mode or no valid target, pick first available NPC
-            if (!respondingNpc) {
-                // Check captive first (friendly NPC who can chat)
+            // If broadcast mode (ALL), give all NPCs a chance to respond via free will
+            if (!chatState.targetEntity) {
+                const allNpcs = [];
+                
+                // Add captive if present and can chat
                 if (battleState.captiveNpc && !battleState.captiveNpc.rescued && battleState.captiveNpc.canChat) {
-                    respondingNpc = battleState.captiveNpc;
+                    allNpcs.push(battleState.captiveNpc);
                 }
                 
-                // If no captive, try enemies
-                if (!respondingNpc) {
-                    respondingNpc = battleState.enemies.find(e => e.hp > 0 && e.backstory);
+                // Add all alive enemies with backstory
+                battleState.enemies.forEach(enemy => {
+                    if (enemy.hp > 0 && enemy.backstory) {
+                        allNpcs.push(enemy);
+                    }
+                });
+                
+                if (allNpcs.length === 0) {
+                    if (statusEl) statusEl.textContent = 'No one can talk';
+                    addChatMessage('System', 'friendly', 'people/zooko_a_head_compressed.png', 
+                        '*No one responds...*', true);
+                    setTimeout(() => { if (statusEl) statusEl.textContent = ''; }, 2000);
+                    return;
                 }
+                
+                // Give each NPC a chance to respond (free will style)
+                if (statusEl) statusEl.textContent = 'NPCs considering response...';
+                for (const npc of allNpcs) {
+                    triggerFreeWillChatResponse(npc, playerName, message);
+                }
+                setTimeout(() => { if (statusEl) statusEl.textContent = ''; }, 3000);
+                return;
             }
             
             if (!respondingNpc) {
@@ -4485,6 +4593,61 @@
             })();
         }
         
+        // Trigger free will response to player broadcast message (ALL mode)
+        // Each NPC decides if they want to respond based on personality/context
+        function triggerFreeWillChatResponse(npc, playerName, playerMessage) {
+            if (!npc || !npc.backstory) return;
+            
+            // Don't spam - check cooldown (shorter than regular free will)
+            if (npc.lastFreeWillChat && Date.now() - npc.lastFreeWillChat < 3000) return;
+            
+            // 1d6 dice roll - only respond on a 1 (~17% chance)
+            const diceRoll = Math.floor(Math.random() * 6) + 1;
+            if (diceRoll !== 1) return;
+            
+            npc.lastFreeWillChat = Date.now();
+            console.log(`[Free Will] ${npc.name} rolled a 1! Considering response...`);
+            
+            // Make async LLM call - NPC decides if they want to respond
+            (async () => {
+                try {
+                    const response = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            npcName: npc.name,
+                            backstory: npc.backstory,
+                            npcType: npc.isBoss ? 'boss' : (npc.isCaptive ? 'captive' : 'mob'),
+                            conversation: chatState.messages.slice(0, 5).reverse(),
+                            message: playerMessage,
+                            playerName: playerName,
+                            modelId: settings.llmUsePaid ? 3 : 2,  // Use Groq models for speed
+                            rpMode: settings.rpMode !== false
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    if (result.success && result.response) {
+                        // Skip if response indicates no response (silence, ignoring, etc)
+                        const responseLower = result.response.toLowerCase();
+                        if (responseLower.includes('*silence*') || 
+                            responseLower.includes('*ignores*') ||
+                            responseLower.includes('*says nothing*') ||
+                            responseLower === '...' ||
+                            result.response.trim().length < 3) {
+                            return; // NPC chose not to respond
+                        }
+                        
+                        const npcType = npc.hostile ? 'hostile' : (npc.questable ? 'questable' : 'friendly');
+                        addChatMessage(npc.name, npcType, npc.spritePath || 'people/zooko_a_head_compressed.png', 
+                            result.response, true, npc.voiceType, npc.personality);
+                    }
+                } catch (error) {
+                    console.error('[Free Will Response] Chat error:', error);
+                }
+            })();
+        }
+        
         // Start a battle encounter
         async function startBattle() {
             // Multiplayer clients cannot start battles - only host
@@ -4562,7 +4725,8 @@
                     sprite: new Image(),
                     spritePath: 'tunnelsofprivacy/heros/zooko.png',
                     backpackSprite: new Image(),
-                    backpackPath: 'tunnelsofprivacy/gear/zooko_backpack.png'
+                    backpackPath: 'tunnelsofprivacy/gear/zooko_backpack.png',
+                    potions: [{ anim: null, visible: true }, { anim: null, visible: true }]
                 },
                 { 
                     name: 'Nate', 
@@ -4576,7 +4740,8 @@
                     sprite: new Image(),
                     spritePath: 'tunnelsofprivacy/heros/nate.png',
                     backpackSprite: new Image(),
-                    backpackPath: 'tunnelsofprivacy/gear/nate_backpack.png'
+                    backpackPath: 'tunnelsofprivacy/gear/nate_backpack.png',
+                    potions: [{ anim: null, visible: true }, { anim: null, visible: true }]
                 },
                 { 
                     name: 'Zancas', 
@@ -4590,7 +4755,8 @@
                     sprite: new Image(),
                     spritePath: 'tunnelsofprivacy/heros/zancas.png',
                     backpackSprite: new Image(),
-                    backpackPath: 'tunnelsofprivacy/gear/zancas_backpack.png'
+                    backpackPath: 'tunnelsofprivacy/gear/zancas_backpack.png',
+                    potions: [{ anim: null, visible: true }, { anim: null, visible: true }]
                 },
                 { 
                     name: 'CyberAxe', 
@@ -4604,7 +4770,8 @@
                     sprite: new Image(),
                     spritePath: 'tunnelsofprivacy/heros/cyberaxe.png',
                     backpackSprite: new Image(),
-                    backpackPath: 'tunnelsofprivacy/gear/cyberaxe_backpack.png'
+                    backpackPath: 'tunnelsofprivacy/gear/cyberaxe_backpack.png',
+                    potions: [{ anim: null, visible: true }, { anim: null, visible: true }]
                 }
             ];
             
@@ -4635,6 +4802,19 @@
                         renderBattle(); // Re-render when backpack loads
                     };
                     hero.backpackSprite.src = hero.backpackPath + '?v=' + Date.now();
+                }
+                
+                // Initialize health potion static sprites
+                if (hero.potions) {
+                    const potionPath = 'tunnelsofprivacy/items/healing_potions_a_cropped.png';
+                    // Load shared potion sprite once per hero
+                    hero.potionSprite = new Image();
+                    hero.potionSprite.onload = () => renderBattle();
+                    hero.potionSprite.src = potionPath + '?v=' + Date.now();
+                    
+                    hero.potions.forEach((potion, idx) => {
+                        potion.visible = idx < hero.healsRemaining;  // Show based on heals remaining
+                    });
                 }
             });
             
@@ -5762,11 +5942,16 @@
                 
                 // Draw backpack at hero's feet (in front of the hero)
                 if (hero.backpackSprite && hero.backpackSprite.complete && hero.backpackSprite.naturalHeight > 0) {
-                    const backpackWidth = 80 * depthScale;
-                    const backpackHeight = 80 * depthScale;
-                    // Position backpack at feet (lower left of hero)
+                    // Per-hero backpack sizes
+                    const backpackSizes = { 'Zooko': 110, 'Nate': 110, 'Zancas': 110, 'CyberAxe': 100 };
+                    const backpackSize = backpackSizes[hero.name] || 100;
+                    const backpackWidth = backpackSize * depthScale;
+                    const backpackHeight = backpackSize * depthScale;
+                    // Position backpack at feet (lower left of hero) - per-hero Y offset
+                    const backpackYOffsets = { 'Zooko': 100, 'Nate': 90, 'Zancas': 95, 'CyberAxe': 90 };
+                    const backpackYOffset = backpackYOffsets[hero.name] || 100;
                     const backpackX = hero.x - backpackWidth / 2 - (60 * depthScale);
-                    const backpackY = hero.y + (60 * depthScale); // At feet level
+                    const backpackY = hero.y + (backpackYOffset * depthScale); // At feet level
                     
                     // Draw shadow behind backpack for depth
                     ctx.save();
@@ -5776,6 +5961,27 @@
                     ctx.shadowOffsetY = 4 * depthScale;
                     ctx.drawImage(hero.backpackSprite, backpackX, backpackY, backpackWidth, backpackHeight);
                     ctx.restore();
+                    
+                    // Draw health potions in front of backpack (left and right)
+                    if (hero.potions) {
+                        const potionSize = 40 * depthScale;
+                        const potionSpacing = 10 * depthScale;  // Space from backpack edge
+                        // Per-hero inward offset for potions (Zooko, Nate, Zancas need potions closer together)
+                        const potionInward = (hero.name === 'Zooko' || hero.name === 'Nate' || hero.name === 'Zancas') ? 5 * depthScale : 0;
+                        
+                        hero.potions.forEach((potion, idx) => {
+                            if (!potion.visible || !hero.potionSprite || !hero.potionSprite.complete) return;
+                            
+                            // Position: left potion on left of backpack, right potion on right
+                            const potionX = idx === 0 
+                                ? backpackX - potionSpacing + potionInward  // Left potion (moved right)
+                                : backpackX + backpackWidth - potionSize + potionSpacing - potionInward;  // Right potion (moved left)
+                            const potionY = backpackY + (backpackHeight - potionSize) / 2 + (15 * depthScale);  // Lowered
+                            
+                            // Draw static potion sprite
+                            ctx.drawImage(hero.potionSprite, potionX, potionY, potionSize, potionSize);
+                        });
+                    }
                 }
                 
                 // Fallback check - if no animation and no static sprite loaded
@@ -6318,18 +6524,18 @@
                 if (acEl) acEl.textContent = hero.stats.ac || 10;
                 if (xpEl) xpEl.textContent = hero.xp || 0;
                 
-                // Update heal hearts display
+                // Update heal potions display
                 if (healsEl) {
                     const healsRemaining = hero.healsRemaining || 0;
-                    let heartsHTML = '';
+                    let potionsHTML = '';
                     for (let i = 0; i < 2; i++) {
                         if (i < healsRemaining) {
-                            heartsHTML += '❤️ ';
+                            potionsHTML += '<img src="tunnelsofprivacy/items/healing_potions_a_cropped.png" style="width:20px;height:20px;vertical-align:middle;margin-right:2px;">';
                         } else {
-                            heartsHTML += '❌ ';
+                            potionsHTML += '<img src="tunnelsofprivacy/items/healing_potions_a_empty.png" style="width:20px;height:20px;vertical-align:middle;margin-right:2px;">';
                         }
                     }
-                    healsEl.innerHTML = heartsHTML.trim();
+                    healsEl.innerHTML = potionsHTML;
                 }
             });
         }
@@ -6852,6 +7058,16 @@
                 currentCombatant.hp = Math.min(currentCombatant.maxHp, currentCombatant.hp + healAmount);
                 currentCombatant.healsRemaining--;
                 currentCombatant.usedHeal = true; // Mark that heal was used this turn
+                
+                // Hide a potion sprite (consume the rightmost visible one)
+                if (currentCombatant.potions) {
+                    for (let i = currentCombatant.potions.length - 1; i >= 0; i--) {
+                        if (currentCombatant.potions[i].visible) {
+                            currentCombatant.potions[i].visible = false;
+                            break;
+                        }
+                    }
+                }
                 
                 // Trigger heal animation if hero has one (plays once, returns to idle)
                 const heroKey = currentCombatant.name.toLowerCase();
@@ -7779,6 +7995,16 @@
                 if (dungeonMenuLevel) {
                     dungeonMenuLevel.textContent = sharedSave.arcadeState.level;
                 }
+                // Set room level for encounter generation
+                preGeneratedEncounter.roomLevel = sharedSave.arcadeState.level;
+            }
+            // Also check dungeonState.currentLevel (from stairs)
+            if (sharedSave && sharedSave.dungeonState && sharedSave.dungeonState.currentLevel) {
+                const dungeonMenuLevel = document.getElementById('dungeonMenuLevel');
+                if (dungeonMenuLevel) {
+                    dungeonMenuLevel.textContent = sharedSave.dungeonState.currentLevel;
+                }
+                preGeneratedEncounter.roomLevel = sharedSave.dungeonState.currentLevel;
             }
             
             // Load hero stats from save to dungeon menu
@@ -8913,6 +9139,7 @@
         async function handleClientChatRequest(data) {
             const playerName = data.playerName || 'Player';
             const message = data.message || '';
+            const clientTarget = data.targetEntity;  // Client's selected target
             
             // Get player's hero avatar
             const heroAvatar = 'people/zooko_a_head_compressed.png';
@@ -8920,9 +9147,53 @@
             // Add player message to chat (will broadcast)
             addChatMessage(playerName, 'player', heroAvatar, message, false);
             
-            // Get NPC to respond
-            const respondingNpc = battleState.enemies.find(e => e.hp > 0 && e.backstory);
+            // Get NPC to respond based on client's target selection
+            let respondingNpc = null;
             
+            if (clientTarget) {
+                // Use client's selected target
+                if (clientTarget.type === 'captive') {
+                    respondingNpc = battleState.captiveNpc;
+                } else if (clientTarget.type === 'enemy' && clientTarget.index !== undefined) {
+                    respondingNpc = battleState.enemies[clientTarget.index];
+                }
+                
+                // Validate target is still valid
+                if (respondingNpc && (respondingNpc.hp <= 0 || respondingNpc.rescued)) {
+                    respondingNpc = null;
+                }
+            }
+            
+            // If no specific target (broadcast mode / ALL), give all NPCs a chance to respond via free will
+            if (!clientTarget) {
+                // Trigger free will for all alive NPCs - each decides if they want to respond
+                const allNpcs = [];
+                
+                // Add captive if present and can chat
+                if (battleState.captiveNpc && !battleState.captiveNpc.rescued && battleState.captiveNpc.canChat) {
+                    allNpcs.push(battleState.captiveNpc);
+                }
+                
+                // Add all alive enemies with backstory
+                battleState.enemies.forEach(enemy => {
+                    if (enemy.hp > 0 && enemy.backstory) {
+                        allNpcs.push(enemy);
+                    }
+                });
+                
+                if (allNpcs.length === 0) {
+                    addChatMessage('System', 'friendly', 'people/zooko_a_head_compressed.png', 
+                        '*No one responds...*', true);
+                    return;
+                }
+                
+                // Give each NPC a chance to respond (free will style)
+                for (const npc of allNpcs) {
+                    triggerFreeWillChatResponse(npc, playerName, message);
+                }
+                return;
+            }
+
             if (!respondingNpc) {
                 addChatMessage('System', 'friendly', 'people/zooko_a_head_compressed.png', 
                     '*No one responds...*', true);
@@ -10236,6 +10507,17 @@
                     hero.hp = Math.min(hero.maxHp, hero.hp + healAmount);
                     hero.healsRemaining--;
                     hero.usedHeal = true;
+                    
+                    // Hide a potion sprite (consume the rightmost visible one)
+                    if (hero.potions) {
+                        for (let i = hero.potions.length - 1; i >= 0; i--) {
+                            if (hero.potions[i].visible) {
+                                hero.potions[i].visible = false;
+                                break;
+                            }
+                        }
+                    }
+                    
                     showDiceRoll(`${hero.name} heals for ${healAmount} HP! (1 action used)`);
                     updateBattleHeroCards();
                 }
@@ -10275,6 +10557,7 @@
                     xp: h.xp,
                     level: h.level,
                     healsRemaining: h.healsRemaining,
+                    potionVisibility: h.potions ? h.potions.map(p => p.visible) : [true, true],
                     stats: h.stats,
                     x: h.x / canvas.width,
                     y: h.y / canvas.height,
@@ -10344,6 +10627,14 @@
                     existingHero.xp = heroData.xp;
                     existingHero.level = heroData.level;
                     existingHero.healsRemaining = heroData.healsRemaining;
+                    // Sync potion visibility from host
+                    if (existingHero.potions && heroData.potionVisibility) {
+                        heroData.potionVisibility.forEach((visible, idx) => {
+                            if (existingHero.potions[idx]) {
+                                existingHero.potions[idx].visible = visible;
+                            }
+                        });
+                    }
                     existingHero.stats = heroData.stats;
                     existingHero.x = heroData.x * canvas.width;
                     existingHero.y = (heroData.y * canvas.height) - 25;
@@ -10526,6 +10817,24 @@
                 if (idlePath) {
                     initAnimation(hero, idlePath, 'pingpong');
                 }
+                
+                // Initialize health potion animations for clients
+                // Initialize health potion static sprites for clients
+                hero.potions = [{ visible: true }, { visible: true }];
+                const potionPath = 'tunnelsofprivacy/items/healing_potions_a_cropped.png';
+                hero.potionSprite = new Image();
+                hero.potionSprite.onload = () => renderBattle();
+                hero.potionSprite.src = potionPath + '?v=' + Date.now();
+                
+                hero.potions.forEach((potion, idx) => {
+                    potion.visible = idx < hero.healsRemaining;  // Show based on heals remaining
+                });
+                
+                // Load backpack sprite for client
+                hero.backpackSprite = new Image();
+                hero.backpackPath = `tunnelsofprivacy/gear/${heroKey}_backpack.png`;
+                hero.backpackSprite.onload = () => renderBattle();
+                hero.backpackSprite.src = hero.backpackPath + '?v=' + Date.now();
             });
             
             // Setup enemies with host's data

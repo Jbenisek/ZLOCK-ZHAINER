@@ -2,6 +2,75 @@
 
 # Changelog
 
+## v0.3.05 - Level-Based Boss Selection (2025-11-29)
+- **Boss Selection by Level:**
+  - Boss now selected based on current dungeon level from `bosses_data.json`
+  - Level 1: No boss (casual intro level, mobs only)
+  - Levels 2-21: Exact matching boss for each level
+  - Levels 22-100: Uses nearest available boss (fallback system)
+  - Levels 100+: Random boss from the pool
+  - Console logging shows boss selection for debugging
+
+- **Technical Changes:**
+  - `preGenerateNextEncounter()` now uses `roomLevel` to find matching boss via `mainLevel` property
+  - Fallback system sorts bosses by distance from current level when no exact match
+  - Bosses data supports levels 2-21 with sprites in `tunnelsofprivacy/bosses/lvl{n}/`
+
+## v0.3.04 - Health Potions, Backpack Customization & Stairs System (2025-11-29)
+- **Health Potion Visual System:**
+  - Added visible health potion sprites next to hero backpacks on battle canvas
+  - Potions appear left and right of each hero's backpack
+  - Potions disappear when used (rightmost first)
+  - Static PNG sprite (`healing_potions_a_cropped.png`) for performance
+  - Potion UI in hero cards now shows potion images instead of heart emojis
+  - Empty potion image (`healing_potions_a_empty.png`) shown for used potions
+
+- **Per-Hero Backpack Customization:**
+  - Zooko, Nate, Zancas: 110x110 backpack size
+  - CyberAxe: 100x100 backpack size
+  - Per-hero Y offset positioning (Zooko: 100, Nate: 90, Zancas: 95, CyberAxe: 90)
+  - Potions moved 5px inward for Zooko, Nate, Zancas
+
+- **Stairs System (Level Navigation):**
+  - Removed REFRESH DATA button from dungeon menu
+  - Added STAIRS section with UP/DOWN buttons
+  - UP button decreases level (minimum 1)
+  - DOWN button increases level (no maximum)
+  - Level changes save to `dungeonState.currentLevel`
+  - Encounter pre-generation triggered for new level
+  - Level now persists across game sessions
+
+- **Broadcast Chat 1d6 Dice Roll:**
+  - When broadcasting to ALL, each NPC rolls 1d6
+  - Only NPCs rolling 1 (~17% chance) attempt LLM response
+  - Reduces API calls when multiple NPCs present
+
+- **Technical Changes:**
+  - `changeLevel(direction)` function handles stairs navigation
+  - `resetPreGeneratedEncounter()` now uses current level from UI
+  - `preGeneratedEncounter.roomLevel` set from saved level on game start
+  - Potion visibility synced via `potionVisibility` array in multiplayer broadcasts
+  - Client initialization includes potion sprites and backpack loading
+
+## v0.3.03 - Multiplayer Chat Target Fix & Broadcast Free Will (2025-11-29)
+- **Client Chat Target Fix:**
+  - Client now sends `targetEntity` with `chat_request` WebSocket message
+  - Host's `handleClientChatRequest()` uses client's selected target instead of picking first NPC
+  - Clicking NPC/Boss/Mob chat buttons on client now addresses the correct entity
+
+- **Broadcast Mode (ALL) Free Will System:**
+  - When ALL is selected (no specific target), all NPCs get a chance to respond
+  - New `triggerFreeWillChatResponse()` function handles broadcast responses
+  - Each NPC/Boss/Mob with backstory decides if they want to respond
+  - NPCs can choose to stay silent (*silence*, *ignores*, etc.)
+  - Works for both host and client broadcast messages
+  - 3-second cooldown per NPC to prevent spam
+
+- **Technical Changes:**
+  - `sendChatMessage()` now triggers free will for all NPCs when `chatState.targetEntity` is null
+  - `handleClientChatRequest()` triggers free will when `clientTarget` is null
+  - Both paths collect all alive NPCs (captive + enemies with backstory) and call `triggerFreeWillChatResponse()`
+
 ## v0.3.02 - Save System & Debug Cleanup (2025-11-29)
 - **Save System Fix:**
   - Game now properly saves after rolling stats and launching in single player
