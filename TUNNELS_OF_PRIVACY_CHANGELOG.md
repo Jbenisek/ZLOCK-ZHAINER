@@ -2,6 +2,68 @@
 
 # Changelog
 
+## v0.3.39 - Level Layout System (2025-11-30)
+- **Level Layout System:**
+  - Each dungeon level now has a predetermined room structure
+  - Rooms are generated with specific types: combat, boss, mini-boss, store, secret, NPC, exploration
+  - `generateLevelLayout(level)` creates room distribution based on level number:
+    - Base room count: 3 + level/5 (minimum 3, caps at ~23 rooms at level 100)
+    - Store room: 50% base chance + 2% per level (guaranteed at level 25+)
+    - Mini-bosses: 1 per 10 levels
+    - Secret rooms: 1 per 15 levels
+    - NPC rooms: 1 per 20 levels
+    - Exploration events: 1 per 12 levels
+
+- **Room Type Generation Functions:**
+  - `generateCombatRoomContent()` - Standard mobs without boss
+  - `generateBossRoomContent()` - Level boss encounter
+  - `generateMiniBossRoomContent()` - Easier boss from earlier levels
+  - `generateStoreRoomContent()` - Merchant with items to buy
+  - `generateSecretRoomContent()` - Treasure, artifact, shrine, or knowledge rewards
+  - `generateNPCRoomContent()` - Adventurer, scholar, healer, or guide interactions
+  - `generateExplorationRoomContent()` - Puzzle, trap, discovery, or environmental events
+
+- **Store System:**
+  - Merchants with random names and greetings
+  - Items: Health Potions, Mana Elixirs, Strength Tonics, Shield Charms, Speed Potions, Antidotes, Scrolls of Insight
+  - Prices scale with dungeon level (base price × (1 + level × 0.1))
+  - Item count increases at deeper levels (3 + level/10)
+
+- **Secret Room Rewards:**
+  - Treasure: Double gold + XP
+  - Artifact: Special item + double XP
+  - Shrine: Temporary blessing buff
+  - Knowledge: Triple XP + lore text
+
+- **NPC System:**
+  - Adventurers share combat tips
+  - Scholars reveal level secrets  
+  - Healers restore HP (25 + level×5)
+  - Guides show remaining rooms
+
+- **Exploration Events:**
+  - Puzzles (INT boost reward)
+  - Traps (DEX boost reward)
+  - Discoveries (standard XP)
+  - Environmental hazards (survival challenge)
+
+- **UI Updates:**
+  - Added "Next Room" preview panel above Explore button
+  - Shows upcoming room type with icon and color coding
+  - Special rooms (boss, store, secret) have glow effect
+  - Rooms display updates from level layout data
+
+- **Level Layout Persistence:**
+  - `saveLevelLayout()` / `loadLevelLayout()` preserve progress in sharedSave
+  - Level layout initializes on game start and level changes
+  - Room type tracking persists across game sessions
+
+- **Technical Details:**
+  - `currentLevelLayout` object tracks: level, totalRooms, roomsRemaining[], hasStore, hasBoss, miniBossCount, secretRooms, npcRooms, explorationEvents
+  - `getNextRoomType()` uses weighted selection from remaining room pool
+  - Boss room guaranteed as final room if not yet defeated
+  - `preGeneratedEncounter` now includes roomType and room-specific data objects
+
 ## v0.3.38 - UI Improvements (2025-11-30)
 - **Title Screen Cleanup:**
   - Removed "Current Dungeon Depth" level display and stats from title screen

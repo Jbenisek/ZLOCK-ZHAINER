@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.3.38</title>
+    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.3.39</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -1848,6 +1848,12 @@
                     </div>
                 </div>
                 
+                <!-- Next Room Preview -->
+                <div id="nextRoomPreview" style="background: rgba(0,0,0,0.4); border: 2px solid rgba(139, 69, 255, 0.5); border-radius: 10px; padding: 10px; margin-bottom: 15px; text-align: center;">
+                    <div style="font-size: 10px; color: #89A0B4; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px;">Next Room</div>
+                    <div id="nextRoomType" style="font-size: 16px; font-weight: bold; color: #F2C94C;">⚔️ Combat</div>
+                </div>
+                
                 <button class="menuButton" id="exploreLevelBtn" onclick="startBattle()">
                     <div class="loadingBar" id="exploreLoadingBar"></div>
                     <span class="btnText">EXPLORE LEVEL</span>
@@ -2148,7 +2154,7 @@
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.3.38 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.3.39 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div id="aboutDonateBtn" style="
@@ -2580,7 +2586,7 @@
         <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         
         <div style="display: block; width: 100%; margin-top: 15px; padding: 10px 0; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A7A8F; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-            Tunnels of Privacy v0.3.38
+            Tunnels of Privacy v0.3.39
         </div>
     </div>
     
@@ -2674,7 +2680,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.3.38';
+        const GAME_VERSION = 'v0.3.39';
         
         // ===== HACKATHON INFO TOOLTIP SYSTEM =====
         const TOOLTIP_DELAY = 800; // ms before tooltip appears
@@ -3473,6 +3479,353 @@
             updateLevelProgressDisplay();
         }
         // ===== END LEVEL PROGRESS TRACKING =====
+        
+        // ===== LEVEL LAYOUT SYSTEM =====
+        // Defines the structure of each dungeon level - rooms, encounters, stores, etc.
+        let currentLevelLayout = null;
+        
+        // Room types for level generation
+        const ROOM_TYPES = {
+            COMBAT: 'combat',           // Standard combat room with mobs
+            BOSS: 'boss',               // Level boss room
+            MINI_BOSS: 'miniBoss',      // Mini-boss encounter
+            STORE: 'store',             // Shop/merchant room
+            NPC: 'npc',                 // Non-combat NPC interaction
+            EXPLORATION: 'exploration', // Exploration/puzzle room
+            SECRET: 'secret',           // Hidden room (requires discovery)
+            CAPTIVE: 'captive'          // Room with captive NPC to rescue
+        };
+        
+        // Generate level layout based on dungeon level
+        function generateLevelLayout(level) {
+            // Base room counts that scale with level
+            const baseRooms = 4 + Math.floor(level / 3); // 4 rooms at level 1, increases every 3 levels
+            const maxRooms = Math.min(baseRooms, 12); // Cap at 12 rooms per level
+            
+            // Calculate room distribution
+            const combatRooms = Math.max(2, Math.floor(maxRooms * 0.4)); // 40% combat
+            const miniBossRooms = level >= 3 ? Math.min(Math.floor(level / 5), 2) : 0; // Mini-bosses start at level 3
+            const npcRooms = Math.max(1, Math.floor(maxRooms * 0.15)); // 15% NPC
+            const explorationRooms = Math.max(1, Math.floor(maxRooms * 0.15)); // 15% exploration
+            const secretRooms = Math.random() < 0.3 + (level * 0.02) ? 1 : 0; // 30%+ chance of secret room
+            const hasStore = Math.random() < 0.6 + (level * 0.02); // 60%+ chance of store
+            const captiveRooms = Math.random() < 0.4 ? 1 : 0; // 40% chance of captive
+            
+            // Build rooms array
+            const rooms = [];
+            let roomId = 1;
+            
+            // Always add the boss room (last room to be encountered)
+            rooms.push({
+                id: roomId++,
+                type: ROOM_TYPES.BOSS,
+                explored: false,
+                accessible: false, // Boss unlocks after other rooms explored
+                data: null // Will be populated by LLM
+            });
+            
+            // Add mini-boss rooms
+            for (let i = 0; i < miniBossRooms; i++) {
+                rooms.push({
+                    id: roomId++,
+                    type: ROOM_TYPES.MINI_BOSS,
+                    explored: false,
+                    accessible: true,
+                    data: null
+                });
+            }
+            
+            // Add combat rooms
+            for (let i = 0; i < combatRooms; i++) {
+                rooms.push({
+                    id: roomId++,
+                    type: ROOM_TYPES.COMBAT,
+                    explored: false,
+                    accessible: true,
+                    data: null
+                });
+            }
+            
+            // Add store if present
+            if (hasStore) {
+                rooms.push({
+                    id: roomId++,
+                    type: ROOM_TYPES.STORE,
+                    explored: false,
+                    accessible: true,
+                    data: null
+                });
+            }
+            
+            // Add NPC rooms
+            for (let i = 0; i < npcRooms; i++) {
+                rooms.push({
+                    id: roomId++,
+                    type: ROOM_TYPES.NPC,
+                    explored: false,
+                    accessible: true,
+                    data: null
+                });
+            }
+            
+            // Add exploration rooms
+            for (let i = 0; i < explorationRooms; i++) {
+                rooms.push({
+                    id: roomId++,
+                    type: ROOM_TYPES.EXPLORATION,
+                    explored: false,
+                    accessible: true,
+                    data: null
+                });
+            }
+            
+            // Add captive room if present
+            if (captiveRooms > 0) {
+                rooms.push({
+                    id: roomId++,
+                    type: ROOM_TYPES.CAPTIVE,
+                    explored: false,
+                    accessible: true,
+                    data: null
+                });
+            }
+            
+            // Add secret rooms (not initially accessible)
+            for (let i = 0; i < secretRooms; i++) {
+                rooms.push({
+                    id: roomId++,
+                    type: ROOM_TYPES.SECRET,
+                    explored: false,
+                    accessible: false, // Must be discovered
+                    discoveryHint: generateSecretRoomHint(),
+                    data: null
+                });
+            }
+            
+            // Shuffle non-boss rooms to randomize encounter order
+            const bossRoom = rooms.find(r => r.type === ROOM_TYPES.BOSS);
+            const otherRooms = rooms.filter(r => r.type !== ROOM_TYPES.BOSS);
+            shuffleArray(otherRooms);
+            
+            const layout = {
+                level: level,
+                totalRooms: rooms.length,
+                accessibleRooms: rooms.filter(r => r.accessible).length,
+                rooms: otherRooms, // Boss is separate
+                bossRoom: bossRoom,
+                hasStore: hasStore,
+                storeFound: false,
+                secretRoomsTotal: secretRooms,
+                secretRoomsFound: 0,
+                roomQueue: [...otherRooms.filter(r => r.accessible)], // Queue of accessible unexplored rooms
+                generatedAt: Date.now()
+            };
+            
+            return layout;
+        }
+        
+        // Generate hint for finding secret rooms
+        function generateSecretRoomHint() {
+            const hints = [
+                'A draft of cold air seeps through a crack in the wall...',
+                'Strange markings on the floor point toward a shadowy corner...',
+                'The echo of your footsteps sounds hollow near one wall...',
+                'A faint glow emanates from behind loose stones...',
+                'Dust patterns suggest something has moved here recently...'
+            ];
+            return hints[Math.floor(Math.random() * hints.length)];
+        }
+        
+        // Shuffle array in place (Fisher-Yates)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+        
+        // Get the next room to explore based on level layout
+        function getNextRoomFromLayout() {
+            if (!currentLevelLayout) return null;
+            
+            // Get unexplored accessible rooms
+            const availableRooms = currentLevelLayout.rooms.filter(r => !r.explored && r.accessible);
+            
+            // Check if boss room should be accessible
+            const nonBossRoomsExplored = currentLevelLayout.rooms.filter(r => r.explored && r.type !== ROOM_TYPES.SECRET).length;
+            const requiredForBoss = Math.floor(currentLevelLayout.accessibleRooms * 0.7); // Need 70% explored for boss
+            
+            if (nonBossRoomsExplored >= requiredForBoss && !currentLevelLayout.bossRoom.explored) {
+                currentLevelLayout.bossRoom.accessible = true;
+            }
+            
+            // If no regular rooms left, check boss
+            if (availableRooms.length === 0) {
+                if (currentLevelLayout.bossRoom.accessible && !currentLevelLayout.bossRoom.explored) {
+                    return currentLevelLayout.bossRoom;
+                }
+                return null; // Level complete
+            }
+            
+            // Calculate room selection weights based on what's been found
+            // If store hasn't been found and few rooms left, increase store odds
+            const roomWeights = availableRooms.map(room => {
+                let weight = 1;
+                
+                if (room.type === ROOM_TYPES.STORE && !currentLevelLayout.storeFound) {
+                    // Increase store weight as fewer rooms remain
+                    const remainingRatio = availableRooms.length / currentLevelLayout.accessibleRooms;
+                    weight = remainingRatio < 0.3 ? 5 : (remainingRatio < 0.5 ? 3 : 1);
+                }
+                
+                return { room, weight };
+            });
+            
+            // Weighted random selection
+            const totalWeight = roomWeights.reduce((sum, rw) => sum + rw.weight, 0);
+            let random = Math.random() * totalWeight;
+            
+            for (const rw of roomWeights) {
+                random -= rw.weight;
+                if (random <= 0) {
+                    return rw.room;
+                }
+            }
+            
+            // Fallback to first available
+            return availableRooms[0];
+        }
+        
+        // Get the next room TYPE as a string for encounter generation
+        // This is used by preGenerateNextEncounter() to determine what kind of content to generate
+        function getNextRoomType() {
+            // Get the next room from the layout
+            const nextRoom = getNextRoomFromLayout();
+            
+            // If no room or no layout, default to combat
+            if (!nextRoom) {
+                return 'combat';
+            }
+            
+            // Map internal room types to the encounter generation types
+            const typeMapping = {
+                [ROOM_TYPES.COMBAT]: 'combat',
+                [ROOM_TYPES.BOSS]: 'boss',
+                [ROOM_TYPES.MINI_BOSS]: 'mini_boss',
+                [ROOM_TYPES.STORE]: 'store',
+                [ROOM_TYPES.NPC]: 'npc',
+                [ROOM_TYPES.EXPLORATION]: 'exploration',
+                [ROOM_TYPES.SECRET]: 'secret',
+                [ROOM_TYPES.CAPTIVE]: 'combat' // Captive rooms have combat + captive
+            };
+            
+            return typeMapping[nextRoom.type] || 'combat';
+        }
+        
+        // Mark a room as explored
+        function markRoomExplored(roomId) {
+            if (!currentLevelLayout) return;
+            
+            const room = currentLevelLayout.rooms.find(r => r.id === roomId);
+            if (room) {
+                room.explored = true;
+                
+                // Update store found flag
+                if (room.type === ROOM_TYPES.STORE) {
+                    currentLevelLayout.storeFound = true;
+                }
+                
+                // Update secret room count
+                if (room.type === ROOM_TYPES.SECRET) {
+                    currentLevelLayout.secretRoomsFound++;
+                }
+            }
+            
+            // Check boss room
+            if (currentLevelLayout.bossRoom && currentLevelLayout.bossRoom.id === roomId) {
+                currentLevelLayout.bossRoom.explored = true;
+            }
+            
+            // Save layout
+            saveLevelLayout();
+        }
+        
+        // Save level layout to sharedSave
+        function saveLevelLayout() {
+            if (multiplayerState.enabled && multiplayerState.role === 'client') return;
+            
+            try {
+                const sharedSave = loadSharedSave();
+                if (sharedSave && sharedSave.dungeonState) {
+                    if (!sharedSave.dungeonState.levelLayouts) {
+                        sharedSave.dungeonState.levelLayouts = {};
+                    }
+                    sharedSave.dungeonState.levelLayouts[currentLevelLayout.level] = currentLevelLayout;
+                    saveSharedSave(sharedSave);
+                }
+            } catch (e) {
+                console.error('[LevelLayout] Error saving:', e);
+            }
+        }
+        
+        // Load level layout from sharedSave or generate new
+        function loadOrGenerateLevelLayout(level) {
+            try {
+                const sharedSave = loadSharedSave();
+                
+                // Check if layout exists for this level
+                if (sharedSave?.dungeonState?.levelLayouts?.[level]) {
+                    currentLevelLayout = sharedSave.dungeonState.levelLayouts[level];
+                    console.log(`[LevelLayout] Loaded existing layout for level ${level}:`, currentLevelLayout.totalRooms, 'rooms');
+                } else {
+                    // Generate new layout
+                    currentLevelLayout = generateLevelLayout(level);
+                    console.log(`[LevelLayout] Generated new layout for level ${level}:`, currentLevelLayout.totalRooms, 'rooms');
+                    saveLevelLayout();
+                }
+                
+                // Update level progress max rooms display
+                levelProgress.roomsMax = currentLevelLayout.totalRooms;
+                updateLevelProgressDisplay();
+                
+            } catch (e) {
+                console.error('[LevelLayout] Error loading/generating:', e);
+                currentLevelLayout = generateLevelLayout(level);
+            }
+        }
+        
+        // Alias for initializeLevelLayout - used by stairs and game start
+        function initializeLevelLayout(level) {
+            loadOrGenerateLevelLayout(level);
+        }
+        
+        // Get room type display name
+        function getRoomTypeName(type) {
+            const names = {
+                [ROOM_TYPES.COMBAT]: 'Combat Room',
+                [ROOM_TYPES.BOSS]: 'Boss Chamber',
+                [ROOM_TYPES.MINI_BOSS]: 'Mini-Boss Lair',
+                [ROOM_TYPES.STORE]: 'Merchant\'s Den',
+                [ROOM_TYPES.NPC]: 'Meeting Hall',
+                [ROOM_TYPES.EXPLORATION]: 'Mysterious Chamber',
+                [ROOM_TYPES.SECRET]: 'Hidden Room',
+                [ROOM_TYPES.CAPTIVE]: 'Prison Cell'
+            };
+            return names[type] || 'Unknown Room';
+        }
+        
+        // Check if level is complete (all non-secret rooms explored + boss defeated)
+        function isLevelComplete() {
+            if (!currentLevelLayout) return false;
+            
+            const requiredRooms = currentLevelLayout.rooms.filter(r => r.type !== ROOM_TYPES.SECRET);
+            const allExplored = requiredRooms.every(r => r.explored);
+            const bossDefeated = currentLevelLayout.bossRoom.explored;
+            
+            return allExplored && bossDefeated;
+        }
+        // ===== END LEVEL LAYOUT SYSTEM =====
         
         // ===== RANDOM PLAYER NAME GENERATOR =====
         const PLAYER_FIRST_NAMES = ['Crypto', 'Shadow', 'Pixel', 'Neon', 'Quantum', 'Cyber', 'Nova', 'Phoenix', 'Storm', 'Blaze'];
@@ -5572,7 +5925,12 @@
             mobs: [],
             captive: null,
             background: null,
-            roomLevel: 2
+            roomLevel: 2,
+            roomType: 'combat',   // Room type from level layout
+            storeData: null,      // Store room merchant/items
+            secretData: null,     // Secret room rewards
+            npcData: null,        // NPC room data
+            explorationData: null // Exploration event data
         };
         
         // Pre-generate the next encounter while player is in dungeon menu
@@ -5593,88 +5951,73 @@
             updateExploreLoadingBar(0);
             
             try {
-                // Load enemy data based on difficulty setting
-                let bossesData = [];
-                let mobsData = [];
-                try {
-                    const difficultyFile = getBossDifficultyFile();
-                    const bossResponse = await fetch(difficultyFile);
-                    bossesData = await bossResponse.json();
-                    const mobResponse = await fetch('tunnelsofprivacy/mobs/mobs_data.json');
-                    const mobObj = await mobResponse.json();
-                    mobsData = mobObj.mobs || [];
-                    updateExploreLoadingBar(10);  // Data loaded
-                } catch(e) {
-                    console.error('[PreGen] Failed to load enemy data:', e);
-                    preGeneratedEncounter.generating = false;
-                    updateExploreLoadingBar(0);
-                    return;
-                }
-                
                 const roomLevel = preGeneratedEncounter.roomLevel;
                 
-                // Generate boss (progress: 10% -> 40%)
-                // Level 1 has no boss (casual intro level)
-                let boss = null;
-                if (roomLevel >= 2) {
-                    boss = bossesData.find(b => b.mainLevel === roomLevel);
-                    
-                    // Fallback for levels without exact boss match
-                    if (!boss) {
-                        if (roomLevel > 100) {
-                            // After level 100, pick a random boss
-                            boss = bossesData[Math.floor(Math.random() * bossesData.length)];
-                        } else {
-                            // For levels 2-100 without exact match, find nearest available boss
-                            console.warn(`[PreGen] No boss found for level ${roomLevel}, finding nearest...`);
-                            const sortedBosses = [...bossesData].sort((a, b) => 
-                                Math.abs(a.mainLevel - roomLevel) - Math.abs(b.mainLevel - roomLevel)
-                            );
-                            boss = sortedBosses[0];
-
-                        }
+                // Get room type from level layout (or default to combat)
+                const roomType = getNextRoomType();
+                preGeneratedEncounter.roomType = roomType;
+                console.log(`[PreGen] Generating ${roomType} room for level ${roomLevel}`);
+                
+                // Load enemy data based on difficulty setting (needed for combat/boss rooms)
+                let bossesData = [];
+                let mobsData = [];
+                if (roomType === 'combat' || roomType === 'boss' || roomType === 'mini_boss') {
+                    try {
+                        const difficultyFile = getBossDifficultyFile();
+                        const bossResponse = await fetch(difficultyFile);
+                        bossesData = await bossResponse.json();
+                        const mobResponse = await fetch('tunnelsofprivacy/mobs/mobs_data.json');
+                        const mobObj = await mobResponse.json();
+                        mobsData = mobObj.mobs || [];
+                    } catch(e) {
+                        console.error('[PreGen] Failed to load enemy data:', e);
+                        preGeneratedEncounter.generating = false;
+                        updateExploreLoadingBar(0);
+                        return;
                     }
                 }
+                updateExploreLoadingBar(10);  // Data loaded
                 
-                if (boss) {
-                    const generatedBoss = await generateEncounter('boss', boss, roomLevel);
-                    preGeneratedEncounter.boss = {
-                        baseData: boss,
-                        generated: generatedBoss
-                    };
-                    updateExploreLoadingBar(40);
-                    await new Promise(r => setTimeout(r, 500));  // Brief delay to avoid rate limits
+                // Generate content based on room type
+                switch (roomType) {
+                    case 'boss':
+                        // Boss room - always has the level boss
+                        await generateBossRoomContent(bossesData, roomLevel);
+                        break;
+                    
+                    case 'mini_boss':
+                        // Mini-boss room - tougher than normal, but not the main boss
+                        await generateMiniBossRoomContent(bossesData, mobsData, roomLevel);
+                        break;
+                    
+                    case 'store':
+                        // Store room - merchant with items to buy
+                        await generateStoreRoomContent(roomLevel);
+                        break;
+                    
+                    case 'secret':
+                        // Secret room - special treasure/event
+                        await generateSecretRoomContent(roomLevel);
+                        break;
+                    
+                    case 'npc':
+                        // NPC room - friendly character interaction
+                        await generateNPCRoomContent(roomLevel);
+                        break;
+                    
+                    case 'exploration':
+                        // Exploration event - puzzle/trap/discovery
+                        await generateExplorationRoomContent(roomLevel);
+                        break;
+                    
+                    case 'combat':
+                    default:
+                        // Standard combat room
+                        await generateCombatRoomContent(bossesData, mobsData, roomLevel);
+                        break;
                 }
                 
-                // Generate mobs based on level (progress: 40% -> 70%)
-                preGeneratedEncounter.mobs = [];
-                const hostileMobs = mobsData.filter(m => m.behavior?.hostile && (m.minLevel === undefined || m.minLevel <= roomLevel));
-                const mobCount = getMobCountForLevel(roomLevel);
-                const mobProgressPerMob = 30 / mobCount; // Distribute 30% progress across all mobs
-                for (let i = 0; i < mobCount && i < hostileMobs.length; i++) {
-                    const mob = hostileMobs[Math.floor(Math.random() * hostileMobs.length)];
-                    const generatedMob = await generateEncounter('mob', mob, roomLevel);
-                    preGeneratedEncounter.mobs.push({
-                        baseData: mob,
-                        generated: generatedMob
-                    });
-                    updateExploreLoadingBar(40 + Math.round((i + 1) * mobProgressPerMob));
-                    await new Promise(r => setTimeout(r, 300));  // Brief delay to avoid rate limits
-                }
-                
-                // Generate captive (50% chance) (progress: 70% -> 90%)
-                preGeneratedEncounter.captive = null;
-                if (Math.random() > 0.5) {
-                    const captiveData = await generateEncounter('captive', {}, roomLevel);
-                    const captiveSpriteNum = Math.floor(Math.random() * 12) + 1;
-                    preGeneratedEncounter.captive = {
-                        generated: captiveData,
-                        spriteNum: captiveSpriteNum
-                    };
-                }
-                updateExploreLoadingBar(90);
-                
-                // Pre-select background
+                // Pre-select background (all room types get a background)
                 const backgroundOptions = [
                     'backgrounds_lvl1 (8).png',
                     'backgrounds_lvl1 (10).png',
@@ -5689,10 +6032,357 @@
                 preGeneratedEncounter.generating = false;
                 updateExploreLoadingBar(100);  // Complete!
                 
+                // Update the Next Room Preview UI
+                updateNextRoomPreview();
+                updateLevelLayoutDisplay();
+                
             } catch (error) {
                 console.error('[PreGen] Error during pre-generation:', error);
                 preGeneratedEncounter.generating = false;
                 updateExploreLoadingBar(0);
+            }
+        }
+        
+        // ===== ROOM TYPE GENERATION FUNCTIONS =====
+        
+        // Generate standard combat room content
+        async function generateCombatRoomContent(bossesData, mobsData, roomLevel) {
+            // Standard combat has no boss, just mobs
+            preGeneratedEncounter.boss = null;
+            preGeneratedEncounter.mobs = [];
+            
+            const hostileMobs = mobsData.filter(m => m.behavior?.hostile && (m.minLevel === undefined || m.minLevel <= roomLevel));
+            const mobCount = getMobCountForLevel(roomLevel);
+            const mobProgressPerMob = 60 / mobCount; // Distribute 60% progress across all mobs
+            
+            for (let i = 0; i < mobCount && i < hostileMobs.length; i++) {
+                const mob = hostileMobs[Math.floor(Math.random() * hostileMobs.length)];
+                const generatedMob = await generateEncounter('mob', mob, roomLevel);
+                preGeneratedEncounter.mobs.push({
+                    baseData: mob,
+                    generated: generatedMob
+                });
+                updateExploreLoadingBar(10 + Math.round((i + 1) * mobProgressPerMob));
+                await new Promise(r => setTimeout(r, 300));
+            }
+            
+            // Generate captive (50% chance)
+            preGeneratedEncounter.captive = null;
+            if (Math.random() > 0.5) {
+                const captiveData = await generateEncounter('captive', {}, roomLevel);
+                const captiveSpriteNum = Math.floor(Math.random() * 12) + 1;
+                preGeneratedEncounter.captive = {
+                    generated: captiveData,
+                    spriteNum: captiveSpriteNum
+                };
+            }
+            updateExploreLoadingBar(90);
+        }
+        
+        // Generate boss room content (level boss)
+        async function generateBossRoomContent(bossesData, roomLevel) {
+            preGeneratedEncounter.mobs = [];
+            preGeneratedEncounter.captive = null;
+            
+            // Level 1 has no boss (casual intro level)
+            if (roomLevel < 2) {
+                preGeneratedEncounter.boss = null;
+                updateExploreLoadingBar(90);
+                return;
+            }
+            
+            let boss = bossesData.find(b => b.mainLevel === roomLevel);
+            
+            // Fallback for levels without exact boss match
+            if (!boss) {
+                if (roomLevel > 100) {
+                    boss = bossesData[Math.floor(Math.random() * bossesData.length)];
+                } else {
+                    console.warn(`[PreGen] No boss found for level ${roomLevel}, finding nearest...`);
+                    const sortedBosses = [...bossesData].sort((a, b) => 
+                        Math.abs(a.mainLevel - roomLevel) - Math.abs(b.mainLevel - roomLevel)
+                    );
+                    boss = sortedBosses[0];
+                }
+            }
+            
+            if (boss) {
+                const generatedBoss = await generateEncounter('boss', boss, roomLevel);
+                preGeneratedEncounter.boss = {
+                    baseData: boss,
+                    generated: generatedBoss
+                };
+            }
+            updateExploreLoadingBar(90);
+        }
+        
+        // Generate mini-boss room content
+        async function generateMiniBossRoomContent(bossesData, mobsData, roomLevel) {
+            // Mini-boss: pick a boss from lower levels or a tougher mob
+            preGeneratedEncounter.mobs = [];
+            preGeneratedEncounter.captive = null;
+            
+            // Try to find a boss from earlier levels
+            const lowerLevelBosses = bossesData.filter(b => b.mainLevel < roomLevel && b.mainLevel >= Math.max(1, roomLevel - 10));
+            
+            let miniBoss = null;
+            if (lowerLevelBosses.length > 0) {
+                miniBoss = lowerLevelBosses[Math.floor(Math.random() * lowerLevelBosses.length)];
+            } else if (bossesData.length > 0) {
+                // Use any random boss
+                miniBoss = bossesData[Math.floor(Math.random() * bossesData.length)];
+            }
+            
+            if (miniBoss) {
+                const generatedBoss = await generateEncounter('boss', miniBoss, roomLevel);
+                preGeneratedEncounter.boss = {
+                    baseData: miniBoss,
+                    generated: generatedBoss,
+                    isMiniBoss: true
+                };
+            }
+            updateExploreLoadingBar(90);
+        }
+        
+        // Generate store room content
+        async function generateStoreRoomContent(roomLevel) {
+            preGeneratedEncounter.boss = null;
+            preGeneratedEncounter.mobs = [];
+            preGeneratedEncounter.captive = null;
+            
+            // Store data - items available for purchase
+            preGeneratedEncounter.storeData = {
+                merchantName: getRandomMerchantName(),
+                items: generateStoreItems(roomLevel),
+                greeting: getRandomMerchantGreeting()
+            };
+            
+            console.log('[PreGen] Generated store with', preGeneratedEncounter.storeData.items.length, 'items');
+            updateExploreLoadingBar(90);
+        }
+        
+        // Generate secret room content
+        async function generateSecretRoomContent(roomLevel) {
+            preGeneratedEncounter.boss = null;
+            preGeneratedEncounter.mobs = [];
+            preGeneratedEncounter.captive = null;
+            
+            // Secret room rewards
+            const secretTypes = ['treasure', 'artifact', 'shrine', 'knowledge'];
+            const secretType = secretTypes[Math.floor(Math.random() * secretTypes.length)];
+            
+            preGeneratedEncounter.secretData = {
+                type: secretType,
+                reward: generateSecretReward(secretType, roomLevel),
+                description: getSecretDescription(secretType)
+            };
+            
+            console.log('[PreGen] Generated secret room:', secretType);
+            updateExploreLoadingBar(90);
+        }
+        
+        // Generate NPC room content
+        async function generateNPCRoomContent(roomLevel) {
+            preGeneratedEncounter.boss = null;
+            preGeneratedEncounter.mobs = [];
+            preGeneratedEncounter.captive = null;
+            
+            // NPC encounter - friendly character
+            const npcTypes = ['adventurer', 'scholar', 'healer', 'guide'];
+            const npcType = npcTypes[Math.floor(Math.random() * npcTypes.length)];
+            
+            preGeneratedEncounter.npcData = {
+                type: npcType,
+                name: getRandomNPCName(npcType),
+                dialogue: getNPCDialogue(npcType, roomLevel),
+                service: getNPCService(npcType, roomLevel)
+            };
+            
+            console.log('[PreGen] Generated NPC room:', npcType);
+            updateExploreLoadingBar(90);
+        }
+        
+        // Generate exploration event room content
+        async function generateExplorationRoomContent(roomLevel) {
+            preGeneratedEncounter.boss = null;
+            preGeneratedEncounter.mobs = [];
+            preGeneratedEncounter.captive = null;
+            
+            // Exploration events
+            const eventTypes = ['puzzle', 'trap', 'discovery', 'environmental'];
+            const eventType = eventTypes[Math.floor(Math.random() * eventTypes.length)];
+            
+            preGeneratedEncounter.explorationData = {
+                type: eventType,
+                challenge: generateExplorationChallenge(eventType, roomLevel),
+                reward: generateExplorationReward(eventType, roomLevel)
+            };
+            
+            console.log('[PreGen] Generated exploration event:', eventType);
+            updateExploreLoadingBar(90);
+        }
+        
+        // ===== STORE HELPERS =====
+        function getRandomMerchantName() {
+            const names = ['Zashop the Vendor', 'Cryptkeeper\'s Cache', 'The Shield Merchant', 'Thornwick\'s Treasures', 'Dusty Dale\'s Goods'];
+            return names[Math.floor(Math.random() * names.length)];
+        }
+        
+        function getRandomMerchantGreeting() {
+            const greetings = [
+                'Welcome, brave adventurer! Take a look at my wares.',
+                'Ah, customers! Please, browse to your heart\'s content.',
+                'Looking for something special? I might have just the thing.',
+                'My prices are fair, my goods are... mostly legitimate.',
+                'Heroes! Perfect timing. I have new stock from the upper levels.'
+            ];
+            return greetings[Math.floor(Math.random() * greetings.length)];
+        }
+        
+        function generateStoreItems(roomLevel) {
+            const items = [];
+            const itemCount = 3 + Math.floor(roomLevel / 10); // More items at deeper levels
+            
+            const itemTypes = [
+                { name: 'Health Potion', type: 'consumable', effect: 'heal', value: 25, basePrice: 50 },
+                { name: 'Mana Elixir', type: 'consumable', effect: 'mana', value: 20, basePrice: 40 },
+                { name: 'Strength Tonic', type: 'consumable', effect: 'buff_str', value: 2, basePrice: 75 },
+                { name: 'Shield Charm', type: 'consumable', effect: 'buff_ac', value: 2, basePrice: 60 },
+                { name: 'Speed Potion', type: 'consumable', effect: 'buff_dex', value: 2, basePrice: 65 },
+                { name: 'Antidote', type: 'consumable', effect: 'cure_poison', value: 1, basePrice: 30 },
+                { name: 'Scroll of Insight', type: 'consumable', effect: 'reveal', value: 1, basePrice: 100 }
+            ];
+            
+            for (let i = 0; i < Math.min(itemCount, 7); i++) {
+                const baseItem = itemTypes[Math.floor(Math.random() * itemTypes.length)];
+                items.push({
+                    ...baseItem,
+                    price: Math.floor(baseItem.basePrice * (1 + roomLevel * 0.1)),
+                    quantity: 1 + Math.floor(Math.random() * 3)
+                });
+            }
+            
+            return items;
+        }
+        
+        // ===== SECRET ROOM HELPERS =====
+        function generateSecretReward(secretType, roomLevel) {
+            const baseXP = 50 * roomLevel;
+            const baseGold = 100 * roomLevel;
+            
+            switch (secretType) {
+                case 'treasure':
+                    return { gold: baseGold * 2, xp: baseXP };
+                case 'artifact':
+                    return { item: 'Mysterious Artifact', xp: baseXP * 2 };
+                case 'shrine':
+                    return { blessing: 'temporary_buff', xp: baseXP, duration: 3 };
+                case 'knowledge':
+                    return { xp: baseXP * 3, lore: 'Ancient Zcash Knowledge' };
+                default:
+                    return { xp: baseXP };
+            }
+        }
+        
+        function getSecretDescription(secretType) {
+            const descriptions = {
+                'treasure': 'You discover a hidden cache of valuables!',
+                'artifact': 'A strange artifact glows with mysterious energy...',
+                'shrine': 'An ancient shrine radiates peaceful power.',
+                'knowledge': 'Cryptic writings cover the walls of this hidden chamber.'
+            };
+            return descriptions[secretType] || 'You found something interesting...';
+        }
+        
+        // ===== NPC HELPERS =====
+        function getRandomNPCName(npcType) {
+            const names = {
+                'adventurer': ['Marcus the Bold', 'Elena Swift', 'Gruff Ironfoot', 'Lily Shadowstep'],
+                'scholar': ['Professor Zook', 'Sage Whisperwind', 'Archivist Dusty', 'Lorekeeper Nyx'],
+                'healer': ['Sister Mercy', 'Brother Calm', 'Herbalist Fern', 'Medic Kane'],
+                'guide': ['Old Map Murphy', 'Scout Keen-Eye', 'Pathfinder Rosa', 'Tunnel Tom']
+            };
+            const typeNames = names[npcType] || names['adventurer'];
+            return typeNames[Math.floor(Math.random() * typeNames.length)];
+        }
+        
+        function getNPCDialogue(npcType, roomLevel) {
+            const dialogues = {
+                'adventurer': `I've been exploring these tunnels for days. Level ${roomLevel} is treacherous - stay alert!`,
+                'scholar': `Fascinating! The cryptographic inscriptions here suggest ancient Zcash knowledge...`,
+                'healer': `You look weary, travelers. Let me tend to your wounds.`,
+                'guide': `I know these passages well. The boss room is nearby - I can feel it.`
+            };
+            return dialogues[npcType] || 'Hello there, traveler.';
+        }
+        
+        function getNPCService(npcType, roomLevel) {
+            const services = {
+                'adventurer': { type: 'hint', description: 'Share combat tips' },
+                'scholar': { type: 'lore', description: 'Reveal level secrets' },
+                'healer': { type: 'heal', description: 'Restore HP', value: 25 + roomLevel * 5 },
+                'guide': { type: 'reveal', description: 'Show remaining rooms' }
+            };
+            return services[npcType] || { type: 'chat', description: 'Friendly conversation' };
+        }
+        
+        // ===== EXPLORATION HELPERS =====
+        function generateExplorationChallenge(eventType, roomLevel) {
+            const challenges = {
+                'puzzle': { type: 'riddle', difficulty: roomLevel, description: 'Solve the ancient puzzle' },
+                'trap': { type: 'avoid', difficulty: roomLevel, description: 'Navigate the trapped corridor' },
+                'discovery': { type: 'search', difficulty: roomLevel, description: 'Investigate the strange markings' },
+                'environmental': { type: 'survive', difficulty: roomLevel, description: 'Deal with hazardous conditions' }
+            };
+            return challenges[eventType] || challenges['discovery'];
+        }
+        
+        function generateExplorationReward(eventType, roomLevel) {
+            const baseXP = 30 * roomLevel;
+            return {
+                xp: baseXP,
+                bonus: eventType === 'puzzle' ? 'intelligence_boost' : eventType === 'trap' ? 'dexterity_boost' : null
+            };
+        }
+        
+        // ===== END ROOM TYPE GENERATION FUNCTIONS =====
+        
+        // Update the Next Room Preview UI
+        function updateNextRoomPreview() {
+            const nextRoomTypeEl = document.getElementById('nextRoomType');
+            if (!nextRoomTypeEl) return;
+            
+            const roomType = preGeneratedEncounter.roomType || 'combat';
+            
+            // Map room types to display text and icons
+            const roomTypeDisplay = {
+                'combat': { icon: '⚔️', text: 'Combat', color: '#E74C3C' },
+                'boss': { icon: '👹', text: 'BOSS BATTLE', color: '#8B45FF' },
+                'mini_boss': { icon: '💀', text: 'Mini-Boss', color: '#E67E22' },
+                'store': { icon: '🛒', text: 'Store', color: '#27AE60' },
+                'secret': { icon: '✨', text: 'Secret Room', color: '#F1C40F' },
+                'npc': { icon: '👤', text: 'NPC Encounter', color: '#3498DB' },
+                'exploration': { icon: '🔍', text: 'Exploration', color: '#9B59B6' }
+            };
+            
+            const display = roomTypeDisplay[roomType] || roomTypeDisplay['combat'];
+            nextRoomTypeEl.innerHTML = `${display.icon} ${display.text}`;
+            nextRoomTypeEl.style.color = display.color;
+            
+            // Add glow effect for special rooms
+            if (roomType === 'boss' || roomType === 'secret' || roomType === 'store') {
+                nextRoomTypeEl.style.textShadow = `0 0 15px ${display.color}`;
+            } else {
+                nextRoomTypeEl.style.textShadow = 'none';
+            }
+        }
+        
+        // Update level layout display (rooms remaining by type)
+        function updateLevelLayoutDisplay() {
+            // Update the Rooms display to show actual room count from layout
+            const roomsMaxEl = document.getElementById('dmRoomsMax');
+            if (roomsMaxEl && currentLevelLayout.generated) {
+                roomsMaxEl.textContent = currentLevelLayout.totalRooms;
             }
         }
         
@@ -5733,7 +6423,12 @@
                 mobs: [],
                 captive: null,
                 background: null,
-                roomLevel: currentLevel
+                roomLevel: currentLevel,
+                roomType: 'combat', // Will be set by preGenerateNextEncounter
+                storeData: null,
+                secretData: null,
+                npcData: null,
+                explorationData: null
             };
             // Reset loading bar UI
             updateExploreLoadingBar(0);
@@ -5793,12 +6488,16 @@
                 mobs: [],
                 captive: null,
                 background: null,
-                roomLevel: newLevel
+                roomLevel: newLevel,
+                roomType: 'combat' // Will be set by preGenerateNextEncounter
             };
             updateExploreLoadingBar(0);
             
             // Load level progress for new level (or reset if no saved progress)
             loadLevelProgress();
+            
+            // Initialize level layout for new level
+            initializeLevelLayout(newLevel);
             
             // Start generating the new encounter
             preGenerateNextEncounter();
@@ -5872,12 +6571,16 @@
                 mobs: [],
                 captive: null,
                 background: null,
-                roomLevel: newLevel
+                roomLevel: newLevel,
+                roomType: 'combat' // Will be set by preGenerateNextEncounter
             };
             updateExploreLoadingBar(0);
             
             // Load level progress for new level (or reset if no saved progress)
             loadLevelProgress();
+            
+            // Initialize level layout for new level
+            initializeLevelLayout(newLevel);
             
             // Start generating the new encounter
             preGenerateNextEncounter();
@@ -10755,6 +11458,10 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             
             // Apply client UI restrictions
             applyClientUIRestrictions();
+            
+            // Initialize level layout for current level
+            const currentLevel = preGeneratedEncounter.roomLevel || 1;
+            initializeLevelLayout(currentLevel);
             
             // Pre-generate next encounter while player is in dungeon menu
             preGenerateNextEncounter();
