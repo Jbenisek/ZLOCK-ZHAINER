@@ -21,8 +21,14 @@
       "loot": {
         "dropChance": 0.3,
         "items": [
-          { "item": "chitin_shell", "chance": 0.6 },
-          { "item": "small_health_potion", "chance": 0.4 }
+          {
+            "item": "chitin_shell",
+            "chance": 0.6
+          },
+          {
+            "item": "small_health_potion",
+            "chance": 0.4
+          }
         ]
       },
       "special": {
@@ -52,8 +58,14 @@
       "loot": {
         "dropChance": 0.4,
         "items": [
-          { "item": "reinforced_chitin", "chance": 0.7 },
-          { "item": "medium_health_potion", "chance": 0.3 }
+          {
+            "item": "reinforced_chitin",
+            "chance": 0.7
+          },
+          {
+            "item": "medium_health_potion",
+            "chance": 0.3
+          }
         ]
       },
       "special": {
@@ -83,8 +95,18 @@
       "loot": {
         "dropChance": 0.5,
         "items": [
-          { "item": "slime_gel", "chance": 0.8 },
-          { "item": "coin", "chance": 0.2, "amount": [1, 5] }
+          {
+            "item": "slime_gel",
+            "chance": 0.8
+          },
+          {
+            "item": "coin",
+            "chance": 0.2,
+            "amount": [
+              1,
+              5
+            ]
+          }
         ]
       },
       "special": {
@@ -114,8 +136,14 @@
       "loot": {
         "dropChance": 0.6,
         "items": [
-          { "item": "toxic_gel", "chance": 0.7 },
-          { "item": "poison_vial", "chance": 0.3 }
+          {
+            "item": "toxic_gel",
+            "chance": 0.7
+          },
+          {
+            "item": "poison_vial",
+            "chance": 0.3
+          }
         ]
       },
       "special": {
@@ -145,8 +173,18 @@
       "loot": {
         "dropChance": 0.4,
         "items": [
-          { "item": "shadow_essence", "chance": 0.5 },
-          { "item": "coin", "chance": 0.5, "amount": [5, 15] }
+          {
+            "item": "shadow_essence",
+            "chance": 0.5
+          },
+          {
+            "item": "coin",
+            "chance": 0.5,
+            "amount": [
+              5,
+              15
+            ]
+          }
         ]
       },
       "special": {
@@ -177,8 +215,14 @@
       "loot": {
         "dropChance": 0.2,
         "items": [
-          { "item": "ancient_coin", "chance": 0.6 },
-          { "item": "map_fragment", "chance": 0.4 }
+          {
+            "item": "ancient_coin",
+            "chance": 0.6
+          },
+          {
+            "item": "map_fragment",
+            "chance": 0.4
+          }
         ]
       },
       "special": {
@@ -213,9 +257,18 @@
       "loot": {
         "dropChance": 0.7,
         "items": [
-          { "item": "stone_core", "chance": 0.5 },
-          { "item": "rare_gem", "chance": 0.3 },
-          { "item": "large_health_potion", "chance": 0.2 }
+          {
+            "item": "stone_core",
+            "chance": 0.5
+          },
+          {
+            "item": "rare_gem",
+            "chance": 0.3
+          },
+          {
+            "item": "large_health_potion",
+            "chance": 0.2
+          }
         ]
       },
       "special": {
@@ -250,8 +303,14 @@
       "loot": {
         "dropChance": 0.8,
         "items": [
-          { "item": "wisp_light", "chance": 0.9 },
-          { "item": "magic_dust", "chance": 0.1 }
+          {
+            "item": "wisp_light",
+            "chance": 0.9
+          },
+          {
+            "item": "magic_dust",
+            "chance": 0.1
+          }
         ]
       },
       "special": {
@@ -286,9 +345,22 @@
       "loot": {
         "dropChance": 0.6,
         "items": [
-          { "item": "horror_tooth", "chance": 0.5 },
-          { "item": "cursed_bone", "chance": 0.3 },
-          { "item": "coin", "chance": 0.2, "amount": [20, 50] }
+          {
+            "item": "horror_tooth",
+            "chance": 0.5
+          },
+          {
+            "item": "cursed_bone",
+            "chance": 0.3
+          },
+          {
+            "item": "coin",
+            "chance": 0.2,
+            "amount": [
+              20,
+              50
+            ]
+          }
         ]
       },
       "special": {
@@ -318,10 +390,26 @@
       "loot": {
         "dropChance": 0.8,
         "items": [
-          { "item": "abyssal_heart", "chance": 0.4 },
-          { "item": "dark_crystal", "chance": 0.3 },
-          { "item": "legendary_weapon", "chance": 0.05 },
-          { "item": "coin", "chance": 0.25, "amount": [50, 100] }
+          {
+            "item": "abyssal_heart",
+            "chance": 0.4
+          },
+          {
+            "item": "dark_crystal",
+            "chance": 0.3
+          },
+          {
+            "item": "legendary_weapon",
+            "chance": 0.05
+          },
+          {
+            "item": "coin",
+            "chance": 0.25,
+            "amount": [
+              50,
+              100
+            ]
+          }
         ]
       },
       "special": {
@@ -351,8 +439,14 @@
       "loot": {
         "dropChance": 0.4,
         "items": [
-          { "item": "bone_fragment", "chance": 0.7 },
-          { "item": "sharp_tooth", "chance": 0.3 }
+          {
+            "item": "bone_fragment",
+            "chance": 0.7
+          },
+          {
+            "item": "sharp_tooth",
+            "chance": 0.3
+          }
         ]
       },
       "special": {
@@ -382,8 +476,18 @@
       "loot": {
         "dropChance": 0.5,
         "items": [
-          { "item": "goblin_dagger", "chance": 0.4 },
-          { "item": "coin", "chance": 0.6, "amount": [1, 10] }
+          {
+            "item": "goblin_dagger",
+            "chance": 0.4
+          },
+          {
+            "item": "coin",
+            "chance": 0.6,
+            "amount": [
+              1,
+              10
+            ]
+          }
         ]
       },
       "special": {
@@ -418,8 +522,14 @@
       "loot": {
         "dropChance": 0.3,
         "items": [
-          { "item": "venom_sac", "chance": 0.6 },
-          { "item": "insect_leg", "chance": 0.4 }
+          {
+            "item": "venom_sac",
+            "chance": 0.6
+          },
+          {
+            "item": "insect_leg",
+            "chance": 0.4
+          }
         ]
       },
       "special": {
@@ -449,8 +559,18 @@
       "loot": {
         "dropChance": 0.2,
         "items": [
-          { "item": "mite_dust", "chance": 0.9 },
-          { "item": "coin", "chance": 0.1, "amount": [1, 2] }
+          {
+            "item": "mite_dust",
+            "chance": 0.9
+          },
+          {
+            "item": "coin",
+            "chance": 0.1,
+            "amount": [
+              1,
+              2
+            ]
+          }
         ]
       },
       "special": {
@@ -480,8 +600,14 @@
       "loot": {
         "dropChance": 0.4,
         "items": [
-          { "item": "moth_wing", "chance": 0.7 },
-          { "item": "dream_dust", "chance": 0.3 }
+          {
+            "item": "moth_wing",
+            "chance": 0.7
+          },
+          {
+            "item": "dream_dust",
+            "chance": 0.3
+          }
         ]
       },
       "special": {
@@ -511,8 +637,14 @@
       "loot": {
         "dropChance": 0.6,
         "items": [
-          { "item": "lunar_wing", "chance": 0.6 },
-          { "item": "moon_essence", "chance": 0.4 }
+          {
+            "item": "lunar_wing",
+            "chance": 0.6
+          },
+          {
+            "item": "moon_essence",
+            "chance": 0.4
+          }
         ]
       },
       "special": {
@@ -547,8 +679,14 @@
       "loot": {
         "dropChance": 0.7,
         "items": [
-          { "item": "magic_core", "chance": 0.6 },
-          { "item": "mana_crystal", "chance": 0.4 }
+          {
+            "item": "magic_core",
+            "chance": 0.6
+          },
+          {
+            "item": "mana_crystal",
+            "chance": 0.4
+          }
         ]
       },
       "special": {
@@ -578,9 +716,22 @@
       "loot": {
         "dropChance": 0.3,
         "items": [
-          { "item": "rat_tail", "chance": 0.7 },
-          { "item": "disease_sample", "chance": 0.2 },
-          { "item": "coin", "chance": 0.1, "amount": [1, 3] }
+          {
+            "item": "rat_tail",
+            "chance": 0.7
+          },
+          {
+            "item": "disease_sample",
+            "chance": 0.2
+          },
+          {
+            "item": "coin",
+            "chance": 0.1,
+            "amount": [
+              1,
+              3
+            ]
+          }
         ]
       },
       "special": {
@@ -610,8 +761,14 @@
       "loot": {
         "dropChance": 0.5,
         "items": [
-          { "item": "spider_silk", "chance": 0.7 },
-          { "item": "venom_gland", "chance": 0.3 }
+          {
+            "item": "spider_silk",
+            "chance": 0.7
+          },
+          {
+            "item": "venom_gland",
+            "chance": 0.3
+          }
         ]
       },
       "special": {
@@ -641,15 +798,1548 @@
       "loot": {
         "dropChance": 0.5,
         "items": [
-          { "item": "worm_segment", "chance": 0.6 },
-          { "item": "digestive_acid", "chance": 0.3 },
-          { "item": "coin", "chance": 0.1, "amount": [10, 30] }
+          {
+            "item": "worm_segment",
+            "chance": 0.6
+          },
+          {
+            "item": "digestive_acid",
+            "chance": 0.3
+          },
+          {
+            "item": "coin",
+            "chance": 0.1,
+            "amount": [
+              10,
+              30
+            ]
+          }
         ]
       },
       "special": {
         "name": "Burrow",
         "description": "Burrows underground, emerging next turn to deal 12 damage",
         "cooldown": 5
+      }
+    },
+    {
+      "id": "mid_1",
+      "name": "Grave-Fungus Crawler",
+      "minLevel": 10,
+      "spritePath": "tunnelsofprivacy/mobs/mid_1.png",
+      "stats": {
+        "hp": 28,
+        "maxHp": 28,
+        "attackDamage": 5,
+        "ac": 12,
+        "speed": 3,
+        "experience": 35
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Deep Skill",
+        "description": "Grave-Fungus Crawler unleashes a mid-depth attack.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "mid_2",
+      "name": "Iron-Tusk Mole",
+      "minLevel": 10,
+      "spritePath": "tunnelsofprivacy/mobs/mid_2.png",
+      "stats": {
+        "hp": 30,
+        "maxHp": 30,
+        "attackDamage": 6,
+        "ac": 13,
+        "speed": 3,
+        "experience": 37
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Deep Skill",
+        "description": "Iron-Tusk Mole unleashes a mid-depth attack.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "mid_3",
+      "name": "Shardback Lizard",
+      "minLevel": 10,
+      "spritePath": "tunnelsofprivacy/mobs/mid_3.png",
+      "stats": {
+        "hp": 32,
+        "maxHp": 32,
+        "attackDamage": 7,
+        "ac": 14,
+        "speed": 3,
+        "experience": 39
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Deep Skill",
+        "description": "Shardback Lizard unleashes a mid-depth attack.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "mid_4",
+      "name": "Echoing Tunnel Stalker",
+      "minLevel": 10,
+      "spritePath": "tunnelsofprivacy/mobs/mid_4.png",
+      "stats": {
+        "hp": 34,
+        "maxHp": 34,
+        "attackDamage": 5,
+        "ac": 15,
+        "speed": 3,
+        "experience": 41
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Deep Skill",
+        "description": "Echoing Tunnel Stalker unleashes a mid-depth attack.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "mid_5",
+      "name": "Mudglass Worm",
+      "minLevel": 10,
+      "spritePath": "tunnelsofprivacy/mobs/mid_5.png",
+      "stats": {
+        "hp": 36,
+        "maxHp": 36,
+        "attackDamage": 6,
+        "ac": 12,
+        "speed": 3,
+        "experience": 43
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Deep Skill",
+        "description": "Mudglass Worm unleashes a mid-depth attack.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "mid_6",
+      "name": "Pit Howler",
+      "minLevel": 10,
+      "spritePath": "tunnelsofprivacy/mobs/mid_6.png",
+      "stats": {
+        "hp": 38,
+        "maxHp": 38,
+        "attackDamage": 7,
+        "ac": 13,
+        "speed": 3,
+        "experience": 45
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Deep Skill",
+        "description": "Pit Howler unleashes a mid-depth attack.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "mid_7",
+      "name": "Gloom-Burrow Snatcher",
+      "minLevel": 10,
+      "spritePath": "tunnelsofprivacy/mobs/mid_7.png",
+      "stats": {
+        "hp": 40,
+        "maxHp": 40,
+        "attackDamage": 5,
+        "ac": 14,
+        "speed": 3,
+        "experience": 47
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Deep Skill",
+        "description": "Gloom-Burrow Snatcher unleashes a mid-depth attack.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "mid_8",
+      "name": "Crag-Tooth Drakelet",
+      "minLevel": 10,
+      "spritePath": "tunnelsofprivacy/mobs/mid_8.png",
+      "stats": {
+        "hp": 42,
+        "maxHp": 42,
+        "attackDamage": 6,
+        "ac": 15,
+        "speed": 3,
+        "experience": 49
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Deep Skill",
+        "description": "Crag-Tooth Drakelet unleashes a mid-depth attack.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "mid_9",
+      "name": "Hollow-Eyed Miner Shade",
+      "minLevel": 10,
+      "spritePath": "tunnelsofprivacy/mobs/mid_9.png",
+      "stats": {
+        "hp": 44,
+        "maxHp": 44,
+        "attackDamage": 7,
+        "ac": 12,
+        "speed": 3,
+        "experience": 51
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Deep Skill",
+        "description": "Hollow-Eyed Miner Shade unleashes a mid-depth attack.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "mid_10",
+      "name": "Rockscale Terrapin",
+      "minLevel": 10,
+      "spritePath": "tunnelsofprivacy/mobs/mid_10.png",
+      "stats": {
+        "hp": 46,
+        "maxHp": 46,
+        "attackDamage": 5,
+        "ac": 13,
+        "speed": 3,
+        "experience": 53
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Deep Skill",
+        "description": "Rockscale Terrapin unleashes a mid-depth attack.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "mid_11",
+      "name": "Tunnel Emberling",
+      "minLevel": 10,
+      "spritePath": "tunnelsofprivacy/mobs/mid_11.png",
+      "stats": {
+        "hp": 48,
+        "maxHp": 48,
+        "attackDamage": 6,
+        "ac": 14,
+        "speed": 3,
+        "experience": 55
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Deep Skill",
+        "description": "Tunnel Emberling unleashes a mid-depth attack.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "mid_12",
+      "name": "Chittering Ore-Eater",
+      "minLevel": 10,
+      "spritePath": "tunnelsofprivacy/mobs/mid_12.png",
+      "stats": {
+        "hp": 50,
+        "maxHp": 50,
+        "attackDamage": 7,
+        "ac": 15,
+        "speed": 3,
+        "experience": 57
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Deep Skill",
+        "description": "Chittering Ore-Eater unleashes a mid-depth attack.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "mid_13",
+      "name": "Root-Vein Strider",
+      "minLevel": 10,
+      "spritePath": "tunnelsofprivacy/mobs/mid_13.png",
+      "stats": {
+        "hp": 52,
+        "maxHp": 52,
+        "attackDamage": 5,
+        "ac": 12,
+        "speed": 3,
+        "experience": 59
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Deep Skill",
+        "description": "Root-Vein Strider unleashes a mid-depth attack.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "mid_14",
+      "name": "Ash-Glow Muckling",
+      "minLevel": 10,
+      "spritePath": "tunnelsofprivacy/mobs/mid_14.png",
+      "stats": {
+        "hp": 54,
+        "maxHp": 54,
+        "attackDamage": 6,
+        "ac": 13,
+        "speed": 3,
+        "experience": 61
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Deep Skill",
+        "description": "Ash-Glow Muckling unleashes a mid-depth attack.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "mid_15",
+      "name": "Rustwing Batfiend",
+      "minLevel": 10,
+      "spritePath": "tunnelsofprivacy/mobs/mid_15.png",
+      "stats": {
+        "hp": 56,
+        "maxHp": 56,
+        "attackDamage": 7,
+        "ac": 14,
+        "speed": 3,
+        "experience": 63
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Deep Skill",
+        "description": "Rustwing Batfiend unleashes a mid-depth attack.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "mid_16",
+      "name": "Miner\u2019s Lament Wraith",
+      "minLevel": 10,
+      "spritePath": "tunnelsofprivacy/mobs/mid_16.png",
+      "stats": {
+        "hp": 58,
+        "maxHp": 58,
+        "attackDamage": 5,
+        "ac": 15,
+        "speed": 3,
+        "experience": 65
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Deep Skill",
+        "description": "Miner\u2019s Lament Wraith unleashes a mid-depth attack.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "mid_17",
+      "name": "Tunnelspine Serpentling",
+      "minLevel": 10,
+      "spritePath": "tunnelsofprivacy/mobs/mid_17.png",
+      "stats": {
+        "hp": 60,
+        "maxHp": 60,
+        "attackDamage": 6,
+        "ac": 12,
+        "speed": 3,
+        "experience": 67
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Deep Skill",
+        "description": "Tunnelspine Serpentling unleashes a mid-depth attack.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "mid_18",
+      "name": "Deepstone Beetle Knight",
+      "minLevel": 10,
+      "spritePath": "tunnelsofprivacy/mobs/mid_18.png",
+      "stats": {
+        "hp": 62,
+        "maxHp": 62,
+        "attackDamage": 7,
+        "ac": 13,
+        "speed": 3,
+        "experience": 69
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Deep Skill",
+        "description": "Deepstone Beetle Knight unleashes a mid-depth attack.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "mid_19",
+      "name": "Gravel-Echo Shrieker",
+      "minLevel": 10,
+      "spritePath": "tunnelsofprivacy/mobs/mid_19.png",
+      "stats": {
+        "hp": 64,
+        "maxHp": 64,
+        "attackDamage": 5,
+        "ac": 14,
+        "speed": 3,
+        "experience": 71
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Deep Skill",
+        "description": "Gravel-Echo Shrieker unleashes a mid-depth attack.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "mid_20",
+      "name": "Crimson Chasm Prowler",
+      "minLevel": 10,
+      "spritePath": "tunnelsofprivacy/mobs/mid_20.png",
+      "stats": {
+        "hp": 66,
+        "maxHp": 66,
+        "attackDamage": 6,
+        "ac": 15,
+        "speed": 3,
+        "experience": 73
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Deep Skill",
+        "description": "Crimson Chasm Prowler unleashes a mid-depth attack.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "hard_1",
+      "name": "Abyssal Rift Strider",
+      "minLevel": 20,
+      "spritePath": "tunnelsofprivacy/mobs/hard_1.png",
+      "stats": {
+        "hp": 55,
+        "maxHp": 55,
+        "attackDamage": 9,
+        "ac": 14,
+        "speed": 4,
+        "experience": 70
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Abyss Skill",
+        "description": "Abyssal Rift Strider uses a high-depth devastating effect.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "hard_2",
+      "name": "Soul-Drain Myconid",
+      "minLevel": 20,
+      "spritePath": "tunnelsofprivacy/mobs/hard_2.png",
+      "stats": {
+        "hp": 58,
+        "maxHp": 58,
+        "attackDamage": 10,
+        "ac": 15,
+        "speed": 4,
+        "experience": 73
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Abyss Skill",
+        "description": "Soul-Drain Myconid uses a high-depth devastating effect.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "hard_3",
+      "name": "Veinbreaker Goliath",
+      "minLevel": 20,
+      "spritePath": "tunnelsofprivacy/mobs/hard_3.png",
+      "stats": {
+        "hp": 61,
+        "maxHp": 61,
+        "attackDamage": 11,
+        "ac": 16,
+        "speed": 4,
+        "experience": 76
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Abyss Skill",
+        "description": "Veinbreaker Goliath uses a high-depth devastating effect.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "hard_4",
+      "name": "Stone-Tyrant Devourer",
+      "minLevel": 20,
+      "spritePath": "tunnelsofprivacy/mobs/hard_4.png",
+      "stats": {
+        "hp": 64,
+        "maxHp": 64,
+        "attackDamage": 12,
+        "ac": 17,
+        "speed": 4,
+        "experience": 79
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Abyss Skill",
+        "description": "Stone-Tyrant Devourer uses a high-depth devastating effect.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "hard_5",
+      "name": "Hollow Seraph Husk",
+      "minLevel": 20,
+      "spritePath": "tunnelsofprivacy/mobs/hard_5.png",
+      "stats": {
+        "hp": 67,
+        "maxHp": 67,
+        "attackDamage": 9,
+        "ac": 18,
+        "speed": 4,
+        "experience": 82
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Abyss Skill",
+        "description": "Hollow Seraph Husk uses a high-depth devastating effect.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "hard_6",
+      "name": "Deepforge Titanling",
+      "minLevel": 20,
+      "spritePath": "tunnelsofprivacy/mobs/hard_6.png",
+      "stats": {
+        "hp": 70,
+        "maxHp": 70,
+        "attackDamage": 10,
+        "ac": 14,
+        "speed": 4,
+        "experience": 85
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Abyss Skill",
+        "description": "Deepforge Titanling uses a high-depth devastating effect.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "hard_7",
+      "name": "Obsidian Maw Reaper",
+      "minLevel": 20,
+      "spritePath": "tunnelsofprivacy/mobs/hard_7.png",
+      "stats": {
+        "hp": 73,
+        "maxHp": 73,
+        "attackDamage": 11,
+        "ac": 15,
+        "speed": 4,
+        "experience": 88
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Abyss Skill",
+        "description": "Obsidian Maw Reaper uses a high-depth devastating effect.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "hard_8",
+      "name": "Molten Depth Strider",
+      "minLevel": 20,
+      "spritePath": "tunnelsofprivacy/mobs/hard_8.png",
+      "stats": {
+        "hp": 76,
+        "maxHp": 76,
+        "attackDamage": 12,
+        "ac": 16,
+        "speed": 4,
+        "experience": 91
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Abyss Skill",
+        "description": "Molten Depth Strider uses a high-depth devastating effect.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "hard_9",
+      "name": "Null-Glow Leviathan Pup",
+      "minLevel": 20,
+      "spritePath": "tunnelsofprivacy/mobs/hard_9.png",
+      "stats": {
+        "hp": 79,
+        "maxHp": 79,
+        "attackDamage": 9,
+        "ac": 17,
+        "speed": 4,
+        "experience": 94
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Abyss Skill",
+        "description": "Null-Glow Leviathan Pup uses a high-depth devastating effect.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "hard_10",
+      "name": "Shadow-Furnace Phantom",
+      "minLevel": 20,
+      "spritePath": "tunnelsofprivacy/mobs/hard_10.png",
+      "stats": {
+        "hp": 82,
+        "maxHp": 82,
+        "attackDamage": 10,
+        "ac": 18,
+        "speed": 4,
+        "experience": 97
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Abyss Skill",
+        "description": "Shadow-Furnace Phantom uses a high-depth devastating effect.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "hard_11",
+      "name": "Rustblood Centurion",
+      "minLevel": 20,
+      "spritePath": "tunnelsofprivacy/mobs/hard_11.png",
+      "stats": {
+        "hp": 85,
+        "maxHp": 85,
+        "attackDamage": 11,
+        "ac": 14,
+        "speed": 4,
+        "experience": 100
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Abyss Skill",
+        "description": "Rustblood Centurion uses a high-depth devastating effect.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "hard_12",
+      "name": "Cavernbound Gargantua",
+      "minLevel": 20,
+      "spritePath": "tunnelsofprivacy/mobs/hard_12.png",
+      "stats": {
+        "hp": 88,
+        "maxHp": 88,
+        "attackDamage": 12,
+        "ac": 15,
+        "speed": 4,
+        "experience": 103
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Abyss Skill",
+        "description": "Cavernbound Gargantua uses a high-depth devastating effect.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "hard_13",
+      "name": "Night-Root Harvester",
+      "minLevel": 20,
+      "spritePath": "tunnelsofprivacy/mobs/hard_13.png",
+      "stats": {
+        "hp": 91,
+        "maxHp": 91,
+        "attackDamage": 9,
+        "ac": 16,
+        "speed": 4,
+        "experience": 106
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Abyss Skill",
+        "description": "Night-Root Harvester uses a high-depth devastating effect.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "hard_14",
+      "name": "Ironclast Crusher",
+      "minLevel": 20,
+      "spritePath": "tunnelsofprivacy/mobs/hard_14.png",
+      "stats": {
+        "hp": 94,
+        "maxHp": 94,
+        "attackDamage": 10,
+        "ac": 17,
+        "speed": 4,
+        "experience": 109
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Abyss Skill",
+        "description": "Ironclast Crusher uses a high-depth devastating effect.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "hard_15",
+      "name": "Cave Abyss Sentinel",
+      "minLevel": 20,
+      "spritePath": "tunnelsofprivacy/mobs/hard_15.png",
+      "stats": {
+        "hp": 97,
+        "maxHp": 97,
+        "attackDamage": 11,
+        "ac": 18,
+        "speed": 4,
+        "experience": 112
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Abyss Skill",
+        "description": "Cave Abyss Sentinel uses a high-depth devastating effect.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "hard_16",
+      "name": "Dreadcore Wurm",
+      "minLevel": 20,
+      "spritePath": "tunnelsofprivacy/mobs/hard_16.png",
+      "stats": {
+        "hp": 100,
+        "maxHp": 100,
+        "attackDamage": 12,
+        "ac": 14,
+        "speed": 4,
+        "experience": 115
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Abyss Skill",
+        "description": "Dreadcore Wurm uses a high-depth devastating effect.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "hard_17",
+      "name": "Chasmfire Brute",
+      "minLevel": 20,
+      "spritePath": "tunnelsofprivacy/mobs/hard_17.png",
+      "stats": {
+        "hp": 103,
+        "maxHp": 103,
+        "attackDamage": 9,
+        "ac": 15,
+        "speed": 4,
+        "experience": 118
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Abyss Skill",
+        "description": "Chasmfire Brute uses a high-depth devastating effect.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "hard_18",
+      "name": "Silent Echo Aberrant",
+      "minLevel": 20,
+      "spritePath": "tunnelsofprivacy/mobs/hard_18.png",
+      "stats": {
+        "hp": 106,
+        "maxHp": 106,
+        "attackDamage": 10,
+        "ac": 16,
+        "speed": 4,
+        "experience": 121
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Abyss Skill",
+        "description": "Silent Echo Aberrant uses a high-depth devastating effect.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "hard_19",
+      "name": "Eclipse-Bore Basilisk",
+      "minLevel": 20,
+      "spritePath": "tunnelsofprivacy/mobs/hard_19.png",
+      "stats": {
+        "hp": 109,
+        "maxHp": 109,
+        "attackDamage": 11,
+        "ac": 17,
+        "speed": 4,
+        "experience": 124
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Abyss Skill",
+        "description": "Eclipse-Bore Basilisk uses a high-depth devastating effect.",
+        "cooldown": 4
+      }
+    },
+    {
+      "id": "hard_20",
+      "name": "Depth-Ruin Marauder",
+      "minLevel": 20,
+      "spritePath": "tunnelsofprivacy/mobs/hard_20.png",
+      "stats": {
+        "hp": 112,
+        "maxHp": 112,
+        "attackDamage": 12,
+        "ac": 18,
+        "speed": 4,
+        "experience": 127
+      },
+      "behavior": {
+        "hostile": true,
+        "friendly": false,
+        "canChat": false,
+        "fleeThreshold": 0.2
+      },
+      "loot": {
+        "dropChance": 0.5,
+        "items": [
+          {
+            "item": "deep_material",
+            "chance": 0.7
+          },
+          {
+            "item": "rare_drop",
+            "chance": 0.3
+          }
+        ]
+      },
+      "special": {
+        "name": "Abyss Skill",
+        "description": "Depth-Ruin Marauder uses a high-depth devastating effect.",
+        "cooldown": 4
       }
     }
   ]

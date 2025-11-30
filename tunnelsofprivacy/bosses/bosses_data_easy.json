@@ -1,0 +1,3244 @@
+[
+  {
+    "id": "metadata_swarm_mass",
+    "name": "Metadata Swarm Mass",
+    "spritePath": "tunnelsofprivacy/bosses/lvl2/metadata_swarm_mass.png",
+    "mainLevel": 2,
+    "stats": {
+      "hp": 27,
+      "maxHp": 27,
+      "attackDamage": 18,
+      "ac": 12,
+      "speed": 3,
+      "experience": 200,
+      "initiative": 2
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": true,
+      "fleeThreshold": 0.2
+    },
+    "backstory": "A swirling mass of stolen metadata fragments. It whispers secrets it has collected - names, addresses, transaction histories. It feeds on exposed information and grows stronger with every privacy violation. It speaks in fragmented sentences, often revealing embarrassing truths about its victims.",
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        {
+          "name": "Metadata Fragment",
+          "chance": 0.6,
+          "goldValue": 25
+        },
+        {
+          "name": "Swarm Core",
+          "chance": 0.25,
+          "goldValue": 75
+        },
+        {
+          "name": "Privacy Shard",
+          "chance": 0.1,
+          "goldValue": 150
+        }
+      ]
+    },
+    "special": {
+      "ability": "Swarm Overwhelm",
+      "description": "Splits into multiple attacks hitting all heroes for reduced damage",
+      "cooldown": 3
+    }
+  },
+  {
+    "id": "open_ledger_golem",
+    "name": "Open Ledger Golem",
+    "spritePath": "tunnelsofprivacy/bosses/lvl3/open_ledger_golem.png",
+    "mainLevel": 3,
+    "stats": {
+      "hp": 31,
+      "maxHp": 31,
+      "attackDamage": 22,
+      "ac": 14,
+      "speed": 2,
+      "experience": 250,
+      "initiative": 0
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": true,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "A massive construct built from transparent ledger pages. Every transaction ever made is inscribed on its crystalline body for all to see. It believes total transparency is the only path to truth, and sees privacy as a form of deception. It speaks in formal, proclamatory tones like reading legal documents aloud.",
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        {
+          "name": "Ledger Page",
+          "chance": 0.6,
+          "goldValue": 30
+        },
+        {
+          "name": "Golem Heart",
+          "chance": 0.25,
+          "goldValue": 85
+        },
+        {
+          "name": "Transparency Crystal",
+          "chance": 0.1,
+          "goldValue": 175
+        }
+      ]
+    },
+    "special": {
+      "ability": "Expose Weakness",
+      "description": "Reveals hero positions, reducing their AC by 3 for 2 turns",
+      "cooldown": 4
+    }
+  },
+  {
+    "id": "leak_channel_imp",
+    "name": "Leak-Channel Imp",
+    "spritePath": "tunnelsofprivacy/bosses/lvl4/leak_channel_imp.png",
+    "mainLevel": 4,
+    "stats": {
+      "hp": 34,
+      "maxHp": 34,
+      "attackDamage": 20,
+      "ac": 11,
+      "speed": 6,
+      "experience": 300,
+      "initiative": 5
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.15
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        {
+          "name": "Broken Chain Link",
+          "chance": 0.6,
+          "goldValue": 35
+        },
+        {
+          "name": "Binding Rune",
+          "chance": 0.25,
+          "goldValue": 95
+        },
+        {
+          "name": "Horror Essence",
+          "chance": 0.1,
+          "goldValue": 200
+        }
+      ]
+    },
+    "special": {
+      "ability": "Chain Bind",
+      "description": "Immobilizes target hero for 1 turn, preventing all actions",
+      "cooldown": 5
+    }
+  },
+  {
+    "id": "trace_hound_construct",
+    "name": "Trace Hound Construct",
+    "spritePath": "tunnelsofprivacy/bosses/lvl5/trace_hound_construct.png",
+    "mainLevel": 5,
+    "stats": {
+      "hp": 38,
+      "maxHp": 38,
+      "attackDamage": 24,
+      "ac": 13,
+      "speed": 5,
+      "experience": 350,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.2
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        {
+          "name": "Reused Address",
+          "chance": 0.6,
+          "goldValue": 40
+        },
+        {
+          "name": "Wraith Cloth",
+          "chance": 0.25,
+          "goldValue": 105
+        },
+        {
+          "name": "Identity Shard",
+          "chance": 0.1,
+          "goldValue": 225
+        }
+      ]
+    },
+    "special": {
+      "ability": "Echo Strike",
+      "description": "Attacks the same target twice in one turn",
+      "cooldown": 3
+    }
+  },
+  {
+    "id": "clear_torch_sentinel",
+    "name": "Clear-Torch Sentinel",
+    "spritePath": "tunnelsofprivacy/bosses/lvl6/clear_torch_sentinel.png",
+    "mainLevel": 6,
+    "stats": {
+      "hp": 41,
+      "maxHp": 41,
+      "attackDamage": 26,
+      "ac": 15,
+      "speed": 2,
+      "experience": 400,
+      "initiative": 1
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.15
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        {
+          "name": "Dust Particle",
+          "chance": 0.6,
+          "goldValue": 45
+        },
+        {
+          "name": "Demon Horn",
+          "chance": 0.25,
+          "goldValue": 115
+        },
+        {
+          "name": "Trail Map",
+          "chance": 0.1,
+          "goldValue": 250
+        }
+      ]
+    },
+    "special": {
+      "ability": "Dust Cloud",
+      "description": "Creates obscuring dust, giving all heroes disadvantage on next attack",
+      "cooldown": 4
+    }
+  },
+  {
+    "id": "echo_signal_wraith",
+    "name": "Echo-Signal Wraith",
+    "spritePath": "tunnelsofprivacy/bosses/lvl7/echo_signal_wraith.png",
+    "mainLevel": 7,
+    "stats": {
+      "hp": 45,
+      "maxHp": 45,
+      "attackDamage": 30,
+      "ac": 12,
+      "speed": 6,
+      "experience": 450,
+      "initiative": 5
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        {
+          "name": "Spider Silk",
+          "chance": 0.6,
+          "goldValue": 50
+        },
+        {
+          "name": "Graph Node",
+          "chance": 0.25,
+          "goldValue": 125
+        },
+        {
+          "name": "Web Cipher",
+          "chance": 0.1,
+          "goldValue": 275
+        }
+      ]
+    },
+    "special": {
+      "ability": "Web Trap",
+      "description": "Ensnares target, reducing their speed by half for 2 turns",
+      "cooldown": 5
+    }
+  },
+  {
+    "id": "data_trail_collector",
+    "name": "Data-Trail Collector",
+    "spritePath": "tunnelsofprivacy/bosses/lvl8/data_trail_collector.png",
+    "mainLevel": 8,
+    "stats": {
+      "hp": 49,
+      "maxHp": 49,
+      "attackDamage": 34,
+      "ac": 13,
+      "speed": 4,
+      "experience": 500,
+      "initiative": 3
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        {
+          "name": "Hunter's Mark",
+          "chance": 0.6,
+          "goldValue": 55
+        },
+        {
+          "name": "Heuristic Core",
+          "chance": 0.25,
+          "goldValue": 135
+        },
+        {
+          "name": "Tracker's Eye",
+          "chance": 0.1,
+          "goldValue": 300
+        }
+      ]
+    },
+    "special": {
+      "ability": "Analyze Pattern",
+      "description": "Studies hero movements, gaining +5 to hit next turn",
+      "cooldown": 3
+    }
+  },
+  {
+    "id": "scan_mask_idol",
+    "name": "Scan-Mask Idol",
+    "spritePath": "tunnelsofprivacy/bosses/lvl9/scan_mask_idol.png",
+    "mainLevel": 9,
+    "stats": {
+      "hp": 52,
+      "maxHp": 52,
+      "attackDamage": 36,
+      "ac": 16,
+      "speed": 2,
+      "experience": 550,
+      "initiative": 1
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.15
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        {
+          "name": "Cluster Data",
+          "chance": 0.6,
+          "goldValue": 60
+        },
+        {
+          "name": "Fiend Tooth",
+          "chance": 0.25,
+          "goldValue": 145
+        },
+        {
+          "name": "Analysis Matrix",
+          "chance": 0.1,
+          "goldValue": 325
+        }
+      ]
+    },
+    "special": {
+      "ability": "Group Assault",
+      "description": "Attacks all heroes in close proximity for 75% damage each",
+      "cooldown": 4
+    }
+  },
+  {
+    "id": "unmasked_scribe_apparition",
+    "name": "Unmasked Scribe Apparition",
+    "spritePath": "tunnelsofprivacy/bosses/lvl10/unmasked_scribe_apparition.png",
+    "mainLevel": 10,
+    "stats": {
+      "hp": 56,
+      "maxHp": 56,
+      "attackDamage": 38,
+      "ac": 11,
+      "speed": 5,
+      "experience": 600,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        {
+          "name": "Fingerprint Fragment",
+          "chance": 0.6,
+          "goldValue": 65
+        },
+        {
+          "name": "Leviathan Scale",
+          "chance": 0.25,
+          "goldValue": 155
+        },
+        {
+          "name": "Identity Seal",
+          "chance": 0.1,
+          "goldValue": 350
+        }
+      ]
+    },
+    "special": {
+      "ability": "Mark Target",
+      "description": "Marks a hero, making them vulnerable to +50% damage for 2 turns",
+      "cooldown": 5
+    }
+  },
+  {
+    "id": "watcher_eye_construct",
+    "name": "Watcher-Eye Construct",
+    "spritePath": "tunnelsofprivacy/bosses/lvl11/watcher_eye_construct.png",
+    "mainLevel": 11,
+    "stats": {
+      "hp": 59,
+      "maxHp": 59,
+      "attackDamage": 42,
+      "ac": 15,
+      "speed": 5,
+      "experience": 650,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.15
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        {
+          "name": "Link Chain",
+          "chance": 0.6,
+          "goldValue": 70
+        },
+        {
+          "name": "Phantom Essence",
+          "chance": 0.25,
+          "goldValue": 165
+        },
+        {
+          "name": "Connection Map",
+          "chance": 0.1,
+          "goldValue": 375
+        }
+      ]
+    },
+    "special": {
+      "ability": "Link Strike",
+      "description": "Attacks bounce between heroes, hitting up to 3 targets",
+      "cooldown": 4
+    }
+  },
+  {
+    "id": "pattern_matcher_phantasm",
+    "name": "Pattern-Matcher Phantasm",
+    "spritePath": "tunnelsofprivacy/bosses/lvl12/pattern_matcher_phantasm.png",
+    "mainLevel": 12,
+    "stats": {
+      "hp": 63,
+      "maxHp": 63,
+      "attackDamage": 44,
+      "ac": 12,
+      "speed": 6,
+      "experience": 700,
+      "initiative": 5
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        {
+          "name": "Time Fragment",
+          "chance": 0.6,
+          "goldValue": 75
+        },
+        {
+          "name": "Beast Claw",
+          "chance": 0.25,
+          "goldValue": 175
+        },
+        {
+          "name": "Temporal Crystal",
+          "chance": 0.1,
+          "goldValue": 400
+        }
+      ]
+    },
+    "special": {
+      "ability": "Time Warp",
+      "description": "Delays a hero's next turn by 1 initiative slot",
+      "cooldown": 5
+    }
+  },
+  {
+    "id": "chain_analysis_serpent",
+    "name": "Chain-Analysis Serpent",
+    "spritePath": "tunnelsofprivacy/bosses/lvl13/chain_analysis_serpent.png",
+    "mainLevel": 13,
+    "stats": {
+      "hp": 67,
+      "maxHp": 67,
+      "attackDamage": 46,
+      "ac": 14,
+      "speed": 3,
+      "experience": 750,
+      "initiative": 2
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        {
+          "name": "Construct Part",
+          "chance": 0.6,
+          "goldValue": 80
+        },
+        {
+          "name": "Deanon Core",
+          "chance": 0.25,
+          "goldValue": 185
+        },
+        {
+          "name": "Revelation Gem",
+          "chance": 0.1,
+          "goldValue": 425
+        }
+      ]
+    },
+    "special": {
+      "ability": "Unmask",
+      "description": "Reveals hidden hero stats, granting advantage on attacks against them",
+      "cooldown": 4
+    }
+  },
+  {
+    "id": "compliance_herald",
+    "name": "Compliance Herald",
+    "spritePath": "tunnelsofprivacy/bosses/lvl14/compliance_herald.png",
+    "mainLevel": 14,
+    "stats": {
+      "hp": 70,
+      "maxHp": 70,
+      "attackDamage": 48,
+      "ac": 14,
+      "speed": 3,
+      "experience": 800,
+      "initiative": 2
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.2
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        {
+          "name": "Watchful Eye",
+          "chance": 0.6,
+          "goldValue": 85
+        },
+        {
+          "name": "Swarm Nucleus",
+          "chance": 0.25,
+          "goldValue": 195
+        },
+        {
+          "name": "Omniscient Lens",
+          "chance": 0.1,
+          "goldValue": 450
+        }
+      ]
+    },
+    "special": {
+      "ability": "All-Seeing Gaze",
+      "description": "Cannot miss attacks for 1 turn, ignoring AC entirely",
+      "cooldown": 6
+    }
+  },
+  {
+    "id": "identity_probe_specter",
+    "name": "Identity-Probe Specter",
+    "spritePath": "tunnelsofprivacy/bosses/lvl15/identity_probe_specter.png",
+    "mainLevel": 15,
+    "stats": {
+      "hp": 74,
+      "maxHp": 74,
+      "attackDamage": 50,
+      "ac": 11,
+      "speed": 7,
+      "experience": 850,
+      "initiative": 6
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        {
+          "name": "Broken Proof",
+          "chance": 0.6,
+          "goldValue": 90
+        },
+        {
+          "name": "Breaker Matrix",
+          "chance": 0.25,
+          "goldValue": 205
+        },
+        {
+          "name": "Cryptographic Key",
+          "chance": 0.1,
+          "goldValue": 475
+        }
+      ]
+    },
+    "special": {
+      "ability": "Proof Collapse",
+      "description": "Shatters hero's defense, reducing AC by 5 for 2 turns",
+      "cooldown": 5
+    }
+  },
+  {
+    "id": "telemetry_spider",
+    "name": "Telemetry Spider",
+    "spritePath": "tunnelsofprivacy/bosses/lvl16/telemetry_spider.png",
+    "mainLevel": 16,
+    "stats": {
+      "hp": 77,
+      "maxHp": 77,
+      "attackDamage": 52,
+      "ac": 14,
+      "speed": 6,
+      "experience": 900,
+      "initiative": 5
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.05
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        {
+          "name": "Knight's Shield",
+          "chance": 0.6,
+          "goldValue": 95
+        },
+        {
+          "name": "Transaction Seal",
+          "chance": 0.25,
+          "goldValue": 215
+        },
+        {
+          "name": "Privacy Armor",
+          "chance": 0.1,
+          "goldValue": 500
+        }
+      ]
+    },
+    "special": {
+      "ability": "Shield Wall",
+      "description": "Raises AC by 4 and reflects 20% damage back to attacker for 2 turns",
+      "cooldown": 4
+    }
+  },
+  {
+    "id": "observer_node_golem",
+    "name": "Observer Node Golem",
+    "spritePath": "tunnelsofprivacy/bosses/lvl17/observer_node_golem.png",
+    "mainLevel": 17,
+    "stats": {
+      "hp": 81,
+      "maxHp": 81,
+      "attackDamage": 54,
+      "ac": 17,
+      "speed": 2,
+      "experience": 950,
+      "initiative": 1
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.15
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        {
+          "name": "Plaintext Note",
+          "chance": 0.6,
+          "goldValue": 100
+        },
+        {
+          "name": "Specter Wisp",
+          "chance": 0.25,
+          "goldValue": 225
+        },
+        {
+          "name": "Readable Cipher",
+          "chance": 0.1,
+          "goldValue": 525
+        }
+      ]
+    },
+    "special": {
+      "ability": "Expose Secrets",
+      "description": "Reads hero abilities, copying one random ability for use",
+      "cooldown": 6
+    }
+  },
+  {
+    "id": "cross_correlation_beast",
+    "name": "Cross-Correlation Beast",
+    "spritePath": "tunnelsofprivacy/bosses/lvl18/cross_correlation_beast.png",
+    "mainLevel": 18,
+    "stats": {
+      "hp": 85,
+      "maxHp": 85,
+      "attackDamage": 56,
+      "ac": 13,
+      "speed": 5,
+      "experience": 1000,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        {
+          "name": "Encrypted Memo",
+          "chance": 0.6,
+          "goldValue": 105
+        },
+        {
+          "name": "Guardian Stone",
+          "chance": 0.25,
+          "goldValue": 235
+        },
+        {
+          "name": "Encryption Key",
+          "chance": 0.1,
+          "goldValue": 550
+        }
+      ]
+    },
+    "special": {
+      "ability": "Cipher Lock",
+      "description": "Locks a hero's special ability, preventing use for 2 turns",
+      "cooldown": 5
+    }
+  },
+  {
+    "id": "surveillance_lens_knight",
+    "name": "Surveillance Lens Knight",
+    "spritePath": "tunnelsofprivacy/bosses/lvl19/surveillance_lens_knight.png",
+    "mainLevel": 19,
+    "stats": {
+      "hp": 88,
+      "maxHp": 88,
+      "attackDamage": 58,
+      "ac": 18,
+      "speed": 3,
+      "experience": 1050,
+      "initiative": 2
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        {
+          "name": "Hydra Head",
+          "chance": 0.6,
+          "goldValue": 110
+        },
+        {
+          "name": "Pool Essence",
+          "chance": 0.25,
+          "goldValue": 245
+        },
+        {
+          "name": "Value Token",
+          "chance": 0.1,
+          "goldValue": 575
+        }
+      ]
+    },
+    "special": {
+      "ability": "Multi-Head Strike",
+      "description": "Attacks 3 random heroes simultaneously for 60% damage each",
+      "cooldown": 4
+    }
+  },
+  {
+    "id": "record_keeper_titan",
+    "name": "Record-Keeper Titan",
+    "spritePath": "tunnelsofprivacy/bosses/lvl20/record_keeper_titan.png",
+    "mainLevel": 20,
+    "stats": {
+      "hp": 92,
+      "maxHp": 92,
+      "attackDamage": 60,
+      "ac": 16,
+      "speed": 2,
+      "experience": 1100,
+      "initiative": 1
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        {
+          "name": "Split Fragment",
+          "chance": 0.6,
+          "goldValue": 115
+        },
+        {
+          "name": "Amalgam Core",
+          "chance": 0.25,
+          "goldValue": 255
+        },
+        {
+          "name": "Join Cipher",
+          "chance": 0.1,
+          "goldValue": 600
+        }
+      ]
+    },
+    "special": {
+      "ability": "Split Form",
+      "description": "Divides into two halves, each attacking separately at 50% damage",
+      "cooldown": 5
+    }
+  },
+  {
+    "id": "broken_entropy_shade",
+    "name": "Broken Entropy Shade",
+    "spritePath": "tunnelsofprivacy/bosses/lvl21/broken_entropy_shade.png",
+    "mainLevel": 21,
+    "stats": {
+      "hp": 95,
+      "maxHp": 95,
+      "attackDamage": 64,
+      "ac": 10,
+      "speed": 5,
+      "experience": 1150,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.05
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        {
+          "name": "Commitment Token",
+          "chance": 0.6,
+          "goldValue": 120
+        },
+        {
+          "name": "Titan's Heart",
+          "chance": 0.25,
+          "goldValue": 265
+        },
+        {
+          "name": "Binding Oath",
+          "chance": 0.1,
+          "goldValue": 625
+        }
+      ]
+    },
+    "special": {
+      "ability": "Unbreakable Vow",
+      "description": "Commits to attacking one hero, dealing double damage but taking +50% from others",
+      "cooldown": 4
+    }
+  },
+  {
+    "id": "corrupted_ceremony_mask_bearer",
+    "name": "Corrupted Ceremony Mask-Bearer",
+    "spritePath": "tunnelsofprivacy/bosses/lvl22/corrupted_ceremony_mask_bearer.png",
+    "mainLevel": 22,
+    "stats": {
+      "hp": 99,
+      "maxHp": 99,
+      "attackDamage": 66,
+      "ac": 14,
+      "speed": 4,
+      "experience": 1200,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "entropy_leak_elemental",
+    "name": "Entropy Leak Elemental",
+    "spritePath": "tunnelsofprivacy/bosses/lvl23/entropy_leak_elemental.png",
+    "mainLevel": 23,
+    "stats": {
+      "hp": 103,
+      "maxHp": 103,
+      "attackDamage": 68,
+      "ac": 14,
+      "speed": 4,
+      "experience": 1250,
+      "initiative": 5
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "burned_hardware_wraith",
+    "name": "Burned Hardware Wraith",
+    "spritePath": "tunnelsofprivacy/bosses/lvl24/burned_hardware_wraith.png",
+    "mainLevel": 24,
+    "stats": {
+      "hp": 106,
+      "maxHp": 106,
+      "attackDamage": 70,
+      "ac": 14,
+      "speed": 5,
+      "experience": 1300,
+      "initiative": 2
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "transcript_echo_lurker",
+    "name": "Transcript Echo Lurker",
+    "spritePath": "tunnelsofprivacy/bosses/lvl25/transcript_echo_lurker.png",
+    "mainLevel": 25,
+    "stats": {
+      "hp": 110,
+      "maxHp": 110,
+      "attackDamage": 72,
+      "ac": 15,
+      "speed": 3,
+      "experience": 1350,
+      "initiative": 3
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "unmixed_polynomial_beast",
+    "name": "Unmixed Polynomial Beast",
+    "spritePath": "tunnelsofprivacy/bosses/lvl26/unmixed_polynomial_beast.png",
+    "mainLevel": 26,
+    "stats": {
+      "hp": 113,
+      "maxHp": 113,
+      "attackDamage": 74,
+      "ac": 15,
+      "speed": 3,
+      "experience": 1400,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "compromised_coordinator_shade",
+    "name": "Compromised Coordinator Shade",
+    "spritePath": "tunnelsofprivacy/bosses/lvl27/compromised_coordinator_shade.png",
+    "mainLevel": 27,
+    "stats": {
+      "hp": 117,
+      "maxHp": 117,
+      "attackDamage": 76,
+      "ac": 15,
+      "speed": 4,
+      "experience": 1450,
+      "initiative": 5
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "ritual_ash_serpent",
+    "name": "Ritual Ash Serpent",
+    "spritePath": "tunnelsofprivacy/bosses/lvl28/ritual_ash_serpent.png",
+    "mainLevel": 28,
+    "stats": {
+      "hp": 121,
+      "maxHp": 121,
+      "attackDamage": 78,
+      "ac": 15,
+      "speed": 4,
+      "experience": 1500,
+      "initiative": 2
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "entropy_drain_reaper",
+    "name": "Entropy Drain Reaper",
+    "spritePath": "tunnelsofprivacy/bosses/lvl29/entropy_drain_reaper.png",
+    "mainLevel": 29,
+    "stats": {
+      "hp": 124,
+      "maxHp": 124,
+      "attackDamage": 80,
+      "ac": 15,
+      "speed": 5,
+      "experience": 1550,
+      "initiative": 3
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "parameter_corruption_idol",
+    "name": "Parameter Corruption Idol",
+    "spritePath": "tunnelsofprivacy/bosses/lvl30/parameter_corruption_idol.png",
+    "mainLevel": 30,
+    "stats": {
+      "hp": 128,
+      "maxHp": 128,
+      "attackDamage": 82,
+      "ac": 16,
+      "speed": 3,
+      "experience": 1600,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "forkspawn_twins",
+    "name": "Forkspawn Twins",
+    "spritePath": "tunnelsofprivacy/bosses/lvl31/forkspawn_twins.png",
+    "mainLevel": 31,
+    "stats": {
+      "hp": 131,
+      "maxHp": 131,
+      "attackDamage": 84,
+      "ac": 16,
+      "speed": 3,
+      "experience": 1650,
+      "initiative": 5
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "stale_block_juggernaut",
+    "name": "Stale Block Juggernaut",
+    "spritePath": "tunnelsofprivacy/bosses/lvl32/stale_block_juggernaut.png",
+    "mainLevel": 32,
+    "stats": {
+      "hp": 135,
+      "maxHp": 135,
+      "attackDamage": 86,
+      "ac": 16,
+      "speed": 4,
+      "experience": 1700,
+      "initiative": 2
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "reorg_serpent_matriarch",
+    "name": "Reorg Serpent Matriarch",
+    "spritePath": "tunnelsofprivacy/bosses/lvl33/reorg_serpent_matriarch.png",
+    "mainLevel": 33,
+    "stats": {
+      "hp": 139,
+      "maxHp": 139,
+      "attackDamage": 88,
+      "ac": 16,
+      "speed": 4,
+      "experience": 1750,
+      "initiative": 3
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "finality_breaker_knight",
+    "name": "Finality Breaker Knight",
+    "spritePath": "tunnelsofprivacy/bosses/lvl34/finality_breaker_knight.png",
+    "mainLevel": 34,
+    "stats": {
+      "hp": 142,
+      "maxHp": 142,
+      "attackDamage": 90,
+      "ac": 16,
+      "speed": 5,
+      "experience": 1800,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "orphan_chunk_golem",
+    "name": "Orphan Chunk Golem",
+    "spritePath": "tunnelsofprivacy/bosses/lvl35/orphan_chunk_golem.png",
+    "mainLevel": 35,
+    "stats": {
+      "hp": 146,
+      "maxHp": 146,
+      "attackDamage": 92,
+      "ac": 17,
+      "speed": 3,
+      "experience": 1850,
+      "initiative": 5
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "split_state_hydra",
+    "name": "Split-State Hydra",
+    "spritePath": "tunnelsofprivacy/bosses/lvl36/split_state_hydra.png",
+    "mainLevel": 36,
+    "stats": {
+      "hp": 149,
+      "maxHp": 149,
+      "attackDamage": 94,
+      "ac": 17,
+      "speed": 3,
+      "experience": 1900,
+      "initiative": 2
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "consensus_spider_matron",
+    "name": "Consensus Spider Matron",
+    "spritePath": "tunnelsofprivacy/bosses/lvl37/consensus_spider_matron.png",
+    "mainLevel": 37,
+    "stats": {
+      "hp": 153,
+      "maxHp": 153,
+      "attackDamage": 96,
+      "ac": 17,
+      "speed": 4,
+      "experience": 1950,
+      "initiative": 3
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "byzantine_envoy_revenant",
+    "name": "Byzantine Envoy Revenant",
+    "spritePath": "tunnelsofprivacy/bosses/lvl38/byzantine_envoy_revenant.png",
+    "mainLevel": 38,
+    "stats": {
+      "hp": 157,
+      "maxHp": 157,
+      "attackDamage": 98,
+      "ac": 17,
+      "speed": 4,
+      "experience": 2000,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "rollback_idol",
+    "name": "Rollback Idol",
+    "spritePath": "tunnelsofprivacy/bosses/lvl39/rollback_idol.png",
+    "mainLevel": 39,
+    "stats": {
+      "hp": 160,
+      "maxHp": 160,
+      "attackDamage": 100,
+      "ac": 17,
+      "speed": 5,
+      "experience": 2050,
+      "initiative": 5
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "dual_chain_champion",
+    "name": "Dual-Chain Champion",
+    "spritePath": "tunnelsofprivacy/bosses/lvl40/dual_chain_champion.png",
+    "mainLevel": 40,
+    "stats": {
+      "hp": 164,
+      "maxHp": 164,
+      "attackDamage": 102,
+      "ac": 18,
+      "speed": 3,
+      "experience": 2100,
+      "initiative": 2
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "tainted_coin_golem",
+    "name": "Tainted Coin Golem",
+    "spritePath": "tunnelsofprivacy/bosses/lvl41/tainted_coin_golem.png",
+    "mainLevel": 41,
+    "stats": {
+      "hp": 167,
+      "maxHp": 167,
+      "attackDamage": 104,
+      "ac": 18,
+      "speed": 3,
+      "experience": 2150,
+      "initiative": 3
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "wallet_fingerprint_phantom",
+    "name": "Wallet-Fingerprint Phantom",
+    "spritePath": "tunnelsofprivacy/bosses/lvl42/wallet_fingerprint_phantom.png",
+    "mainLevel": 42,
+    "stats": {
+      "hp": 171,
+      "maxHp": 171,
+      "attackDamage": 106,
+      "ac": 18,
+      "speed": 4,
+      "experience": 2200,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "heuristic_hound",
+    "name": "Heuristic Hound",
+    "spritePath": "tunnelsofprivacy/bosses/lvl43/heuristic_hound.png",
+    "mainLevel": 43,
+    "stats": {
+      "hp": 175,
+      "maxHp": 175,
+      "attackDamage": 108,
+      "ac": 18,
+      "speed": 4,
+      "experience": 2250,
+      "initiative": 5
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "cluster_tag_butcher",
+    "name": "Cluster-Tag Butcher",
+    "spritePath": "tunnelsofprivacy/bosses/lvl44/cluster_tag_butcher.png",
+    "mainLevel": 44,
+    "stats": {
+      "hp": 178,
+      "maxHp": 178,
+      "attackDamage": 110,
+      "ac": 18,
+      "speed": 5,
+      "experience": 2300,
+      "initiative": 2
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "blacklist_enforcer",
+    "name": "Blacklist Enforcer",
+    "spritePath": "tunnelsofprivacy/bosses/lvl45/blacklist_enforcer.png",
+    "mainLevel": 45,
+    "stats": {
+      "hp": 182,
+      "maxHp": 182,
+      "attackDamage": 112,
+      "ac": 19,
+      "speed": 3,
+      "experience": 2350,
+      "initiative": 3
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "whitelist_paladin",
+    "name": "Whitelist Paladin",
+    "spritePath": "tunnelsofprivacy/bosses/lvl46/whitelist_paladin.png",
+    "mainLevel": 46,
+    "stats": {
+      "hp": 185,
+      "maxHp": 185,
+      "attackDamage": 114,
+      "ac": 19,
+      "speed": 3,
+      "experience": 2400,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "trace_vector_valkyrie",
+    "name": "Trace-Vector Valkyrie",
+    "spritePath": "tunnelsofprivacy/bosses/lvl47/trace_vector_valkyrie.png",
+    "mainLevel": 47,
+    "stats": {
+      "hp": 189,
+      "maxHp": 189,
+      "attackDamage": 116,
+      "ac": 19,
+      "speed": 4,
+      "experience": 2450,
+      "initiative": 5
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "coin_color_chimera",
+    "name": "Coin-Color Chimera",
+    "spritePath": "tunnelsofprivacy/bosses/lvl48/coin_color_chimera.png",
+    "mainLevel": 48,
+    "stats": {
+      "hp": 193,
+      "maxHp": 193,
+      "attackDamage": 118,
+      "ac": 19,
+      "speed": 4,
+      "experience": 2500,
+      "initiative": 2
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "analytic_oracle_eye",
+    "name": "Analytic Oracle Eye",
+    "spritePath": "tunnelsofprivacy/bosses/lvl49/analytic_oracle_eye.png",
+    "mainLevel": 49,
+    "stats": {
+      "hp": 196,
+      "maxHp": 196,
+      "attackDamage": 120,
+      "ac": 19,
+      "speed": 5,
+      "experience": 2550,
+      "initiative": 3
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "purity_arbiter",
+    "name": "Purity Arbiter",
+    "spritePath": "tunnelsofprivacy/bosses/lvl50/purity_arbiter.png",
+    "mainLevel": 50,
+    "stats": {
+      "hp": 200,
+      "maxHp": 200,
+      "attackDamage": 122,
+      "ac": 20,
+      "speed": 3,
+      "experience": 2600,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "fake_mint_goblin_chief",
+    "name": "Fake-Mint Goblin Chief",
+    "spritePath": "tunnelsofprivacy/bosses/lvl51/fake_mint_goblin_chief.png",
+    "mainLevel": 51,
+    "stats": {
+      "hp": 203,
+      "maxHp": 203,
+      "attackDamage": 124,
+      "ac": 20,
+      "speed": 3,
+      "experience": 2650,
+      "initiative": 5
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "unbounded_supply_slime",
+    "name": "Unbounded Supply Slime",
+    "spritePath": "tunnelsofprivacy/bosses/lvl52/unbounded_supply_slime.png",
+    "mainLevel": 52,
+    "stats": {
+      "hp": 207,
+      "maxHp": 207,
+      "attackDamage": 126,
+      "ac": 20,
+      "speed": 4,
+      "experience": 2700,
+      "initiative": 2
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "counterfeit_note_phantom",
+    "name": "Counterfeit Note Phantom",
+    "spritePath": "tunnelsofprivacy/bosses/lvl53/counterfeit_note_phantom.png",
+    "mainLevel": 53,
+    "stats": {
+      "hp": 211,
+      "maxHp": 211,
+      "attackDamage": 128,
+      "ac": 20,
+      "speed": 4,
+      "experience": 2750,
+      "initiative": 3
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "overflow_beast",
+    "name": "Overflow Beast",
+    "spritePath": "tunnelsofprivacy/bosses/lvl54/overflow_beast.png",
+    "mainLevel": 54,
+    "stats": {
+      "hp": 214,
+      "maxHp": 214,
+      "attackDamage": 130,
+      "ac": 20,
+      "speed": 5,
+      "experience": 2800,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "rogue_mint_overseer",
+    "name": "Rogue Mint Overseer",
+    "spritePath": "tunnelsofprivacy/bosses/lvl55/rogue_mint_overseer.png",
+    "mainLevel": 55,
+    "stats": {
+      "hp": 218,
+      "maxHp": 218,
+      "attackDamage": 132,
+      "ac": 21,
+      "speed": 3,
+      "experience": 2850,
+      "initiative": 5
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "broken_supply_oracle",
+    "name": "Broken Supply Oracle",
+    "spritePath": "tunnelsofprivacy/bosses/lvl56/broken_supply_oracle.png",
+    "mainLevel": 56,
+    "stats": {
+      "hp": 221,
+      "maxHp": 221,
+      "attackDamage": 134,
+      "ac": 21,
+      "speed": 3,
+      "experience": 2900,
+      "initiative": 2
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "overflow_abomination",
+    "name": "Overflow Abomination",
+    "spritePath": "tunnelsofprivacy/bosses/lvl57/overflow_abomination.png",
+    "mainLevel": 57,
+    "stats": {
+      "hp": 225,
+      "maxHp": 225,
+      "attackDamage": 136,
+      "ac": 21,
+      "speed": 4,
+      "experience": 2950,
+      "initiative": 3
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "forged_ledger_dragonet",
+    "name": "Forged Ledger Dragonet",
+    "spritePath": "tunnelsofprivacy/bosses/lvl58/forged_ledger_dragonet.png",
+    "mainLevel": 58,
+    "stats": {
+      "hp": 229,
+      "maxHp": 229,
+      "attackDamage": 138,
+      "ac": 21,
+      "speed": 4,
+      "experience": 3000,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "counterfeit_choir",
+    "name": "Counterfeit Choir",
+    "spritePath": "tunnelsofprivacy/bosses/lvl59/counterfeit_choir.png",
+    "mainLevel": 59,
+    "stats": {
+      "hp": 232,
+      "maxHp": 232,
+      "attackDamage": 140,
+      "ac": 21,
+      "speed": 5,
+      "experience": 3050,
+      "initiative": 5
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "auditor_of_total_supply",
+    "name": "Auditor of Total Supply",
+    "spritePath": "tunnelsofprivacy/bosses/lvl60/auditor_of_total_supply.png",
+    "mainLevel": 60,
+    "stats": {
+      "hp": 236,
+      "maxHp": 236,
+      "attackDamage": 142,
+      "ac": 22,
+      "speed": 3,
+      "experience": 3100,
+      "initiative": 2
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "sapling_root_sentinel",
+    "name": "Sapling Root Sentinel",
+    "spritePath": "tunnelsofprivacy/bosses/lvl61/sapling_root_sentinel.png",
+    "mainLevel": 61,
+    "stats": {
+      "hp": 239,
+      "maxHp": 239,
+      "attackDamage": 144,
+      "ac": 22,
+      "speed": 3,
+      "experience": 3150,
+      "initiative": 3
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "orchard_gate_dryad",
+    "name": "Orchard Gate Dryad",
+    "spritePath": "tunnelsofprivacy/bosses/lvl62/orchard_gate_dryad.png",
+    "mainLevel": 62,
+    "stats": {
+      "hp": 243,
+      "maxHp": 243,
+      "attackDamage": 146,
+      "ac": 22,
+      "speed": 4,
+      "experience": 3200,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "note_commitment_warden",
+    "name": "Note Commitment Warden",
+    "spritePath": "tunnelsofprivacy/bosses/lvl63/note_commitment_warden.png",
+    "mainLevel": 63,
+    "stats": {
+      "hp": 247,
+      "maxHp": 247,
+      "attackDamage": 148,
+      "ac": 22,
+      "speed": 4,
+      "experience": 3250,
+      "initiative": 5
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "shielded_stream_serpent",
+    "name": "Shielded Stream Serpent",
+    "spritePath": "tunnelsofprivacy/bosses/lvl64/shielded_stream_serpent.png",
+    "mainLevel": 64,
+    "stats": {
+      "hp": 250,
+      "maxHp": 250,
+      "attackDamage": 150,
+      "ac": 22,
+      "speed": 5,
+      "experience": 3300,
+      "initiative": 2
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "nullifier_fang_beast",
+    "name": "Nullifier Fang Beast",
+    "spritePath": "tunnelsofprivacy/bosses/lvl65/nullifier_fang_beast.png",
+    "mainLevel": 65,
+    "stats": {
+      "hp": 254,
+      "maxHp": 254,
+      "attackDamage": 152,
+      "ac": 23,
+      "speed": 3,
+      "experience": 3350,
+      "initiative": 3
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "orchard_overwatch_angel",
+    "name": "Orchard Overwatch Angel",
+    "spritePath": "tunnelsofprivacy/bosses/lvl66/orchard_overwatch_angel.png",
+    "mainLevel": 66,
+    "stats": {
+      "hp": 257,
+      "maxHp": 257,
+      "attackDamage": 154,
+      "ac": 23,
+      "speed": 3,
+      "experience": 3400,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "unified_address_sphinx",
+    "name": "Unified Address Sphinx",
+    "spritePath": "tunnelsofprivacy/bosses/lvl67/unified_address_sphinx.png",
+    "mainLevel": 67,
+    "stats": {
+      "hp": 261,
+      "maxHp": 261,
+      "attackDamage": 156,
+      "ac": 23,
+      "speed": 4,
+      "experience": 3450,
+      "initiative": 5
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "diversifier_harlequin",
+    "name": "Diversifier Harlequin",
+    "spritePath": "tunnelsofprivacy/bosses/lvl68/diversifier_harlequin.png",
+    "mainLevel": 68,
+    "stats": {
+      "hp": 265,
+      "maxHp": 265,
+      "attackDamage": 158,
+      "ac": 23,
+      "speed": 4,
+      "experience": 3500,
+      "initiative": 2
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "orchard_balance_keeper",
+    "name": "Orchard Balance Keeper",
+    "spritePath": "tunnelsofprivacy/bosses/lvl69/orchard_balance_keeper.png",
+    "mainLevel": 69,
+    "stats": {
+      "hp": 268,
+      "maxHp": 268,
+      "attackDamage": 160,
+      "ac": 23,
+      "speed": 5,
+      "experience": 3550,
+      "initiative": 3
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "guardian_of_the_silent_pool",
+    "name": "Guardian of the Silent Pool",
+    "spritePath": "tunnelsofprivacy/bosses/lvl70/guardian_of_the_silent_pool.png",
+    "mainLevel": 70,
+    "stats": {
+      "hp": 272,
+      "maxHp": 272,
+      "attackDamage": 162,
+      "ac": 24,
+      "speed": 3,
+      "experience": 3600,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "recursive_echo_knight",
+    "name": "Recursive Echo Knight",
+    "spritePath": "tunnelsofprivacy/bosses/lvl71/recursive_echo_knight.png",
+    "mainLevel": 71,
+    "stats": {
+      "hp": 275,
+      "maxHp": 275,
+      "attackDamage": 164,
+      "ac": 24,
+      "speed": 3,
+      "experience": 3650,
+      "initiative": 5
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "halo_loop_phantom",
+    "name": "Halo Loop Phantom",
+    "spritePath": "tunnelsofprivacy/bosses/lvl72/halo_loop_phantom.png",
+    "mainLevel": 72,
+    "stats": {
+      "hp": 279,
+      "maxHp": 279,
+      "attackDamage": 166,
+      "ac": 24,
+      "speed": 4,
+      "experience": 3700,
+      "initiative": 2
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "proof_spiral_shade",
+    "name": "Proof Spiral Shade",
+    "spritePath": "tunnelsofprivacy/bosses/lvl73/proof_spiral_shade.png",
+    "mainLevel": 73,
+    "stats": {
+      "hp": 283,
+      "maxHp": 283,
+      "attackDamage": 168,
+      "ac": 24,
+      "speed": 4,
+      "experience": 3750,
+      "initiative": 3
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "recursive_mirror_warden",
+    "name": "Recursive Mirror Warden",
+    "spritePath": "tunnelsofprivacy/bosses/lvl74/recursive_mirror_warden.png",
+    "mainLevel": 74,
+    "stats": {
+      "hp": 286,
+      "maxHp": 286,
+      "attackDamage": 170,
+      "ac": 24,
+      "speed": 5,
+      "experience": 3800,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "halo_fragment_golem",
+    "name": "Halo Fragment Golem",
+    "spritePath": "tunnelsofprivacy/bosses/lvl75/halo_fragment_golem.png",
+    "mainLevel": 75,
+    "stats": {
+      "hp": 290,
+      "maxHp": 290,
+      "attackDamage": 172,
+      "ac": 25,
+      "speed": 3,
+      "experience": 3850,
+      "initiative": 5
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "loopbound_sentinel",
+    "name": "Loopbound Sentinel",
+    "spritePath": "tunnelsofprivacy/bosses/lvl76/loopbound_sentinel.png",
+    "mainLevel": 76,
+    "stats": {
+      "hp": 293,
+      "maxHp": 293,
+      "attackDamage": 174,
+      "ac": 25,
+      "speed": 3,
+      "experience": 3900,
+      "initiative": 2
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "recursion_wisp",
+    "name": "Recursion Wisp",
+    "spritePath": "tunnelsofprivacy/bosses/lvl77/recursion_wisp.png",
+    "mainLevel": 77,
+    "stats": {
+      "hp": 297,
+      "maxHp": 297,
+      "attackDamage": 176,
+      "ac": 25,
+      "speed": 4,
+      "experience": 3950,
+      "initiative": 3
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "circuit_loop_shade",
+    "name": "Circuit-Loop Shade",
+    "spritePath": "tunnelsofprivacy/bosses/lvl78/circuit_loop_shade.png",
+    "mainLevel": 78,
+    "stats": {
+      "hp": 301,
+      "maxHp": 301,
+      "attackDamage": 178,
+      "ac": 25,
+      "speed": 4,
+      "experience": 4000,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "proof_cycle_idol",
+    "name": "Proof-Cycle Idol",
+    "spritePath": "tunnelsofprivacy/bosses/lvl79/proof_cycle_idol.png",
+    "mainLevel": 79,
+    "stats": {
+      "hp": 304,
+      "maxHp": 304,
+      "attackDamage": 180,
+      "ac": 25,
+      "speed": 5,
+      "experience": 4050,
+      "initiative": 5
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "halo_paradox_herald",
+    "name": "Halo Paradox Herald",
+    "spritePath": "tunnelsofprivacy/bosses/lvl80/halo_paradox_herald.png",
+    "mainLevel": 80,
+    "stats": {
+      "hp": 308,
+      "maxHp": 308,
+      "attackDamage": 182,
+      "ac": 25,
+      "speed": 3,
+      "experience": 4100,
+      "initiative": 2
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "sybil_trickster",
+    "name": "Sybil Trickster",
+    "spritePath": "tunnelsofprivacy/bosses/lvl81/sybil_trickster.png",
+    "mainLevel": 81,
+    "stats": {
+      "hp": 311,
+      "maxHp": 311,
+      "attackDamage": 184,
+      "ac": 25,
+      "speed": 3,
+      "experience": 4150,
+      "initiative": 3
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "cloneborn_stalker",
+    "name": "Cloneborn Stalker",
+    "spritePath": "tunnelsofprivacy/bosses/lvl82/cloneborn_stalker.png",
+    "mainLevel": 82,
+    "stats": {
+      "hp": 315,
+      "maxHp": 315,
+      "attackDamage": 186,
+      "ac": 25,
+      "speed": 4,
+      "experience": 4200,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "identity_split_beast",
+    "name": "Identity Split Beast",
+    "spritePath": "tunnelsofprivacy/bosses/lvl83/identity_split_beast.png",
+    "mainLevel": 83,
+    "stats": {
+      "hp": 319,
+      "maxHp": 319,
+      "attackDamage": 188,
+      "ac": 25,
+      "speed": 4,
+      "experience": 4250,
+      "initiative": 5
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "false_face_phantom",
+    "name": "False-Face Phantom",
+    "spritePath": "tunnelsofprivacy/bosses/lvl84/false_face_phantom.png",
+    "mainLevel": 84,
+    "stats": {
+      "hp": 322,
+      "maxHp": 322,
+      "attackDamage": 190,
+      "ac": 25,
+      "speed": 5,
+      "experience": 4300,
+      "initiative": 2
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "mirror_double_serpent",
+    "name": "Mirror-Double Serpent",
+    "spritePath": "tunnelsofprivacy/bosses/lvl85/mirror_double_serpent.png",
+    "mainLevel": 85,
+    "stats": {
+      "hp": 326,
+      "maxHp": 326,
+      "attackDamage": 192,
+      "ac": 25,
+      "speed": 3,
+      "experience": 4350,
+      "initiative": 3
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "replicant_knight",
+    "name": "Replicant Knight",
+    "spritePath": "tunnelsofprivacy/bosses/lvl86/replicant_knight.png",
+    "mainLevel": 86,
+    "stats": {
+      "hp": 329,
+      "maxHp": 329,
+      "attackDamage": 194,
+      "ac": 25,
+      "speed": 3,
+      "experience": 4400,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "sybil_mask_raider",
+    "name": "Sybil Mask Raider",
+    "spritePath": "tunnelsofprivacy/bosses/lvl87/sybil_mask_raider.png",
+    "mainLevel": 87,
+    "stats": {
+      "hp": 333,
+      "maxHp": 333,
+      "attackDamage": 196,
+      "ac": 25,
+      "speed": 4,
+      "experience": 4450,
+      "initiative": 5
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "identity_echo_shade",
+    "name": "Identity Echo Shade",
+    "spritePath": "tunnelsofprivacy/bosses/lvl88/identity_echo_shade.png",
+    "mainLevel": 88,
+    "stats": {
+      "hp": 337,
+      "maxHp": 337,
+      "attackDamage": 198,
+      "ac": 25,
+      "speed": 4,
+      "experience": 4500,
+      "initiative": 2
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "split_self_idol",
+    "name": "Split-Self Idol",
+    "spritePath": "tunnelsofprivacy/bosses/lvl89/split_self_idol.png",
+    "mainLevel": 89,
+    "stats": {
+      "hp": 340,
+      "maxHp": 340,
+      "attackDamage": 200,
+      "ac": 25,
+      "speed": 5,
+      "experience": 4550,
+      "initiative": 3
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "sybil_matron",
+    "name": "Sybil Matron",
+    "spritePath": "tunnelsofprivacy/bosses/lvl90/sybil_matron.png",
+    "mainLevel": 90,
+    "stats": {
+      "hp": 344,
+      "maxHp": 344,
+      "attackDamage": 202,
+      "ac": 25,
+      "speed": 3,
+      "experience": 4600,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "depth_echo_titan",
+    "name": "Depth Echo Titan",
+    "spritePath": "tunnelsofprivacy/bosses/lvl91/depth_echo_titan.png",
+    "mainLevel": 91,
+    "stats": {
+      "hp": 347,
+      "maxHp": 347,
+      "attackDamage": 204,
+      "ac": 25,
+      "speed": 3,
+      "experience": 4650,
+      "initiative": 5
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "null_depth_phantom",
+    "name": "Null Depth Phantom",
+    "spritePath": "tunnelsofprivacy/bosses/lvl92/null_depth_phantom.png",
+    "mainLevel": 92,
+    "stats": {
+      "hp": 351,
+      "maxHp": 351,
+      "attackDamage": 206,
+      "ac": 25,
+      "speed": 4,
+      "experience": 4700,
+      "initiative": 2
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "pressure_warped_golem",
+    "name": "Pressure-Warped Golem",
+    "spritePath": "tunnelsofprivacy/bosses/lvl93/pressure_warped_golem.png",
+    "mainLevel": 93,
+    "stats": {
+      "hp": 355,
+      "maxHp": 355,
+      "attackDamage": 208,
+      "ac": 25,
+      "speed": 4,
+      "experience": 4750,
+      "initiative": 3
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "cavern_bloom_beast",
+    "name": "Cavern Bloom Beast",
+    "spritePath": "tunnelsofprivacy/bosses/lvl94/cavern_bloom_beast.png",
+    "mainLevel": 94,
+    "stats": {
+      "hp": 358,
+      "maxHp": 358,
+      "attackDamage": 210,
+      "ac": 25,
+      "speed": 5,
+      "experience": 4800,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "deep_fragment_idol",
+    "name": "Deep Fragment Idol",
+    "spritePath": "tunnelsofprivacy/bosses/lvl95/deep_fragment_idol.png",
+    "mainLevel": 95,
+    "stats": {
+      "hp": 362,
+      "maxHp": 362,
+      "attackDamage": 212,
+      "ac": 25,
+      "speed": 3,
+      "experience": 4850,
+      "initiative": 5
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "subterranean_shade",
+    "name": "Subterranean Shade",
+    "spritePath": "tunnelsofprivacy/bosses/lvl96/subterranean_shade.png",
+    "mainLevel": 96,
+    "stats": {
+      "hp": 365,
+      "maxHp": 365,
+      "attackDamage": 214,
+      "ac": 25,
+      "speed": 3,
+      "experience": 4900,
+      "initiative": 2
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "cracked_core_guardian",
+    "name": "Cracked Core Guardian",
+    "spritePath": "tunnelsofprivacy/bosses/lvl97/cracked_core_guardian.png",
+    "mainLevel": 97,
+    "stats": {
+      "hp": 369,
+      "maxHp": 369,
+      "attackDamage": 216,
+      "ac": 25,
+      "speed": 4,
+      "experience": 4950,
+      "initiative": 3
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "deep_channel_serpent",
+    "name": "Deep Channel Serpent",
+    "spritePath": "tunnelsofprivacy/bosses/lvl98/deep_channel_serpent.png",
+    "mainLevel": 98,
+    "stats": {
+      "hp": 373,
+      "maxHp": 373,
+      "attackDamage": 218,
+      "ac": 25,
+      "speed": 4,
+      "experience": 5000,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  },
+  {
+    "id": "abyssal_echo_revenant",
+    "name": "Abyssal Echo Revenant",
+    "spritePath": "tunnelsofprivacy/bosses/lvl99/abyssal_echo_revenant.png",
+    "mainLevel": 99,
+    "stats": {
+      "hp": 376,
+      "maxHp": 376,
+      "attackDamage": 220,
+      "ac": 25,
+      "speed": 5,
+      "experience": 5050,
+      "initiative": 5
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "",
+    "loot": {
+      "dropChance": 0.0,
+      "items": []
+    },
+    "special": {
+      "ability": "",
+      "description": "",
+      "cooldown": 0
+    }
+  }
+]

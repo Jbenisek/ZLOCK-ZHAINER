@@ -2,6 +2,198 @@
 
 # Changelog
 
+## v0.3.17 - Tooltip Content Updates (2025-11-29)
+- **Updated EXPLORE LEVEL Tooltip:**
+  - Now shows OpenRouter + Groq as API sources
+  - Mentions 9 models to choose from
+  - Changed from free/paid hybrid to paid-only tags
+
+- **Fixed AI Story Animations Tooltip:**
+  - Corrected tag from "free" to "paid" (AI video generation is paid)
+  - Added credits: Video by AiVideo.com, Story by ChatGPT
+  - Footer now shows proper attribution
+
+## v0.3.16 - Hackathon Info Tooltips (2025-11-29)
+- **Custom Tooltip System:**
+  - Rich info tooltips appear after 800ms hover on key UI elements
+  - Beautiful gold-bordered design with icons, tags, and descriptions
+  - Tags indicate: 🤖 AI-Generated, ✅ Free, 💳 Paid API, 💻 Local, 💛 Zcash, 👥 Multiplayer
+
+- **Tooltips Showcase AI Features:**
+  - EXPLORE LEVEL: LLM-powered encounter generation (paid)
+  - TALK Button: Piper TTS local voice synthesis (free)
+  - Combat System: D&D 5e dice mechanics
+  - Special Abilities: AI-generated particle effects
+  - Music: 100% AI-composed soundtrack (Suno AI)
+  - Story Backgrounds: AI-generated sprite animations
+  - Hero Art: All portraits/sprites AI-generated
+  - Version Display: Credits all AI contributions
+
+- **Educational Content:**
+  - Music ticker shows Zcash ecosystem facts
+  - Tooltips explain free vs paid features
+  - Technical details about WebSocket multiplayer
+  - Information about local TTS vs cloud APIs
+
+- **Technical Implementation:**
+  - TOOLTIP_DATA object stores all tooltip content
+  - initTooltipSystem() attaches listeners by element ID
+  - Position-aware rendering keeps tooltips on screen
+  - Smooth fade-in/out transitions
+
+## v0.3.15 - Dungeon Masters Panel UI (2025-11-29)
+- **Dungeon Masters Expandable Panel:**
+  - Moved Stairs, Fast Travel, and Difficulty controls to collapsible side panel
+  - New "🎲 DUNGEON MASTERS" button in center menu (below REST/SLEEP)
+  - Panel appears on right side of screen when expanded
+  - Clean UI with close button and organized sections
+  - Button highlights when panel is open
+
+- **UI Improvements:**
+  - Center menu now cleaner with fewer buttons
+  - Difficulty buttons now stacked vertically in panel
+  - Panel has purple gradient styling matching game theme
+  - Client restrictions still apply to controls inside panel
+
+## v0.3.14 - Release Heroes on Player Disconnect (2025-11-29)
+- **Hero Release on Disconnect:**
+  - Heroes selected by a disconnecting player are now automatically released
+  - Server removes heroes from `rooms[room]['heroes']` when client disconnects
+  - Updated `player_disconnected` message includes `released_heroes`, `heroes`, and `players` data
+  - All remaining players (host + clients) receive updated hero selection state
+  - Notification shows which heroes became available (e.g., "Player disconnected - Zooko, Nate now available")
+
+- **Server Changes (zlock_server.py):**
+  - Track and release heroes owned by disconnecting player
+  - Remove player from `players` list on disconnect
+  - Broadcast updated hero/player state to all remaining room members
+
+## v0.3.13 - Multiplayer Hero Selection Sync (2025-11-29)
+- **Hero Selection Sync on Join:**
+  - Fixed clients not seeing host's hero selections when joining a room
+  - Server now includes current `heroes` data in `joined` response message
+  - Client calls `updateHeroSelection()` after `showHeroSelection()` to sync UI
+  - Prevents duplicate hero selection conflicts when client joins late
+
+- **Server Changes (zlock_server.py):**
+  - Added `heroes_data` dictionary to `join_room` response
+  - Includes `playerId` and `playerName` for each selected hero
+
+## v0.3.12 - Bug Fixes for Initial Load (2025-11-29)
+- **Story Background Fix:**
+  - Fixed host not showing story background on initial dungeon menu load
+  - Root cause: `currentScreen` was set AFTER `updateDungeonMenuHeroes()` in multiple locations
+  - Fixed in: rolled stats completion, startNewAdventure(), and continueGameMultiplayer()
+  - Animation check `if (currentScreen === 'dungeonMenu')` now passes correctly
+
+- **Difficulty Button Fix:**
+  - Fixed difficulty buttons not showing current selection on screen load
+  - Added `updateDifficultyButtons()` call at start of `updateDungeonMenuHeroes()`
+  - Normal difficulty button now correctly highlighted by default on all entry points
+
+## v0.3.11 - Bug Fixes (2025-11-29)
+- **Story Background Fix:**
+  - Moved `startDungeonMenuAnimation()` call before early return in `updateDungeonMenuHeroes()`
+  - (Partial fix - full fix in v0.3.12)
+
+- **Difficulty Button Fix:**
+  - Added `updateDifficultyButtons()` call when entering dungeon menu
+  - (Partial fix - full fix in v0.3.12)
+
+## v0.3.10 - Animated Story Backgrounds for Dungeon Menu (2025-11-29)
+- **Story Background Animation:**
+  - Added animated story backgrounds to dungeon menu (same as arcade game)
+  - Sprite atlas format: 8 columns × 16 rows = 128 frames at 16fps
+  - Background changes based on dungeon level (level-based selection)
+  - Ping-pong playback mode for story sequences, loop mode for idle animations
+  - Low opacity (0.25) for subtle effect behind menu UI
+
+- **Level-Based Animation Selection:**
+  - Levels 1-9: Intro story sequences (intro_a through intro_e)
+  - Levels 10-99: Story progression (lvl1 through lvl10)
+  - Levels 100-999: Upgrade sequences (up_1 through up_5)
+  - Level 10000+: End sequence
+  - Each level range has dedicated animation file
+
+- **Animation System:**
+  - `dungeonStoryLoops` array defines minLevel/maxLevel/file/pingpong for each animation
+  - `getDungeonStoryAnimation(level)` selects appropriate animation for current level
+  - `startDungeonMenuAnimation()` initializes sprite atlas and frame animation
+  - `stopDungeonMenuAnimation()` cleans up interval when leaving dungeon menu
+  - `updateDungeonMenuBackground()` refreshes animation when level changes
+
+- **Technical Implementation:**
+  - CSS: `#dungeonMenuBackground` absolute positioned, z-index -1, background-size 800% 1600%
+  - Animation hooked into `updateDungeonMenuHeroes()` for automatic start when entering dungeon menu
+  - Animation stopped when entering battle or quitting to title
+  - Multiplayer clients also see story backgrounds
+
+## v0.3.09 - Game Difficulty System (2025-11-29)
+- **Difficulty Selection:**
+  - Added DIFFICULTY section to dungeon menu with three options:
+    - 🌼 CASUAL - Uses `bosses_data_easy.json` (lower boss stats)
+    - ⚔️ NORMAL - Uses `bosses_data_normal.json` (default)
+    - 💀 EXPERT - Uses `bosses_data_hard.json` (higher boss stats)
+  - Selected difficulty button highlighted with color glow
+  - Difficulty saved to settings and persists across sessions
+
+- **Encounter Regeneration:**
+  - Changing difficulty immediately regenerates the queued encounter
+  - Loading bar resets and new encounter uses updated boss stats
+  - Both `preGenerateNextEncounter()` and fallback `startBattle()` use difficulty setting
+
+- **Multiplayer Support:**
+  - Only host/party leader can change difficulty
+  - `difficulty_change` WebSocket message broadcasts to all clients
+  - Clients see difficulty button updates and notification
+  - Difficulty buttons disabled for clients (like stairs/travel)
+  - Server forwards `difficulty_change` messages from host to room
+
+- **Technical Changes:**
+  - New `settings.difficulty` property (default: 'normal')
+  - `getBossDifficultyFile()` returns correct JSON path based on difficulty
+  - `setDifficulty(difficulty)` function handles change + regeneration
+  - `updateDifficultyButtons()` manages visual state of difficulty buttons
+  - `applyClientUIRestrictions()` now disables difficulty buttons for clients
+
+## v0.3.08 - Client UI Restrictions for Level Navigation (2025-11-29)
+- **Client UI Restrictions:**
+  - Stairs UP/DOWN buttons now disabled and greyed out for clients
+  - Fast Travel button and input disabled for clients
+  - Added IDs to buttons: `stairsUpBtn`, `stairsDownBtn`, `fastTravelBtn`
+  - `applyClientUIRestrictions()` now disables all level navigation controls
+  - Buttons show 50% opacity with not-allowed cursor for clients
+  - Tooltip on hover explains "Only party leader can..."
+
+- **Technical Changes:**
+  - Dual-layer protection: UI disabled + function-level checks
+  - Function checks remain as backup if buttons somehow triggered
+
+## v0.3.07 - Multiplayer Level Sync & Client Roll Phase Fix (2025-11-29)
+- **Multiplayer Level Navigation:**
+  - Host stairs (UP/DOWN) and Fast Travel now broadcast `level_change` to all clients
+  - Clients receive level updates and sync their UI automatically
+  - Clients blocked from using stairs/fast travel with notification "Only the party leader can..."
+  - Server forwards `level_change` messages from host to all clients in room
+  - Client's `preGeneratedEncounter.roomLevel` updated to match host
+
+- **Client Roll Phase Fix:**
+  - Fixed bug where clients with single-player save couldn't roll stats in multiplayer
+  - Client's `heroSelectionHasSave` now forced to `false` when host starts roll phase
+  - Client's local save is irrelevant when joining a NEW multiplayer game
+  - Roll buttons now appear correctly for clients regardless of their local save state
+
+- **Fast Travel Feature (Diag):**
+  - Added level input field and TRAVEL button for jumping to specific levels
+  - Useful for testing boss sprites and encounters at different levels
+  - Host-only in multiplayer, broadcasts to clients
+
+- **Technical Changes:**
+  - New `level_change` WebSocket message type handled by server and clients
+  - `changeLevel()` and `fastTravel()` check `multiplayerState.enabled` (not `.connected`)
+  - Server `zlock_server.py` updated with `level_change` message forwarding
+  - `roll_phase_start` handler sets `heroSelectionHasSave = false` for clients
+
 ## v0.3.06 - Boss Sprite Loading Fix (2025-11-29)
 - **Boss Sprite Standardization:**
   - Renamed all boss sprites to `boss_lvl{n}.png` format (levels 1-26)

@@ -56,6 +56,20 @@
             z-index: 100;
         }
         
+        #dungeonMenuBackground {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.25;
+            background-size: 800% 1600%;
+            background-position: 0% 0%;
+            background-repeat: no-repeat;
+            transition: opacity 1s ease-in-out;
+        }
+        
         #battleScreen {
             display: none;
             position: absolute;
@@ -1500,9 +1514,93 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.6; }
         }
+        
+        /* ===== HACKATHON INFO TOOLTIPS ===== */
+        #infoTooltip {
+            position: fixed;
+            max-width: 380px;
+            background: linear-gradient(135deg, rgba(15, 10, 35, 0.98), rgba(30, 20, 50, 0.98));
+            border: 2px solid #F2C94C;
+            border-radius: 12px;
+            padding: 15px 18px;
+            z-index: 99999;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 8px 32px rgba(242, 201, 76, 0.3), 0 0 60px rgba(139, 69, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        #infoTooltip.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        #infoTooltip .tooltip-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(242, 201, 76, 0.3);
+        }
+        
+        #infoTooltip .tooltip-icon {
+            font-size: 24px;
+        }
+        
+        #infoTooltip .tooltip-title {
+            color: #F2C94C;
+            font-size: 16px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        #infoTooltip .tooltip-body {
+            color: #E0E0E0;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        
+        #infoTooltip .tooltip-tag {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            margin-right: 5px;
+            margin-top: 8px;
+            text-transform: uppercase;
+        }
+        
+        #infoTooltip .tag-ai { background: rgba(139, 69, 255, 0.4); color: #D4BBFF; border: 1px solid #8B45FF; }
+        #infoTooltip .tag-free { background: rgba(46, 204, 113, 0.4); color: #A8F0C8; border: 1px solid #2ECC71; }
+        #infoTooltip .tag-paid { background: rgba(231, 76, 60, 0.4); color: #F5A8A0; border: 1px solid #E74C3C; }
+        #infoTooltip .tag-local { background: rgba(52, 152, 219, 0.4); color: #A8D4F0; border: 1px solid #3498DB; }
+        #infoTooltip .tag-zcash { background: rgba(242, 201, 76, 0.4); color: #FFF4C8; border: 1px solid #F2C94C; }
+        #infoTooltip .tag-multiplayer { background: rgba(155, 89, 182, 0.4); color: #E0C8F0; border: 1px solid #9B59B6; }
+        
+        #infoTooltip .tooltip-footer {
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(242, 201, 76, 0.2);
+            font-size: 10px;
+            color: #89A0B4;
+            font-style: italic;
+        }
+        
+        [data-tooltip] {
+            position: relative;
+        }
+        /* ===== END HACKATHON INFO TOOLTIPS ===== */
     </style>
 </head>
 <body>
+    <!-- Hackathon Info Tooltip -->
+    <div id="infoTooltip"></div>
+    
     <!-- Loading Modal -->
     <div id="loadingModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); display: flex; align-items: center; justify-content: center; z-index: 10000;">
         <div style="background: linear-gradient(135deg, #1a2332 0%, #0d1218 100%); padding: 40px 60px; border-radius: 15px; border: 2px solid #8B45FF; box-shadow: 0 10px 50px rgba(139, 69, 255, 0.5); text-align: center; min-width: 500px;">
@@ -1539,6 +1637,9 @@
     <div id="gameContainer">
         <!-- Dungeon Menu Screen -->
         <div id="dungeonMenuScreen">
+            <!-- Story Background Animation -->
+            <div id="dungeonMenuBackground"></div>
+            
             <!-- Hero Cards in Corners -->
             <div class="dungeonHeroCard" id="dungeonZooko">
                 <div class="heroPortrait" style="background-image: url('people/zooko_a_head_compressed.png'); border-color: #EB5757; box-shadow: 0 0 10px rgba(235, 87, 87, 0.4);"></div>
@@ -1595,13 +1696,41 @@
                 <button class="menuButton comingSoon" disabled>ENTER LEVEL STORE<br><span style="font-size: 12px; font-weight: 400;">(If Found)</span></button>
                 <button class="menuButton">INVENTORY</button>
                 <button class="menuButton">REST / SLEEP</button>
+                <button class="menuButton" id="dungeonMastersBtn" onclick="toggleDungeonMasters()" style="background: linear-gradient(135deg, rgba(139, 69, 255, 0.4), rgba(75, 0, 130, 0.4));">🎲 DUNGEON MASTERS</button>
+            </div>
+            
+            <!-- Dungeon Masters Panel (Right Side) -->
+            <div id="dungeonMastersPanel" style="display: none; position: absolute; top: 50%; right: 20px; transform: translateY(-50%); background: linear-gradient(135deg, rgba(20, 10, 40, 0.95), rgba(40, 20, 60, 0.95)); border: 3px solid #8B45FF; border-radius: 15px; padding: 20px; backdrop-filter: blur(15px); box-shadow: 0 0 30px rgba(139, 69, 255, 0.4), inset 0 0 20px rgba(139, 69, 255, 0.1); min-width: 280px;">
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <div style="color: #F2C94C; font-size: 18px; font-weight: 900; text-shadow: 0 0 15px rgba(242, 201, 76, 0.5);">🎲 DUNGEON MASTERS</div>
+                    <button onclick="toggleDungeonMasters()" style="position: absolute; top: 10px; right: 10px; background: rgba(255,100,100,0.3); border: 2px solid #ff6b6b; border-radius: 50%; width: 28px; height: 28px; color: #ff6b6b; font-size: 16px; cursor: pointer; font-weight: bold;">✕</button>
+                </div>
                 
                 <!-- Stairs Section -->
-                <div style="text-align: center; margin-top: 5px;">
+                <div style="text-align: center; margin-bottom: 15px;">
                     <div style="color: #BFD1E0; font-size: 14px; font-weight: 700; margin-bottom: 8px; text-shadow: 0 0 10px rgba(139, 69, 255, 0.5);">STAIRS</div>
                     <div style="display: flex; gap: 10px; justify-content: center;">
-                        <button class="menuButton" onclick="changeLevel(-1)" style="width: 120px; padding: 10px 15px; font-size: 14px;">⬆️ UP</button>
-                        <button class="menuButton" onclick="changeLevel(1)" style="width: 120px; padding: 10px 15px; font-size: 14px;">⬇️ DOWN</button>
+                        <button id="stairsUpBtn" class="menuButton" onclick="changeLevel(-1)" style="width: 110px; padding: 10px 12px; font-size: 13px;">⬆️ UP</button>
+                        <button id="stairsDownBtn" class="menuButton" onclick="changeLevel(1)" style="width: 110px; padding: 10px 12px; font-size: 13px;">⬇️ DOWN</button>
+                    </div>
+                </div>
+                
+                <!-- Fast Travel -->
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <div style="color: #BFD1E0; font-size: 14px; font-weight: 700; margin-bottom: 8px; text-shadow: 0 0 10px rgba(139, 69, 255, 0.5);">FAST TRAVEL</div>
+                    <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+                        <input type="number" id="fastTravelLevel" min="1" value="1" style="width: 60px; padding: 8px; font-size: 14px; text-align: center; background: rgba(0,0,0,0.5); border: 2px solid #8B45FF; border-radius: 5px; color: #F2C94C; font-family: 'JetBrains Mono', monospace;">
+                        <button id="fastTravelBtn" class="menuButton" onclick="fastTravel()" style="width: 100px; padding: 10px 12px; font-size: 13px;">🚀 GO</button>
+                    </div>
+                </div>
+                
+                <!-- Difficulty Section -->
+                <div style="text-align: center;">
+                    <div style="color: #BFD1E0; font-size: 14px; font-weight: 700; margin-bottom: 8px; text-shadow: 0 0 10px rgba(139, 69, 255, 0.5);">DIFFICULTY</div>
+                    <div style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
+                        <button id="diffCasualBtn" class="menuButton" onclick="setDifficulty('casual')" style="width: 200px; padding: 8px 10px; font-size: 12px;">🌼 CASUAL</button>
+                        <button id="diffNormalBtn" class="menuButton" onclick="setDifficulty('normal')" style="width: 200px; padding: 8px 10px; font-size: 12px;">⚔️ NORMAL</button>
+                        <button id="diffExpertBtn" class="menuButton" onclick="setDifficulty('expert')" style="width: 200px; padding: 8px 10px; font-size: 12px;">💀 EXPERT</button>
                     </div>
                 </div>
             </div>
@@ -1662,7 +1791,7 @@
                         <button class="battleButton taunt" onclick="battleAction('taunt')">🗣 TAUNT</button>
                         <button class="battleButton heal" onclick="battleAction('heal')">💚 HEAL</button>
                         <button class="battleButton" id="battleSkipBtn" onclick="battleAction('skip')">⏭ SKIP</button>
-                        <button class="battleButton" onclick="battleAction('talk')">💬 TALK</button>
+                        <button class="battleButton" id="battleTalkBtn" onclick="battleAction('talk')">💬 TALK</button>
                         <button class="battleButton retreat" onclick="battleAction('retreat')">🏃 RETREAT</button>
                     </div>
                 </div>
@@ -1750,15 +1879,15 @@
                 <button class="menuButton portalButton" onclick="exitPortal()">
                     <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                         <div style="text-align: left;">
-                            <div style="font-size: 18px; font-weight: 700;">EXIT PORTAL</div>
-                            <div style="font-size: 10px; font-weight: 400; margin-top: 2px;">(RETURN TO ARCADE)</div>
+                            <div style="font-size: 18px; font-weight: 700;">ENTER ARCADE</div>
+                            <div style="font-size: 10px; font-weight: 400; margin-top: 2px;">(ZLOCK ZHAINER)</div>
                         </div>
                         <span style="display: inline-block; padding: 4px 10px; background: #8B45FF; border-radius: 5px; font-weight: bold; color: white; font-size: 12px;">BACK</span>
                     </div>
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.3.06 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.3.17 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div style="
@@ -2177,7 +2306,7 @@
         <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         
         <div style="display: block; width: 100%; margin-top: 15px; padding: 10px 0; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A7A8F; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-            Tunnels of Privacy v0.2.61
+            Tunnels of Privacy v0.3.17
         </div>
     </div>
     
@@ -2238,7 +2367,245 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.3.06';
+        const GAME_VERSION = 'v0.3.17';
+        
+        // ===== HACKATHON INFO TOOLTIP SYSTEM =====
+        const TOOLTIP_DELAY = 800; // ms before tooltip appears
+        let tooltipTimeout = null;
+        let currentTooltipElement = null;
+        
+        // Tooltip definitions - showcasing AI and technical features
+        const TOOLTIP_DATA = {
+            // Battle Actions
+            'exploreLevelBtn': {
+                icon: '🤖',
+                title: 'AI-Powered Encounters',
+                body: 'Uses <strong>LLM (Large Language Model)</strong> to pre-generate unique encounters while you\'re in the menu. Boss names, stats, personalities, and battle dialogue are all AI-created in real-time.<br><br>🔌 <strong>API Sources:</strong> OpenRouter + Groq<br>🎯 <strong>9 Models:</strong> Choose your preferred LLM',
+                tags: ['ai', 'paid'],
+                footer: 'OpenRouter & Groq APIs • 9 models to choose from'
+            },
+            'battleTalkBtn': {
+                icon: '🗣️',
+                title: 'Local Text-to-Speech',
+                body: 'Uses <strong>Piper TTS</strong> - a completely FREE, locally-hosted neural text-to-speech engine. No cloud API needed! Voices are AI-generated but run 100% on your machine.',
+                tags: ['ai', 'free', 'local'],
+                footer: 'Free feature: Piper TTS auto-installs on first use'
+            },
+            'battleHeavyBtn': {
+                icon: '⚔️',
+                title: 'D&D Combat System',
+                body: 'Full <strong>D&D 5e-style</strong> dice rolling: d20 for attack rolls vs AC, damage dice (1d6/2d6/3d6), stat modifiers. All combat math follows tabletop RPG rules.',
+                tags: ['free'],
+                footer: 'Real dice mechanics with critical hits and misses'
+            },
+            'battleSpecialBtn': {
+                icon: '✨',
+                title: 'Hero Special Abilities',
+                body: 'Each hero has unique special attacks with <strong>AI-generated particle effects</strong>. Zooko\'s shield, Nate\'s fury, Zancas\'s precision, CyberAxe\'s electric storm.',
+                tags: ['ai', 'free'],
+                footer: 'Particle effects created with custom editor'
+            },
+            // Dungeon Menu
+            'dungeonMastersBtn': {
+                icon: '🎲',
+                title: 'Dungeon Master Controls',
+                body: 'Host-only panel for <strong>level navigation</strong> and <strong>difficulty settings</strong>. In multiplayer, only the party leader can change these - clients see updates in real-time via WebSocket.',
+                tags: ['multiplayer', 'free'],
+                footer: 'WebSocket-based real-time sync for all players'
+            },
+            'diffCasualBtn': {
+                icon: '🌼',
+                title: 'Dynamic Difficulty',
+                body: 'Loads different <strong>boss stat JSON files</strong> based on difficulty. Casual/Normal/Expert each have unique boss HP, damage, and ability modifiers.',
+                tags: ['free'],
+                footer: 'Boss data files: bosses_data_easy/normal/hard.json'
+            },
+            'diffNormalBtn': {
+                icon: '⚔️',
+                title: 'Dynamic Difficulty',
+                body: 'Loads different <strong>boss stat JSON files</strong> based on difficulty. Casual/Normal/Expert each have unique boss HP, damage, and ability modifiers.',
+                tags: ['free'],
+                footer: 'Boss data files: bosses_data_easy/normal/hard.json'
+            },
+            'diffExpertBtn': {
+                icon: '💀',
+                title: 'Dynamic Difficulty',
+                body: 'Loads different <strong>boss stat JSON files</strong> based on difficulty. Casual/Normal/Expert each have unique boss HP, damage, and ability modifiers.',
+                tags: ['free'],
+                footer: 'Boss data files: bosses_data_easy/normal/hard.json'
+            },
+            // Music & Audio
+            'musicTicker': {
+                icon: '📚',
+                title: 'Educational Zcash Facts',
+                body: 'The music ticker displays <strong>random Zcash ecosystem facts</strong> loaded from ticker_facts.json. Learn about privacy, zero-knowledge proofs, and the Zcash community while playing!',
+                tags: ['zcash', 'free'],
+                footer: 'Facts rotate with each song change'
+            },
+            'musicControls': {
+                icon: '🎵',
+                title: 'AI-Generated Soundtrack',
+                body: 'All 10 theme tracks were <strong>100% AI-composed</strong> using Suno AI. Each track is a unique WebM audio file designed to match the dungeon atmosphere.',
+                tags: ['ai', 'free'],
+                footer: 'Music generated by Suno AI'
+            },
+            // Story & Visuals
+            'dungeonMenuBackground': {
+                icon: '🎬',
+                title: 'AI Story Animations',
+                body: '<strong>Sprite atlas animations</strong> (8×16 = 128 frames at 16fps) play as backgrounds. All story sequences were AI-generated as video, then converted to sprite sheets.<br><br>🎥 <strong>Video:</strong> AiVideo.com<br>📖 <strong>Story:</strong> ChatGPT',
+                tags: ['ai', 'paid'],
+                footer: 'Video by AiVideo.com • Story by ChatGPT'
+            },
+            // Heroes
+            'dungeonZooko': {
+                icon: '🎨',
+                title: 'AI-Generated Hero Art',
+                body: 'All character portraits, sprites, and animations were <strong>100% AI-generated</strong> using image generation models. No human artists - pure AI creativity!',
+                tags: ['ai', 'free'],
+                footer: 'Hero: Zooko - Named after Zcash founder'
+            },
+            'dungeonNate': {
+                icon: '🎨',
+                title: 'AI-Generated Hero Art',
+                body: 'All character portraits, sprites, and animations were <strong>100% AI-generated</strong> using image generation models. No human artists - pure AI creativity!',
+                tags: ['ai', 'free'],
+                footer: 'Hero: Nate - The warrior of the group'
+            },
+            'dungeonZancas': {
+                icon: '🎨',
+                title: 'AI-Generated Hero Art',
+                body: 'All character portraits, sprites, and animations were <strong>100% AI-generated</strong> using image generation models. No human artists - pure AI creativity!',
+                tags: ['ai', 'free'],
+                footer: 'Hero: Zancas - Swift and precise'
+            },
+            'dungeonCyberAxe': {
+                icon: '🎨',
+                title: 'AI-Generated Hero Art',
+                body: 'All character portraits, sprites, and animations were <strong>100% AI-generated</strong> using image generation models. No human artists - pure AI creativity!',
+                tags: ['ai', 'free'],
+                footer: 'Hero: CyberAxe - Electric powerhouse'
+            },
+            // Version/Credits
+            'versionDisplay': {
+                icon: '🤖',
+                title: '100% AI-Developed Game',
+                body: '<strong>EVERYTHING</strong> in this game was AI-generated or AI-assisted:<br>• Code: GitHub Copilot (Claude)<br>• Art: AI image generation<br>• Music: Suno AI<br>• Story: AI video generation<br>• Sound FX: AI audio tools<br>• 3D Models: AI-assisted',
+                tags: ['ai', 'zcash'],
+                footer: 'Built for Zcash Hackathon 2025'
+            },
+            // Multiplayer
+            'heroSelectionCode': {
+                icon: '🌐',
+                title: 'WebSocket Multiplayer',
+                body: 'Real-time <strong>4-player co-op</strong> using WebSocket connections. Host creates room, clients join with 6-character code. Turn-based combat with live state sync.',
+                tags: ['multiplayer', 'free'],
+                footer: 'Python WebSocket server on port 8765'
+            }
+        };
+        
+        // Initialize tooltip system
+        function initTooltipSystem() {
+            const tooltip = document.getElementById('infoTooltip');
+            if (!tooltip) return;
+            
+            // Add event listeners to all elements with tooltip data
+            Object.keys(TOOLTIP_DATA).forEach(elementId => {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.addEventListener('mouseenter', (e) => showTooltipDelayed(e, elementId));
+                    element.addEventListener('mouseleave', hideTooltip);
+                    element.addEventListener('mousemove', updateTooltipPosition);
+                }
+            });
+            
+            // Also handle elements by class
+            document.querySelectorAll('[data-tooltip-id]').forEach(element => {
+                const tooltipId = element.getAttribute('data-tooltip-id');
+                if (TOOLTIP_DATA[tooltipId]) {
+                    element.addEventListener('mouseenter', (e) => showTooltipDelayed(e, tooltipId));
+                    element.addEventListener('mouseleave', hideTooltip);
+                    element.addEventListener('mousemove', updateTooltipPosition);
+                }
+            });
+        }
+        
+        function showTooltipDelayed(event, tooltipId) {
+            clearTimeout(tooltipTimeout);
+            currentTooltipElement = event.target;
+            
+            tooltipTimeout = setTimeout(() => {
+                showTooltip(event, tooltipId);
+            }, TOOLTIP_DELAY);
+        }
+        
+        function showTooltip(event, tooltipId) {
+            const tooltip = document.getElementById('infoTooltip');
+            const data = TOOLTIP_DATA[tooltipId];
+            if (!tooltip || !data) return;
+            
+            // Build tooltip HTML
+            let tagsHtml = '';
+            if (data.tags) {
+                data.tags.forEach(tag => {
+                    const tagLabels = {
+                        'ai': '🤖 AI-Generated',
+                        'free': '✅ Free',
+                        'paid': '💳 Paid API',
+                        'local': '💻 Local',
+                        'zcash': '💛 Zcash',
+                        'multiplayer': '👥 Multiplayer'
+                    };
+                    tagsHtml += `<span class="tooltip-tag tag-${tag}">${tagLabels[tag] || tag}</span>`;
+                });
+            }
+            
+            tooltip.innerHTML = `
+                <div class="tooltip-header">
+                    <span class="tooltip-icon">${data.icon}</span>
+                    <span class="tooltip-title">${data.title}</span>
+                </div>
+                <div class="tooltip-body">
+                    ${data.body}
+                    <div style="margin-top: 8px;">${tagsHtml}</div>
+                </div>
+                ${data.footer ? `<div class="tooltip-footer">ℹ️ ${data.footer}</div>` : ''}
+            `;
+            
+            updateTooltipPosition(event);
+            tooltip.classList.add('visible');
+        }
+        
+        function updateTooltipPosition(event) {
+            const tooltip = document.getElementById('infoTooltip');
+            if (!tooltip) return;
+            
+            const padding = 15;
+            let x = event.clientX + padding;
+            let y = event.clientY + padding;
+            
+            // Keep tooltip on screen
+            const rect = tooltip.getBoundingClientRect();
+            if (x + rect.width > window.innerWidth - padding) {
+                x = event.clientX - rect.width - padding;
+            }
+            if (y + rect.height > window.innerHeight - padding) {
+                y = event.clientY - rect.height - padding;
+            }
+            
+            tooltip.style.left = `${x}px`;
+            tooltip.style.top = `${y}px`;
+        }
+        
+        function hideTooltip() {
+            clearTimeout(tooltipTimeout);
+            const tooltip = document.getElementById('infoTooltip');
+            if (tooltip) {
+                tooltip.classList.remove('visible');
+            }
+            currentTooltipElement = null;
+        }
+        // ===== END HACKATHON INFO TOOLTIP SYSTEM =====
         
         // ===== RANDOM PLAYER NAME GENERATOR =====
         const PLAYER_FIRST_NAMES = ['Crypto', 'Shadow', 'Pixel', 'Neon', 'Quantum', 'Cyber', 'Nova', 'Phoenix', 'Storm', 'Blaze'];
@@ -2905,7 +3272,8 @@
             llmFreeWill: false,      // NPCs chat autonomously
             llmUsePaid: false,       // Use paid LLM models
             rpMode: true,            // RP emotes/dramatic speech vs normal 2025 talk
-            diagMode: false          // Diagnostic mode - enemies have 5 HP
+            diagMode: false,         // Diagnostic mode - enemies have 5 HP
+            difficulty: 'normal'     // Game difficulty: 'casual', 'normal', 'expert'
         };
         
         function showSettings() {
@@ -3281,6 +3649,7 @@
             // Update dungeon menu with save data
             updateDungeonMenuHeroes();
             updateGoldDisplay();
+            updateDifficultyButtons();
             
             // Apply client UI restrictions
             applyClientUIRestrictions();
@@ -3321,6 +3690,263 @@
             swapInitiator: null
         };
         
+        // Get boss data file based on difficulty setting
+        function getBossDifficultyFile() {
+            const difficultyMap = {
+                'casual': 'tunnelsofprivacy/bosses/bosses_data_easy.json',
+                'normal': 'tunnelsofprivacy/bosses/bosses_data_normal.json',
+                'expert': 'tunnelsofprivacy/bosses/bosses_data_hard.json'
+            };
+            return difficultyMap[settings.difficulty] || difficultyMap['normal'];
+        }
+        
+        // Toggle Dungeon Masters panel visibility
+        function toggleDungeonMasters() {
+            const panel = document.getElementById('dungeonMastersPanel');
+            const btn = document.getElementById('dungeonMastersBtn');
+            if (panel) {
+                const isVisible = panel.style.display !== 'none';
+                panel.style.display = isVisible ? 'none' : 'block';
+                
+                // Update button style to show active state
+                if (btn) {
+                    if (isVisible) {
+                        btn.style.background = 'linear-gradient(135deg, rgba(139, 69, 255, 0.4), rgba(75, 0, 130, 0.4))';
+                        btn.style.borderColor = '';
+                    } else {
+                        btn.style.background = 'linear-gradient(135deg, rgba(139, 69, 255, 0.7), rgba(75, 0, 130, 0.7))';
+                        btn.style.borderColor = '#F2C94C';
+                    }
+                }
+            }
+        }
+        
+        // Set game difficulty and regenerate encounter
+        function setDifficulty(difficulty) {
+            // In multiplayer, only host can change difficulty
+            if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                showNotification('Only the party leader can change difficulty', 'warning');
+                return;
+            }
+            
+            // Don't do anything if same difficulty
+            if (settings.difficulty === difficulty) {
+                return;
+            }
+            
+            settings.difficulty = difficulty;
+            saveSettings();
+            
+            // Update button highlights
+            updateDifficultyButtons();
+            
+            // Reset and regenerate the queued encounter
+            preGeneratedEncounter = {
+                ready: false,
+                generating: false,
+                boss: null,
+                mobs: [],
+                captive: null,
+                background: null,
+                roomLevel: preGeneratedEncounter.roomLevel || 1
+            };
+            updateExploreLoadingBar(0);
+            
+            // Start regenerating
+            preGenerateNextEncounter();
+            
+            const difficultyNames = { 'casual': 'Casual', 'normal': 'Normal', 'expert': 'Expert' };
+            showNotification(`Difficulty set to ${difficultyNames[difficulty]}`, 'info');
+            console.log('[Difficulty] Changed to:', difficulty);
+            
+            // In multiplayer, broadcast difficulty change to clients
+            if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                sendWebSocketMessage({
+                    type: 'difficulty_change',
+                    difficulty: difficulty
+                });
+            }
+        }
+        
+        // Update difficulty button visual states
+        function updateDifficultyButtons() {
+            const buttons = {
+                'casual': document.getElementById('diffCasualBtn'),
+                'normal': document.getElementById('diffNormalBtn'),
+                'expert': document.getElementById('diffExpertBtn')
+            };
+            
+            // Reset all buttons
+            Object.values(buttons).forEach(btn => {
+                if (btn) {
+                    btn.style.background = '';
+                    btn.style.borderColor = '';
+                    btn.style.boxShadow = '';
+                }
+            });
+            
+            // Highlight selected difficulty
+            const selectedBtn = buttons[settings.difficulty];
+            if (selectedBtn) {
+                const colors = {
+                    'casual': { bg: 'rgba(39, 174, 96, 0.4)', border: '#27AE60', shadow: '0 0 15px rgba(39, 174, 96, 0.5)' },
+                    'normal': { bg: 'rgba(242, 201, 76, 0.4)', border: '#F2C94C', shadow: '0 0 15px rgba(242, 201, 76, 0.5)' },
+                    'expert': { bg: 'rgba(235, 87, 87, 0.4)', border: '#EB5757', shadow: '0 0 15px rgba(235, 87, 87, 0.5)' }
+                };
+                const c = colors[settings.difficulty];
+                selectedBtn.style.background = `linear-gradient(135deg, ${c.bg}, ${c.bg})`;
+                selectedBtn.style.borderColor = c.border;
+                selectedBtn.style.boxShadow = c.shadow;
+            }
+        }
+        
+        // ===== DUNGEON MENU STORY BACKGROUND ANIMATION =====
+        // Sprite atlas format: 8 cols x 16 rows = 128 frames at 16fps
+        const STORY_COLS = 8;
+        const STORY_ROWS = 16;
+        const STORY_TOTAL_FRAMES = 128;
+        const STORY_FPS = 16;
+        
+        let storyBackgroundFrame = 0;
+        let storyBackgroundDirection = 1; // 1 = forward, -1 = backward (ping-pong)
+        let storyBackgroundIntervalId = null;
+        let currentStoryAnimation = null;
+        
+        // Story animations based on dungeon level
+        const dungeonStoryLoops = [
+            { file: 'story/intro/intro_a.png', minLevel: 1, maxLevel: 2, pingpong: true },
+            { file: 'story/intro/intro_b.png', minLevel: 3, maxLevel: 4, pingpong: true },
+            { file: 'story/intro/intro_c.png', minLevel: 5, maxLevel: 5, pingpong: true },
+            { file: 'story/intro/intro_d.png', minLevel: 6, maxLevel: 7, pingpong: true },
+            { file: 'story/intro/intro_e.png', minLevel: 8, maxLevel: 9, pingpong: true },
+            { file: 'story/lvl1/story_lvl_1.png', minLevel: 10, maxLevel: 12, pingpong: true },
+            { file: 'story/lvl1/story_lvl_1_loop.png', minLevel: 13, maxLevel: 19, pingpong: false },
+            { file: 'story/lvl2/story_lvl_2.png', minLevel: 20, maxLevel: 22, pingpong: true },
+            { file: 'story/lvl2/story_lvl_2_idle.png', minLevel: 23, maxLevel: 29, pingpong: false },
+            { file: 'story/lvl3/story_lvl_3.png', minLevel: 30, maxLevel: 32, pingpong: true },
+            { file: 'story/lvl3/story_lvl_3_idle.png', minLevel: 33, maxLevel: 39, pingpong: false },
+            { file: 'story/lvl4/story_lvl_4.png', minLevel: 40, maxLevel: 42, pingpong: true },
+            { file: 'story/lvl4/story_lvl_4_idle.png', minLevel: 43, maxLevel: 49, pingpong: false },
+            { file: 'story/lvl5/story_lvl_5.png', minLevel: 50, maxLevel: 52, pingpong: true },
+            { file: 'story/lvl5/story_lvl_5_idle.png', minLevel: 53, maxLevel: 59, pingpong: false },
+            { file: 'story/lvl6/story_lvl_6.png', minLevel: 60, maxLevel: 62, pingpong: true },
+            { file: 'story/lvl6/story_lvl_6_idle.png', minLevel: 63, maxLevel: 69, pingpong: false },
+            { file: 'story/lvl7/story_lvl_7.png', minLevel: 70, maxLevel: 72, pingpong: true },
+            { file: 'story/lvl7/story_lvl_7_idle.png', minLevel: 73, maxLevel: 79, pingpong: false },
+            { file: 'story/lvl8/story_lvl_8.png', minLevel: 80, maxLevel: 82, pingpong: true },
+            { file: 'story/lvl8/story_lvl_8_idle.png', minLevel: 83, maxLevel: 89, pingpong: false },
+            { file: 'story/lvl9/story_lvl_9.png', minLevel: 90, maxLevel: 92, pingpong: true },
+            { file: 'story/lvl9/story_lvl_9_idle.png', minLevel: 93, maxLevel: 99, pingpong: false },
+            { file: 'story/lvl10/story_lvl_10.png', minLevel: 100, maxLevel: 102, pingpong: true },
+            { file: 'story/lvl10/story_lvl_10_idle.png', minLevel: 103, maxLevel: 199, pingpong: false },
+            { file: 'story/up_1/story_up_1.png', minLevel: 200, maxLevel: 210, pingpong: true },
+            { file: 'story/up_1/story_up_1_idle.png', minLevel: 211, maxLevel: 399, pingpong: false },
+            { file: 'story/up_2/story_up_2.png', minLevel: 400, maxLevel: 410, pingpong: true },
+            { file: 'story/up_2/story_up_2_idle.png', minLevel: 411, maxLevel: 599, pingpong: false },
+            { file: 'story/up_3/story_up_3.png', minLevel: 600, maxLevel: 610, pingpong: true },
+            { file: 'story/up_3/story_up_3_idle.png', minLevel: 611, maxLevel: 799, pingpong: false },
+            { file: 'story/up_4/story_up_4.png', minLevel: 800, maxLevel: 810, pingpong: true },
+            { file: 'story/up_4/story_up_4_idle.png', minLevel: 811, maxLevel: 999, pingpong: false },
+            { file: 'story/up_5/story_up_5.png', minLevel: 1000, maxLevel: 1005, pingpong: true },
+            { file: 'story/up_5/story_up_5_idle.png', minLevel: 1006, maxLevel: 9999, pingpong: false },
+            { file: 'story/end/end.png', minLevel: 10000, maxLevel: 999999, pingpong: true }
+        ];
+        
+        // Get story animation for current level
+        function getDungeonStoryAnimation(level) {
+            for (const loop of dungeonStoryLoops) {
+                if (level >= loop.minLevel && level <= loop.maxLevel) {
+                    return loop;
+                }
+            }
+            // Default to first animation
+            return dungeonStoryLoops[0];
+        }
+        
+        // Start dungeon menu background animation
+        function startDungeonMenuAnimation() {
+            const bgElement = document.getElementById('dungeonMenuBackground');
+            if (!bgElement) return;
+            
+            // Get current dungeon level
+            const dungeonLevelEl = document.getElementById('dungeonMenuLevel');
+            const currentLevel = parseInt(dungeonLevelEl?.textContent) || 1;
+            
+            // Get appropriate animation for this level
+            const animData = getDungeonStoryAnimation(currentLevel);
+            
+            // Only reload if animation changed
+            if (currentStoryAnimation !== animData.file) {
+                currentStoryAnimation = animData.file;
+                storyBackgroundFrame = 0;
+                storyBackgroundDirection = 1;
+                
+                // Set sprite atlas as background
+                bgElement.style.backgroundImage = `url('${animData.file}')`;
+                bgElement.style.backgroundSize = `${STORY_COLS * 100}% ${STORY_ROWS * 100}%`;
+                bgElement.style.opacity = '0.25';
+                
+                console.log('[StoryBG] Loaded animation:', animData.file, 'for level', currentLevel);
+            }
+            
+            // Stop existing animation if running
+            if (storyBackgroundIntervalId) {
+                clearInterval(storyBackgroundIntervalId);
+            }
+            
+            // Start frame animation at 16fps
+            const frameInterval = 1000 / STORY_FPS;
+            const isPingPong = animData.pingpong;
+            
+            storyBackgroundIntervalId = setInterval(() => {
+                // Calculate current frame position in atlas
+                const col = storyBackgroundFrame % STORY_COLS;
+                const row = Math.floor(storyBackgroundFrame / STORY_COLS);
+                
+                // Set background position to show current frame
+                const xPercent = (col / (STORY_COLS - 1)) * 100;
+                const yPercent = (row / (STORY_ROWS - 1)) * 100;
+                bgElement.style.backgroundPosition = `${xPercent}% ${yPercent}%`;
+                
+                // Advance frame
+                if (isPingPong) {
+                    // Ping-pong mode: forward then backward
+                    storyBackgroundFrame += storyBackgroundDirection;
+                    
+                    if (storyBackgroundFrame >= STORY_TOTAL_FRAMES - 1) {
+                        storyBackgroundFrame = STORY_TOTAL_FRAMES - 1;
+                        storyBackgroundDirection = -1;
+                    } else if (storyBackgroundFrame <= 0) {
+                        storyBackgroundFrame = 0;
+                        storyBackgroundDirection = 1;
+                    }
+                } else {
+                    // Loop mode: restart at beginning
+                    storyBackgroundFrame++;
+                    if (storyBackgroundFrame >= STORY_TOTAL_FRAMES) {
+                        storyBackgroundFrame = 0;
+                    }
+                }
+            }, frameInterval);
+        }
+        
+        // Stop dungeon menu background animation
+        function stopDungeonMenuAnimation() {
+            if (storyBackgroundIntervalId) {
+                clearInterval(storyBackgroundIntervalId);
+                storyBackgroundIntervalId = null;
+            }
+        }
+        
+        // Update story background when level changes
+        function updateDungeonMenuBackground() {
+            // Only update if dungeon menu is visible
+            if (currentScreen === 'dungeonMenu') {
+                startDungeonMenuAnimation();
+            }
+        }
+        // ===== END DUNGEON MENU STORY BACKGROUND ANIMATION =====
+        
         // Pre-generated encounter data (prepared while in dungeon menu)
         let preGeneratedEncounter = {
             ready: false,
@@ -3351,11 +3977,12 @@
             updateExploreLoadingBar(0);
             
             try {
-                // Load enemy data
+                // Load enemy data based on difficulty setting
                 let bossesData = [];
                 let mobsData = [];
                 try {
-                    const bossResponse = await fetch('tunnelsofprivacy/bosses/bosses_data.json');
+                    const difficultyFile = getBossDifficultyFile();
+                    const bossResponse = await fetch(difficultyFile);
                     bossesData = await bossResponse.json();
                     const mobResponse = await fetch('tunnelsofprivacy/mobs/mobs_data.json');
                     const mobObj = await mobResponse.json();
@@ -3504,6 +4131,13 @@
         
         // Change dungeon level (stairs up/down)
         function changeLevel(direction) {
+            // In multiplayer, only host can change levels
+            if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                console.log('[Stairs] Clients cannot change levels - waiting for host');
+                showNotification('Only the party leader can use stairs', 'warning');
+                return;
+            }
+            
             // Get current level from UI
             const dungeonLevelEl = document.getElementById('dungeonMenuLevel');
             let currentLevel = parseInt(dungeonLevelEl?.textContent) || 1;
@@ -3524,16 +4158,21 @@
                 dungeonLevelEl.textContent = newLevel;
             }
             
-            // Save to shared save
-            const sharedSave = loadSharedSave();
-            if (sharedSave) {
-                if (!sharedSave.dungeonState) {
-                    sharedSave.dungeonState = {};
+            // Update story background for new level
+            updateDungeonMenuBackground();
+            
+            // Save to shared save (host only saves in multiplayer)
+            if (!multiplayerState.enabled || multiplayerState.role === 'host') {
+                const sharedSave = loadSharedSave();
+                if (sharedSave) {
+                    if (!sharedSave.dungeonState) {
+                        sharedSave.dungeonState = {};
+                    }
+                    sharedSave.dungeonState.currentLevel = newLevel;
+                    sharedSave.lastPlayed = Date.now();
+                    saveSharedSave(sharedSave);
+                    console.log('[Stairs] Game saved at level', newLevel);
                 }
-                sharedSave.dungeonState.currentLevel = newLevel;
-                sharedSave.lastPlayed = Date.now();
-                saveSharedSave(sharedSave);
-                console.log('[Stairs] Game saved at level', newLevel);
             }
             
             // Reset and regenerate encounter for new level
@@ -3550,6 +4189,89 @@
             
             // Start generating the new encounter
             preGenerateNextEncounter();
+            
+            // In multiplayer, host broadcasts level change to all clients
+            if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                sendWebSocketMessage({
+                    type: 'level_change',
+                    newLevel: newLevel
+                });
+                console.log('[MP] Broadcast level change to clients:', newLevel);
+            }
+        }
+        
+        // Fast travel to a specific level (diag feature)
+        function fastTravel() {
+            // In multiplayer, only host can fast travel
+            if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                console.log('[FastTravel] Clients cannot fast travel - waiting for host');
+                showNotification('Only the party leader can fast travel', 'warning');
+                return;
+            }
+            
+            const input = document.getElementById('fastTravelLevel');
+            const targetLevel = parseInt(input?.value) || 1;
+            
+            // Minimum level 1
+            const newLevel = Math.max(1, targetLevel);
+            
+            // Get current level
+            const dungeonLevelEl = document.getElementById('dungeonMenuLevel');
+            const currentLevel = parseInt(dungeonLevelEl?.textContent) || 1;
+            
+            // Don't do anything if already at target level
+            if (newLevel === currentLevel) {
+                console.log('[FastTravel] Already at level', newLevel);
+                return;
+            }
+            
+            console.log(`[FastTravel] Traveling from level ${currentLevel} to level ${newLevel}`);
+            
+            // Update UI
+            if (dungeonLevelEl) {
+                dungeonLevelEl.textContent = newLevel;
+            }
+            
+            // Update story background for new level
+            updateDungeonMenuBackground();
+            
+            // Save to shared save (host only saves in multiplayer)
+            if (!multiplayerState.enabled || multiplayerState.role === 'host') {
+                const sharedSave = loadSharedSave();
+                if (sharedSave) {
+                    if (!sharedSave.dungeonState) {
+                        sharedSave.dungeonState = {};
+                    }
+                    sharedSave.dungeonState.currentLevel = newLevel;
+                    sharedSave.lastPlayed = Date.now();
+                    saveSharedSave(sharedSave);
+                    console.log('[FastTravel] Game saved at level', newLevel);
+                }
+            }
+            
+            // Reset and regenerate encounter for new level
+            preGeneratedEncounter = {
+                ready: false,
+                generating: false,
+                boss: null,
+                mobs: [],
+                captive: null,
+                background: null,
+                roomLevel: newLevel
+            };
+            updateExploreLoadingBar(0);
+            
+            // Start generating the new encounter
+            preGenerateNextEncounter();
+            
+            // In multiplayer, host broadcasts level change to all clients
+            if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                sendWebSocketMessage({
+                    type: 'level_change',
+                    newLevel: newLevel
+                });
+                console.log('[MP] Broadcast level change to clients:', newLevel);
+            }
         }
         
         // Chat state for battle
@@ -4656,6 +5378,9 @@
                 return;
             }
             
+            // Stop dungeon menu story background animation
+            stopDungeonMenuAnimation();
+            
             // Switch to battle screen
             currentScreen = 'battle';
             document.getElementById('dungeonMenuScreen').style.display = 'none';
@@ -4698,7 +5423,8 @@
             let mobsData = [];
             if (!usePreGenerated) {
                 try {
-                    const bossResponse = await fetch('tunnelsofprivacy/bosses/bosses_data.json');
+                    const difficultyFile = getBossDifficultyFile();
+                    const bossResponse = await fetch(difficultyFile);
                     bossesData = await bossResponse.json();
                     const mobResponse = await fetch('tunnelsofprivacy/mobs/mobs_data.json');
                     const mobObj = await mobResponse.json();
@@ -7835,6 +8561,12 @@
         
         // Update dungeon menu hero stats from save
         function updateDungeonMenuHeroes() {
+            // Start story background animation when entering dungeon menu (do this first!)
+            if (currentScreen === 'dungeonMenu') {
+                startDungeonMenuAnimation();
+                updateDifficultyButtons(); // Ensure difficulty button shows current selection
+            }
+            
             // Clients use cached stats from host broadcasts, host uses localStorage
             if (multiplayerState.enabled && multiplayerState.role === 'client') {
                 // Client: Display from cache
@@ -8035,6 +8767,7 @@
         // Apply client UI restrictions (disable host-only buttons)
         function applyClientUIRestrictions() {
             if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                // Disable EXPLORE LEVEL button
                 const exploreLevelBtn = document.getElementById('exploreLevelBtn');
                 if (exploreLevelBtn) {
                     exploreLevelBtn.disabled = true;
@@ -8042,6 +8775,47 @@
                     exploreLevelBtn.style.cursor = 'not-allowed';
                     exploreLevelBtn.innerHTML = 'EXPLORE LEVEL<br>(HOST/PARTY LEADER ONLY)';
                 }
+                
+                // Disable STAIRS buttons (UP/DOWN)
+                const stairsUpBtn = document.getElementById('stairsUpBtn');
+                if (stairsUpBtn) {
+                    stairsUpBtn.disabled = true;
+                    stairsUpBtn.style.opacity = '0.5';
+                    stairsUpBtn.style.cursor = 'not-allowed';
+                    stairsUpBtn.title = 'Only party leader can use stairs';
+                }
+                const stairsDownBtn = document.getElementById('stairsDownBtn');
+                if (stairsDownBtn) {
+                    stairsDownBtn.disabled = true;
+                    stairsDownBtn.style.opacity = '0.5';
+                    stairsDownBtn.style.cursor = 'not-allowed';
+                    stairsDownBtn.title = 'Only party leader can use stairs';
+                }
+                
+                // Disable FAST TRAVEL button and input
+                const fastTravelBtn = document.getElementById('fastTravelBtn');
+                if (fastTravelBtn) {
+                    fastTravelBtn.disabled = true;
+                    fastTravelBtn.style.opacity = '0.5';
+                    fastTravelBtn.style.cursor = 'not-allowed';
+                    fastTravelBtn.title = 'Only party leader can fast travel';
+                }
+                const fastTravelInput = document.getElementById('fastTravelLevel');
+                if (fastTravelInput) {
+                    fastTravelInput.disabled = true;
+                    fastTravelInput.style.opacity = '0.5';
+                }
+                
+                // Disable DIFFICULTY buttons
+                const diffButtons = ['diffCasualBtn', 'diffNormalBtn', 'diffExpertBtn'];
+                diffButtons.forEach(btnId => {
+                    const btn = document.getElementById(btnId);
+                    if (btn) {
+                        btn.disabled = true;
+                        btn.style.cursor = 'not-allowed';
+                        btn.title = 'Only party leader can change difficulty';
+                    }
+                });
             }
         }
         
@@ -8167,6 +8941,9 @@
                 sharedSave.lastPlayed = Date.now();
                 saveSharedSave(sharedSave);
             }
+            
+            // Stop dungeon menu story background animation
+            stopDungeonMenuAnimation();
             
             isPaused = false;
             currentScreen = 'title';
@@ -8693,6 +9470,11 @@
                     
                     // Show hero selection
                     showHeroSelection();
+                    
+                    // Sync current hero selections from host (if any heroes already selected)
+                    if (data.heroes && Object.keys(data.heroes).length > 0) {
+                        updateHeroSelection({ heroes: data.heroes, players: data.players });
+                    }
                     break;
                 
                 case 'error':
@@ -8845,6 +9627,66 @@
                     }
                     break;
                 
+                case 'level_change':
+                    // Host notifies level change from stairs/fast travel
+                    if (multiplayerState.role === 'client') {
+                        const newLevel = data.newLevel;
+                        console.log('[MP] Received level change from host:', newLevel);
+                        
+                        // Update UI
+                        const dungeonLevelEl = document.getElementById('dungeonMenuLevel');
+                        if (dungeonLevelEl) {
+                            dungeonLevelEl.textContent = newLevel;
+                        }
+                        
+                        // Update story background for new level
+                        updateDungeonMenuBackground();
+                        
+                        // Reset encounter state for new level (client doesn't generate, waits for host)
+                        preGeneratedEncounter = {
+                            ready: false,
+                            generating: false,
+                            boss: null,
+                            mobs: [],
+                            captive: null,
+                            background: null,
+                            roomLevel: newLevel
+                        };
+                        updateExploreLoadingBar(0);
+                        
+                        showNotification(`Party moved to level ${newLevel}`, 'info');
+                    }
+                    break;
+                
+                case 'difficulty_change':
+                    // Host notifies difficulty change
+                    if (multiplayerState.role === 'client') {
+                        const newDifficulty = data.difficulty;
+                        console.log('[MP] Received difficulty change from host:', newDifficulty);
+                        
+                        // Update local setting (don't save - client doesn't persist host settings)
+                        settings.difficulty = newDifficulty;
+                        
+                        // Update button visuals
+                        updateDifficultyButtons();
+                        
+                        // Reset encounter state (client waits for host to regenerate)
+                        preGeneratedEncounter = {
+                            ready: false,
+                            generating: false,
+                            boss: null,
+                            mobs: [],
+                            captive: null,
+                            background: null,
+                            roomLevel: preGeneratedEncounter.roomLevel || 1
+                        };
+                        updateExploreLoadingBar(0);
+                        
+                        const difficultyNames = { 'casual': 'Casual', 'normal': 'Normal', 'expert': 'Expert' };
+                        showNotification(`Difficulty changed to ${difficultyNames[newDifficulty]}`, 'info');
+                    }
+                    break;
+                
                 case 'kicked':
                     showNotification(data.message, 'error');
                     resetMultiplayerState();
@@ -8862,6 +9704,17 @@
                 case 'player_disconnected':
                     if (multiplayerState.role === 'host') {
                         handlePlayerDisconnect(data.player_id);
+                    }
+                    
+                    // Update hero selection UI if heroes were released
+                    if (data.heroes) {
+                        updateHeroSelection({ heroes: data.heroes, players: data.players });
+                        
+                        // Show notification about released heroes
+                        if (data.released_heroes && data.released_heroes.length > 0) {
+                            const heroNames = data.released_heroes.map(h => h.charAt(0).toUpperCase() + h.slice(1)).join(', ');
+                            showNotification(`Player disconnected - ${heroNames} now available`, 'info');
+                        }
                     }
                     break;
                 
@@ -8980,6 +9833,9 @@
                         inRollPhase = true;
                         // This is a new game, not reconnecting
                         multiplayerState.isReconnecting = false;
+                        // CRITICAL: Force heroSelectionHasSave to false for clients
+                        // Client's local save is irrelevant - host is starting a NEW game
+                        heroSelectionHasSave = false;
                         showAllRollButtons();
                         // Show phase 2 UI
                         document.getElementById('gameStartPhase1').style.display = 'none';
@@ -9058,6 +9914,9 @@
                             // Apply client UI restrictions
                             applyClientUIRestrictions();
                         } else if (data.screen === 'battle') {
+                            // Stop dungeon menu story background animation
+                            stopDungeonMenuAnimation();
+                            
                             // Client waits for battle_init message from host
                             // Just show the screen, don't initialize yet
                             document.getElementById('dungeonMenuScreen').style.display = 'none';
@@ -10002,13 +10861,13 @@
             document.getElementById('musicControls').classList.add('dungeonMenuActive');
             document.getElementById('musicTicker').classList.add('dungeonMenuActive');
             
-            // Update dungeon menu with save data
-            updateDungeonMenuHeroes();
-            
             // Show dungeon menu
             currentScreen = 'dungeonMenu';
             document.getElementById('titleScreen').style.display = 'none';
             document.getElementById('dungeonMenuScreen').style.display = 'block';
+            
+            // Update dungeon menu with save data (after currentScreen is set)
+            updateDungeonMenuHeroes();
             
             // Notify all clients to start WITH save data
             sendWebSocketMessage({ 
@@ -10225,13 +11084,13 @@
             const newSave = createDefaultSharedSave();
             saveSharedSave(newSave);
             
-            // Update dungeon menu with new save data
-            updateDungeonMenuHeroes();
-            
             inRollPhase = false;
             currentScreen = 'dungeonMenu';
             document.getElementById('titleScreen').style.display = 'none';
             document.getElementById('dungeonMenuScreen').style.display = 'block';
+            
+            // Update dungeon menu with new save data (after currentScreen is set)
+            updateDungeonMenuHeroes();
             
             // Center music controls
             document.getElementById('musicControls').classList.remove('heroSelectionActive');
@@ -10276,12 +11135,12 @@
                     const newSave = createDefaultSharedSave();
                     saveSharedSave(newSave);
                     
-                    // Update dungeon menu with new save data
-                    updateDungeonMenuHeroes();
-                    
                     currentScreen = 'dungeonMenu';
                     document.getElementById('titleScreen').style.display = 'none';
                     document.getElementById('dungeonMenuScreen').style.display = 'block';
+                    
+                    // Update dungeon menu with new save data (after currentScreen is set)
+                    updateDungeonMenuHeroes();
                     
                     // Center music controls
                     document.getElementById('musicControls').classList.remove('heroSelectionActive');
@@ -11113,6 +11972,9 @@
             
             // Update title screen button states
             updateTitleScreenButtons();
+            
+            // Initialize hackathon info tooltips
+            initTooltipSystem();
             
             console.log('Initialization complete. Portal system ready.');
         }

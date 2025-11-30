@@ -1,0 +1,664 @@
+[
+  {
+    "id": "metadata_swarm_mass",
+    "name": "Metadata Swarm Mass",
+    "spritePath": "tunnelsofprivacy/bosses/lvl2/metadata_swarm_mass.png",
+    "mainLevel": 2,
+    "stats": {
+      "hp": 150,
+      "maxHp": 150,
+      "attackDamage": 18,
+      "ac": 12,
+      "speed": 3,
+      "experience": 200,
+      "initiative": 2
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": true,
+      "fleeThreshold": 0.2
+    },
+    "backstory": "A swirling mass of stolen metadata fragments. It whispers secrets it has collected - names, addresses, transaction histories. It feeds on exposed information and grows stronger with every privacy violation. It speaks in fragmented sentences, often revealing embarrassing truths about its victims.",
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        { "name": "Metadata Fragment", "chance": 0.6, "goldValue": 25 },
+        { "name": "Swarm Core", "chance": 0.25, "goldValue": 75 },
+        { "name": "Privacy Shard", "chance": 0.1, "goldValue": 150 }
+      ]
+    },
+    "special": {
+      "ability": "Swarm Overwhelm",
+      "description": "Splits into multiple attacks hitting all heroes for reduced damage",
+      "cooldown": 3
+    }
+  },
+  {
+    "id": "open_ledger_golem",
+    "name": "Open Ledger Golem",
+    "spritePath": "tunnelsofprivacy/bosses/lvl3/open_ledger_golem.png",
+    "mainLevel": 3,
+    "stats": {
+      "hp": 180,
+      "maxHp": 180,
+      "attackDamage": 22,
+      "ac": 14,
+      "speed": 2,
+      "experience": 250,
+      "initiative": 0
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": true,
+      "fleeThreshold": 0.1
+    },
+    "backstory": "A massive construct built from transparent ledger pages. Every transaction ever made is inscribed on its crystalline body for all to see. It believes total transparency is the only path to truth, and sees privacy as a form of deception. It speaks in formal, proclamatory tones like reading legal documents aloud.",
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        { "name": "Ledger Page", "chance": 0.6, "goldValue": 30 },
+        { "name": "Golem Heart", "chance": 0.25, "goldValue": 85 },
+        { "name": "Transparency Crystal", "chance": 0.1, "goldValue": 175 }
+      ]
+    },
+    "special": {
+      "ability": "Expose Weakness",
+      "description": "Reveals hero positions, reducing their AC by 3 for 2 turns",
+      "cooldown": 4
+    }
+  },
+  {
+    "id": "leak_channel_imp",
+    "name": "Leak-Channel Imp",
+    "spritePath": "tunnelsofprivacy/bosses/lvl4/leak_channel_imp.png",
+    "mainLevel": 4,
+    "stats": {
+      "hp": 180,
+      "maxHp": 180,
+      "attackDamage": 20,
+      "ac": 11,
+      "speed": 6,
+      "experience": 300,
+      "initiative": 5
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.15
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        { "name": "Broken Chain Link", "chance": 0.6, "goldValue": 35 },
+        { "name": "Binding Rune", "chance": 0.25, "goldValue": 95 },
+        { "name": "Horror Essence", "chance": 0.1, "goldValue": 200 }
+      ]
+    },
+    "special": {
+      "ability": "Chain Bind",
+      "description": "Immobilizes target hero for 1 turn, preventing all actions",
+      "cooldown": 5
+    }
+  },
+  {
+    "id": "trace_hound_construct",
+    "name": "Trace Hound Construct",
+    "spritePath": "tunnelsofprivacy/bosses/lvl5/trace_hound_construct.png",
+    "mainLevel": 5,
+    "stats": {
+      "hp": 220,
+      "maxHp": 220,
+      "attackDamage": 24,
+      "ac": 13,
+      "speed": 5,
+      "experience": 350,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.2
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        { "name": "Reused Address", "chance": 0.6, "goldValue": 40 },
+        { "name": "Wraith Cloth", "chance": 0.25, "goldValue": 105 },
+        { "name": "Identity Shard", "chance": 0.1, "goldValue": 225 }
+      ]
+    },
+    "special": {
+      "ability": "Echo Strike",
+      "description": "Attacks the same target twice in one turn",
+      "cooldown": 3
+    }
+  },
+  {
+    "id": "clear_torch_sentinel",
+    "name": "Clear-Torch Sentinel",
+    "spritePath": "tunnelsofprivacy/bosses/lvl6/clear_torch_sentinel.png",
+    "mainLevel": 6,
+    "stats": {
+      "hp": 300,
+      "maxHp": 300,
+      "attackDamage": 26,
+      "ac": 15,
+      "speed": 2,
+      "experience": 400,
+      "initiative": 1
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.15
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        { "name": "Dust Particle", "chance": 0.6, "goldValue": 45 },
+        { "name": "Demon Horn", "chance": 0.25, "goldValue": 115 },
+        { "name": "Trail Map", "chance": 0.1, "goldValue": 250 }
+      ]
+    },
+    "special": {
+      "ability": "Dust Cloud",
+      "description": "Creates obscuring dust, giving all heroes disadvantage on next attack",
+      "cooldown": 4
+    }
+  },
+  {
+    "id": "echo_signal_wraith",
+    "name": "Echo-Signal Wraith",
+    "spritePath": "tunnelsofprivacy/bosses/lvl7/echo_signal_wraith.png",
+    "mainLevel": 7,
+    "stats": {
+      "hp": 260,
+      "maxHp": 260,
+      "attackDamage": 30,
+      "ac": 12,
+      "speed": 6,
+      "experience": 450,
+      "initiative": 5
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        { "name": "Spider Silk", "chance": 0.6, "goldValue": 50 },
+        { "name": "Graph Node", "chance": 0.25, "goldValue": 125 },
+        { "name": "Web Cipher", "chance": 0.1, "goldValue": 275 }
+      ]
+    },
+    "special": {
+      "ability": "Web Trap",
+      "description": "Ensnares target, reducing their speed by half for 2 turns",
+      "cooldown": 5
+    }
+  },
+  {
+    "id": "data_trail_collector",
+    "name": "Data-Trail Collector",
+    "spritePath": "tunnelsofprivacy/bosses/lvl8/data_trail_collector.png",
+    "mainLevel": 8,
+    "stats": {
+      "hp": 320,
+      "maxHp": 320,
+      "attackDamage": 34,
+      "ac": 13,
+      "speed": 4,
+      "experience": 500,
+      "initiative": 3
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        { "name": "Hunter's Mark", "chance": 0.6, "goldValue": 55 },
+        { "name": "Heuristic Core", "chance": 0.25, "goldValue": 135 },
+        { "name": "Tracker's Eye", "chance": 0.1, "goldValue": 300 }
+      ]
+    },
+    "special": {
+      "ability": "Analyze Pattern",
+      "description": "Studies hero movements, gaining +5 to hit next turn",
+      "cooldown": 3
+    }
+  },
+  {
+    "id": "scan_mask_idol",
+    "name": "Scan-Mask Idol",
+    "spritePath": "tunnelsofprivacy/bosses/lvl9/scan_mask_idol.png",
+    "mainLevel": 9,
+    "stats": {
+      "hp": 350,
+      "maxHp": 350,
+      "attackDamage": 36,
+      "ac": 16,
+      "speed": 2,
+      "experience": 550,
+      "initiative": 1
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.15
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        { "name": "Cluster Data", "chance": 0.6, "goldValue": 60 },
+        { "name": "Fiend Tooth", "chance": 0.25, "goldValue": 145 },
+        { "name": "Analysis Matrix", "chance": 0.1, "goldValue": 325 }
+      ]
+    },
+    "special": {
+      "ability": "Group Assault",
+      "description": "Attacks all heroes in close proximity for 75% damage each",
+      "cooldown": 4
+    }
+  },
+  {
+    "id": "unmasked_scribe_apparition",
+    "name": "Unmasked Scribe Apparition",
+    "spritePath": "tunnelsofprivacy/bosses/lvl10/unmasked_scribe_apparition.png",
+    "mainLevel": 10,
+    "stats": {
+      "hp": 340,
+      "maxHp": 340,
+      "attackDamage": 38,
+      "ac": 11,
+      "speed": 5,
+      "experience": 600,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        { "name": "Fingerprint Fragment", "chance": 0.6, "goldValue": 65 },
+        { "name": "Leviathan Scale", "chance": 0.25, "goldValue": 155 },
+        { "name": "Identity Seal", "chance": 0.1, "goldValue": 350 }
+      ]
+    },
+    "special": {
+      "ability": "Mark Target",
+      "description": "Marks a hero, making them vulnerable to +50% damage for 2 turns",
+      "cooldown": 5
+    }
+  },
+  {
+    "id": "watcher_eye_construct",
+    "name": "Watcher-Eye Construct",
+    "spritePath": "tunnelsofprivacy/bosses/lvl11/watcher_eye_construct.png",
+    "mainLevel": 11,
+    "stats": {
+      "hp": 420,
+      "maxHp": 420,
+      "attackDamage": 42,
+      "ac": 15,
+      "speed": 5,
+      "experience": 650,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.15
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        { "name": "Link Chain", "chance": 0.6, "goldValue": 70 },
+        { "name": "Phantom Essence", "chance": 0.25, "goldValue": 165 },
+        { "name": "Connection Map", "chance": 0.1, "goldValue": 375 }
+      ]
+    },
+    "special": {
+      "ability": "Link Strike",
+      "description": "Attacks bounce between heroes, hitting up to 3 targets",
+      "cooldown": 4
+    }
+  },
+  {
+    "id": "pattern_matcher_phantasm",
+    "name": "Pattern-Matcher Phantasm",
+    "spritePath": "tunnelsofprivacy/bosses/lvl12/pattern_matcher_phantasm.png",
+    "mainLevel": 12,
+    "stats": {
+      "hp": 440,
+      "maxHp": 440,
+      "attackDamage": 44,
+      "ac": 12,
+      "speed": 6,
+      "experience": 700,
+      "initiative": 5
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        { "name": "Time Fragment", "chance": 0.6, "goldValue": 75 },
+        { "name": "Beast Claw", "chance": 0.25, "goldValue": 175 },
+        { "name": "Temporal Crystal", "chance": 0.1, "goldValue": 400 }
+      ]
+    },
+    "special": {
+      "ability": "Time Warp",
+      "description": "Delays a hero's next turn by 1 initiative slot",
+      "cooldown": 5
+    }
+  },
+  {
+    "id": "chain_analysis_serpent",
+    "name": "Chain-Analysis Serpent",
+    "spritePath": "tunnelsofprivacy/bosses/lvl13/chain_analysis_serpent.png",
+    "mainLevel": 13,
+    "stats": {
+      "hp": 540,
+      "maxHp": 540,
+      "attackDamage": 46,
+      "ac": 14,
+      "speed": 3,
+      "experience": 750,
+      "initiative": 2
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        { "name": "Construct Part", "chance": 0.6, "goldValue": 80 },
+        { "name": "Deanon Core", "chance": 0.25, "goldValue": 185 },
+        { "name": "Revelation Gem", "chance": 0.1, "goldValue": 425 }
+      ]
+    },
+    "special": {
+      "ability": "Unmask",
+      "description": "Reveals hidden hero stats, granting advantage on attacks against them",
+      "cooldown": 4
+    }
+  },
+  {
+    "id": "compliance_herald",
+    "name": "Compliance Herald",
+    "spritePath": "tunnelsofprivacy/bosses/lvl14/compliance_herald.png",
+    "mainLevel": 14,
+    "stats": {
+      "hp": 520,
+      "maxHp": 520,
+      "attackDamage": 48,
+      "ac": 14,
+      "speed": 3,
+      "experience": 800,
+      "initiative": 2
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.2
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        { "name": "Watchful Eye", "chance": 0.6, "goldValue": 85 },
+        { "name": "Swarm Nucleus", "chance": 0.25, "goldValue": 195 },
+        { "name": "Omniscient Lens", "chance": 0.1, "goldValue": 450 }
+      ]
+    },
+    "special": {
+      "ability": "All-Seeing Gaze",
+      "description": "Cannot miss attacks for 1 turn, ignoring AC entirely",
+      "cooldown": 6
+    }
+  },
+  {
+    "id": "identity_probe_specter",
+    "name": "Identity-Probe Specter",
+    "spritePath": "tunnelsofprivacy/bosses/lvl15/identity_probe_specter.png",
+    "mainLevel": 15,
+    "stats": {
+      "hp": 500,
+      "maxHp": 500,
+      "attackDamage": 50,
+      "ac": 11,
+      "speed": 7,
+      "experience": 850,
+      "initiative": 6
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        { "name": "Broken Proof", "chance": 0.6, "goldValue": 90 },
+        { "name": "Breaker Matrix", "chance": 0.25, "goldValue": 205 },
+        { "name": "Cryptographic Key", "chance": 0.1, "goldValue": 475 }
+      ]
+    },
+    "special": {
+      "ability": "Proof Collapse",
+      "description": "Shatters hero's defense, reducing AC by 5 for 2 turns",
+      "cooldown": 5
+    }
+  },
+  {
+    "id": "telemetry_spider",
+    "name": "Telemetry Spider",
+    "spritePath": "tunnelsofprivacy/bosses/lvl16/telemetry_spider.png",
+    "mainLevel": 16,
+    "stats": {
+      "hp": 560,
+      "maxHp": 560,
+      "attackDamage": 52,
+      "ac": 14,
+      "speed": 6,
+      "experience": 900,
+      "initiative": 5
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.05
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        { "name": "Knight's Shield", "chance": 0.6, "goldValue": 95 },
+        { "name": "Transaction Seal", "chance": 0.25, "goldValue": 215 },
+        { "name": "Privacy Armor", "chance": 0.1, "goldValue": 500 }
+      ]
+    },
+    "special": {
+      "ability": "Shield Wall",
+      "description": "Raises AC by 4 and reflects 20% damage back to attacker for 2 turns",
+      "cooldown": 4
+    }
+  },
+  {
+    "id": "observer_node_golem",
+    "name": "Observer Node Golem",
+    "spritePath": "tunnelsofprivacy/bosses/lvl17/observer_node_golem.png",
+    "mainLevel": 17,
+    "stats": {
+      "hp": 680,
+      "maxHp": 680,
+      "attackDamage": 54,
+      "ac": 17,
+      "speed": 2,
+      "experience": 950,
+      "initiative": 1
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.15
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        { "name": "Plaintext Note", "chance": 0.6, "goldValue": 100 },
+        { "name": "Specter Wisp", "chance": 0.25, "goldValue": 225 },
+        { "name": "Readable Cipher", "chance": 0.1, "goldValue": 525 }
+      ]
+    },
+    "special": {
+      "ability": "Expose Secrets",
+      "description": "Reads hero abilities, copying one random ability for use",
+      "cooldown": 6
+    }
+  },
+  {
+    "id": "cross_correlation_beast",
+    "name": "Cross-Correlation Beast",
+    "spritePath": "tunnelsofprivacy/bosses/lvl18/cross_correlation_beast.png",
+    "mainLevel": 18,
+    "stats": {
+      "hp": 640,
+      "maxHp": 640,
+      "attackDamage": 56,
+      "ac": 13,
+      "speed": 5,
+      "experience": 1000,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        { "name": "Encrypted Memo", "chance": 0.6, "goldValue": 105 },
+        { "name": "Guardian Stone", "chance": 0.25, "goldValue": 235 },
+        { "name": "Encryption Key", "chance": 0.1, "goldValue": 550 }
+      ]
+    },
+    "special": {
+      "ability": "Cipher Lock",
+      "description": "Locks a hero's special ability, preventing use for 2 turns",
+      "cooldown": 5
+    }
+  },
+  {
+    "id": "surveillance_lens_knight",
+    "name": "Surveillance Lens Knight",
+    "spritePath": "tunnelsofprivacy/bosses/lvl19/surveillance_lens_knight.png",
+    "mainLevel": 19,
+    "stats": {
+      "hp": 700,
+      "maxHp": 700,
+      "attackDamage": 58,
+      "ac": 18,
+      "speed": 3,
+      "experience": 1050,
+      "initiative": 2
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        { "name": "Hydra Head", "chance": 0.6, "goldValue": 110 },
+        { "name": "Pool Essence", "chance": 0.25, "goldValue": 245 },
+        { "name": "Value Token", "chance": 0.1, "goldValue": 575 }
+      ]
+    },
+    "special": {
+      "ability": "Multi-Head Strike",
+      "description": "Attacks 3 random heroes simultaneously for 60% damage each",
+      "cooldown": 4
+    }
+  },
+  {
+    "id": "record_keeper_titan",
+    "name": "Record-Keeper Titan",
+    "spritePath": "tunnelsofprivacy/bosses/lvl20/record_keeper_titan.png",
+    "mainLevel": 20,
+    "stats": {
+      "hp": 850,
+      "maxHp": 850,
+      "attackDamage": 60,
+      "ac": 16,
+      "speed": 2,
+      "experience": 1100,
+      "initiative": 1
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.1
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        { "name": "Split Fragment", "chance": 0.6, "goldValue": 115 },
+        { "name": "Amalgam Core", "chance": 0.25, "goldValue": 255 },
+        { "name": "Join Cipher", "chance": 0.1, "goldValue": 600 }
+      ]
+    },
+    "special": {
+      "ability": "Split Form",
+      "description": "Divides into two halves, each attacking separately at 50% damage",
+      "cooldown": 5
+    }
+  },
+  {
+    "id": "broken_entropy_shade",
+    "name": "Broken Entropy Shade",
+    "spritePath": "tunnelsofprivacy/bosses/lvl21/broken_entropy_shade.png",
+    "mainLevel": 21,
+    "stats": {
+      "hp": 720,
+      "maxHp": 720,
+      "attackDamage": 64,
+      "ac": 10,
+      "speed": 5,
+      "experience": 1150,
+      "initiative": 4
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": false,
+      "fleeThreshold": 0.05
+    },
+    "loot": {
+      "dropChance": 0.95,
+      "items": [
+        { "name": "Commitment Token", "chance": 0.6, "goldValue": 120 },
+        { "name": "Titan's Heart", "chance": 0.25, "goldValue": 265 },
+        { "name": "Binding Oath", "chance": 0.1, "goldValue": 625 }
+      ]
+    },
+    "special": {
+      "ability": "Unbreakable Vow",
+      "description": "Commits to attacking one hero, dealing double damage but taking +50% from others",
+      "cooldown": 4
+    }
+  }
+]

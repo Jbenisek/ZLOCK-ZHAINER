@@ -1373,11 +1373,20 @@ async def handle_websocket(websocket, path):
                                 break
                         players_list.append({ 'id': pid, 'name': pdata['name'], 'hero': hero })
                     
+                    # Build current hero selections for sync
+                    heroes_data = {}
+                    for hero_name, hero_data in rooms[room_code]['heroes'].items():
+                        heroes_data[hero_name] = {
+                            'playerId': hero_data['playerId'],
+                            'playerName': hero_data['playerName']
+                        }
+                    
                     await websocket.send(json.dumps({
                         'type': 'joined',
                         'code': room_code,
                         'player_id': player_id,
                         'players': players_list,
+                        'heroes': heroes_data,
                         'reconnected': is_reconnect
                     }))
                     
@@ -1599,6 +1608,22 @@ async def handle_websocket(websocket, path):
                         await client.send(message)
                     print(f"[WS] Host sent battle_end to room {client_room}: {data.get('reason', 'unknown')}")
             
+            # LEVEL CHANGE (host only - stairs/fast travel)
+            elif msg_type == 'level_change':
+                if client_room and client_room in rooms and client_role == 'host':
+                    # Broadcast level change to all clients
+                    for client in rooms[client_room]['clients']:
+                        await client.send(message)
+                    print(f"[WS] Host sent level_change to room {client_room}: level {data.get('newLevel', '?')}")
+            
+            # DIFFICULTY CHANGE (host only)
+            elif msg_type == 'difficulty_change':
+                if client_room and client_room in rooms and client_role == 'host':
+                    # Broadcast difficulty change to all clients
+                    for client in rooms[client_room]['clients']:
+                        await client.send(message)
+                    print(f"[WS] Host sent difficulty_change to room {client_room}: {data.get('difficulty', '?')}")
+            
             # PLAYER LEAVE (victory leave tracking)
             elif msg_type == 'player_leave':
                 if client_room and client_room in rooms:
@@ -1704,14 +1729,67 @@ async def handle_websocket(websocket, path):
             elif websocket in rooms[client_room]['clients']:
                 # Client disconnected
                 rooms[client_room]['clients'].remove(websocket)
-                # Notify host
+                player_id = id(websocket)
+                
+                # Release any heroes owned by this player
+                released_heroes = []
+                heroes_to_remove = []
+                for hero_name, hero_data in rooms[client_room]['heroes'].items():
+                    if hero_data['playerId'] == player_id:
+                        heroes_to_remove.append(hero_name)
+                        released_heroes.append(hero_name)
+                
+                for hero_name in heroes_to_remove:
+                    del rooms[client_room]['heroes'][hero_name]
+                    print(f"[WS] Released hero '{hero_name}' from disconnected player {player_id}")
+                
+                # Remove player from players list
+                if player_id in rooms[client_room]['players']:
+                    del rooms[client_room]['players'][player_id]
+                
+                # Build updated heroes data for broadcast
+                heroes_data = {}
+                for hero_name, hero_data in rooms[client_room]['heroes'].items():
+                    heroes_data[hero_name] = {
+                        'playerId': hero_data['playerId'],
+                        'playerName': hero_data['playerName']
+                    }
+                
+                # Build updated players list
+                players_list = []
+                for pid, pdata in rooms[client_room]['players'].items():
+                    hero = None
+                    for h, hdata in rooms[client_room]['heroes'].items():
+                        if hdata['playerId'] == pid:
+                            hero = h
+                            break
+                    players_list.append({ 'id': pid, 'name': pdata['name'], 'hero': hero })
+                
+                # Notify host with updated hero selections
                 try:
                     await rooms[client_room]['host'].send(json.dumps({
                         'type': 'player_disconnected',
-                        'player_id': id(websocket)
+                        'player_id': player_id,
+                        'released_heroes': released_heroes,
+                        'heroes': heroes_data,
+                        'players': players_list
                     }))
                 except:
                     pass
+                
+                # Notify other clients with updated hero selections
+                for client in rooms[client_room]['clients']:
+                    try:
+                        await client.send(json.dumps({
+                            'type': 'player_disconnected',
+                            'player_id': player_id,
+                            'released_heroes': released_heroes,
+                            'heroes': heroes_data,
+                            'players': players_list
+                        }))
+                    except:
+                        pass
+                
                 print(f"[WS] Client disconnected from room {client_room}")
 
 async def start_websocket_server():
