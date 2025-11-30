@@ -243,6 +243,11 @@ VOICE_PARAMS = {
     'default': {'length_scale': 1.1, 'noise_scale': 0.667, 'noise_w_scale': 0.85},
 }
 
+# Cache for entity voice assignments
+# Maps entity_id -> (language, speaker, quality) tuple
+# This ensures the same entity always uses the same voice within a session
+ENTITY_VOICE_CACHE = {}
+
 def ensure_piper_installed():
     """Install piper-tts if not already installed"""
     global TTS_ENABLED
@@ -412,8 +417,24 @@ class GameHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             return self.handle_tts()
         elif self.path == '/api/tts-status':
             return self.handle_tts_status()
+        elif self.path == '/api/tts/clear-voice-cache':
+            return self.handle_clear_voice_cache()
         else:
             self.send_error(404, "Not found")
+    
+    def handle_clear_voice_cache(self):
+        """Clear the entity voice cache (called when leaving a room)"""
+        global ENTITY_VOICE_CACHE
+        count = len(ENTITY_VOICE_CACHE)
+        ENTITY_VOICE_CACHE = {}
+        print(f"[TTS] Voice cache cleared ({count} entries)")
+        self.send_response(200)
+        self.send_header('Content-Type', 'application/json')
+        self.end_headers()
+        self.wfile.write(json.dumps({
+            'success': True,
+            'cleared': count
+        }).encode('utf-8'))
     
     def handle_tts_status(self):
         """Return TTS availability status"""
@@ -455,6 +476,7 @@ class GameHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             text = data.get('text', '')
             voice_type = data.get('voiceType', 'default').lower()  # narrator, hero name, boss, mob, etc.
             personality = data.get('personality', '').lower()  # emotional context from NPC
+            entity_id = data.get('entityId', None)  # Unique ID to maintain voice consistency
             
             # Strip asterisk actions like *laughs menacingly* from text
             # These are roleplay actions that shouldn't be read literally
@@ -503,14 +525,27 @@ class GameHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 }).encode('utf-8'))
                 return
             
-            # Get voice configuration - check pools first, then fixed assignments
-            if voice_type in VOICE_POOLS:
-                # Random selection from pool for variety
-                voice_config = random.choice(VOICE_POOLS[voice_type])
-            elif voice_type in VOICE_ASSIGNMENTS:
-                voice_config = VOICE_ASSIGNMENTS[voice_type]
-            else:
-                voice_config = VOICE_ASSIGNMENTS['default']
+            # Get voice configuration - use cached voice for entities, or pick new one
+            voice_config = None
+            
+            # If entity has ID, check cache for consistent voice
+            if entity_id and entity_id in ENTITY_VOICE_CACHE:
+                voice_config = ENTITY_VOICE_CACHE[entity_id]
+                print(f"[TTS] Using cached voice for entity '{entity_id}'")
+            
+            # No cached voice - pick one
+            if voice_config is None:
+                if voice_type in VOICE_POOLS:
+                    # Random selection from pool for variety
+                    voice_config = random.choice(VOICE_POOLS[voice_type])
+                    # Cache it if entity has ID
+                    if entity_id:
+                        ENTITY_VOICE_CACHE[entity_id] = voice_config
+                        print(f"[TTS] Assigned new voice to entity '{entity_id}': {voice_config}")
+                elif voice_type in VOICE_ASSIGNMENTS:
+                    voice_config = VOICE_ASSIGNMENTS[voice_type]
+                else:
+                    voice_config = VOICE_ASSIGNMENTS['default']
             
             language, speaker, quality = voice_config
             
@@ -744,49 +779,121 @@ Don't mention being an AI."""
                 'temperature': 0.8
             }
             
-            # Choose API based on provider
-            if provider == 'groq':
-                api_url = 'https://api.groq.com/openai/v1/chat/completions'
-                headers = {
-                    'Content-Type': 'application/json',
-                    'Authorization': f'Bearer {GROQ_API_KEY}'
-                }
-            else:  # openrouter
-                api_url = 'https://openrouter.ai/api/v1/chat/completions'
-                headers = {
-                    'Content-Type': 'application/json',
-                    'Authorization': f'Bearer {OPENROUTER_API_KEY}',
-                    'HTTP-Referer': 'http://localhost:4243',
-                    'X-Title': 'Tunnels of Privacy'
-                }
+            # BUILD FAILOVER MODEL LIST
+            # If user selected a Groq model (2-5), failover to other Groq then OpenRouter
+            # If user selected OpenRouter (1, 6-9), failover to other OR then Groq
+            GROQ_MODELS = [
+                (2, 'groq', 'llama-3.1-8b-instant'),
+                (3, 'groq', 'llama-3.3-70b-versatile'),
+                (4, 'groq', 'gemma2-9b-it'),
+                (5, 'groq', 'mixtral-8x7b-32768'),
+            ]
+            OPENROUTER_MODELS = [
+                (1, 'openrouter', 'mistralai/mistral-nemo'),
+                (6, 'openrouter', 'meta-llama/llama-3.1-8b-instruct'),
+                (7, 'openrouter', 'google/gemma-2-9b-it'),
+                (8, 'openrouter', 'qwen/qwen2.5-coder-7b-instruct'),
+                (9, 'openrouter', 'sao10k/l3-lunaris-8b'),
+            ]
             
-            req = urllib.request.Request(
-                api_url,
-                data=json.dumps(api_request).encode('utf-8'),
-                headers=headers
-            )
+            # Start with selected model, then add failovers
+            if provider == 'groq':
+                # Groq first (filter out current), then OpenRouter
+                failover_list = [(model_id, provider, selected_model)]
+                failover_list += [(mid, p, m) for mid, p, m in GROQ_MODELS if mid != model_id and GROQ_API_KEY]
+                failover_list += [(mid, p, m) for mid, p, m in OPENROUTER_MODELS if OPENROUTER_API_KEY]
+            else:
+                # OpenRouter first (filter out current), then Groq
+                failover_list = [(model_id, provider, selected_model)]
+                failover_list += [(mid, p, m) for mid, p, m in OPENROUTER_MODELS if mid != model_id and OPENROUTER_API_KEY]
+                failover_list += [(mid, p, m) for mid, p, m in GROQ_MODELS if GROQ_API_KEY]
+            
+            # FAILOVER LOGIC
+            npc_response = None
+            last_error = None
+            actual_model_id = model_id
+            models_tried = []
             
             timing['build_http'] = time.time() - t_api_start
             t_network_start = time.time()
             
-            with urllib.request.urlopen(req, timeout=60) as response:
-                timing['network_wait'] = time.time() - t_network_start
-                t_parse_start = time.time()
+            for current_model_id, current_provider, current_model in failover_list:
+                models_tried.append(f"{current_provider}/{current_model}")
+                api_request['model'] = current_model
                 
-                result = json.loads(response.read().decode('utf-8'))
-                npc_response = result['choices'][0]['message']['content']
+                # Set API URL and headers
+                if current_provider == 'groq':
+                    api_url = 'https://api.groq.com/openai/v1/chat/completions'
+                    headers = {
+                        'Content-Type': 'application/json',
+                        'Authorization': f'Bearer {GROQ_API_KEY}'
+                    }
+                else:
+                    api_url = 'https://openrouter.ai/api/v1/chat/completions'
+                    headers = {
+                        'Content-Type': 'application/json',
+                        'Authorization': f'Bearer {OPENROUTER_API_KEY}',
+                        'HTTP-Referer': 'http://localhost:4243',
+                        'X-Title': 'Tunnels of Privacy'
+                    }
                 
-                # Extract token usage
-                usage = result.get('usage', {})
-                prompt_tokens = usage.get('prompt_tokens', 0)
-                completion_tokens = usage.get('completion_tokens', 0)
+                req = urllib.request.Request(
+                    api_url,
+                    data=json.dumps(api_request).encode('utf-8'),
+                    headers=headers
+                )
                 
-                # Calculate cost
-                input_cost_per_m, output_cost_per_m = MODEL_COSTS.get(model_id, (0, 0))
-                cost = (prompt_tokens * input_cost_per_m / 1000000) + (completion_tokens * output_cost_per_m / 1000000)
-                
-                timing['parse_response'] = time.time() - t_parse_start
-                timing['total'] = time.time() - t_start
+                try:
+                    print(f"[Chat API] Trying {current_provider}/{current_model}")
+                    with urllib.request.urlopen(req, timeout=60) as response:
+                        result = json.loads(response.read().decode('utf-8'))
+                        npc_response = result['choices'][0]['message']['content']
+                        actual_model_id = current_model_id
+                        
+                        # Extract token usage
+                        usage = result.get('usage', {})
+                        prompt_tokens = usage.get('prompt_tokens', 0)
+                        completion_tokens = usage.get('completion_tokens', 0)
+                        
+                        print(f"[Chat API] Success with {current_provider}/{current_model}")
+                        break  # Success
+                        
+                except urllib.error.HTTPError as http_err:
+                    last_error = http_err
+                    error_body = ''
+                    try:
+                        error_body = http_err.read().decode('utf-8')
+                    except:
+                        pass
+                    
+                    if http_err.code == 429:
+                        print(f"[Chat API] Rate limited (429) on {current_provider}/{current_model}, trying next...")
+                        continue  # Try next model
+                    elif http_err.code == 402:
+                        print(f"[Chat API] Payment required (402) on {current_provider}/{current_model}, trying next...")
+                        continue
+                    else:
+                        print(f"[Chat API] Error ({http_err.code}) on {current_provider}/{current_model}: {error_body[:100]}")
+                        continue  # Try next model
+                except Exception as e:
+                    last_error = e
+                    print(f"[Chat API] Exception on {current_provider}/{current_model}: {str(e)[:100]}")
+                    continue
+            
+            # Check if we got a response
+            if not npc_response:
+                print(f"[Chat API] All models exhausted. Tried: {', '.join(models_tried)}")
+                raise last_error if last_error else Exception(f"All models failed")
+            
+            timing['network_wait'] = time.time() - t_network_start
+            t_parse_start = time.time()
+            
+            # Calculate cost
+            input_cost_per_m, output_cost_per_m = MODEL_COSTS.get(actual_model_id, (0, 0))
+            cost = (prompt_tokens * input_cost_per_m / 1000000) + (completion_tokens * output_cost_per_m / 1000000)
+            
+            timing['parse_response'] = time.time() - t_parse_start
+            timing['total'] = time.time() - t_start
                 
             # Print timing breakdown
             print(f"[Chat API] TIMING: build_req={timing['build_request']:.3f}s | build_http={timing['build_http']:.3f}s | NETWORK={timing['network_wait']:.2f}s | parse={timing['parse_response']:.3f}s | TOTAL={timing['total']:.2f}s")
@@ -854,24 +961,36 @@ Don't mention being an AI."""
             encounter_type = data.get('type', 'boss')  # boss, mob, npc, captive
             base_data = data.get('baseData', {})  # Original JSON data as template
             room_level = data.get('roomLevel', 1)
+            use_free_model = data.get('useFreeModel', True)  # Client preference
             
-            # SMART API ROUTING: Split work between APIs to avoid rate limits
-            # - OpenRouter: Bosses (complex, need quality, 1 per encounter)
-            # - Groq: Mobs & Captives (simpler, more frequent, use fast model)
+            # MODEL POOLS FOR FAILOVER
+            # Free models (Groq) - fast, generous limits
+            FREE_MODELS = [
+                ('groq', 'llama-3.1-8b-instant'),      # Fastest
+                ('groq', 'llama-3.3-70b-versatile'),   # Smartest
+                ('groq', 'gemma2-9b-it'),              # Backup
+                ('groq', 'mixtral-8x7b-32768'),        # Backup
+            ]
             
-            if encounter_type == 'boss' and OPENROUTER_API_KEY:
-                # Bosses go to OpenRouter (better quality, less rate limited)
-                provider = 'openrouter'
-                model = 'mistralai/mistral-nemo'  # Free tier model
-            elif GROQ_API_KEY:
-                # Mobs, captives, NPCs go to Groq (fast, good for simple tasks)
-                provider = 'groq'
-                model = 'llama-3.1-8b-instant'  # Fast free model
-            elif OPENROUTER_API_KEY:
-                # Fallback to OpenRouter if Groq unavailable
-                provider = 'openrouter'
-                model = 'mistralai/mistral-nemo'
+            # Paid models (OpenRouter) - better quality
+            PAID_MODELS = [
+                ('openrouter', 'mistralai/mistral-nemo'),           # Free tier on OR
+                ('openrouter', 'meta-llama/llama-3.1-8b-instruct'), # Cheap
+                ('openrouter', 'google/gemma-2-9b-it'),             # Cheap
+                ('openrouter', 'qwen/qwen2.5-coder-7b-instruct'),   # Cheap
+            ]
+            
+            # Build model list based on preference with failover
+            if use_free_model:
+                # Free first, then paid as fallback
+                model_list = [(p, m) for p, m in FREE_MODELS if (p == 'groq' and GROQ_API_KEY) or (p == 'openrouter' and OPENROUTER_API_KEY)]
+                model_list += [(p, m) for p, m in PAID_MODELS if (p == 'groq' and GROQ_API_KEY) or (p == 'openrouter' and OPENROUTER_API_KEY)]
             else:
+                # Paid first, then free as fallback
+                model_list = [(p, m) for p, m in PAID_MODELS if (p == 'groq' and GROQ_API_KEY) or (p == 'openrouter' and OPENROUTER_API_KEY)]
+                model_list += [(p, m) for p, m in FREE_MODELS if (p == 'groq' and GROQ_API_KEY) or (p == 'openrouter' and OPENROUTER_API_KEY)]
+            
+            if not model_list:
                 self.send_response(200)
                 self.send_header('Content-Type', 'application/json')
                 self.end_headers()
@@ -882,7 +1001,9 @@ Don't mention being an AI."""
                 }).encode('utf-8'))
                 return
             
-            print(f"[DM API] Generating {encounter_type} for level {room_level} using {provider}/{model}")
+            # Start with first model in list
+            provider, model = model_list[0]
+            print(f"[DM API] Generating {encounter_type} for level {room_level} using {provider}/{model} (free={use_free_model})")
             
             # World lore for context
             world_lore = """
@@ -1040,57 +1161,85 @@ RULES:
                 'temperature': 0.8
             }
             
-            # Make API call
-            if provider == 'groq':
-                api_url = 'https://api.groq.com/openai/v1/chat/completions'
-                headers = {
-                    'Content-Type': 'application/json',
-                    'Authorization': f'Bearer {GROQ_API_KEY}'
-                }
-            else:
-                api_url = 'https://openrouter.ai/api/v1/chat/completions'
-                headers = {
-                    'Content-Type': 'application/json',
-                    'Authorization': f'Bearer {OPENROUTER_API_KEY}',
-                    'HTTP-Referer': 'http://localhost:4243',
-                    'X-Title': 'Tunnels of Privacy DM'
-                }
-            
-            req = urllib.request.Request(
-                api_url,
-                data=json.dumps(api_request).encode('utf-8'),
-                headers=headers
-            )
-            
-            # Retry logic for rate limits
-            max_retries = 3
-            retry_delay = 2  # seconds
+            # FAILOVER LOGIC: Try each model in list until one works
+            llm_response = None
             last_error = None
+            models_tried = []
             
-            for attempt in range(max_retries):
-                try:
-                    with urllib.request.urlopen(req, timeout=30) as response:
-                        result = json.loads(response.read().decode('utf-8'))
-                        llm_response = result['choices'][0]['message']['content']
-                        break  # Success, exit retry loop
-                except urllib.error.HTTPError as http_err:
-                    last_error = http_err
-                    if http_err.code == 429:
-                        # Rate limited - wait and retry
-                        wait_time = retry_delay * (attempt + 1)
-                        print(f"[DM API] Rate limited (429), waiting {wait_time}s before retry {attempt + 1}/{max_retries}")
-                        time.sleep(wait_time)
-                        # Recreate request since it may have been consumed
-                        req = urllib.request.Request(
-                            api_url,
-                            data=json.dumps(api_request).encode('utf-8'),
-                            headers=headers
-                        )
-                    else:
-                        raise  # Re-raise non-429 errors immediately
-            else:
-                # All retries exhausted
-                raise last_error if last_error else Exception("Max retries exceeded")
+            for model_idx, (current_provider, current_model) in enumerate(model_list):
+                models_tried.append(f"{current_provider}/{current_model}")
+                
+                # Update request for current model
+                api_request['model'] = current_model
+                
+                # Set API URL and headers based on provider
+                if current_provider == 'groq':
+                    api_url = 'https://api.groq.com/openai/v1/chat/completions'
+                    headers = {
+                        'Content-Type': 'application/json',
+                        'Authorization': f'Bearer {GROQ_API_KEY}'
+                    }
+                else:
+                    api_url = 'https://openrouter.ai/api/v1/chat/completions'
+                    headers = {
+                        'Content-Type': 'application/json',
+                        'Authorization': f'Bearer {OPENROUTER_API_KEY}',
+                        'HTTP-Referer': 'http://localhost:4243',
+                        'X-Title': 'Tunnels of Privacy DM'
+                    }
+                
+                req = urllib.request.Request(
+                    api_url,
+                    data=json.dumps(api_request).encode('utf-8'),
+                    headers=headers
+                )
+                
+                # Try this model with 2 retries for transient errors
+                for attempt in range(2):
+                    try:
+                        print(f"[DM API] Trying {current_provider}/{current_model} (attempt {attempt + 1})")
+                        with urllib.request.urlopen(req, timeout=30) as response:
+                            result = json.loads(response.read().decode('utf-8'))
+                            llm_response = result['choices'][0]['message']['content']
+                            print(f"[DM API] Success with {current_provider}/{current_model}")
+                            break  # Success, exit retry loop
+                    except urllib.error.HTTPError as http_err:
+                        last_error = http_err
+                        error_body = ''
+                        try:
+                            error_body = http_err.read().decode('utf-8')
+                        except:
+                            pass
+                        
+                        if http_err.code == 429:
+                            # Rate limited - try next model
+                            print(f"[DM API] Rate limited (429) on {current_provider}/{current_model}: {error_body[:100]}")
+                            break  # Exit retry loop, try next model
+                        elif http_err.code == 402:
+                            # Payment required / out of credits - try next model
+                            print(f"[DM API] Payment required (402) on {current_provider}/{current_model}")
+                            break
+                        elif http_err.code >= 500:
+                            # Server error - retry same model
+                            print(f"[DM API] Server error ({http_err.code}) on {current_provider}/{current_model}, retrying...")
+                            time.sleep(1)
+                            req = urllib.request.Request(api_url, data=json.dumps(api_request).encode('utf-8'), headers=headers)
+                        else:
+                            # Other error - try next model
+                            print(f"[DM API] Error ({http_err.code}) on {current_provider}/{current_model}: {error_body[:100]}")
+                            break
+                    except Exception as e:
+                        last_error = e
+                        print(f"[DM API] Exception on {current_provider}/{current_model}: {str(e)[:100]}")
+                        break  # Try next model
+                
+                if llm_response:
+                    break  # Got a successful response, exit model loop
+            
+            # Check if we got a response
+            if not llm_response:
+                print(f"[DM API] All models exhausted. Tried: {', '.join(models_tried)}")
+                raise last_error if last_error else Exception(f"All models failed: {', '.join(models_tried)}")
             
             # Try to parse JSON from response
             try:

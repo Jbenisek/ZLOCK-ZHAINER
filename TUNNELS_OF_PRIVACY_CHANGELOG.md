@@ -2,6 +2,235 @@
 
 # Changelog
 
+## v0.3.30 - Zone-Based Music System (2025-11-29)
+- **Zone Music System:**
+  - Added 15 zone-specific music tracks mapped to dungeon zones
+  - Descent Arc (Levels 1-100): Entry Crypts, Forgotten Mines, Fungal Gardens, Underground River, Crystal Caverns, Bone Pits, Infernal Depths, Shadow Realm, Abyssal Trenches, Core of Darkness
+  - Ascent Arc (Levels 101-1000): Sanctuary Ruins, Ember Wastes, Celestial Spire, Void Threshold, Beyond the Veil
+  - Music automatically switches when entering a new zone
+
+- **Music Track Types:**
+  - Zone Tracks: Play based on current dungeon level/zone
+  - Theme Songs: Zcash-themed tracks that play randomly between zone tracks
+  - 50% chance to play a random theme after each zone track ends
+  - Ticker displays "Zone Track: [name] (Levels X-Y)" or "Theme Song: [name]"
+
+- **Settings Panel:**
+  - Added "Theme Songs" toggle (enable/disable theme music)
+  - Added "Zone Music" toggle (enable/disable zone-based tracks)
+  - At least one type must remain enabled
+  - Settings persist to localStorage
+
+- **Music System Improvements:**
+  - `animateMusicSystem()` monitors level changes for automatic track switching
+  - `getMusicForZone(level)` returns appropriate track for current level
+  - Zone music takes over from theme after themes complete
+  - Previous/Next buttons intelligently switch between zone and theme tracks
+  - User manual pause state preserved (`userPausedMusic` flag)
+
+## v0.3.29 - LLM Failover System (2025-11-29)
+- **Automatic Model Failover:**
+  - Both `/api/chat` and `/api/generate-encounter` now have failover logic
+  - On 429 (rate limit) or 402 (payment required), automatically tries next model
+  - Respects user's free/paid preference: tries same tier first, then falls back to other tier
+
+- **Dungeon Master Encounter Generation:**
+  - Free models (Groq): llama-3.1-8b-instant, llama-3.3-70b-versatile, gemma2-9b-it, mixtral-8x7b-32768
+  - Paid models (OpenRouter): mistral-nemo, llama-3.1-8b, gemma-2-9b, qwen2.5-7b
+  - If `useFreeModel=true`: tries all Groq first, then OpenRouter as fallback
+  - If `useFreeModel=false`: tries all OpenRouter first, then Groq as fallback
+
+- **Chat API:**
+  - Same failover logic for NPC chat, narrator, and free will responses
+  - If user selects Groq model (2-5): failover to other Groq, then OpenRouter
+  - If user selects OpenRouter model (1,6-9): failover to other OR, then Groq
+  - Logs each model attempt for debugging
+
+- **Error Handling:**
+  - 429: Rate limited - try next model immediately
+  - 402: Payment required - try next model
+  - 5xx: Server error - retry same model once, then next
+  - Other errors: try next model
+
+## v0.3.28 - Rate Limit Warning Popup (2025-11-29)
+- **Rate Limit Detection:**
+  - Detects HTTP 429 and rate limit errors from LLM APIs
+  - Shows popup warning on right side of screen when rate limited
+  - Message: "Wait 30-60 seconds and retry, or switch to Paid Models in Settings"
+  - Auto-dismisses after 10 seconds, or click DISMISS
+
+- **Added Rate Limit Checks To:**
+  - Narrator LLM calls
+  - NPC free will chat (triggerNPCFreeWill)
+  - Player broadcast responses (triggerFreeWillChatResponse)
+  - Direct chat messages (sendChatMessage)
+  - Client-side multiplayer chat handler
+
+- **Bug Fix:**
+  - Hidden scrollbars on character card container (was showing briefly on hover)
+
+## v0.3.27 - Compact Character Cards with Hover Enlarge (2025-11-29)
+- **Compact Card Layout:**
+  - Reduced character cards to ~50% original size (75px width, 32px portraits)
+  - Default 2-column grid layout (was single column)
+  - 3-column layout when >8 cards to prevent overlap with music controls
+  - Max height with scroll to prevent cards going off screen
+  - Smaller fonts (7px name, 6px stats) with text truncation
+
+- **Hover-to-Enlarge Feature:**
+  - Hold mouse over any card for 0.5 seconds to enlarge
+  - Card scales 2x at fixed position for easy reading
+  - Enhanced shadow effect when enlarged
+  - Works on all card types: enemies, bosses, captives
+  - Returns to normal size on mouse leave
+
+- **Style Adjustments:**
+  - Reduced padding, gaps, and border radius to match compact size
+  - Smaller glow effects and shadows
+  - Name field truncates with ellipsis if too long
+
+## v0.3.26 - TTS Voice Consistency Per Entity (2025-11-29)
+- **Per-Entity Voice Caching:**
+  - Server now caches voice assignment per entity ID
+  - Same entity always uses same voice throughout battle (no more voice changes mid-conversation)
+  - `ENTITY_VOICE_CACHE` dictionary maps entity_id → (language, speaker, quality) tuple
+
+- **Entity ID System:**
+  - All enemies/NPCs now get unique `entityId` on creation (e.g., `entity_1732900000000_abc123def`)
+  - Captive NPCs get `captive_` prefixed IDs
+  - IDs generated in `applyGeneratedData()` for enemies, inline for captives
+
+- **Voice Cache Lifecycle:**
+  - When entity first speaks: server picks random voice from pool, caches by entityId
+  - Subsequent speech: server retrieves cached voice, same voice every time
+  - When leaving room: `endBattle()` calls `/api/tts/clear-voice-cache` to recycle cache
+  - New room = fresh voice assignments (not carrying over stale voices)
+
+- **API Changes:**
+  - Client now passes `entityId` in TTS requests
+  - New endpoint: `/api/tts/clear-voice-cache` (POST) - clears server voice cache
+  - `addChatMessage()` and `playTTS()` now accept `entityId` parameter
+
+## v0.3.25 - Custom Dialog System (2025-11-29)
+- **Custom Confirmation/Info Dialogs:**
+  - Replaced browser `confirm()` and `alert()` with custom styled dialogs
+  - New `confirmDialog` panel with warning icon, YES/CANCEL buttons
+  - New `infoDialog` panel with success/error icons and OK button
+  - Dialogs match game's visual style (gradients, blur, shadows)
+  - z-index 1200 ensures dialogs appear above settings panel (1100)
+  - Overlay z-index dynamically adjusted when dialogs are shown
+
+- **Clear Cache Improvement:**
+  - Now uses custom dialog instead of browser popup
+  - Clearer warning message about data deletion
+  - Success confirmation before page reload
+
+## v0.3.24 - Settings Defaults & Narrator Fixes (2025-11-29)
+- **Settings Default Changes:**
+  - `llmFreeWill` now ON by default (NPCs chat autonomously)
+  - `rpMode` now OFF by default (normal 2025 speech instead of dramatic RP)
+
+- **Narrator Bug Fixes:**
+  - Fixed `gameState is not defined` error - now reads level from DOM elements
+  - Narrator now honors user's RP mode setting (was hardcoded to false)
+  - Uses same level-reading pattern as rest of codebase
+
+## v0.3.23 - Level Narrator System (2025-11-29)
+- **New Level Narrator Feature:**
+  - Added NARRATE button to dungeon menu screen (top-right area)
+  - Button uses LLM to generate dramatic level descriptions based on `level_data.json`
+  - Plays narration via Piper TTS with narrator voice type
+  - Play/Stop toggle functionality
+  - Loading states: LOADING → GENERATING → SPEAKING → STOP
+  - Narrations cached per level to avoid repeated LLM calls
+
+- **New Level Data System:**
+  - Added `tunnelsofprivacy/levels/level_data.json` with complete zone definitions
+  - 16 zones covering levels 1-990 across Descent and Ascent arcs
+  - Each zone has: name, description, lore, enemies, minibosses, bosses
+  - Difficulty scaling multipliers for HP, damage, and gold
+  - Zone info passed to LLM for contextual narration
+
+- **LLM Narrator Prompt:**
+  - Sends zone name, arc, lore, enemies to LLM
+  - Requests 2-3 sentence atmospheric narration under 50 words
+  - Falls back to basic zone description if LLM fails
+
+## v0.3.22 - Dungeon Menu Stats & Tooltip Fixes (2025-11-29)
+- **Dungeon Menu Level Stats Display:**
+  - Added same level stats grid to dungeon menu screen (matching title screen)
+  - Shows: Rooms explored, Boss defeated, Store visited, Captives freed
+  - Total Bosses Defeated counter at bottom
+  - Uses dm-prefixed element IDs to avoid conflicts with title screen
+  - `updateLevelProgressDisplay()` now updates both screens
+
+- **Tooltip Corrections:**
+  - Fixed Zancas hero tooltip: Now correctly credits Josh "Zancas" Wilcox, creator of Zingo Wallet
+  - Fixed Music Controls tooltip: Credits Hank Mishkoff's original Tunnels of Doom (1982) theme
+  - Music remixed with permission using AiVideo.com (not Suno AI)
+
+## v0.3.21 - Title Screen Tooltips & Level Progress Tracking (2025-11-29)
+- **New Title Screen Tooltips:**
+  - Dungeon Level Display: Hover for level info and progress tracking explanation
+  - START ADVENTURE: Quest introduction + game mechanics
+  - ENTER ARCADE: Portal system explanation + ZLOCK CONSENSUS info
+  - ABOUT/DONATE: Zcash support + project credits
+  - All tooltips have 2 slides: Zcash/Lore first, then AI/Tech second
+
+- **Tooltip Slideshow Improvements:**
+  - Changed auto-rotation from 4 to 6 seconds
+  - Added mouse wheel support: scroll to change slides
+  - Wheel scroll resets the auto-rotation timer
+
+- **Level Progress Tracking System:**
+  - New `levelProgress` state object tracks current level stats
+  - Expanded Dungeon Level Display box with stats grid:
+    - Rooms Explored: X/?
+    - Boss Defeated: 0/1 or 1/1
+    - Store Visited: 0/1 or 1/1
+    - Captives Freed: count
+    - Total Bosses Defeated: career total
+  - Stats tracked automatically during gameplay
+  - Progress saves per level to `sharedSave.dungeonState.levelProgress`
+  - Progress loads when returning to a level
+  - Total bosses persisted to save file
+
+- **Multiplayer Level Progress Sync:**
+  - Host broadcasts `level_progress_update` messages to clients
+  - Clients receive and display host's progress stats
+  - Level changes also broadcast current level progress
+  - Only host saves to localStorage (clients display from broadcasts)
+
+- **Battle State Enhancement:**
+  - Added `hadBoss` flag to track if battle included a boss
+  - Boss defeats increment both level and career totals
+  - Captive rescues tracked per level
+
+## v0.3.20 - Tooltip Slideshow & Zcash Lore (2025-11-29)
+- **Tooltip Slideshow System:**
+  - Tooltips now cycle between multiple slides (4 second intervals)
+  - Clickable navigation dots to jump between slides
+  - Auto-rotation pauses and resets when clicking dots
+  - Smooth transitions between slide content
+
+- **Dual-Content Tooltips:**
+  - Slide 1: Zcash/Privacy lore and hero backgrounds
+  - Slide 2: AI/Technical implementation details
+  - Each tooltip now educates on BOTH the game's purpose AND its technology
+
+- **Hero Lore Added:**
+  - **Zooko**: Named after Zooko Wilcox-O'Hearn, Zcash founder and cryptographer
+  - **Nate**: Named after Nathan Wilcox, Zcash's former CTO who led engineering
+  - **Zancas**: Named after Jack "Str4d" Grigg, core developer for cryptographic implementation
+  - **CyberAxe**: Represents the Zcash community - developers, advocates, and users
+
+- **Enhanced Tooltip Content:**
+  - EXPLORE LEVEL: Privacy-first exploration lore + AI encounter generation
+  - TALK Button: Negotiation lore + Piper TTS tech
+  - Special Abilities: Zero-knowledge power concepts + AI particle effects
+  - Music: Privacy soundtrack theme + Suno AI generation
+  - Version: Zcash Hackathon mission + AI development credits
+
 ## v0.3.19 - LLM Prompt Fixes & Battle Layout Improvements (2025-11-29)
 - **Fixed LLM JSON Parse Failures:**
   - Root cause: Ambiguous prompt formatting like `"goldDrop": 5-40` and `true/false`

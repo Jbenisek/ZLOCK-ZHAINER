@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.2.91</title>
+    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.3.30</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -124,53 +124,74 @@
             100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
         }
         
+        @keyframes slideInRight {
+            0% { transform: translateY(-50%) translateX(100px); opacity: 0; }
+            100% { transform: translateY(-50%) translateX(0); opacity: 1; }
+        }
+        
         #battleEnemyCards {
             position: absolute;
             top: 20px;
             left: 20px;
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-            max-width: 160px;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            max-width: 170px;
+            max-height: calc(100vh - 180px);
+            overflow-y: auto;
+            overflow-x: hidden;
             z-index: 10;
+            scrollbar-width: none;  /* Firefox */
+            -ms-overflow-style: none;  /* IE/Edge */
         }
         
-        #battleEnemyCards.twoColumns {
-            grid-template-columns: 1fr 1fr;
-            max-width: 330px;
+        #battleEnemyCards::-webkit-scrollbar {
+            display: none;  /* Chrome/Safari/Opera */
+        }
+        
+        #battleEnemyCards.threeColumns {
+            grid-template-columns: 1fr 1fr 1fr;
+            max-width: 255px;
         }
         
         .battleEnemyCard {
             background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
             border: 2px solid #E74C3C;
-            border-radius: 8px;
-            padding: 8px;
-            width: 140px;
+            border-radius: 6px;
+            padding: 4px;
+            width: 75px;
             backdrop-filter: blur(10px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
+            transform-origin: top left;
+        }
+        
+        .battleEnemyCard.enlarged {
+            position: fixed;
+            transform: scale(2);
+            z-index: 1000;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
         }
         
         .battleEnemyCard.boss {
             border-color: #8B45FF;
-            box-shadow: 0 0 15px rgba(139, 69, 255, 0.4);
+            box-shadow: 0 0 8px rgba(139, 69, 255, 0.4);
         }
         
         .battleEnemyCard.targetable {
             border-color: #FFD700;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
             animation: cardPulse 1s infinite;
         }
         
         .battleEnemyCard:hover.targetable {
-            transform: scale(1.05);
-            box-shadow: 0 0 25px rgba(255, 215, 0, 0.8);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
         }
         
         @keyframes cardPulse {
-            0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); }
-            50% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.9); }
+            0%, 100% { box-shadow: 0 0 12px rgba(255, 215, 0, 0.6); }
+            50% { box-shadow: 0 0 18px rgba(255, 215, 0, 0.9); }
         }
         
         .battleEnemyCard.dead {
@@ -180,51 +201,60 @@
         }
         
         .battleEnemyPortrait {
-            width: 60px;
-            height: 60px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             background-size: cover;
             background-position: center;
-            border: 2px solid #E74C3C;
-            margin: 0 auto 6px auto;
-            box-shadow: 0 0 10px rgba(231, 76, 60, 0.4);
+            border: 1px solid #E74C3C;
+            margin: 0 auto 3px auto;
+            box-shadow: 0 0 5px rgba(231, 76, 60, 0.4);
         }
         
         .battleEnemyCard.boss .battleEnemyPortrait {
             border-color: #8B45FF;
-            box-shadow: 0 0 10px rgba(139, 69, 255, 0.4);
+            box-shadow: 0 0 5px rgba(139, 69, 255, 0.4);
         }
         
         .battleEnemyName {
             font-family: 'Inter', sans-serif;
-            font-size: 10px;
+            font-size: 7px;
             font-weight: 700;
             text-align: center;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
             color: #E74C3C;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .battleEnemyCard.boss .battleEnemyName {
             color: #8B45FF;
         }
         
+        .battleEnemyStat {
+            font-size: 6px;
+            text-align: center;
+            margin-bottom: 1px;
+        }
+        
         .battleEnemyCard.captive {
             border-color: #F2C94C;
-            box-shadow: 0 0 15px rgba(242, 201, 76, 0.4);
+            box-shadow: 0 0 8px rgba(242, 201, 76, 0.4);
         }
         
         .battleEnemyCard.captive .battleEnemyPortrait {
             border-color: #F2C94C;
-            box-shadow: 0 0 10px rgba(242, 201, 76, 0.4);
+            box-shadow: 0 0 5px rgba(242, 201, 76, 0.4);
             background-size: 250%;
             background-position: center 15%;
         }
         
         .battleEnemyCard.captive .battleEnemyName {
             color: #F2C94C;
-            margin-top: -8px;
+            margin-top: -4px;
             position: relative;
             z-index: 10;
         }
@@ -941,6 +971,45 @@
         #dungeonZancas { top: 20px; right: 20px; border-color: #27AE60; box-shadow: 0 0 15px rgba(39, 174, 96, 0.3); }
         #dungeonCyberAxe { bottom: 80px; right: 20px; border-color: #2E86DE; box-shadow: 0 0 15px rgba(46, 134, 222, 0.3); }
         
+        /* Narrator Button */
+        #narratorBtn {
+            position: absolute;
+            top: 20px;
+            right: 180px;
+            background: linear-gradient(135deg, rgba(139, 69, 255, 0.4), rgba(75, 0, 130, 0.4));
+            border: 2px solid #8B45FF;
+            border-radius: 10px;
+            padding: 10px 15px;
+            color: #F2C94C;
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(139, 69, 255, 0.3);
+            z-index: 50;
+        }
+        #narratorBtn:hover {
+            background: linear-gradient(135deg, rgba(139, 69, 255, 0.6), rgba(75, 0, 130, 0.6));
+            box-shadow: 0 0 25px rgba(139, 69, 255, 0.5);
+            transform: scale(1.05);
+        }
+        #narratorBtn.playing {
+            background: linear-gradient(135deg, rgba(235, 87, 87, 0.4), rgba(150, 50, 50, 0.4));
+            border-color: #EB5757;
+            box-shadow: 0 0 20px rgba(235, 87, 87, 0.4);
+        }
+        #narratorBtn.loading {
+            opacity: 0.7;
+            cursor: wait;
+        }
+        #narratorBtn .narratorIcon {
+            font-size: 18px;
+        }
+        
         .heroRow {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -1279,10 +1348,43 @@
             border: 2px solid #8B45FF;
             border-radius: 10px;
             width: 380px;
-            pointer-events: none;
+            pointer-events: auto;
             backdrop-filter: blur(10px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
             margin-bottom: 20px;
+            cursor: help;
+        }
+        
+        #dungeonLevelDisplay:hover {
+            border-color: #F2C94C;
+            box-shadow: 0 0 20px rgba(242, 201, 76, 0.3);
+        }
+        
+        .levelStatsGrid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 12px;
+            text-align: left;
+        }
+        
+        .levelStatItem {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 8px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            font-size: 11px;
+        }
+        
+        .levelStatLabel {
+            color: #89A0B4;
+        }
+        
+        .levelStatValue {
+            color: #F2C94C;
+            font-weight: bold;
+            font-family: 'JetBrains Mono', monospace;
         }
         
         /* Music Ticker */
@@ -1425,6 +1527,7 @@
             background: rgba(139, 69, 255, 0.2);
             outline: none;
             -webkit-appearance: none;
+            appearance: none;
         }
         
         .volumeSlider::-webkit-slider-thumb {
@@ -1535,6 +1638,7 @@
         #infoTooltip.visible {
             opacity: 1;
             transform: translateY(0);
+            pointer-events: auto;
         }
         
         #infoTooltip .tooltip-header {
@@ -1591,6 +1695,34 @@
             font-style: italic;
         }
         
+        /* Slideshow dots */
+        #infoTooltip .tooltip-dots {
+            display: flex;
+            gap: 6px;
+            margin-left: auto;
+        }
+        
+        #infoTooltip .tooltip-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(242, 201, 76, 0.3);
+            border: 1px solid rgba(242, 201, 76, 0.5);
+            cursor: pointer;
+            pointer-events: auto;
+            transition: all 0.2s ease;
+        }
+        
+        #infoTooltip .tooltip-dot:hover {
+            background: rgba(242, 201, 76, 0.6);
+            transform: scale(1.2);
+        }
+        
+        #infoTooltip .tooltip-dot.active {
+            background: #F2C94C;
+            box-shadow: 0 0 8px rgba(242, 201, 76, 0.8);
+        }
+        
         [data-tooltip] {
             position: relative;
         }
@@ -1640,6 +1772,12 @@
             <!-- Story Background Animation -->
             <div id="dungeonMenuBackground"></div>
             
+            <!-- Narrator Button (Top Right) -->
+            <button id="narratorBtn" onclick="toggleNarrator()" title="Listen to level narration">
+                <span class="narratorIcon">🎭</span>
+                <span id="narratorBtnText">NARRATE</span>
+            </button>
+            
             <!-- Hero Cards in Corners -->
             <div class="dungeonHeroCard" id="dungeonZooko">
                 <div class="heroPortrait" style="background-image: url('people/zooko_a_head_compressed.png'); border-color: #EB5757; box-shadow: 0 0 10px rgba(235, 87, 87, 0.4);"></div>
@@ -1687,6 +1825,27 @@
                     <div style="color: #BFD1E0; font-size: 14px; margin-bottom: 5px;">Dungeon Menu</div>
                     <div style="color: #F2C94C; font-size: 28px; font-weight: 900; text-shadow: 0 0 20px rgba(242, 201, 76, 0.5);">LEVEL <span id="dungeonMenuLevel">1</span></div>
                     <div style="color: #FFD700; font-size: 16px; font-weight: 700; margin-top: 5px;">💰 <span id="dungeonMenuGold">0</span> Gold</div>
+                    <div class="levelStatsGrid" style="margin-top: 10px;">
+                        <div class="levelStatItem">
+                            <span class="levelStatLabel">Rooms</span>
+                            <span class="levelStatValue"><span id="dmRoomsExplored">0</span>/<span id="dmRoomsMax">?</span></span>
+                        </div>
+                        <div class="levelStatItem">
+                            <span class="levelStatLabel">Boss</span>
+                            <span class="levelStatValue"><span id="dmBossDefeated">0</span>/1</span>
+                        </div>
+                        <div class="levelStatItem">
+                            <span class="levelStatLabel">Store</span>
+                            <span class="levelStatValue"><span id="dmStoreVisited">0</span>/1</span>
+                        </div>
+                        <div class="levelStatItem">
+                            <span class="levelStatLabel">Captives</span>
+                            <span class="levelStatValue" id="dmCaptivesFreed">0</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 8px; font-size: 10px; color: #89A0B4; border-top: 1px solid rgba(139, 69, 255, 0.3); padding-top: 6px;">
+                        <span style="color: #8B45FF;">👹</span> Bosses Defeated: <span id="dmTotalBossesDefeated" style="color: #F2C94C; font-weight: bold;">0</span>
+                    </div>
                 </div>
                 
                 <button class="menuButton" id="exploreLevelBtn" onclick="startBattle()">
@@ -1860,7 +2019,7 @@
         
         <div id="titleScreen">
             <!-- Story Intro Background Animation -->
-            <div id="storyIntroBackground"></div>
+            <div id="storyIntroBackground" data-tooltip-id="titleBackground"></div>
             
             <div id="title">TUNNELS OF PRIVACY</div>
             <div id="subtitle">A Dungeon Crawler Adventure</div>
@@ -1870,13 +2029,34 @@
                 <div id="dungeonLevelDisplay">
                     <div style="color: #BFD1E0; font-size: 14px; margin-bottom: 5px;">Current Dungeon Depth</div>
                     <div style="color: #F2C94C; font-size: 36px; font-weight: 900; text-shadow: 0 0 20px rgba(242, 201, 76, 0.5);">LEVEL <span id="dungeonLevel">1</span></div>
+                    <div class="levelStatsGrid">
+                        <div class="levelStatItem">
+                            <span class="levelStatLabel">Rooms</span>
+                            <span class="levelStatValue"><span id="levelRoomsExplored">0</span>/<span id="levelRoomsMax">?</span></span>
+                        </div>
+                        <div class="levelStatItem">
+                            <span class="levelStatLabel">Boss</span>
+                            <span class="levelStatValue"><span id="levelBossDefeated">0</span>/1</span>
+                        </div>
+                        <div class="levelStatItem">
+                            <span class="levelStatLabel">Store</span>
+                            <span class="levelStatValue"><span id="levelStoreVisited">0</span>/1</span>
+                        </div>
+                        <div class="levelStatItem">
+                            <span class="levelStatLabel">Captives</span>
+                            <span class="levelStatValue" id="levelCaptivesFreed">0</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 10px; font-size: 10px; color: #89A0B4; border-top: 1px solid rgba(139, 69, 255, 0.3); padding-top: 8px;">
+                        <span style="color: #8B45FF;">👹</span> Bosses Defeated: <span id="totalBossesDefeated" style="color: #F2C94C; font-weight: bold;">0</span>
+                    </div>
                 </div>
                 
                 <button id="startAdventureBtn" class="menuButton" onclick="startAdventure()">START ADVENTURE<span style="display: inline-block; width: 26px; height: 26px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">A</span></button>
                 <button id="continueBtn" class="menuButton comingSoon" disabled onclick="continueGame()">CONTINUE<span style="display: inline-block; width: 26px; height: 26px; background: #EB5757; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">A</span></button>
                 <button class="menuButton" onclick="showLoadSave()">LOAD SAVE FILE<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
                 <button class="menuButton" onclick="showSettings()">SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #2A9D8F; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">Y</span></button>
-                <button class="menuButton portalButton" onclick="exitPortal()">
+                <button id="enterArcadeBtn" class="menuButton portalButton" onclick="exitPortal()">
                     <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                         <div style="text-align: left;">
                             <div style="font-size: 18px; font-weight: 700;">ENTER ARCADE</div>
@@ -1887,10 +2067,10 @@
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.3.19 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.3.30 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
-            <div style="
+            <div id="aboutDonateBtn" style="
                 position: absolute;
                 bottom: 20px;
                 right: 20px;
@@ -2253,6 +2433,19 @@
             <span id="musicVolumeValue" style="margin-left: 8px; font-weight: bold; color: #2D9CDB; font-size: 14px;">75</span>
         </div>
         
+        <!-- Theme/Zone Music Toggles -->
+        <div class="settingRow" style="margin-bottom: 10px;">
+            <span class="settingLabel" style="font-size: 16px;">Theme Songs</span>
+            <input type="checkbox" id="themeMusicEnabled" checked onchange="updateSettings()">
+            <span style="font-size: 10px; color: #89A0B4; margin-left: 8px;">Zcash themes</span>
+        </div>
+        
+        <div class="settingRow" style="margin-bottom: 15px;">
+            <span class="settingLabel" style="font-size: 16px;">Zone Music</span>
+            <input type="checkbox" id="zoneMusicEnabled" checked onchange="updateSettings()">
+            <span style="font-size: 10px; color: #89A0B4; margin-left: 8px;">Changes per dungeon zone</span>
+        </div>
+        
         <!-- Hitbox Toggle -->
         <div class="settingRow" style="margin-bottom: 15px;">
             <span class="settingLabel" style="font-size: 16px;">Show Hitboxes</span>
@@ -2306,7 +2499,7 @@
         <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         
         <div style="display: block; width: 100%; margin-top: 15px; padding: 10px 0; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A7A8F; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-            Tunnels of Privacy v0.3.19
+            Tunnels of Privacy v0.3.30
         </div>
     </div>
     
@@ -2341,6 +2534,39 @@
         <button class="menuButton" onclick="closeAllPanels()" style="width: 100%; margin-top: 20px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
     </div>
     
+    <!-- Confirmation Dialog Panel -->
+    <div id="confirmDialog" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: linear-gradient(135deg, rgba(10, 14, 18, 0.98), rgba(20, 27, 34, 0.95)); border: 3px solid #EB5757; border-radius: 12px; padding: 30px; max-width: 450px; width: 85vw; z-index: 1200; pointer-events: all; box-shadow: 0 10px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(235, 87, 87, 0.3); backdrop-filter: blur(15px);">
+        <div style="text-align: center;">
+            <div style="font-size: 48px; margin-bottom: 15px;">⚠️</div>
+            <div class="panelTitle" style="color: #EB5757; margin-bottom: 15px;" id="confirmDialogTitle">CONFIRM ACTION</div>
+            <div style="font-family: 'Inter', sans-serif; color: #D4E3F0; font-size: 16px; line-height: 1.6; margin-bottom: 25px;" id="confirmDialogMessage">
+                Are you sure you want to proceed?
+            </div>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button class="menuButton" id="confirmDialogYes" style="flex: 1; background: linear-gradient(135deg, rgba(235, 87, 87, 0.4), rgba(180, 60, 60, 0.4)); border-color: #EB5757;">
+                    YES, DELETE
+                </button>
+                <button class="menuButton" id="confirmDialogNo" style="flex: 1; background: linear-gradient(135deg, rgba(39, 174, 96, 0.4), rgba(30, 130, 70, 0.4)); border-color: #27AE60;">
+                    CANCEL
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Info Dialog Panel (replaces alert) -->
+    <div id="infoDialog" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: linear-gradient(135deg, rgba(10, 14, 18, 0.98), rgba(20, 27, 34, 0.95)); border: 3px solid #27AE60; border-radius: 12px; padding: 30px; max-width: 450px; width: 85vw; z-index: 1200; pointer-events: all; box-shadow: 0 10px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(39, 174, 96, 0.3); backdrop-filter: blur(15px);">
+        <div style="text-align: center;">
+            <div style="font-size: 48px; margin-bottom: 15px;" id="infoDialogIcon">✅</div>
+            <div class="panelTitle" style="color: #27AE60; margin-bottom: 15px;" id="infoDialogTitle">SUCCESS</div>
+            <div style="font-family: 'Inter', sans-serif; color: #D4E3F0; font-size: 16px; line-height: 1.6; margin-bottom: 25px;" id="infoDialogMessage">
+                Operation completed successfully.
+            </div>
+            <button class="menuButton" id="infoDialogOk" style="width: 100%;">
+                OK
+            </button>
+        </div>
+    </div>
+    
     <!-- Load Save Panel -->
     <div id="loadSavePanel" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); border: 2px solid #3498DB; border-radius: 12px; padding: 25px; max-width: 600px; width: 85vw; z-index: 200; pointer-events: all; box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px);">
         <div class="panelTitle" style="color: #3498DB;">LOAD SAVE FILE</div>
@@ -2367,140 +2593,422 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.3.19';
+        const GAME_VERSION = 'v0.3.30';
         
         // ===== HACKATHON INFO TOOLTIP SYSTEM =====
         const TOOLTIP_DELAY = 800; // ms before tooltip appears
+        const TOOLTIP_SLIDE_INTERVAL = 6000; // ms between slides
         let tooltipTimeout = null;
+        let tooltipSlideInterval = null;
         let currentTooltipElement = null;
+        let currentTooltipId = null;
+        let currentSlideIndex = 0;
         
-        // Tooltip definitions - showcasing AI and technical features
+        // Tooltip definitions - each tooltip has multiple slides (Zcash/Lore first, then AI/Tech)
         const TOOLTIP_DATA = {
             // Battle Actions
             'exploreLevelBtn': {
-                icon: '🤖',
-                title: 'AI-Powered Encounters',
-                body: 'Uses <strong>LLM (Large Language Model)</strong> to pre-generate unique encounters while you\'re in the menu. Boss names, stats, personalities, and battle dialogue are all AI-created in real-time.<br><br>🔌 <strong>API Sources:</strong> OpenRouter + Groq<br>🎯 <strong>9 Models:</strong> Choose your preferred LLM',
-                tags: ['ai', 'paid'],
-                footer: 'OpenRouter & Groq APIs • 9 models to choose from'
+                slides: [
+                    {
+                        icon: '💛',
+                        title: 'Privacy-First Exploration',
+                        body: 'The <strong>Tunnels of Privacy</strong> are ancient passages where personal data is protected. Each level represents the fight against surveillance and data harvesting in a world where privacy is treasure.',
+                        tags: ['zcash'],
+                        footer: 'Zcash: Privacy is a human right'
+                    },
+                    {
+                        icon: '🤖',
+                        title: 'AI-Powered Encounters',
+                        body: 'Uses <strong>LLM (Large Language Model)</strong> to pre-generate unique encounters. Boss names, stats, personalities, and dialogue are all AI-created in real-time.<br><br>🔌 <strong>API:</strong> OpenRouter + Groq<br>🎯 <strong>9 Models</strong> to choose from',
+                        tags: ['ai', 'paid'],
+                        footer: 'OpenRouter & Groq APIs • 9 models available'
+                    }
+                ]
             },
             'battleTalkBtn': {
-                icon: '🗣️',
-                title: 'Local Text-to-Speech',
-                body: 'Uses <strong>Piper TTS</strong> - a completely FREE, locally-hosted neural text-to-speech engine. No cloud API needed! Voices are AI-generated but run 100% on your machine.',
-                tags: ['ai', 'free', 'local'],
-                footer: 'Free feature: Piper TTS auto-installs on first use'
+                slides: [
+                    {
+                        icon: '💛',
+                        title: 'Negotiate for Privacy',
+                        body: 'Some enemies can be <strong>reasoned with or bribed</strong>. In the Zcash universe, not every conflict requires violence - sometimes privacy can be bought, traded, or persuaded.',
+                        tags: ['zcash'],
+                        footer: 'Diplomacy: A tool for the wise adventurer'
+                    },
+                    {
+                        icon: '🗣️',
+                        title: 'Local Text-to-Speech',
+                        body: 'Uses <strong>Piper TTS</strong> - a completely FREE, locally-hosted neural text-to-speech engine. No cloud API needed! Voices run 100% on your machine.',
+                        tags: ['ai', 'free', 'local'],
+                        footer: 'Free feature: Piper TTS auto-installs on first use'
+                    }
+                ]
             },
             'battleHeavyBtn': {
-                icon: '⚔️',
-                title: 'D&D Combat System',
-                body: 'Full <strong>D&D 5e-style</strong> dice rolling: d20 for attack rolls vs AC, damage dice (1d6/2d6/3d6), stat modifiers. All combat math follows tabletop RPG rules.',
-                tags: ['free'],
-                footer: 'Real dice mechanics with critical hits and misses'
+                slides: [
+                    {
+                        icon: '⚔️',
+                        title: 'Fight for Freedom',
+                        body: 'Heavy attacks represent the <strong>direct action</strong> needed to protect privacy. Sometimes you must fight surveillance head-on with overwhelming force.',
+                        tags: ['free'],
+                        footer: 'Privacy worth fighting for'
+                    },
+                    {
+                        icon: '🎲',
+                        title: 'D&D Combat System',
+                        body: 'Full <strong>D&D 5e-style</strong> dice rolling: d20 for attack rolls vs AC, damage dice (1d6/2d6/3d6), stat modifiers. All combat math follows tabletop RPG rules.',
+                        tags: ['free'],
+                        footer: 'Real dice mechanics with critical hits and misses'
+                    }
+                ]
             },
             'battleSpecialBtn': {
-                icon: '✨',
-                title: 'Hero Special Abilities',
-                body: 'Each hero has unique special attacks with <strong>AI-generated particle effects</strong>. Zooko\'s shield, Nate\'s fury, Zancas\'s precision, CyberAxe\'s electric storm.',
-                tags: ['ai', 'free'],
-                footer: 'Particle effects created with custom editor'
+                slides: [
+                    {
+                        icon: '💛',
+                        title: 'Zero-Knowledge Powers',
+                        body: 'Each hero\'s special ability is inspired by <strong>cryptographic concepts</strong>. Zooko\'s shield (encryption), Nate\'s fury (brute force), Zancas\'s precision (targeted proofs), CyberAxe\'s storm (distributed attack).',
+                        tags: ['zcash'],
+                        footer: 'Crypto-powered heroes!'
+                    },
+                    {
+                        icon: '✨',
+                        title: 'AI Particle Effects',
+                        body: 'Each hero has unique special attacks with <strong>AI-generated particle effects</strong> created using a custom particle editor tool.',
+                        tags: ['ai', 'free'],
+                        footer: 'Effects created with particle_editor.html'
+                    }
+                ]
             },
             // Dungeon Menu
             'dungeonMastersBtn': {
-                icon: '🎲',
-                title: 'Dungeon Master Controls',
-                body: 'Host-only panel for <strong>level navigation</strong> and <strong>difficulty settings</strong>. In multiplayer, only the party leader can change these - clients see updates in real-time via WebSocket.',
-                tags: ['multiplayer', 'free'],
-                footer: 'WebSocket-based real-time sync for all players'
+                slides: [
+                    {
+                        icon: '🎲',
+                        title: 'Dungeon Master',
+                        body: 'Like a tabletop RPG <strong>Game Master</strong>, the host controls the adventure. Choose difficulty, navigate levels, and guide your party through the Tunnels of Privacy.',
+                        tags: ['free'],
+                        footer: 'Host = Dungeon Master'
+                    },
+                    {
+                        icon: '👥',
+                        title: 'WebSocket Multiplayer',
+                        body: 'Host-only panel for <strong>level navigation</strong> and <strong>difficulty settings</strong>. Clients see updates in real-time via WebSocket sync.',
+                        tags: ['multiplayer', 'free'],
+                        footer: 'Real-time sync for all players'
+                    }
+                ]
             },
             'diffCasualBtn': {
-                icon: '🌼',
-                title: 'Dynamic Difficulty',
-                body: 'Loads different <strong>boss stat JSON files</strong> based on difficulty. Casual/Normal/Expert each have unique boss HP, damage, and ability modifiers.',
-                tags: ['free'],
-                footer: 'Boss data files: bosses_data_easy/normal/hard.json'
+                slides: [
+                    {
+                        icon: '🌼',
+                        title: 'Casual Mode',
+                        body: 'For those new to privacy advocacy - <strong>easier enemies</strong> let you learn the ropes while enjoying the story and Zcash lore.',
+                        tags: ['free'],
+                        footer: 'Everyone deserves privacy education'
+                    },
+                    {
+                        icon: '📊',
+                        title: 'Dynamic Difficulty',
+                        body: 'Loads different <strong>boss stat JSON files</strong> based on difficulty. Casual has lower boss HP, damage, and ability modifiers.',
+                        tags: ['free'],
+                        footer: 'Boss data: bosses_data_easy.json'
+                    }
+                ]
             },
             'diffNormalBtn': {
-                icon: '⚔️',
-                title: 'Dynamic Difficulty',
-                body: 'Loads different <strong>boss stat JSON files</strong> based on difficulty. Casual/Normal/Expert each have unique boss HP, damage, and ability modifiers.',
-                tags: ['free'],
-                footer: 'Boss data files: bosses_data_easy/normal/hard.json'
+                slides: [
+                    {
+                        icon: '⚔️',
+                        title: 'Normal Mode',
+                        body: 'The standard challenge - <strong>balanced difficulty</strong> for experienced privacy advocates ready to defend their data.',
+                        tags: ['free'],
+                        footer: 'The intended experience'
+                    },
+                    {
+                        icon: '📊',
+                        title: 'Dynamic Difficulty',
+                        body: 'Loads different <strong>boss stat JSON files</strong> based on difficulty. Normal has balanced boss stats.',
+                        tags: ['free'],
+                        footer: 'Boss data: bosses_data_normal.json'
+                    }
+                ]
             },
             'diffExpertBtn': {
-                icon: '💀',
-                title: 'Dynamic Difficulty',
-                body: 'Loads different <strong>boss stat JSON files</strong> based on difficulty. Casual/Normal/Expert each have unique boss HP, damage, and ability modifiers.',
-                tags: ['free'],
-                footer: 'Boss data files: bosses_data_easy/normal/hard.json'
+                slides: [
+                    {
+                        icon: '💀',
+                        title: 'Expert Mode',
+                        body: 'For hardened cypherpunks only - <strong>brutal enemies</strong> that test your strategic thinking and party coordination.',
+                        tags: ['free'],
+                        footer: 'Privacy is worth the struggle'
+                    },
+                    {
+                        icon: '📊',
+                        title: 'Dynamic Difficulty',
+                        body: 'Loads different <strong>boss stat JSON files</strong> based on difficulty. Expert has higher boss HP, damage, and abilities.',
+                        tags: ['free'],
+                        footer: 'Boss data: bosses_data_hard.json'
+                    }
+                ]
             },
             // Music & Audio
             'musicTicker': {
-                icon: '📚',
-                title: 'Educational Zcash Facts',
-                body: 'The music ticker displays <strong>random Zcash ecosystem facts</strong> loaded from ticker_facts.json. Learn about privacy, zero-knowledge proofs, and the Zcash community while playing!',
-                tags: ['zcash', 'free'],
-                footer: 'Facts rotate with each song change'
+                slides: [
+                    {
+                        icon: '💛',
+                        title: 'Learn About Zcash',
+                        body: 'The ticker displays <strong>real Zcash ecosystem facts</strong>! Learn about shielded transactions, zero-knowledge proofs, the Zcash Foundation, and privacy technology while you play.',
+                        tags: ['zcash', 'free'],
+                        footer: 'Education through entertainment'
+                    },
+                    {
+                        icon: '📚',
+                        title: 'Dynamic Fact System',
+                        body: 'Facts loaded from <strong>ticker_facts.json</strong> - a curated database of Zcash knowledge. New facts appear with each song change.',
+                        tags: ['free'],
+                        footer: 'Facts rotate with each track'
+                    }
+                ]
             },
             'musicControls': {
-                icon: '🎵',
-                title: 'AI-Generated Soundtrack',
-                body: 'All 10 theme tracks were <strong>100% AI-composed</strong> using Suno AI. Each track is a unique WebM audio file designed to match the dungeon atmosphere.',
-                tags: ['ai', 'free'],
-                footer: 'Music generated by Suno AI'
+                slides: [
+                    {
+                        icon: '🎵',
+                        title: 'Tunnels of Doom Tribute',
+                        body: 'Music inspired by <strong>Hank Mishkoff\'s</strong> iconic theme song for the TI-99/4A classic <strong>Tunnels of Doom</strong> (1982). The original drew from D&D, Infocom Adventures, and Wizardry.',
+                        tags: ['free'],
+                        footer: 'Remixed with permission from Hank Mishkoff'
+                    },
+                    {
+                        icon: '🤖',
+                        title: 'AI-Remixed Music',
+                        body: 'All 10 theme tracks were <strong>AI-remixed</strong> using AiVideo.com, reimagining the classic Tunnels of Doom sound for a modern cyberpunk-fantasy atmosphere.',
+                        tags: ['ai', 'paid'],
+                        footer: 'Music: AiVideo.com • Original: Hank Mishkoff'
+                    }
+                ]
             },
             // Story & Visuals
             'dungeonMenuBackground': {
-                icon: '🎬',
-                title: 'AI Story Animations',
-                body: '<strong>Sprite atlas animations</strong> (8×16 = 128 frames at 16fps) play as backgrounds. All story sequences were AI-generated as video, then converted to sprite sheets.<br><br>🎥 <strong>Video:</strong> AiVideo.com<br>📖 <strong>Story:</strong> ChatGPT',
-                tags: ['ai', 'paid'],
-                footer: 'Video by AiVideo.com • Story by ChatGPT'
+                slides: [
+                    {
+                        icon: '📖',
+                        title: 'The Zcash Story',
+                        body: 'The story follows heroes fighting to protect <strong>financial privacy</strong> in a world where personal data has become currency. Privacy is treasure, and those who steal it become corrupted.',
+                        tags: ['zcash'],
+                        footer: 'Privacy: The ultimate treasure'
+                    },
+                    {
+                        icon: '🎬',
+                        title: 'AI Story Animations',
+                        body: '<strong>Sprite atlas animations</strong> (8×16 = 128 frames at 16fps) play as backgrounds. All sequences were AI-generated as video, then converted to sprite sheets.<br><br>🎥 <strong>Video:</strong> AiVideo.com<br>📖 <strong>Story:</strong> ChatGPT',
+                        tags: ['ai', 'paid'],
+                        footer: 'Video by AiVideo.com • Story by ChatGPT'
+                    }
+                ]
             },
-            // Heroes
+            // Heroes - with proper Zcash bios
             'dungeonZooko': {
-                icon: '🎨',
-                title: 'AI-Generated Hero Art',
-                body: 'All character portraits, sprites, and animations were <strong>100% AI-generated</strong> using image generation models. No human artists - pure AI creativity!',
-                tags: ['ai', 'free'],
-                footer: 'Hero: Zooko - Named after Zcash founder'
+                slides: [
+                    {
+                        icon: '💛',
+                        title: 'Zooko Wilcox-O\'Hearn',
+                        body: '<strong>Named after the founder of Zcash</strong>. The real Zooko is a cryptographer and cypherpunk who created Zcash to give everyone access to private, digital money. In-game, Zooko is the party\'s wise protector.',
+                        tags: ['zcash'],
+                        footer: 'Role: Guardian • Shield abilities'
+                    },
+                    {
+                        icon: '🎨',
+                        title: 'AI-Generated Hero Art',
+                        body: 'All character portraits, sprites, and animations were <strong>AI-generated</strong> using licensed assets and image generation tools from Envato.com.',
+                        tags: ['ai', 'paid'],
+                        footer: 'Art: Envato.com'
+                    }
+                ]
             },
             'dungeonNate': {
-                icon: '🎨',
-                title: 'AI-Generated Hero Art',
-                body: 'All character portraits, sprites, and animations were <strong>100% AI-generated</strong> using image generation models. No human artists - pure AI creativity!',
-                tags: ['ai', 'free'],
-                footer: 'Hero: Nate - The warrior of the group'
+                slides: [
+                    {
+                        icon: '💛',
+                        title: 'Nathan Wilcox',
+                        body: '<strong>Named after Zcash\'s former CTO</strong>. Nathan helped build the technical foundation of Zcash and led engineering efforts. In-game, Nate is the fierce warrior who charges into battle.',
+                        tags: ['zcash'],
+                        footer: 'Role: Warrior • Heavy damage dealer'
+                    },
+                    {
+                        icon: '🎨',
+                        title: 'AI-Generated Hero Art',
+                        body: 'All character portraits, sprites, and animations were <strong>AI-generated</strong> using licensed assets and image generation tools from Envato.com.',
+                        tags: ['ai', 'paid'],
+                        footer: 'Art: Envato.com'
+                    }
+                ]
             },
             'dungeonZancas': {
-                icon: '🎨',
-                title: 'AI-Generated Hero Art',
-                body: 'All character portraits, sprites, and animations were <strong>100% AI-generated</strong> using image generation models. No human artists - pure AI creativity!',
-                tags: ['ai', 'free'],
-                footer: 'Hero: Zancas - Swift and precise'
+                slides: [
+                    {
+                        icon: '💛',
+                        title: 'Josh "Zancas" Wilcox',
+                        body: '<strong>Named after Zcash developer Josh Wilcox (zancas)</strong>. Josh created Zingo Wallet and contributed to numerous Zcash projects. In-game, Zancas represents precision, innovation, and relentless dedication to privacy tools.',
+                        tags: ['zcash'],
+                        footer: 'Role: Rogue • Precision striker'
+                    },
+                    {
+                        icon: '🎨',
+                        title: 'AI-Generated Hero Art',
+                        body: 'All character portraits, sprites, and animations were <strong>AI-generated</strong> using licensed assets and image generation tools from Envato.com.',
+                        tags: ['ai', 'paid'],
+                        footer: 'Art: Envato.com'
+                    }
+                ]
             },
             'dungeonCyberAxe': {
-                icon: '🎨',
-                title: 'AI-Generated Hero Art',
-                body: 'All character portraits, sprites, and animations were <strong>100% AI-generated</strong> using image generation models. No human artists - pure AI creativity!',
-                tags: ['ai', 'free'],
-                footer: 'Hero: CyberAxe - Electric powerhouse'
+                slides: [
+                    {
+                        icon: '💛',
+                        title: 'Community Champion',
+                        body: '<strong>CyberAxe represents the Zcash community</strong> - the developers, advocates, and users who power the network. Electric abilities symbolize the distributed, unstoppable nature of decentralized privacy.',
+                        tags: ['zcash'],
+                        footer: 'Role: Mage • Electric storm attacks'
+                    },
+                    {
+                        icon: '🎨',
+                        title: 'AI-Generated Hero Art',
+                        body: 'All character portraits, sprites, and animations were <strong>AI-generated</strong> using licensed assets and image generation tools from Envato.com.',
+                        tags: ['ai', 'paid'],
+                        footer: 'Art: Envato.com'
+                    }
+                ]
             },
             // Version/Credits
             'versionDisplay': {
-                icon: '🤖',
-                title: '100% AI-Developed Game',
-                body: '<strong>EVERYTHING</strong> in this game was AI-generated or AI-assisted:<br>• Code: GitHub Copilot (Claude)<br>• Art: AI image generation<br>• Music: Suno AI<br>• Story: AI video generation<br>• Sound FX: AI audio tools<br>• 3D Models: AI-assisted',
-                tags: ['ai', 'zcash'],
-                footer: 'Built for Zcash Hackathon 2025'
+                slides: [
+                    {
+                        icon: '💛',
+                        title: 'Zcash Hackathon 2025',
+                        body: 'Built to showcase <strong>Zcash values</strong>: privacy, freedom, and the right to transact without surveillance. The game teaches crypto concepts through gameplay and story.',
+                        tags: ['zcash'],
+                        footer: 'Privacy is normal. Privacy is freedom.'
+                    },
+                    {
+                        icon: '🤖',
+                        title: '100% AI-Developed Game',
+                        body: '<strong>EVERYTHING</strong> in this game was AI-generated:<br>• Code: GitHub Copilot (Claude)<br>• Art: AI image generation<br>• Music: Suno AI<br>• Story: ChatGPT<br>• Video: AiVideo.com<br>• Sound FX: AI audio tools',
+                        tags: ['ai'],
+                        footer: 'Built for Zcash Hackathon 2025'
+                    }
+                ]
             },
             // Multiplayer
             'heroSelectionCode': {
-                icon: '🌐',
-                title: 'WebSocket Multiplayer',
-                body: 'Real-time <strong>4-player co-op</strong> using WebSocket connections. Host creates room, clients join with 6-character code. Turn-based combat with live state sync.',
-                tags: ['multiplayer', 'free'],
-                footer: 'Python WebSocket server on port 8765'
+                slides: [
+                    {
+                        icon: '👥',
+                        title: 'Party Up!',
+                        body: 'Join forces with up to <strong>4 players</strong> to explore the Tunnels together. Each player controls one hero - coordinate your attacks and protect each other!',
+                        tags: ['multiplayer', 'free'],
+                        footer: 'Stronger together'
+                    },
+                    {
+                        icon: '🌐',
+                        title: 'WebSocket Multiplayer',
+                        body: 'Real-time <strong>4-player co-op</strong> using WebSocket connections. Host creates room, clients join with 6-character code. Turn-based combat with live state sync.',
+                        tags: ['multiplayer', 'free'],
+                        footer: 'Python WebSocket server on port 8765'
+                    }
+                ]
+            },
+            // ===== TITLE SCREEN TOOLTIPS =====
+            'dungeonLevelDisplay': {
+                slides: [
+                    {
+                        icon: '🏰',
+                        title: 'Dungeon Depth',
+                        body: 'Your current <strong>depth in the Tunnels of Privacy</strong>. Deeper levels have stronger enemies but better rewards. Each level has rooms to explore, a boss to defeat, and captives to rescue.',
+                        tags: ['zcash', 'free'],
+                        footer: 'Descend deeper to find greater treasures'
+                    },
+                    {
+                        icon: '📊',
+                        title: 'Level Progress',
+                        body: '<strong>Track your exploration:</strong><br>• Rooms: Encounters completed<br>• Boss: Level guardian status<br>• Store: Merchant visited<br>• Captives: NPCs rescued<br>• Total Bosses: Career defeats',
+                        tags: ['free'],
+                        footer: 'Clear the boss to descend deeper'
+                    }
+                ]
+            },
+            'startAdventureBtn': {
+                slides: [
+                    {
+                        icon: '⚔️',
+                        title: 'Begin Your Quest',
+                        body: 'Enter the <strong>Tunnels of Privacy</strong> - ancient passages where financial freedom is defended. Lead your party of heroes against surveillance, data harvesters, and corrupted entities.',
+                        tags: ['zcash', 'free'],
+                        footer: 'Protect the right to privacy!'
+                    },
+                    {
+                        icon: '🎮',
+                        title: 'Dungeon Crawler RPG',
+                        body: '<strong>Turn-based combat</strong> with D&D mechanics, AI-generated encounters, procedural levels, and persistent hero progression. Single player or 4-player co-op!',
+                        tags: ['ai', 'multiplayer', 'free'],
+                        footer: 'Progress saves automatically'
+                    }
+                ]
+            },
+            'enterArcadeBtn': {
+                slides: [
+                    {
+                        icon: '🎯',
+                        title: 'ZLOCK CONSENSUS',
+                        body: 'The <strong>other half of this universe</strong>! ZLOCK CONSENSUS is a 3D puzzle arcade game where the same heroes solve block puzzles. Your hero stats carry between both games!',
+                        tags: ['zcash', 'free'],
+                        footer: 'Portal System: Shared heroes & progress'
+                    },
+                    {
+                        icon: '🕹️',
+                        title: '3D Puzzle Game',
+                        body: '<strong>Three.js-powered</strong> arcade puzzler with falling blocks, combos, and special abilities. Same 4 heroes, different gameplay. XP earned in either game levels up your characters!',
+                        tags: ['ai', 'free'],
+                        footer: 'Built with Three.js • WebGL renderer'
+                    }
+                ]
+            },
+            'aboutDonateBtn': {
+                slides: [
+                    {
+                        icon: '💛',
+                        title: 'Support Zcash',
+                        body: 'This game was created to <strong>spread awareness about Zcash</strong> and financial privacy. Donations help fund continued development and more educational content.',
+                        tags: ['zcash'],
+                        footer: 'Every ZEC helps!'
+                    },
+                    {
+                        icon: '🙏',
+                        title: 'About This Project',
+                        body: 'A <strong>Zcash Hackathon 2025</strong> entry demonstrating how AI can create complete games. 100% AI-developed: code, art, music, story, and more. Open source and free to play!',
+                        tags: ['ai', 'free'],
+                        footer: 'Made with ❤️ for the Zcash community'
+                    }
+                ]
+            },
+            'titleBackground': {
+                slides: [
+                    {
+                        icon: '📖',
+                        title: 'The Story',
+                        body: 'In a world where <strong>personal data became currency</strong>, privacy itself is treasure. The Tunnels are ancient passages where defenders of financial freedom fight back against surveillance.',
+                        tags: ['zcash'],
+                        footer: 'A tale of privacy vs surveillance'
+                    },
+                    {
+                        icon: '🎬',
+                        title: 'AI Story Animations',
+                        body: '<strong>Sprite atlas animations</strong> (8×16 = 128 frames) created by converting AI-generated video to sprite sheets. Background tells the story while you play!',
+                        tags: ['ai', 'paid'],
+                        footer: 'Video: AiVideo.com • Story: ChatGPT'
+                    }
+                ]
             }
         };
         
@@ -2508,6 +3016,9 @@
         function initTooltipSystem() {
             const tooltip = document.getElementById('infoTooltip');
             if (!tooltip) return;
+            
+            // Add wheel event listener to tooltip for slide navigation
+            tooltip.addEventListener('wheel', handleTooltipWheel, { passive: false });
             
             // Add event listeners to all elements with tooltip data
             Object.keys(TOOLTIP_DATA).forEach(elementId => {
@@ -2532,7 +3043,10 @@
         
         function showTooltipDelayed(event, tooltipId) {
             clearTimeout(tooltipTimeout);
+            clearInterval(tooltipSlideInterval);
             currentTooltipElement = event.target;
+            currentTooltipId = tooltipId;
+            currentSlideIndex = 0;
             
             tooltipTimeout = setTimeout(() => {
                 showTooltip(event, tooltipId);
@@ -2542,12 +3056,32 @@
         function showTooltip(event, tooltipId) {
             const tooltip = document.getElementById('infoTooltip');
             const data = TOOLTIP_DATA[tooltipId];
-            if (!tooltip || !data) return;
+            if (!tooltip || !data || !data.slides) return;
             
-            // Build tooltip HTML
+            currentSlideIndex = 0;
+            renderTooltipSlide(tooltip, data, currentSlideIndex);
+            
+            updateTooltipPosition(event);
+            tooltip.classList.add('visible');
+            
+            // Start slideshow if multiple slides
+            if (data.slides.length > 1) {
+                clearInterval(tooltipSlideInterval);
+                tooltipSlideInterval = setInterval(() => {
+                    currentSlideIndex = (currentSlideIndex + 1) % data.slides.length;
+                    renderTooltipSlide(tooltip, data, currentSlideIndex);
+                }, TOOLTIP_SLIDE_INTERVAL);
+            }
+        }
+        
+        function renderTooltipSlide(tooltip, data, slideIndex) {
+            const slide = data.slides[slideIndex];
+            if (!slide) return;
+            
+            // Build tags HTML
             let tagsHtml = '';
-            if (data.tags) {
-                data.tags.forEach(tag => {
+            if (slide.tags) {
+                slide.tags.forEach(tag => {
                     const tagLabels = {
                         'ai': '🤖 AI-Generated',
                         'free': '✅ Free',
@@ -2560,20 +3094,70 @@
                 });
             }
             
+            // Build slide dots HTML
+            let dotsHtml = '';
+            if (data.slides.length > 1) {
+                dotsHtml = '<div class="tooltip-dots">';
+                for (let i = 0; i < data.slides.length; i++) {
+                    dotsHtml += `<span class="tooltip-dot ${i === slideIndex ? 'active' : ''}" onclick="goToTooltipSlide(${i})"></span>`;
+                }
+                dotsHtml += '</div>';
+            }
+            
             tooltip.innerHTML = `
                 <div class="tooltip-header">
-                    <span class="tooltip-icon">${data.icon}</span>
-                    <span class="tooltip-title">${data.title}</span>
+                    <span class="tooltip-icon">${slide.icon}</span>
+                    <span class="tooltip-title">${slide.title}</span>
+                    ${dotsHtml}
                 </div>
                 <div class="tooltip-body">
-                    ${data.body}
+                    ${slide.body}
                     <div style="margin-top: 8px;">${tagsHtml}</div>
                 </div>
-                ${data.footer ? `<div class="tooltip-footer">ℹ️ ${data.footer}</div>` : ''}
+                ${slide.footer ? `<div class="tooltip-footer">ℹ️ ${slide.footer}</div>` : ''}
             `;
+        }
+        
+        function goToTooltipSlide(index) {
+            const tooltip = document.getElementById('infoTooltip');
+            const data = TOOLTIP_DATA[currentTooltipId];
+            if (!tooltip || !data || !data.slides) return;
             
-            updateTooltipPosition(event);
-            tooltip.classList.add('visible');
+            currentSlideIndex = index;
+            renderTooltipSlide(tooltip, data, currentSlideIndex);
+            
+            // Reset the interval timer
+            if (data.slides.length > 1) {
+                clearInterval(tooltipSlideInterval);
+                tooltipSlideInterval = setInterval(() => {
+                    currentSlideIndex = (currentSlideIndex + 1) % data.slides.length;
+                    renderTooltipSlide(tooltip, data, currentSlideIndex);
+                }, TOOLTIP_SLIDE_INTERVAL);
+            }
+        }
+        
+        function handleTooltipWheel(event) {
+            const data = TOOLTIP_DATA[currentTooltipId];
+            if (!data || !data.slides || data.slides.length <= 1) return;
+            
+            event.preventDefault();
+            
+            // Scroll down = next slide, scroll up = previous slide
+            if (event.deltaY > 0) {
+                currentSlideIndex = (currentSlideIndex + 1) % data.slides.length;
+            } else {
+                currentSlideIndex = (currentSlideIndex - 1 + data.slides.length) % data.slides.length;
+            }
+            
+            const tooltip = document.getElementById('infoTooltip');
+            renderTooltipSlide(tooltip, data, currentSlideIndex);
+            
+            // Reset the interval timer
+            clearInterval(tooltipSlideInterval);
+            tooltipSlideInterval = setInterval(() => {
+                currentSlideIndex = (currentSlideIndex + 1) % data.slides.length;
+                renderTooltipSlide(tooltip, data, currentSlideIndex);
+            }, TOOLTIP_SLIDE_INTERVAL);
         }
         
         function updateTooltipPosition(event) {
@@ -2599,13 +3183,215 @@
         
         function hideTooltip() {
             clearTimeout(tooltipTimeout);
+            clearInterval(tooltipSlideInterval);
             const tooltip = document.getElementById('infoTooltip');
             if (tooltip) {
                 tooltip.classList.remove('visible');
             }
             currentTooltipElement = null;
+            currentTooltipId = null;
+            currentSlideIndex = 0;
         }
         // ===== END HACKATHON INFO TOOLTIP SYSTEM =====
+        
+        // ===== LEVEL PROGRESS TRACKING =====
+        let levelProgress = {
+            roomsExplored: 0,
+            roomsMax: '?',
+            bossDefeated: false,
+            storeVisited: false,
+            captivesFreed: 0,
+            totalBossesDefeated: 0
+        };
+        
+        function resetLevelProgress() {
+            levelProgress.roomsExplored = 0;
+            levelProgress.roomsMax = '?';
+            levelProgress.bossDefeated = false;
+            levelProgress.storeVisited = false;
+            levelProgress.captivesFreed = 0;
+            updateLevelProgressDisplay();
+            saveLevelProgress();
+            broadcastLevelProgress();
+        }
+        
+        function updateLevelProgressDisplay() {
+            // Update the level stats in the dungeon level display (title screen)
+            const roomsExploredEl = document.getElementById('levelRoomsExplored');
+            const roomsMaxEl = document.getElementById('levelRoomsMax');
+            const bossDefeatedEl = document.getElementById('levelBossDefeated');
+            const storeVisitedEl = document.getElementById('levelStoreVisited');
+            const captivesFreedEl = document.getElementById('levelCaptivesFreed');
+            const totalBossesEl = document.getElementById('totalBossesDefeated');
+            
+            if (roomsExploredEl) roomsExploredEl.textContent = levelProgress.roomsExplored;
+            if (roomsMaxEl) roomsMaxEl.textContent = levelProgress.roomsMax;
+            if (bossDefeatedEl) bossDefeatedEl.textContent = levelProgress.bossDefeated ? '1' : '0';
+            if (storeVisitedEl) storeVisitedEl.textContent = levelProgress.storeVisited ? '1' : '0';
+            if (captivesFreedEl) captivesFreedEl.textContent = levelProgress.captivesFreed;
+            if (totalBossesEl) totalBossesEl.textContent = levelProgress.totalBossesDefeated;
+            
+            // Update the level stats in the dungeon menu (dm = dungeon menu)
+            const dmRoomsExploredEl = document.getElementById('dmRoomsExplored');
+            const dmRoomsMaxEl = document.getElementById('dmRoomsMax');
+            const dmBossDefeatedEl = document.getElementById('dmBossDefeated');
+            const dmStoreVisitedEl = document.getElementById('dmStoreVisited');
+            const dmCaptivesFreedEl = document.getElementById('dmCaptivesFreed');
+            const dmTotalBossesEl = document.getElementById('dmTotalBossesDefeated');
+            
+            if (dmRoomsExploredEl) dmRoomsExploredEl.textContent = levelProgress.roomsExplored;
+            if (dmRoomsMaxEl) dmRoomsMaxEl.textContent = levelProgress.roomsMax;
+            if (dmBossDefeatedEl) dmBossDefeatedEl.textContent = levelProgress.bossDefeated ? '1' : '0';
+            if (dmStoreVisitedEl) dmStoreVisitedEl.textContent = levelProgress.storeVisited ? '1' : '0';
+            if (dmCaptivesFreedEl) dmCaptivesFreedEl.textContent = levelProgress.captivesFreed;
+            if (dmTotalBossesEl) dmTotalBossesEl.textContent = levelProgress.totalBossesDefeated;
+        }
+        
+        function incrementRoomsExplored() {
+            levelProgress.roomsExplored++;
+            updateLevelProgressDisplay();
+            saveLevelProgress();
+            broadcastLevelProgress();
+        }
+        
+        function markBossDefeated() {
+            levelProgress.bossDefeated = true;
+            levelProgress.totalBossesDefeated++;
+            updateLevelProgressDisplay();
+            saveLevelProgress();
+            broadcastLevelProgress();
+            
+            // Also save to sharedSave bossesDefeated array
+            try {
+                const sharedSave = loadSharedSave();
+                if (sharedSave && sharedSave.dungeonState && sharedSave.dungeonState.questProgress) {
+                    const currentLevel = parseInt(document.getElementById('dungeonLevel')?.textContent || document.getElementById('dungeonMenuLevel')?.textContent) || 1;
+                    if (!sharedSave.dungeonState.questProgress.bossesDefeated.includes(currentLevel)) {
+                        sharedSave.dungeonState.questProgress.bossesDefeated.push(currentLevel);
+                        saveSharedSave(sharedSave);
+                    }
+                }
+            } catch (e) {
+                console.error('[LevelProgress] Error saving boss defeat:', e);
+            }
+        }
+        
+        function markStoreVisited() {
+            levelProgress.storeVisited = true;
+            updateLevelProgressDisplay();
+            saveLevelProgress();
+            broadcastLevelProgress();
+        }
+        
+        function incrementCaptivesFreed() {
+            levelProgress.captivesFreed++;
+            updateLevelProgressDisplay();
+            saveLevelProgress();
+            broadcastLevelProgress();
+        }
+        
+        function loadTotalBossesDefeated() {
+            try {
+                const sharedSave = loadSharedSave();
+                if (sharedSave && sharedSave.dungeonState && sharedSave.dungeonState.questProgress) {
+                    levelProgress.totalBossesDefeated = sharedSave.dungeonState.questProgress.bossesDefeated.length || 0;
+                }
+            } catch (e) {
+                console.error('[LevelProgress] Error loading boss count:', e);
+            }
+            updateLevelProgressDisplay();
+        }
+        
+        // Save current level progress to sharedSave
+        function saveLevelProgress() {
+            // Only host saves in multiplayer
+            if (multiplayerState.enabled && multiplayerState.role === 'client') return;
+            
+            try {
+                const sharedSave = loadSharedSave();
+                if (sharedSave && sharedSave.dungeonState) {
+                    const currentLevel = parseInt(document.getElementById('dungeonLevel')?.textContent || document.getElementById('dungeonMenuLevel')?.textContent) || 1;
+                    
+                    // Initialize levelProgress storage if not exists
+                    if (!sharedSave.dungeonState.levelProgress) {
+                        sharedSave.dungeonState.levelProgress = {};
+                    }
+                    
+                    // Save current level's progress
+                    sharedSave.dungeonState.levelProgress[currentLevel] = {
+                        roomsExplored: levelProgress.roomsExplored,
+                        bossDefeated: levelProgress.bossDefeated,
+                        storeVisited: levelProgress.storeVisited,
+                        captivesFreed: levelProgress.captivesFreed
+                    };
+                    
+                    saveSharedSave(sharedSave);
+                }
+            } catch (e) {
+                console.error('[LevelProgress] Error saving level progress:', e);
+            }
+        }
+        
+        // Load level progress for current level from sharedSave
+        function loadLevelProgress() {
+            try {
+                const sharedSave = loadSharedSave();
+                const currentLevel = parseInt(document.getElementById('dungeonLevel')?.textContent || document.getElementById('dungeonMenuLevel')?.textContent) || 1;
+                
+                // Load total bosses defeated
+                if (sharedSave && sharedSave.dungeonState && sharedSave.dungeonState.questProgress) {
+                    levelProgress.totalBossesDefeated = sharedSave.dungeonState.questProgress.bossesDefeated.length || 0;
+                }
+                
+                // Load this level's progress if exists
+                if (sharedSave && sharedSave.dungeonState && sharedSave.dungeonState.levelProgress && sharedSave.dungeonState.levelProgress[currentLevel]) {
+                    const saved = sharedSave.dungeonState.levelProgress[currentLevel];
+                    levelProgress.roomsExplored = saved.roomsExplored || 0;
+                    levelProgress.bossDefeated = saved.bossDefeated || false;
+                    levelProgress.storeVisited = saved.storeVisited || false;
+                    levelProgress.captivesFreed = saved.captivesFreed || 0;
+                } else {
+                    // No saved progress for this level - reset
+                    levelProgress.roomsExplored = 0;
+                    levelProgress.bossDefeated = false;
+                    levelProgress.storeVisited = false;
+                    levelProgress.captivesFreed = 0;
+                }
+                
+                updateLevelProgressDisplay();
+            } catch (e) {
+                console.error('[LevelProgress] Error loading level progress:', e);
+            }
+        }
+        
+        // Broadcast level progress to all clients (host only)
+        function broadcastLevelProgress() {
+            if (!multiplayerState.enabled || multiplayerState.role !== 'host') return;
+            
+            sendWebSocketMessage({
+                type: 'level_progress_update',
+                progress: {
+                    roomsExplored: levelProgress.roomsExplored,
+                    roomsMax: levelProgress.roomsMax,
+                    bossDefeated: levelProgress.bossDefeated,
+                    storeVisited: levelProgress.storeVisited,
+                    captivesFreed: levelProgress.captivesFreed,
+                    totalBossesDefeated: levelProgress.totalBossesDefeated
+                }
+            });
+        }
+        
+        // Client receives level progress from host
+        function updateLevelProgressFromHost(progress) {
+            levelProgress.roomsExplored = progress.roomsExplored || 0;
+            levelProgress.roomsMax = progress.roomsMax || '?';
+            levelProgress.bossDefeated = progress.bossDefeated || false;
+            levelProgress.storeVisited = progress.storeVisited || false;
+            levelProgress.captivesFreed = progress.captivesFreed || 0;
+            levelProgress.totalBossesDefeated = progress.totalBossesDefeated || 0;
+            updateLevelProgressDisplay();
+        }
+        // ===== END LEVEL PROGRESS TRACKING =====
         
         // ===== RANDOM PLAYER NAME GENERATOR =====
         const PLAYER_FIRST_NAMES = ['Crypto', 'Shadow', 'Pixel', 'Neon', 'Quantum', 'Cyber', 'Nova', 'Phoenix', 'Storm', 'Blaze'];
@@ -2686,6 +3472,11 @@
         let musicStarted = false;
         let currentTrackIndex = 0;
         let mainThemePlayed = false; // Track if main theme has played
+        let zoneMusicEnabled = true; // Zone tracks toggle
+        let themeMusicEnabled = true; // Theme songs toggle
+        let musicAnimationFrameId = null;
+        let currentMusicZone = -1; // Track current zone for music switching
+        let userPausedMusic = false; // Track if user manually paused
         
         // Asset loading tracking
         let assetsToLoad = 0;
@@ -3086,8 +3877,60 @@
             { file: 'music/theme_j.webm', name: 'Shielded Sunset' }
         ];
         
+        // Zone music tracks - mapped to dungeon zones from level_data.json
+        // Descent Arc (Levels 1-100)
+        const zoneMusicTracks = [
+            { file: 'music/level_1.webm', minLevel: 1, maxLevel: 5, name: 'Entry Crypts' },
+            { file: 'music/level_2.webm', minLevel: 6, maxLevel: 15, name: 'Forgotten Mines' },
+            { file: 'music/level_3.webm', minLevel: 16, maxLevel: 25, name: 'Fungal Gardens' },
+            { file: 'music/level_4.webm', minLevel: 26, maxLevel: 35, name: 'Underground River' },
+            { file: 'music/level_5.webm', minLevel: 36, maxLevel: 45, name: 'Crystal Caverns' },
+            { file: 'music/level_6.webm', minLevel: 46, maxLevel: 55, name: 'Bone Pits' },
+            { file: 'music/level_7.webm', minLevel: 56, maxLevel: 65, name: 'Infernal Depths' },
+            { file: 'music/level_8.webm', minLevel: 66, maxLevel: 75, name: 'Shadow Realm' },
+            { file: 'music/level_9.webm', minLevel: 76, maxLevel: 90, name: 'Abyssal Trenches' },
+            { file: 'music/level_10.webm', minLevel: 91, maxLevel: 100, name: 'Core of Darkness' },
+            // Ascent Arc (Levels 101-1000)
+            { file: 'music/up_1.webm', minLevel: 101, maxLevel: 200, name: 'Sanctuary Ruins' },
+            { file: 'music/up_2.webm', minLevel: 201, maxLevel: 400, name: 'Ember Wastes' },
+            { file: 'music/up_3.webm', minLevel: 401, maxLevel: 700, name: 'Celestial Spire' },
+            { file: 'music/up_4.webm', minLevel: 701, maxLevel: 999, name: 'Void Threshold' },
+            { file: 'music/up_5.webm', minLevel: 1000, maxLevel: 999999, name: 'Beyond the Veil' }
+        ];
+        
+        // Get appropriate zone music track for current dungeon level
+        function getMusicForZone(level) {
+            for (let i = 0; i < zoneMusicTracks.length; i++) {
+                const track = zoneMusicTracks[i];
+                if (level >= track.minLevel && level <= track.maxLevel) {
+                    return track;
+                }
+            }
+            return zoneMusicTracks[0]; // Default to first track
+        }
+        
         function loadMusic(trackData) {
             if (!musicEnabled) return;
+            
+            // Check if zone or theme music is disabled - skip to alternate type
+            const isTheme = trackData.minLevel === undefined;
+            if (isTheme && !themeMusicEnabled) {
+                // Theme disabled, play zone track instead
+                if (zoneMusicEnabled) {
+                    const currentLevel = parseInt(document.getElementById('dungeonLevel')?.textContent) || 1;
+                    const zoneTrack = getMusicForZone(currentLevel);
+                    loadMusic(zoneTrack);
+                }
+                return;
+            }
+            if (!isTheme && !zoneMusicEnabled) {
+                // Zone disabled, play theme instead
+                if (themeMusicEnabled) {
+                    const randomTheme = themeTracks[Math.floor(Math.random() * themeTracks.length)];
+                    loadMusic(randomTheme);
+                }
+                return;
+            }
             
             // Check if we're already playing this track
             if (currentMusic && currentMusic.src.endsWith(trackData.file)) {
@@ -3103,7 +3946,16 @@
                     currentTickerFact = tickerFacts[Math.floor(Math.random() * tickerFacts.length)];
                 }
                 
-                const musicInfo = `♫ Theme Song: ${trackData.name} ♫`;
+                // Check if this is a zone track or theme track
+                let musicInfo = '';
+                if (trackData.minLevel !== undefined) {
+                    // Zone track - show level range
+                    const levelRange = trackData.maxLevel === 999999 ? `${trackData.minLevel}+` : `${trackData.minLevel}-${trackData.maxLevel}`;
+                    musicInfo = `♫ Zone Track: ${trackData.name} (Levels ${levelRange}) ♫`;
+                } else {
+                    // Theme track
+                    musicInfo = `♫ Theme Song: ${trackData.name} ♫`;
+                }
                 
                 // Combine music info with fun fact
                 const finalText = currentTickerFact ? `${musicInfo}  •  ${currentTickerFact}` : musicInfo;
@@ -3125,15 +3977,28 @@
                 musicStarted = true;
                 updateMusicButton();
                 
-                // When song ends, play next random track
-                // Add listener AFTER play() succeeds to ensure it's attached
+                // When song ends, maybe play a theme, then resume zone track
                 newMusic.addEventListener('ended', () => {
-                    if (!musicEnabled) return;
-                    mainThemePlayed = true; // Mark main theme as played
-                    // Pick random track excluding main theme (index 0)
-                    const randomIndex = Math.floor(Math.random() * (themeTracks.length - 1)) + 1;
-                    const randomTrack = themeTracks[randomIndex];
-                    loadMusic(randomTrack);
+                    // Don't auto-play next track if user manually paused
+                    if (userPausedMusic || !musicEnabled) return;
+                    
+                    mainThemePlayed = true;
+                    const shouldPlayTheme = Math.random() < 0.5; // 50% chance
+                    
+                    if (shouldPlayTheme && themeMusicEnabled) {
+                        // Pick random theme
+                        const randomTheme = themeTracks[Math.floor(Math.random() * themeTracks.length)];
+                        loadMusic(randomTheme);
+                    } else if (zoneMusicEnabled) {
+                        // Loop the zone track again
+                        const currentLevel = parseInt(document.getElementById('dungeonLevel')?.textContent) || 1;
+                        const zoneTrack = getMusicForZone(currentLevel);
+                        loadMusic(zoneTrack);
+                    } else if (themeMusicEnabled) {
+                        // Fall back to theme if zone disabled
+                        const randomTheme = themeTracks[Math.floor(Math.random() * themeTracks.length)];
+                        loadMusic(randomTheme);
+                    }
                 });
             }).catch(err => {
                 console.log('Music autoplay blocked:', err);
@@ -3175,9 +4040,10 @@
             const btn = document.getElementById('musicPlayPauseBtn');
             
             if (!currentMusic) {
-                // No music loaded yet, start with main theme
+                // No music loaded yet, start music system
                 musicEnabled = true;
-                loadMusic(themeTracks[0]); // Always start with main theme
+                userPausedMusic = false;
+                startMusicSystem();
                 if (btn) btn.textContent = '⏸';
                 return;
             }
@@ -3185,10 +4051,11 @@
             if (currentMusic.paused) {
                 currentMusic.play().catch(err => console.log('Play error:', err));
                 musicEnabled = true;
+                userPausedMusic = false;
                 if (btn) btn.textContent = '⏸';
             } else {
                 currentMusic.pause();
-                musicEnabled = false;
+                userPausedMusic = true;
                 if (btn) btn.textContent = '▶';
             }
         }
@@ -3198,12 +4065,20 @@
                 currentMusic.pause();
             }
             
-            musicEnabled = true; // Enable music if it was paused
+            musicEnabled = true;
+            userPausedMusic = false;
             mainThemePlayed = true;
-            // Pick random track excluding main theme (index 0)
-            const randomIndex = Math.floor(Math.random() * (themeTracks.length - 1)) + 1;
-            const randomTrack = themeTracks[randomIndex];
-            loadMusic(randomTrack);
+            
+            // If zone music enabled, play zone track; otherwise theme
+            if (zoneMusicEnabled) {
+                const currentLevel = parseInt(document.getElementById('dungeonLevel')?.textContent) || 1;
+                const zoneTrack = getMusicForZone(currentLevel);
+                loadMusic(zoneTrack);
+            } else if (themeMusicEnabled) {
+                const randomIndex = Math.floor(Math.random() * (themeTracks.length - 1)) + 1;
+                const randomTrack = themeTracks[randomIndex];
+                loadMusic(randomTrack);
+            }
         }
         
         function musicNext() {
@@ -3211,12 +4086,27 @@
                 currentMusic.pause();
             }
             
-            musicEnabled = true; // Enable music if it was paused
+            musicEnabled = true;
+            userPausedMusic = false;
             mainThemePlayed = true;
-            // Pick random track excluding main theme (index 0)
-            const randomIndex = Math.floor(Math.random() * (themeTracks.length - 1)) + 1;
-            const randomTrack = themeTracks[randomIndex];
-            loadMusic(randomTrack);
+            
+            // Alternate between zone and theme tracks
+            const isCurrentlyZone = currentMusic && zoneMusicTracks.some(t => currentMusic.src.endsWith(t.file));
+            
+            if (isCurrentlyZone && themeMusicEnabled) {
+                // Currently zone, play random theme
+                const randomIndex = Math.floor(Math.random() * themeTracks.length);
+                loadMusic(themeTracks[randomIndex]);
+            } else if (zoneMusicEnabled) {
+                // Play zone track for current level
+                const currentLevel = parseInt(document.getElementById('dungeonLevel')?.textContent) || 1;
+                const zoneTrack = getMusicForZone(currentLevel);
+                loadMusic(zoneTrack);
+            } else if (themeMusicEnabled) {
+                // Fall back to theme
+                const randomIndex = Math.floor(Math.random() * themeTracks.length);
+                loadMusic(themeTracks[randomIndex]);
+            }
         }
         
         function updateMusicButton() {
@@ -3227,6 +4117,65 @@
                 } else {
                     btn.textContent = '▶';
                 }
+            }
+        }
+        
+        // SEPARATE animation loop for music system - monitors zone changes
+        function animateMusicSystem() {
+            if (!musicEnabled) {
+                musicAnimationFrameId = null;
+                return;
+            }
+            
+            musicAnimationFrameId = requestAnimationFrame(animateMusicSystem);
+            
+            // Get current dungeon level
+            const currentLevel = parseInt(document.getElementById('dungeonLevel')?.textContent) || 1;
+            
+            // Check if zone changed and we need a different track
+            if (currentLevel !== currentMusicZone && zoneMusicEnabled) {
+                const oldTrack = getMusicForZone(currentMusicZone);
+                const newTrack = getMusicForZone(currentLevel);
+                
+                // Only switch if track file is different (zone changed)
+                if (oldTrack.file !== newTrack.file) {
+                    console.log(`[Music] Zone changed: Level ${currentMusicZone} -> ${currentLevel}, switching to "${newTrack.name}"`);
+                    loadMusic(newTrack);
+                }
+                
+                currentMusicZone = currentLevel;
+            }
+            
+            // Update volume dynamically based on musicVolume (1-150 range)
+            if (currentMusic) {
+                const volumeScale = Math.min(1.0, musicVolume / 100);
+                currentMusic.volume = volumeScale;
+            }
+        }
+        
+        // Start the music system with proper initialization
+        function startMusicSystem() {
+            if (musicEnabled && !musicAnimationFrameId) {
+                const currentLevel = parseInt(document.getElementById('dungeonLevel')?.textContent) || 1;
+                currentMusicZone = currentLevel;
+                
+                // Start with a random theme song for variety, then zone music takes over
+                if (themeMusicEnabled && !mainThemePlayed) {
+                    // First time: play main theme
+                    loadMusic(themeTracks[0]);
+                    mainThemePlayed = true;
+                } else if (themeMusicEnabled) {
+                    // After first time: random theme
+                    const randomTheme = themeTracks[Math.floor(Math.random() * themeTracks.length)];
+                    loadMusic(randomTheme);
+                } else if (zoneMusicEnabled) {
+                    // Themes disabled: play zone track
+                    const zoneTrack = getMusicForZone(currentLevel);
+                    loadMusic(zoneTrack);
+                }
+                
+                // Start the monitoring loop
+                animateMusicSystem();
             }
         }
         
@@ -3267,11 +4216,13 @@
         let settings = {
             musicEnabled: true,
             musicVolume: 75,
+            themeMusicEnabled: true,  // Theme songs toggle
+            zoneMusicEnabled: true,   // Zone music toggle
             showHitboxes: false,
             playerName: '',
-            llmFreeWill: false,      // NPCs chat autonomously
+            llmFreeWill: true,       // NPCs chat autonomously
             llmUsePaid: false,       // Use paid LLM models
-            rpMode: true,            // RP emotes/dramatic speech vs normal 2025 talk
+            rpMode: false,           // RP emotes/dramatic speech vs normal 2025 talk
             diagMode: false,         // Diagnostic mode - enemies have 5 HP
             difficulty: 'normal'     // Game difficulty: 'casual', 'normal', 'expert'
         };
@@ -3284,6 +4235,8 @@
             document.getElementById('musicEnabled').checked = settings.musicEnabled;
             document.getElementById('musicVolume').value = settings.musicVolume;
             document.getElementById('musicVolumeValue').textContent = settings.musicVolume;
+            document.getElementById('themeMusicEnabled').checked = settings.themeMusicEnabled !== false;
+            document.getElementById('zoneMusicEnabled').checked = settings.zoneMusicEnabled !== false;
             document.getElementById('showHitboxes').checked = settings.showHitboxes;
             document.getElementById('llmFreeWill').checked = settings.llmFreeWill;
             document.getElementById('llmUsePaid').checked = settings.llmUsePaid;
@@ -3309,9 +4262,29 @@
             // Update display
             document.getElementById('musicVolumeValue').textContent = settings.musicVolume;
             
+            // Read theme/zone music toggles
+            const themeCheckbox = document.getElementById('themeMusicEnabled');
+            const zoneCheckbox = document.getElementById('zoneMusicEnabled');
+            if (themeCheckbox) settings.themeMusicEnabled = themeCheckbox.checked;
+            if (zoneCheckbox) settings.zoneMusicEnabled = zoneCheckbox.checked;
+            
+            // Prevent both being disabled - at least one must be on
+            if (!settings.themeMusicEnabled && !settings.zoneMusicEnabled) {
+                // Re-enable the one that was just disabled
+                if (!themeCheckbox.checked) {
+                    settings.zoneMusicEnabled = true;
+                    if (zoneCheckbox) zoneCheckbox.checked = true;
+                } else {
+                    settings.themeMusicEnabled = true;
+                    if (themeCheckbox) themeCheckbox.checked = true;
+                }
+            }
+            
             // Apply to game state
             musicEnabled = settings.musicEnabled;
             musicVolume = settings.musicVolume;
+            themeMusicEnabled = settings.themeMusicEnabled;
+            zoneMusicEnabled = settings.zoneMusicEnabled;
             
             // Re-render battle if active to show/hide hitboxes
             if (battleState.active) {
@@ -3443,6 +4416,8 @@
                     // Apply to game state
                     musicEnabled = settings.musicEnabled;
                     musicVolume = settings.musicVolume;
+                    themeMusicEnabled = settings.themeMusicEnabled !== false;
+                    zoneMusicEnabled = settings.zoneMusicEnabled !== false;
                     
                     // Update main volume slider and display
                     const mainSlider = document.getElementById('volumeSlider');
@@ -3575,28 +4550,105 @@
             };
         }
         
+        // Custom dialog system (replaces browser confirm/alert)
+        function showConfirmDialog(title, message, onConfirm, onCancel) {
+            const dialog = document.getElementById('confirmDialog');
+            const overlay = document.getElementById('overlay');
+            const titleEl = document.getElementById('confirmDialogTitle');
+            const messageEl = document.getElementById('confirmDialogMessage');
+            const yesBtn = document.getElementById('confirmDialogYes');
+            const noBtn = document.getElementById('confirmDialogNo');
+            
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+            
+            // Clear previous handlers
+            yesBtn.onclick = null;
+            noBtn.onclick = null;
+            
+            yesBtn.onclick = () => {
+                dialog.style.display = 'none';
+                overlay.style.zIndex = '150'; // Reset overlay z-index
+                if (onConfirm) onConfirm();
+            };
+            
+            noBtn.onclick = () => {
+                dialog.style.display = 'none';
+                overlay.style.zIndex = '150'; // Reset overlay z-index
+                if (onCancel) onCancel();
+            };
+            
+            overlay.style.zIndex = '1150'; // Above settings (1100) but below dialogs (1200)
+            overlay.style.display = 'block';
+            dialog.style.display = 'block';
+        }
+        
+        function showInfoDialog(title, message, icon, onOk) {
+            const dialog = document.getElementById('infoDialog');
+            const overlay = document.getElementById('overlay');
+            const titleEl = document.getElementById('infoDialogTitle');
+            const messageEl = document.getElementById('infoDialogMessage');
+            const iconEl = document.getElementById('infoDialogIcon');
+            const okBtn = document.getElementById('infoDialogOk');
+            
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+            iconEl.textContent = icon || '✅';
+            
+            // Set border color based on icon
+            if (icon === '❌' || icon === '⚠️') {
+                dialog.style.borderColor = '#EB5757';
+                titleEl.style.color = '#EB5757';
+            } else {
+                dialog.style.borderColor = '#27AE60';
+                titleEl.style.color = '#27AE60';
+            }
+            
+            okBtn.onclick = () => {
+                dialog.style.display = 'none';
+                overlay.style.zIndex = '150'; // Reset overlay z-index
+                if (onOk) onOk();
+            };
+            
+            overlay.style.zIndex = '1150'; // Above settings (1100) but below dialogs (1200)
+            overlay.style.display = 'block';
+            dialog.style.display = 'block';
+        }
+        
         // Clear cache - deletes all localStorage data and forces hard reload
         function clearCache() {
-            if (confirm('This will delete ALL saved data including your progress. Are you sure?')) {
-                try {
-                    localStorage.removeItem(STORAGE_KEYS.SETTINGS);
-                    localStorage.removeItem(STORAGE_KEYS.SHARED_SAVE);
-                    
-                    // Clear browser cache for images and assets
-                    if ('caches' in window) {
-                        caches.keys().then(function(names) {
-                            for (let name of names) caches.delete(name);
-                        });
+            showConfirmDialog(
+                'CLEAR ALL DATA',
+                'This will delete ALL saved data including your hero progress, settings, and game state. This cannot be undone. Are you sure?',
+                () => {
+                    // User confirmed - clear everything
+                    try {
+                        localStorage.removeItem(STORAGE_KEYS.SETTINGS);
+                        localStorage.removeItem(STORAGE_KEYS.SHARED_SAVE);
+                        
+                        // Clear browser cache for images and assets
+                        if ('caches' in window) {
+                            caches.keys().then(function(names) {
+                                for (let name of names) caches.delete(name);
+                            });
+                        }
+                        
+                        showInfoDialog(
+                            'CACHE CLEARED',
+                            'All data has been deleted. The page will now reload with fresh assets.',
+                            '✅',
+                            () => {
+                                // Force hard reload (bypass cache)
+                                location.reload(true);
+                            }
+                        );
+                    } catch (e) {
+                        console.error('Clear cache error:', e);
+                        showInfoDialog('ERROR', 'Error clearing cache: ' + e.message, '❌');
                     }
-                    
-                    alert('Cache cleared! The page will reload with fresh assets.');
-                    // Force hard reload (bypass cache)
-                    location.reload(true);
-                } catch (e) {
-                    console.error('Clear cache error:', e);
-                    alert('Error clearing cache: ' + e.message);
-                }
-            }
+                },
+                null // Cancel does nothing
+            );
         }
         
         // Update title screen button states based on save existence
@@ -3673,6 +4725,7 @@
         let battleState = {
             active: false,
             won: false,
+            hadBoss: false, // Track if this battle had a boss (for level progress)
             currentTurn: 0,
             turnOrder: [],
             heroes: [],
@@ -4212,6 +5265,9 @@
             };
             updateExploreLoadingBar(0);
             
+            // Load level progress for new level (or reset if no saved progress)
+            loadLevelProgress();
+            
             // Start generating the new encounter
             preGenerateNextEncounter();
             
@@ -4222,6 +5278,8 @@
                     newLevel: newLevel
                 });
                 console.log('[MP] Broadcast level change to clients:', newLevel);
+                // Also broadcast level progress
+                broadcastLevelProgress();
             }
         }
         
@@ -4286,6 +5344,9 @@
             };
             updateExploreLoadingBar(0);
             
+            // Load level progress for new level (or reset if no saved progress)
+            loadLevelProgress();
+            
             // Start generating the new encounter
             preGenerateNextEncounter();
             
@@ -4296,6 +5357,8 @@
                     newLevel: newLevel
                 });
                 console.log('[MP] Broadcast level change to clients:', newLevel);
+                // Also broadcast level progress
+                broadcastLevelProgress();
             }
         }
         
@@ -4371,7 +5434,7 @@
         }
         
         // Play TTS for a message
-        async function playTTS(text, senderType, senderName, entityVoiceType, entityPersonality) {
+        async function playTTS(text, senderType, senderName, entityVoiceType, entityPersonality, entityId = null) {
             if (!chatState.ttsEnabled || !chatState.ttsAvailable) return;
             
             // Skip empty or very short text
@@ -4384,12 +5447,17 @@
             
             try {
                 const voiceType = getTTSVoiceType(senderType, senderName, entityVoiceType);
-                console.log(`[TTS] Generating audio for "${text.substring(0, 30)}..." with voice: ${voiceType}, personality: ${entityPersonality || 'none'}`);
+                console.log(`[TTS] Generating audio for "${text.substring(0, 30)}..." with voice: ${voiceType}, personality: ${entityPersonality || 'none'}, entityId: ${entityId || 'none'}`);
                 
                 const response = await fetch('/api/tts', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text, voiceType, personality: entityPersonality || '' })
+                    body: JSON.stringify({ 
+                        text, 
+                        voiceType, 
+                        personality: entityPersonality || '',
+                        entityId: entityId || null  // For consistent voice per entity
+                    })
                 });
                 
                 if (!response.ok) {
@@ -4438,6 +5506,232 @@
                 console.log('[TTS] Autoplay blocked, user interaction needed');
                 ttsCurrentAudio = null;
             });
+        }
+        
+        // ============ NARRATOR SYSTEM ============
+        let narratorState = {
+            levelData: null,
+            isPlaying: false,
+            isLoading: false,
+            currentAudio: null,
+            cachedNarrations: {} // Cache narrations per level
+        };
+        
+        // Load level data JSON
+        async function loadLevelData() {
+            if (narratorState.levelData) return narratorState.levelData;
+            
+            try {
+                const response = await fetch('tunnelsofprivacy/levels/level_data.json');
+                narratorState.levelData = await response.json();
+                console.log('[Narrator] Level data loaded:', narratorState.levelData.zones.length, 'zones');
+                return narratorState.levelData;
+            } catch (e) {
+                console.error('[Narrator] Failed to load level data:', e);
+                return null;
+            }
+        }
+        
+        // Get zone info for current level
+        function getZoneForLevel(level) {
+            if (!narratorState.levelData) return null;
+            
+            for (const zone of narratorState.levelData.zones) {
+                if (level >= zone.levelRange[0] && level <= zone.levelRange[1]) {
+                    return zone;
+                }
+            }
+            return null;
+        }
+        
+        // Generate narrator text via LLM
+        async function generateNarration(level, zone) {
+            const cacheKey = `level_${level}`;
+            if (narratorState.cachedNarrations[cacheKey]) {
+                console.log('[Narrator] Using cached narration for level', level);
+                return narratorState.cachedNarrations[cacheKey];
+            }
+            
+            // Build context for LLM
+            const arcInfo = narratorState.levelData.arcs[zone.arc];
+            const enemyList = zone.enemies?.join(', ') || 'unknown threats';
+            const miniboss = zone.miniboss ? `The miniboss ${zone.miniboss} lurks here.` : '';
+            const boss = zone.boss ? `The boss ${zone.boss.name} - ${zone.boss.title} awaits.` : '';
+            
+            const prompt = `You are the narrator for "Tunnels of Privacy", a dungeon crawler RPG about protecting financial privacy in a world where personal data has become currency. The heroes fight to defend Zcash values: privacy, freedom, and the right to transact without surveillance.
+
+CURRENT LEVEL: ${level}
+ZONE: ${zone.name}
+ARC: ${arcInfo.name} - ${arcInfo.description}
+ZONE DESCRIPTION: ${zone.description}
+ZONE LORE: ${zone.lore}
+ENEMIES: ${enemyList}
+${miniboss}
+${boss}
+
+Write a dramatic 2-3 sentence narration describing this level as the heroes enter. Be atmospheric and evocative. Reference the zone's theme and dangers. Keep it under 50 words. Do not use quotation marks. Speak as an omniscient narrator.`;
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        npcName: 'Narrator',
+                        backstory: 'The omniscient narrator of the Tunnels of Privacy',
+                        npcType: 'narrator',
+                        conversation: [],
+                        message: prompt,
+                        playerName: 'Heroes',
+                        modelId: chatState.selectedModel || 'groq/llama-3.3-70b-versatile',
+                        rpMode: settings.rpMode !== false  // Honor user's RP mode setting
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    narratorState.cachedNarrations[cacheKey] = result.response;
+                    return result.response;
+                } else {
+                    console.error('[Narrator] LLM error:', result.error);
+                    checkForRateLimitError(result.error);
+                    return `Level ${level}. ${zone.name}. ${zone.description}.`;
+                }
+            } catch (e) {
+                console.error('[Narrator] API error:', e);
+                checkForRateLimitError(e.message || String(e));
+                return `Level ${level}. ${zone.name}. ${zone.description}.`;
+            }
+        }
+        
+        // Toggle narrator play/stop
+        async function toggleNarrator() {
+            const btn = document.getElementById('narratorBtn');
+            const btnText = document.getElementById('narratorBtnText');
+            
+            // If playing, stop
+            if (narratorState.isPlaying) {
+                stopNarrator();
+                return;
+            }
+            
+            // If loading, ignore
+            if (narratorState.isLoading) return;
+            
+            // Start loading
+            narratorState.isLoading = true;
+            btn.classList.add('loading');
+            btnText.textContent = 'LOADING...';
+            
+            try {
+                // Load level data if needed
+                await loadLevelData();
+                if (!narratorState.levelData) {
+                    throw new Error('Failed to load level data');
+                }
+                
+                // Get current level from DOM (same pattern used elsewhere in codebase)
+                const currentLevel = parseInt(document.getElementById('dungeonMenuLevel')?.textContent || document.getElementById('dungeonLevel')?.textContent) || 1;
+                const zone = getZoneForLevel(currentLevel);
+                
+                if (!zone) {
+                    throw new Error('No zone found for level ' + currentLevel);
+                }
+                
+                // Generate narration
+                btnText.textContent = 'GENERATING...';
+                const narrationText = await generateNarration(currentLevel, zone);
+                
+                // Play TTS
+                btnText.textContent = 'SPEAKING...';
+                await playNarratorTTS(narrationText);
+                
+                // Update UI to playing state
+                narratorState.isPlaying = true;
+                narratorState.isLoading = false;
+                btn.classList.remove('loading');
+                btn.classList.add('playing');
+                btnText.textContent = 'STOP';
+                
+            } catch (e) {
+                console.error('[Narrator] Error:', e);
+                narratorState.isLoading = false;
+                btn.classList.remove('loading');
+                btnText.textContent = 'NARRATE';
+            }
+        }
+        
+        // Play narrator TTS
+        async function playNarratorTTS(text) {
+            if (!chatState.ttsAvailable) {
+                console.log('[Narrator] TTS not available, showing text only');
+                // Could show text in UI instead
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/tts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        text: text, 
+                        voiceType: 'narrator',
+                        personality: 'dramatic, wise, omniscient'
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('TTS request failed');
+                }
+                
+                const audioBlob = await response.blob();
+                const audioUrl = URL.createObjectURL(audioBlob);
+                
+                narratorState.currentAudio = new Audio(audioUrl);
+                narratorState.currentAudio.volume = 0.9;
+                
+                narratorState.currentAudio.onended = () => {
+                    URL.revokeObjectURL(audioUrl);
+                    narratorState.currentAudio = null;
+                    narratorState.isPlaying = false;
+                    
+                    const btn = document.getElementById('narratorBtn');
+                    const btnText = document.getElementById('narratorBtnText');
+                    if (btn) btn.classList.remove('playing');
+                    if (btnText) btnText.textContent = 'NARRATE';
+                };
+                
+                narratorState.currentAudio.onerror = (e) => {
+                    console.error('[Narrator] Audio error:', e);
+                    URL.revokeObjectURL(audioUrl);
+                    stopNarrator();
+                };
+                
+                await narratorState.currentAudio.play();
+                
+            } catch (e) {
+                console.error('[Narrator] TTS error:', e);
+                throw e;
+            }
+        }
+        
+        // Stop narrator
+        function stopNarrator() {
+            if (narratorState.currentAudio) {
+                narratorState.currentAudio.pause();
+                narratorState.currentAudio = null;
+            }
+            
+            narratorState.isPlaying = false;
+            narratorState.isLoading = false;
+            
+            const btn = document.getElementById('narratorBtn');
+            const btnText = document.getElementById('narratorBtnText');
+            if (btn) {
+                btn.classList.remove('playing', 'loading');
+            }
+            if (btnText) {
+                btnText.textContent = 'NARRATE';
+            }
         }
         
         // Select chat target entity
@@ -4617,7 +5911,7 @@
         }
         
         // Add message to chat
-        function addChatMessage(senderName, senderType, senderAvatar, text, isNpc = false, voiceType = null, personality = null) {
+        function addChatMessage(senderName, senderType, senderAvatar, text, isNpc = false, voiceType = null, personality = null, entityId = null) {
             const message = {
                 id: Date.now(),
                 senderName,
@@ -4628,6 +5922,7 @@
                 isNpc,
                 voiceType,  // LLM-assigned voice type
                 personality,  // For TTS emotional adjustment
+                entityId,  // Unique ID for consistent TTS voice
                 timestamp: new Date().toLocaleTimeString()
             };
             
@@ -4645,8 +5940,8 @@
             if (isNpc && text.length > 0) {
                 setTimeout(() => typewriterEffect(message.id, text, 0), 100);
                 
-                // Play TTS for NPC responses (pass entity's voiceType and personality)
-                playTTS(text, senderType, senderName, voiceType, personality);
+                // Play TTS for NPC responses (pass entity's voiceType, personality, and ID)
+                playTTS(text, senderType, senderName, voiceType, personality, entityId);
             }
             
             // Broadcast to other players if host (send full text, clients show instantly)
@@ -4870,6 +6165,7 @@
                         if (statusEl) statusEl.textContent = `Model ${chatState.selectedModel} rate limited!`;
                         addChatMessage('System', 'friendly', 'people/zooko_a_head_compressed.png', 
                             `*Model ${chatState.selectedModel} is rate limited. Try another model.*`, true);
+                        showRateLimitWarning();  // Show popup
                     } else {
                         if (statusEl) statusEl.textContent = `Error (${totalTime}s): ` + errorMsg;
                     }
@@ -5216,6 +6512,10 @@
         function applyGeneratedData(enemy, generated) {
             if (!generated) return;
             
+            // Generate unique entity ID for TTS voice consistency
+            // Server caches voice assignment per entityId
+            enemy.entityId = 'entity_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            
             // Apply name
             if (generated.name) {
                 enemy.name = generated.name;
@@ -5289,7 +6589,7 @@
                 case 'battle_start':
                     if (npc.openingLine) {
                         addChatMessage(npc.name, npc.hostile ? 'hostile' : 'friendly', 
-                            npc.spritePath || 'people/zooko_a_head_compressed.png', npc.openingLine, true, npc.voiceType, npc.personality);
+                            npc.spritePath || 'people/zooko_a_head_compressed.png', npc.openingLine, true, npc.voiceType, npc.personality, npc.entityId);
                         return;
                     }
                     contextPrompt = 'The battle just started. Say something to intimidate or greet the heroes.';
@@ -5332,10 +6632,13 @@
                     if (result.success && result.response) {
                         const npcType = npc.hostile ? 'hostile' : (npc.questable ? 'questable' : 'friendly');
                         addChatMessage(npc.name, npcType, npc.spritePath || 'people/zooko_a_head_compressed.png', 
-                            result.response, true, npc.voiceType, npc.personality);
+                            result.response, true, npc.voiceType, npc.personality, npc.entityId);
+                    } else if (result.error) {
+                        checkForRateLimitError(result.error);
                     }
                 } catch (error) {
                     console.error('[Free Will] Chat error:', error);
+                    checkForRateLimitError(error.message || String(error));
                 }
             })();
         }
@@ -5387,10 +6690,13 @@
                         
                         const npcType = npc.hostile ? 'hostile' : (npc.questable ? 'questable' : 'friendly');
                         addChatMessage(npc.name, npcType, npc.spritePath || 'people/zooko_a_head_compressed.png', 
-                            result.response, true, npc.voiceType, npc.personality);
+                            result.response, true, npc.voiceType, npc.personality, npc.entityId);
+                    } else if (result.error) {
+                        checkForRateLimitError(result.error);
                     }
                 } catch (error) {
                     console.error('[Free Will Response] Chat error:', error);
+                    checkForRateLimitError(error.message || String(error));
                 }
             })();
         }
@@ -5721,6 +7027,7 @@
                     species: captiveData?.species || 'human',
                     gender: captiveData?.gender || 'unknown',
                     voiceType: captiveData?.voiceType || null,
+                    entityId: 'captive_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
                     backstory: captiveData?.backstory || 'A prisoner needing rescue.',
                     personality: captiveData?.personality || 'grateful',
                     rescueReward: captiveData?.rescueReward || { gold: 20 },
@@ -5759,6 +7066,7 @@
                     species: captiveData?.species || 'human',
                     gender: captiveData?.gender || 'unknown',
                     voiceType: captiveData?.voiceType || null,
+                    entityId: 'captive_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
                     backstory: captiveData?.backstory || 'A prisoner needing rescue.',
                     personality: captiveData?.personality || 'grateful',
                     rescueReward: captiveData?.rescueReward || { gold: 20 },
@@ -5846,6 +7154,7 @@
             battleState.currentTurn = 0;
             battleState.active = true;
             battleState.won = false;
+            battleState.hadBoss = battleState.enemies.some(e => e.isBoss); // Track if this is a boss battle
             battleState.targetingMode = false;
             battleState.pendingAction = null;
             
@@ -7327,11 +8636,14 @@
                 return a.isMob ? 1 : -1; // Bosses (isMob=false) first
             });
             
-            // Set 2-column layout if more than 6 enemies
-            if (sortedEnemies.length > 6) {
-                container.classList.add('twoColumns');
+            // Count total cards including captive
+            const totalCards = sortedEnemies.length + (battleState.captiveNpc && !battleState.captiveNpc.rescued ? 1 : 0);
+            
+            // Set 3-column layout if more than 8 cards to prevent overlap with music controls
+            if (totalCards > 8) {
+                container.classList.add('threeColumns');
             } else {
-                container.classList.remove('twoColumns');
+                container.classList.remove('threeColumns');
             }
             
             // Clear and rebuild cards
@@ -7421,6 +8733,26 @@
                     }
                 });
                 
+                // Hover-to-enlarge functionality (hold for 0.5s)
+                let hoverTimeout = null;
+                card.addEventListener('mouseenter', () => {
+                    hoverTimeout = setTimeout(() => {
+                        // Get card position for proper enlargement
+                        const rect = card.getBoundingClientRect();
+                        card.style.position = 'fixed';
+                        card.style.left = rect.left + 'px';
+                        card.style.top = rect.top + 'px';
+                        card.classList.add('enlarged');
+                    }, 500);
+                });
+                card.addEventListener('mouseleave', () => {
+                    clearTimeout(hoverTimeout);
+                    card.classList.remove('enlarged');
+                    card.style.position = '';
+                    card.style.left = '';
+                    card.style.top = '';
+                });
+                
                 container.appendChild(card);
             });
             
@@ -7470,6 +8802,25 @@
                 label.style.fontWeight = 'bold';
                 label.textContent = 'CAPTIVE';
                 card.appendChild(label);
+                
+                // Hover-to-enlarge functionality (hold for 0.5s)
+                let hoverTimeout = null;
+                card.addEventListener('mouseenter', () => {
+                    hoverTimeout = setTimeout(() => {
+                        const rect = card.getBoundingClientRect();
+                        card.style.position = 'fixed';
+                        card.style.left = rect.left + 'px';
+                        card.style.top = rect.top + 'px';
+                        card.classList.add('enlarged');
+                    }, 500);
+                });
+                card.addEventListener('mouseleave', () => {
+                    clearTimeout(hoverTimeout);
+                    card.classList.remove('enlarged');
+                    card.style.position = '';
+                    card.style.left = '';
+                    card.style.top = '';
+                });
                 
                 container.appendChild(card);
             }
@@ -8100,6 +9451,14 @@
                 if (battleState.enemies.length === 0) {
                     battleState.won = true;
                     
+                    // Track level progress - room explored
+                    incrementRoomsExplored();
+                    
+                    // Check if this battle had a boss
+                    if (battleState.hadBoss) {
+                        markBossDefeated();
+                    }
+                    
                     // Award 100 XP to all heroes for clearing the room
                     battleState.heroes.forEach(hero => {
                         hero.xp = (hero.xp || 0) + 100;
@@ -8111,6 +9470,7 @@
                     // Rescue captive NPC if present
                     if (battleState.captiveNpc && !battleState.captiveNpc.rescued) {
                         battleState.captiveNpc.rescued = true;
+                        incrementCaptivesFreed(); // Track captive rescue
                         setTimeout(() => {
                             // Show rescue dialogue
                             addChatMessage(
@@ -8507,6 +9867,10 @@
             
             // Clear battle chat
             clearBattleChat();
+            
+            // Clear TTS voice cache (entities leaving room)
+            fetch('/api/tts/clear-voice-cache', { method: 'POST' })
+                .catch(e => console.log('[TTS] Voice cache clear failed (server offline?):', e.message));
             
             // Pre-generate next encounter while player is in dungeon menu
             preGenerateNextEncounter();
@@ -9702,6 +11066,14 @@
                     }
                     break;
                 
+                case 'level_progress_update':
+                    // Host broadcasts level progress changes to clients
+                    if (multiplayerState.role === 'client') {
+                        console.log('[MP] Received level progress update from host');
+                        updateLevelProgressFromHost(data.progress);
+                    }
+                    break;
+                
                 case 'difficulty_change':
                     // Host notifies difficulty change
                     if (multiplayerState.role === 'client') {
@@ -10138,9 +11510,12 @@
                         true,
                         respondingNpc.voiceType
                     );
+                } else if (result.error) {
+                    checkForRateLimitError(result.error);
                 }
             } catch (error) {
                 console.error('Chat fetch error:', error);
+                checkForRateLimitError(error.message || String(error));
             }
         }
         
@@ -11864,6 +13239,72 @@
             showDiceRoll(message);
         }
         
+        // Show rate limit warning on right side of screen
+        function showRateLimitWarning() {
+            // Remove existing warning if any
+            const existing = document.getElementById('rateLimitWarning');
+            if (existing) existing.remove();
+            
+            const warning = document.createElement('div');
+            warning.id = 'rateLimitWarning';
+            warning.innerHTML = `
+                <div style="
+                    position: fixed;
+                    top: 50%;
+                    right: 20px;
+                    transform: translateY(-50%);
+                    background: linear-gradient(135deg, rgba(235, 87, 87, 0.95), rgba(180, 50, 50, 0.95));
+                    border: 2px solid #EB5757;
+                    border-radius: 12px;
+                    padding: 16px 20px;
+                    max-width: 280px;
+                    z-index: 10000;
+                    backdrop-filter: blur(10px);
+                    box-shadow: 0 8px 32px rgba(235, 87, 87, 0.4);
+                    animation: slideInRight 0.3s ease-out;
+                ">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <span style="font-size: 24px;">⚠️</span>
+                        <span style="font-weight: 700; font-size: 14px; color: #fff;">LLM Rate Limited</span>
+                    </div>
+                    <div style="font-size: 12px; color: rgba(255,255,255,0.9); line-height: 1.4; margin-bottom: 12px;">
+                        API request limit reached.<br>
+                        <strong>Wait 30-60 seconds</strong> and retry,<br>
+                        or switch to <strong>Paid Models</strong> in Settings.
+                    </div>
+                    <button onclick="document.getElementById('rateLimitWarning').remove()" style="
+                        background: rgba(255,255,255,0.2);
+                        border: 1px solid rgba(255,255,255,0.3);
+                        border-radius: 6px;
+                        padding: 6px 16px;
+                        color: #fff;
+                        font-size: 11px;
+                        cursor: pointer;
+                        width: 100%;
+                        transition: background 0.2s;
+                    " onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+                        DISMISS
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(warning);
+            
+            // Auto-dismiss after 10 seconds
+            setTimeout(() => {
+                const el = document.getElementById('rateLimitWarning');
+                if (el) el.remove();
+            }, 10000);
+        }
+        
+        // Check if error is a rate limit error and show warning
+        function checkForRateLimitError(error) {
+            if (error && (error.includes('429') || error.toLowerCase().includes('rate limit'))) {
+                showRateLimitWarning();
+                return true;
+            }
+            return false;
+        }
+
         // ===== NETWORK DEBUG FUNCTIONS =====
         let debugMessageLog = [];
         const MAX_DEBUG_MESSAGES = 20;
@@ -12019,6 +13460,9 @@
             
             // Initialize hackathon info tooltips
             initTooltipSystem();
+            
+            // Load level progress stats (total bosses defeated, current level progress)
+            loadLevelProgress();
             
             console.log('Initialization complete. Portal system ready.');
         }

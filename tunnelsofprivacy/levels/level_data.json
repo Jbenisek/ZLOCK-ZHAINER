@@ -1,0 +1,289 @@
+{
+  "version": "1.0.0",
+  "arcs": {
+    "descent": {
+      "name": "Descent Arc",
+      "description": "Going down into the deep cryptographic underworld, culminating in the ultimate boss and the Sceptre of Privacy.",
+      "levelRange": [1, 100]
+    },
+    "ascent": {
+      "name": "Ascent Arc",
+      "description": "The story flips: You climb up, escaping the depths, bringing privacy back to the surface world.",
+      "levelRange": [101, 1000]
+    }
+  },
+  "zones": [
+    {
+      "id": "unshielded_approach",
+      "name": "The Unshielded Approach",
+      "arc": "descent",
+      "levelRange": [1, 10],
+      "description": "Tutorial surface tunnels",
+      "theme": "surface",
+      "difficulty": "tutorial",
+      "enemies": ["Leak Imps", "Dustlings", "Metadata Wisps"],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The entrance to the Tunnels of Privacy, where novice adventurers first learn the importance of shielding their data from prying eyes."
+    },
+    {
+      "id": "broken_ledger_halls",
+      "name": "The Broken Ledger Halls",
+      "arc": "descent",
+      "levelRange": [11, 20],
+      "description": "Enemies representing surveillance and transparency decay",
+      "theme": "halls",
+      "difficulty": "easy",
+      "enemies": ["Auditor Fragments", "Watcher Golems"],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Ancient halls where the records of transparent transactions crumble, haunted by entities that feed on exposed financial data."
+    },
+    {
+      "id": "trusted_setup_catacombs",
+      "name": "The Trusted Setup Catacombs",
+      "arc": "descent",
+      "levelRange": [21, 30],
+      "description": "Crypts full of failed parameters and ceremony relics",
+      "theme": "catacombs",
+      "difficulty": "easy",
+      "enemies": ["Ceremony Ghosts", "Parameter Wraiths", "Toxic Waste Slimes"],
+      "miniboss": "The Parameter Shade",
+      "boss": null,
+      "lore": "Deep crypts containing the remnants of cryptographic ceremonies past. Failed trusted setups left behind corrupted parameters that now walk as undead."
+    },
+    {
+      "id": "forked_maze",
+      "name": "The Forked Maze",
+      "arc": "descent",
+      "levelRange": [31, 40],
+      "description": "Shifting corridors, unstable consensus, block ghost illusions",
+      "theme": "maze",
+      "difficulty": "medium",
+      "enemies": ["Block Ghosts", "Reorg Phantoms", "Consensus Shifters", "Fork Sprites"],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A labyrinth where reality itself forks and merges. Unstable consensus creates corridors that shift and change, trapping unwary travelers in orphaned branches."
+    },
+    {
+      "id": "fungibility_labyrinth",
+      "name": "The Fungibility Labyrinth",
+      "arc": "descent",
+      "levelRange": [41, 50],
+      "description": "Hydra-tainted coins, shifting purity, value illusions",
+      "theme": "labyrinth",
+      "difficulty": "medium",
+      "enemies": ["Tainted Coin Hydras", "Purity Shifters", "Value Illusions", "Fungibility Leeches"],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A twisted maze where coins lose their fungibility. Tainted assets multiply like hydra heads, and the very concept of equal value becomes corrupted."
+    },
+    {
+      "id": "counterfeit_vaults",
+      "name": "The Counterfeit Vaults",
+      "arc": "descent",
+      "levelRange": [51, 60],
+      "description": "Nullifier Shades, Supply Phantoms, Issuance Oozes",
+      "theme": "vaults",
+      "difficulty": "medium",
+      "enemies": ["Nullifier Shades", "Supply Phantoms", "Issuance Oozes", "Double-Spend Specters"],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Forbidden vaults where counterfeit creation was attempted. The failed experiments left behind entities that represent inflation, double-spending, and supply corruption."
+    },
+    {
+      "id": "orchard_sanctum",
+      "name": "The Orchard Sanctum",
+      "arc": "descent",
+      "levelRange": [61, 70],
+      "description": "Shielded temples, proof angels, unified-address spirits",
+      "theme": "sanctum",
+      "difficulty": "hard",
+      "enemies": ["Corrupted Proof Angels", "Address Spirits", "Shielded Sentinels"],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Sacred temples dedicated to the Orchard protocol. Once holy ground for shielded transactions, now defended by corrupted guardians who test all who enter."
+    },
+    {
+      "id": "halo_spiral",
+      "name": "The Halo Spiral",
+      "arc": "descent",
+      "levelRange": [71, 80],
+      "description": "Recursive paradox rooms, proof-clones, anti-entropy storms",
+      "theme": "spiral",
+      "difficulty": "hard",
+      "enemies": ["Proof-Clones", "Recursion Loops", "Anti-Entropy Storms", "Halo Guardians"],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A spiraling descent through recursive proof verification. Reality folds upon itself as Halo proofs create infinite loops and paradoxes that manifest as hostile entities."
+    },
+    {
+      "id": "identity_depths",
+      "name": "The Identity Depths",
+      "arc": "descent",
+      "levelRange": [81, 90],
+      "description": "Sybil illusions, multiplicity monsters, identity storms",
+      "theme": "depths",
+      "difficulty": "hard",
+      "enemies": ["Sybil Illusions", "Multiplicity Monsters", "Identity Storms", "False-Self Mimics"],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The deepest psychological realm where identity itself is under attack. Sybil attacks manifest as swarms of false identities, and maintaining your true self becomes the greatest challenge."
+    },
+    {
+      "id": "descent_to_core",
+      "name": "Descent to the Core",
+      "arc": "descent",
+      "levelRange": [91, 99],
+      "description": "Total darkness, decentralization pressure, proto-boss entities",
+      "theme": "core",
+      "difficulty": "extreme",
+      "enemies": ["Proto-Boss Entities", "Centralization Creepers", "Darkness Incarnates", "Pressure Wraiths"],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The final descent before the Core. Total darkness presses in as decentralization itself strains under immense pressure. Proto-boss entities herald the coming of the Centralizer."
+    },
+    {
+      "id": "the_core",
+      "name": "The Core",
+      "arc": "descent",
+      "levelRange": [100, 100],
+      "description": "THE MAIN BOSS: THE CENTRALIZER",
+      "theme": "boss",
+      "difficulty": "boss",
+      "enemies": [],
+      "miniboss": null,
+      "boss": {
+        "name": "The Centralizer",
+        "title": "World-Eating Machine-God",
+        "description": "The one true final boss of the entire storyline. A world-eating machine-god that thrives on concentration of power, surveillance, single points of failure, and economic oppression.",
+        "reward": {
+          "name": "The Sceptre of Privacy",
+          "type": "mythical_artifact",
+          "description": "Mythical artifact forged from shielded proof light, distributed consensus fire, entropy crystals, and the last purified nullifier seal.",
+          "powers": ["Protects identity", "Protects value", "Protects autonomy", "Enables ascent to the surface"]
+        }
+      },
+      "lore": "The heart of all corruption. Here dwells the Centralizer, the antithesis of everything Zcash stands for. Only by defeating this entity can privacy be restored to the world."
+    },
+    {
+      "id": "rising_tunnels",
+      "name": "The Rising Tunnels",
+      "arc": "ascent",
+      "levelRange": [101, 300],
+      "description": "Fight upward against collapsing caverns and corrupted constructs",
+      "theme": "tunnels",
+      "difficulty": "medium",
+      "enemies": ["Echo Imps", "Collapsing Constructs", "Corruption Remnants", "Cave-In Spirits"],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The ascent begins! Armed with the Sceptre of Privacy, heroes fight upward through collapsing caverns. Echo monsters - weaker versions of previous threats - attempt to stop your rise."
+    },
+    {
+      "id": "breaking_shadows",
+      "name": "The Breaking Shadows",
+      "arc": "ascent",
+      "levelRange": [301, 600],
+      "description": "Mid-ascent enemies attempt to reclaim the Sceptre",
+      "theme": "shadows",
+      "difficulty": "hard",
+      "enemies": ["Chain Reorg Worms", "Entropy Thieves", "Proof Leeches", "Shadow Reclaimers"],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The shadows fight back! Desperate enemies attempt to reclaim the Sceptre of Privacy. But the light of the surface grows brighter as you climb ever higher."
+    },
+    {
+      "id": "great_uprising",
+      "name": "The Great Uprising",
+      "arc": "ascent",
+      "levelRange": [601, 800],
+      "description": "Villages, towns, and resistance factions cheer you on",
+      "theme": "villages",
+      "difficulty": "medium",
+      "enemies": ["Rare Corrupted Scouts", "Environmental Hazards"],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Hope returns! Villages, towns, and resistance factions greet the heroes as liberators. Light replaces darkness, monsters become rare, and the world begins to heal."
+    },
+    {
+      "id": "air_of_freedom",
+      "name": "The Air of Freedom",
+      "arc": "ascent",
+      "levelRange": [801, 899],
+      "description": "Open caverns resembling the surface world",
+      "theme": "surface",
+      "difficulty": "easy",
+      "enemies": ["Occasional Remnants"],
+      "miniboss": "Unfinished Business Guardians",
+      "boss": null,
+      "lore": "Freedom approaches! Open caverns resemble the surface world. Wildlife returns, shops and shrines appear, and only occasional minibosses tied to 'unfinished business' remain."
+    },
+    {
+      "id": "ascent_gauntlet",
+      "name": "The Final Boss Rush",
+      "arc": "ascent",
+      "levelRange": [900, 990],
+      "description": "THE ASCENT GAUNTLET - Final remnants of the Centralizer's power",
+      "theme": "gauntlet",
+      "difficulty": "extreme",
+      "enemies": [],
+      "miniboss": null,
+      "boss": null,
+      "gauntletBosses": [
+        {
+          "name": "The Auditor Titan Shade",
+          "level": 910,
+          "description": "A massive echo of surveillance past"
+        },
+        {
+          "name": "The Last Forking Wyrm",
+          "level": 925,
+          "description": "The final serpent of consensus instability"
+        },
+        {
+          "name": "The Fungibility Hydra Remnant",
+          "level": 940,
+          "description": "Last heads of the taint corruption"
+        },
+        {
+          "name": "The Halo Paradox Echo",
+          "level": 955,
+          "description": "A recursive nightmare given form"
+        },
+        {
+          "name": "The Sybil King's Final Form",
+          "level": 965,
+          "description": "The ultimate identity threat"
+        },
+        {
+          "name": "The Inflation Demon's Shell",
+          "level": 975,
+          "description": "Hollow remnant of supply corruption"
+        },
+        {
+          "name": "The Ledger Colossus Fragment",
+          "level": 985,
+          "description": "Final piece of transparent tyranny"
+        }
+      ],
+      "lore": "The final gauntlet! Not story bosses, but the remaining echoes of the Centralizer's power. Seven mighty foes stand between the heroes and complete freedom."
+    }
+  ],
+  "levelDefaults": {
+    "roomsMin": 3,
+    "roomsMax": 8,
+    "hasBoss": true,
+    "hasStore": true,
+    "hasCaptives": true,
+    "captivesMin": 0,
+    "captivesMax": 3
+  },
+  "difficultyScaling": {
+    "tutorial": { "hpMultiplier": 0.5, "damageMultiplier": 0.5, "goldMultiplier": 0.75 },
+    "easy": { "hpMultiplier": 0.75, "damageMultiplier": 0.75, "goldMultiplier": 1.0 },
+    "medium": { "hpMultiplier": 1.0, "damageMultiplier": 1.0, "goldMultiplier": 1.25 },
+    "hard": { "hpMultiplier": 1.5, "damageMultiplier": 1.25, "goldMultiplier": 1.5 },
+    "extreme": { "hpMultiplier": 2.0, "damageMultiplier": 1.5, "goldMultiplier": 2.0 },
+    "boss": { "hpMultiplier": 3.0, "damageMultiplier": 2.0, "goldMultiplier": 5.0 }
+  }
+}
