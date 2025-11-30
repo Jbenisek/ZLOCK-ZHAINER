@@ -2,6 +2,37 @@
 
 # Changelog
 
+## v0.3.38 - UI Improvements (2025-11-30)
+- **Title Screen Cleanup:**
+  - Removed "Current Dungeon Depth" level display and stats from title screen
+  - Level display remains on dungeon menu screen only
+
+- **Stat Roll Color Coding:**
+  - Total stat roll now color-coded based on quality:
+    - Red (#E74C3C): 40 and below (poor)
+    - Yellow (#F2C94C): 41-60 (average)
+    - Green (#27AE60): 61-80 (good)
+    - Purple (#9B59B6): 81+ (excellent)
+
+## v0.3.37 - Camp Healing Fix & Cleanup (2025-11-30)
+- **Bug Fix: Knocked out heroes now heal when camping**
+  - Removed incorrect `hp > 0` check that prevented 0 HP heroes from healing
+  - Heroes are knocked out, not dead - camping should revive them
+  - All 4 heroes now heal properly during camp regardless of HP
+
+- **Camp System Simplification:**
+  - `applyHealToHeroes()` now directly updates save file instead of using `battleState.heroes`
+  - Removed unnecessary `battleState.heroes` initialization in `startCamping()`
+  - Removed redundant save in `completeCamping()` (healing already saved during camp)
+
+- **Console Log Cleanup:**
+  - Removed debug logs from `applyHealToHeroes()`
+  - Removed all `[PreGen]` encounter pre-generation logs
+  - Removed preload asset logs (images, music metadata, timeouts)
+
+- **Camp Video Audio:**
+  - Camp video volume set to 5% (0.05) for subtle ambient sounds
+
 ## v0.3.36 - Camp Audio (2025-11-30)
 - **Camp Video Audio:**
   - Enabled audio on camping video backgrounds

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.3.36</title>
+    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.3.38</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -2131,34 +2131,8 @@
             <div id="title">TUNNELS OF PRIVACY</div>
             <div id="subtitle">A Dungeon Crawler Adventure</div>
             
-            <!-- Center Column - Level Display, Menu Buttons, Music Controls -->
+            <!-- Center Column - Menu Buttons, Music Controls -->
             <div id="menuButtonsCenter">
-                <div id="dungeonLevelDisplay">
-                    <div style="color: #BFD1E0; font-size: 14px; margin-bottom: 5px;">Current Dungeon Depth</div>
-                    <div style="color: #F2C94C; font-size: 36px; font-weight: 900; text-shadow: 0 0 20px rgba(242, 201, 76, 0.5);">LEVEL <span id="dungeonLevel">1</span></div>
-                    <div class="levelStatsGrid">
-                        <div class="levelStatItem">
-                            <span class="levelStatLabel">Rooms</span>
-                            <span class="levelStatValue"><span id="levelRoomsExplored">0</span>/<span id="levelRoomsMax">?</span></span>
-                        </div>
-                        <div class="levelStatItem">
-                            <span class="levelStatLabel">Boss</span>
-                            <span class="levelStatValue"><span id="levelBossDefeated">0</span>/1</span>
-                        </div>
-                        <div class="levelStatItem">
-                            <span class="levelStatLabel">Store</span>
-                            <span class="levelStatValue"><span id="levelStoreVisited">0</span>/1</span>
-                        </div>
-                        <div class="levelStatItem">
-                            <span class="levelStatLabel">Captives</span>
-                            <span class="levelStatValue" id="levelCaptivesFreed">0</span>
-                        </div>
-                    </div>
-                    <div style="margin-top: 10px; font-size: 10px; color: #89A0B4; border-top: 1px solid rgba(139, 69, 255, 0.3); padding-top: 8px;">
-                        <span style="color: #8B45FF;">👹</span> Bosses Defeated: <span id="totalBossesDefeated" style="color: #F2C94C; font-weight: bold;">0</span>
-                    </div>
-                </div>
-                
                 <button id="startAdventureBtn" class="menuButton" onclick="startAdventure()">START ADVENTURE<span style="display: inline-block; width: 26px; height: 26px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">A</span></button>
                 <button id="continueBtn" class="menuButton comingSoon" disabled onclick="continueGame()">CONTINUE<span style="display: inline-block; width: 26px; height: 26px; background: #EB5757; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">A</span></button>
                 <button class="menuButton" onclick="showLoadSave()">LOAD SAVE FILE<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
@@ -2174,7 +2148,7 @@
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.3.36 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.3.38 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div id="aboutDonateBtn" style="
@@ -2606,7 +2580,7 @@
         <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         
         <div style="display: block; width: 100%; margin-top: 15px; padding: 10px 0; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A7A8F; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-            Tunnels of Privacy v0.3.36
+            Tunnels of Privacy v0.3.38
         </div>
     </div>
     
@@ -2700,7 +2674,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.3.36';
+        const GAME_VERSION = 'v0.3.38';
         
         // ===== HACKATHON INFO TOOLTIP SYSTEM =====
         const TOOLTIP_DELAY = 800; // ms before tooltip appears
@@ -5077,17 +5051,6 @@
                 return;
             }
             
-            // Initialize battleState.heroes from current save data for camping
-            const sharedSave = loadSharedSave();
-            if (sharedSave && sharedSave.heroes) {
-                battleState.heroes = [
-                    { name: 'Zooko', hp: sharedSave.heroes.zooko?.hp ?? 30, maxHp: sharedSave.heroes.zooko?.maxHp ?? 30 },
-                    { name: 'Nate', hp: sharedSave.heroes.nate?.hp ?? 28, maxHp: sharedSave.heroes.nate?.maxHp ?? 30 },
-                    { name: 'Zancas', hp: sharedSave.heroes.zancas?.hp ?? 24, maxHp: sharedSave.heroes.zancas?.maxHp ?? 26 },
-                    { name: 'CyberAxe', hp: sharedSave.heroes.cyberaxe?.hp ?? 32, maxHp: sharedSave.heroes.cyberaxe?.maxHp ?? 35 }
-                ];
-            }
-            
             // Set camp state
             campState.active = true;
             campState.hoursRemaining = campState.selectedHours;
@@ -5110,7 +5073,7 @@
             if (videoEl) {
                 videoEl.querySelector('source').src = videoSrc;
                 videoEl.load();
-                videoEl.volume = 0.2; // 20% volume for ambient camp sounds
+                videoEl.volume = 0.05; // 5% volume for ambient camp sounds
                 videoEl.play().catch(e => console.log('[Camp] Video autoplay blocked:', e));
                 campState.videoPlaying = true;
             }
@@ -5181,15 +5144,20 @@
             console.log('[Camp] Started camping for', campState.selectedHours, 'hours');
         }
         
-        // Apply healing to all heroes
+        // Apply healing to all heroes - directly updates save file
         function applyHealToHeroes(amount) {
-            battleState.heroes.forEach(hero => {
-                if (hero.hp > 0) { // Only heal living heroes
+            const sharedSave = loadSharedSave();
+            if (!sharedSave || !sharedSave.heroes) return;
+            
+            // Heal each hero directly in the save (ALL heroes, including knocked out at 0 HP)
+            ['zooko', 'nate', 'zancas', 'cyberaxe'].forEach(heroKey => {
+                const hero = sharedSave.heroes[heroKey];
+                if (hero) {
                     hero.hp = Math.min(hero.hp + amount, hero.maxHp);
                 }
             });
             
-            // Update dungeon menu hero display if visible
+            saveSharedSave(sharedSave);
             updateDungeonMenuHeroes();
         }
         
@@ -5318,22 +5286,6 @@
             
             campState.active = false;
             
-            // Save hero states (host only in multiplayer)
-            if (!multiplayerState.enabled || multiplayerState.role === 'host') {
-                const sharedSave = loadSharedSave();
-                if (sharedSave && sharedSave.heroes) {
-                    battleState.heroes.forEach(hero => {
-                        const heroKey = hero.name.toLowerCase();
-                        if (sharedSave.heroes[heroKey]) {
-                            sharedSave.heroes[heroKey].hp = hero.hp;
-                            sharedSave.heroes[heroKey].maxHp = hero.maxHp;
-                        }
-                    });
-                    sharedSave.lastPlayed = Date.now();
-                    saveSharedSave(sharedSave);
-                }
-            }
-            
             // Brief delay before returning to menu
             setTimeout(() => {
                 document.getElementById('campingScreen').style.display = 'none';
@@ -5344,15 +5296,17 @@
                 
                 // Broadcast completion in multiplayer
                 if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                    const sharedSave = loadSharedSave();
                     sendWebSocketMessage({
                         type: 'camp_completed',
                         hoursRested: campState.selectedHours,
                         healedAmount: totalHealed,
-                        heroes: battleState.heroes.map(h => ({
-                            name: h.name,
-                            hp: h.hp,
-                            maxHp: h.maxHp
-                        }))
+                        heroes: sharedSave ? [
+                            { name: 'Zooko', hp: sharedSave.heroes.zooko?.hp, maxHp: sharedSave.heroes.zooko?.maxHp },
+                            { name: 'Nate', hp: sharedSave.heroes.nate?.hp, maxHp: sharedSave.heroes.nate?.maxHp },
+                            { name: 'Zancas', hp: sharedSave.heroes.zancas?.hp, maxHp: sharedSave.heroes.zancas?.maxHp },
+                            { name: 'CyberAxe', hp: sharedSave.heroes.cyberaxe?.hp, maxHp: sharedSave.heroes.cyberaxe?.maxHp }
+                        ] : []
                     });
                 }
             }, 1500);
@@ -5634,7 +5588,6 @@
             }
             
             preGeneratedEncounter.generating = true;
-            console.log('[PreGen] Starting encounter pre-generation...');
             
             // Reset loading bar
             updateExploreLoadingBar(0);
@@ -5659,7 +5612,6 @@
                 }
                 
                 const roomLevel = preGeneratedEncounter.roomLevel;
-                console.log('[PreGen] Generating encounter for level:', roomLevel);
                 
                 // Generate boss (progress: 10% -> 40%)
                 // Level 1 has no boss (casual intro level)
@@ -5672,7 +5624,6 @@
                         if (roomLevel > 100) {
                             // After level 100, pick a random boss
                             boss = bossesData[Math.floor(Math.random() * bossesData.length)];
-                            console.log(`[PreGen] Level ${roomLevel} > 100, random boss: ${boss.name}`);
                         } else {
                             // For levels 2-100 without exact match, find nearest available boss
                             console.warn(`[PreGen] No boss found for level ${roomLevel}, finding nearest...`);
@@ -5680,9 +5631,7 @@
                                 Math.abs(a.mainLevel - roomLevel) - Math.abs(b.mainLevel - roomLevel)
                             );
                             boss = sortedBosses[0];
-                            if (boss) {
-                                console.log(`[PreGen] Using fallback boss from level ${boss.mainLevel}: ${boss.name}`);
-                            }
+
                         }
                     }
                 }
@@ -5693,7 +5642,6 @@
                         baseData: boss,
                         generated: generatedBoss
                     };
-                    console.log('[PreGen] Boss generated:', generatedBoss?.name || boss.name);
                     updateExploreLoadingBar(40);
                     await new Promise(r => setTimeout(r, 500));  // Brief delay to avoid rate limits
                 }
@@ -5703,7 +5651,6 @@
                 const hostileMobs = mobsData.filter(m => m.behavior?.hostile && (m.minLevel === undefined || m.minLevel <= roomLevel));
                 const mobCount = getMobCountForLevel(roomLevel);
                 const mobProgressPerMob = 30 / mobCount; // Distribute 30% progress across all mobs
-                console.log(`[PreGen] Spawning ${mobCount} mobs for level ${roomLevel}`);
                 for (let i = 0; i < mobCount && i < hostileMobs.length; i++) {
                     const mob = hostileMobs[Math.floor(Math.random() * hostileMobs.length)];
                     const generatedMob = await generateEncounter('mob', mob, roomLevel);
@@ -5711,7 +5658,6 @@
                         baseData: mob,
                         generated: generatedMob
                     });
-                    console.log('[PreGen] Mob generated:', generatedMob?.name || mob.name);
                     updateExploreLoadingBar(40 + Math.round((i + 1) * mobProgressPerMob));
                     await new Promise(r => setTimeout(r, 300));  // Brief delay to avoid rate limits
                 }
@@ -5725,7 +5671,6 @@
                         generated: captiveData,
                         spriteNum: captiveSpriteNum
                     };
-                    console.log('[PreGen] Captive generated:', captiveData?.name);
                 }
                 updateExploreLoadingBar(90);
                 
@@ -5743,7 +5688,6 @@
                 preGeneratedEncounter.ready = true;
                 preGeneratedEncounter.generating = false;
                 updateExploreLoadingBar(100);  // Complete!
-                console.log('[PreGen] ✓ Encounter ready! Click Explore Dungeon to start instantly.');
                 
             } catch (error) {
                 console.error('[PreGen] Error during pre-generation:', error);
@@ -11304,7 +11248,6 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 const img = new Image();
                 img.src = imagePath;
                 img.addEventListener('load', () => {
-                    console.log(`Preloaded: ${imagePath}`);
                     // Cache sprite sheets for animation system
                     if (imagePath.includes('tunnelsofprivacy/heros/')) {
                         spriteSheetCache[imagePath] = img;
@@ -11333,14 +11276,12 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     
                     // Set a timeout in case music doesn't load
                     const musicTimeout = setTimeout(() => {
-                        console.log('Music preload timeout - continuing anyway');
                         audioLoaded++;
                         assetsLoaded++;
                         updateLoadingProgress();
                     }, 3000); // 3 second timeout
                     
                     musicPlayer.addEventListener('loadedmetadata', () => {
-                        console.log('Music metadata loaded');
                         clearTimeout(musicTimeout);
                         audioLoaded++;
                         assetsLoaded++;
@@ -12733,7 +12674,20 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     const total = rolledStats.str + rolledStats.dex + rolledStats.con + rolledStats.int + rolledStats.wis + rolledStats.cha;
                     document.getElementById('diceRollHP').textContent = hp;
                     document.getElementById('diceRollAC').textContent = ac;
-                    document.getElementById('diceRollTotal').textContent = total;
+                    
+                    const totalEl = document.getElementById('diceRollTotal');
+                    totalEl.textContent = total;
+                    
+                    // Color code total: Red <40, Yellow 41-60, Green 61-80, Purple >80
+                    if (total > 80) {
+                        totalEl.style.color = '#9B59B6'; // Purple for 81+
+                    } else if (total >= 61) {
+                        totalEl.style.color = '#27AE60'; // Green for 61-80
+                    } else if (total >= 41) {
+                        totalEl.style.color = '#F2C94C'; // Yellow for 41-60
+                    } else {
+                        totalEl.style.color = '#E74C3C'; // Red for 40 and below
+                    }
                 }
             }, 50);
         }
