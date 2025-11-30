@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.3.30</title>
+    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.3.32</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -1852,10 +1852,67 @@
                     <div class="loadingBar" id="exploreLoadingBar"></div>
                     <span class="btnText">EXPLORE LEVEL</span>
                 </button>
-                <button class="menuButton comingSoon" disabled>ENTER LEVEL STORE<br><span style="font-size: 12px; font-weight: 400;">(If Found)</span></button>
+                <button class="menuButton comingSoon" id="levelStoreBtn" disabled>ENTER LEVEL STORE<br><span style="font-size: 12px; font-weight: 400;">(If Found)</span></button>
                 <button class="menuButton">INVENTORY</button>
-                <button class="menuButton">REST / SLEEP</button>
+                <button class="menuButton" id="campBtn" onclick="openCampPanel()">🏕️ CAMP</button>
                 <button class="menuButton" id="dungeonMastersBtn" onclick="toggleDungeonMasters()" style="background: linear-gradient(135deg, rgba(139, 69, 255, 0.4), rgba(75, 0, 130, 0.4));">🎲 DUNGEON MASTERS</button>
+            </div>
+            
+            <!-- Camp Panel (Right Side) -->
+            <div id="campPanel" style="display: none; position: absolute; top: 50%; right: 20px; transform: translateY(-50%); background: linear-gradient(135deg, rgba(20, 10, 40, 0.95), rgba(40, 20, 60, 0.95)); border: 3px solid #27AE60; border-radius: 15px; padding: 20px; backdrop-filter: blur(15px); box-shadow: 0 0 30px rgba(39, 174, 96, 0.4), inset 0 0 20px rgba(39, 174, 96, 0.1); min-width: 320px; z-index: 100;">
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <div style="color: #27AE60; font-size: 20px; font-weight: 900; text-shadow: 0 0 15px rgba(39, 174, 96, 0.5);">🏕️ CAMP</div>
+                    <button onclick="closeCampPanel()" style="position: absolute; top: 10px; right: 10px; background: rgba(255,100,100,0.3); border: 2px solid #ff6b6b; border-radius: 50%; width: 28px; height: 28px; color: #ff6b6b; font-size: 16px; cursor: pointer; font-weight: bold;">✕</button>
+                </div>
+                
+                <!-- Rest Duration Selection -->
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <div style="color: #BFD1E0; font-size: 14px; font-weight: 700; margin-bottom: 8px;">REST DURATION</div>
+                    <div style="display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap;">
+                        <button class="campDurationBtn" onclick="setCampDuration(1)" data-hours="1" style="padding: 8px 12px; background: rgba(39, 174, 96, 0.3); border: 2px solid #27AE60; border-radius: 8px; color: #27AE60; font-weight: bold; cursor: pointer;">1 Hr</button>
+                        <button class="campDurationBtn" onclick="setCampDuration(2)" data-hours="2" style="padding: 8px 12px; background: rgba(39, 174, 96, 0.3); border: 2px solid #27AE60; border-radius: 8px; color: #27AE60; font-weight: bold; cursor: pointer;">2 Hrs</button>
+                        <button class="campDurationBtn" onclick="setCampDuration(4)" data-hours="4" style="padding: 8px 12px; background: rgba(39, 174, 96, 0.3); border: 2px solid #27AE60; border-radius: 8px; color: #27AE60; font-weight: bold; cursor: pointer;">4 Hrs</button>
+                        <button class="campDurationBtn active" onclick="setCampDuration(8)" data-hours="8" style="padding: 8px 12px; background: rgba(39, 174, 96, 0.6); border: 2px solid #27AE60; border-radius: 8px; color: white; font-weight: bold; cursor: pointer;">8 Hrs</button>
+                    </div>
+                </div>
+                
+                <!-- Health Regen Preview -->
+                <div style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 12px; margin-bottom: 15px;">
+                    <div style="color: #F2C94C; font-size: 14px; font-weight: 700; text-align: center; margin-bottom: 8px;">❤️ HEALTH RESTORED</div>
+                    <div style="display: flex; justify-content: space-around; font-size: 12px;">
+                        <div style="text-align: center;">
+                            <div style="color: #E74C3C; font-weight: bold;" id="campHealZooko">+16 HP</div>
+                            <div style="color: #89A0B4;">Zooko</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="color: #E74C3C; font-weight: bold;" id="campHealNate">+16 HP</div>
+                            <div style="color: #89A0B4;">Nate</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="color: #E74C3C; font-weight: bold;" id="campHealZancas">+16 HP</div>
+                            <div style="color: #89A0B4;">Zancas</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="color: #E74C3C; font-weight: bold;" id="campHealCyberAxe">+16 HP</div>
+                            <div style="color: #89A0B4;">CyberAxe</div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin-top: 8px; font-size: 11px; color: #27AE60;">
+                        Base Regen: 2 HP per hour
+                    </div>
+                </div>
+                
+                <!-- Warning Note -->
+                <div style="background: rgba(242, 201, 76, 0.15); border: 1px solid rgba(242, 201, 76, 0.4); border-radius: 8px; padding: 10px; margin-bottom: 15px;">
+                    <div style="color: #F2C94C; font-size: 11px; text-align: center;">
+                        ⚠️ <strong>Warning:</strong> Longer rest periods have higher odds of encounters - good or bad!
+                    </div>
+                </div>
+                
+                <!-- Camp Button -->
+                <button id="startCampBtn" class="menuButton" onclick="startCamping()" style="width: 100%; padding: 12px; font-size: 16px; background: linear-gradient(135deg, rgba(39, 174, 96, 0.5), rgba(39, 174, 96, 0.3));">
+                    🔥 MAKE CAMP
+                </button>
             </div>
             
             <!-- Dungeon Masters Panel (Right Side) -->
@@ -1891,6 +1948,52 @@
                         <button id="diffNormalBtn" class="menuButton" onclick="setDifficulty('normal')" style="width: 200px; padding: 8px 10px; font-size: 12px;">⚔️ NORMAL</button>
                         <button id="diffExpertBtn" class="menuButton" onclick="setDifficulty('expert')" style="width: 200px; padding: 8px 10px; font-size: 12px;">💀 EXPERT</button>
                     </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Camping Screen -->
+        <div id="campingScreen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 500; background: #000;">
+            <!-- Video Background -->
+            <video id="campVideo" autoplay loop muted playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1;">
+                <source src="" type="video/mp4">
+            </video>
+            
+            <!-- Dark Overlay -->
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 2;"></div>
+            
+            <!-- Camp UI Overlay -->
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <!-- Camp Title -->
+                <div style="color: #F2C94C; font-size: 36px; font-weight: 900; text-shadow: 0 0 30px rgba(242, 201, 76, 0.8), 2px 2px 4px rgba(0,0,0,0.8); margin-bottom: 20px;">
+                    🏕️ RESTING AT CAMP
+                </div>
+                
+                <!-- Progress Info -->
+                <div style="background: rgba(0,0,0,0.7); border: 2px solid #27AE60; border-radius: 15px; padding: 30px 50px; text-align: center; backdrop-filter: blur(10px);">
+                    <div style="color: #27AE60; font-size: 24px; font-weight: bold; margin-bottom: 15px;">
+                        <span id="campTimeRemaining">8</span> Hours Remaining
+                    </div>
+                    
+                    <!-- Progress Bar -->
+                    <div style="width: 300px; height: 20px; background: rgba(0,0,0,0.5); border-radius: 10px; overflow: hidden; margin-bottom: 20px;">
+                        <div id="campProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #27AE60, #2ECC71); transition: width 0.5s ease;"></div>
+                    </div>
+                    
+                    <!-- Health Regen Status -->
+                    <div style="color: #E74C3C; font-size: 18px; margin-bottom: 15px;">
+                        ❤️ +<span id="campHealedSoFar">0</span> HP Restored
+                    </div>
+                    
+                    <!-- Cancel Button -->
+                    <button onclick="cancelCamping()" style="padding: 12px 30px; background: rgba(231, 76, 60, 0.3); border: 2px solid #E74C3C; border-radius: 8px; color: #E74C3C; font-size: 14px; font-weight: bold; cursor: pointer;">
+                        ❌ BREAK CAMP EARLY
+                    </button>
+                </div>
+                
+                <!-- Event Log -->
+                <div id="campEventLog" style="margin-top: 20px; max-width: 500px; max-height: 150px; overflow-y: auto; background: rgba(0,0,0,0.6); border-radius: 10px; padding: 15px;">
+                    <div style="color: #89A0B4; font-size: 12px; text-align: center;">The campfire crackles softly...</div>
                 </div>
             </div>
         </div>
@@ -2067,7 +2170,7 @@
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.3.30 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.3.32 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div id="aboutDonateBtn" style="
@@ -2499,7 +2602,7 @@
         <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         
         <div style="display: block; width: 100%; margin-top: 15px; padding: 10px 0; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A7A8F; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-            Tunnels of Privacy v0.3.30
+            Tunnels of Privacy v0.3.32
         </div>
     </div>
     
@@ -2593,7 +2696,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.3.30';
+        const GAME_VERSION = 'v0.3.32';
         
         // ===== HACKATHON INFO TOOLTIP SYSTEM =====
         const TOOLTIP_DELAY = 800; // ms before tooltip appears
@@ -4775,8 +4878,453 @@
             return difficultyMap[settings.difficulty] || difficultyMap['normal'];
         }
         
+        // ===== CAMP SYSTEM =====
+        
+        // Camp state
+        let campState = {
+            active: false,
+            selectedHours: 8,
+            hoursRemaining: 0,
+            healPerHour: 2,
+            startTime: null,
+            intervalId: null,
+            videoPlaying: false
+        };
+        
+        // Camp video files organized by level ranges
+        const campVideos = {
+            // Early levels (1-20) - general camp videos
+            early: [
+                'tunnelsofprivacy/levels/camps/camp_lvl1_var1.mp4',
+                'tunnelsofprivacy/levels/camps/camp_lvl1_var2.mp4',
+                'tunnelsofprivacy/levels/camps/camp_lvl1_var3.mp4',
+                'tunnelsofprivacy/levels/camps/camp_lvl1_var4.mp4'
+            ],
+            // Mid levels (21-60) - counterfeit vaults area
+            mid: [
+                'tunnelsofprivacy/levels/camps/camp_lvl5x-6x_counterfeit_vaults_var1.mp4',
+                'tunnelsofprivacy/levels/camps/camp_lvl5x-6x_counterfeit_vaults_var2.mp4'
+            ],
+            // Deep levels (61-90) - descent to core
+            deep: [
+                'tunnelsofprivacy/levels/camps/camp_lvl9x_descent_to_core_var1.mp4',
+                'tunnelsofprivacy/levels/camps/camp_lvl9x_descent_to_core_var2.mp4'
+            ],
+            // Zone-specific camps
+            forkedMaze: ['tunnelsofprivacy/levels/camps/camp_forked_maze_var1.mp4'],
+            fungibilityLabyrinth: ['tunnelsofprivacy/levels/camps/camp_fungibility_labyrinth_var1.mp4'],
+            haloSpiral: ['tunnelsofprivacy/levels/camps/camp_halo_spiral_var1.mp4'],
+            identityDepths: [
+                'tunnelsofprivacy/levels/camps/camp_identity_depths_var1.mp4',
+                'tunnelsofprivacy/levels/camps/camp_identity_depths_var2.mp4'
+            ],
+            orchardSanctum: ['tunnelsofprivacy/levels/camps/camp_orchard_sanctum_var1.mp4'],
+            // Generic camps
+            generic: [
+                'tunnelsofprivacy/levels/camps/camps_bitgold_bazaar_var1.mp4',
+                'tunnelsofprivacy/levels/camps/camps_collapsed_gallery_var1.mp4',
+                'tunnelsofprivacy/levels/camps/camps_crossroads_village_var1.mp4',
+                'tunnelsofprivacy/levels/camps/camps_refugee_village_var1.mp4',
+                'tunnelsofprivacy/levels/camps/camps_river_tavern_var1.mp4',
+                'tunnelsofprivacy/levels/camps/camps_tunnel_inn_var1.mp4'
+            ]
+        };
+        
+        // Get appropriate camp video based on current dungeon level
+        function getCampVideoForLevel(level) {
+            let videoPool = [];
+            
+            if (level <= 20) {
+                videoPool = [...campVideos.early, ...campVideos.generic];
+            } else if (level <= 60) {
+                videoPool = [...campVideos.mid, ...campVideos.generic];
+            } else if (level <= 90) {
+                videoPool = [...campVideos.deep, ...campVideos.generic];
+            } else {
+                // High levels - use zone-specific or generic
+                videoPool = [
+                    ...campVideos.identityDepths,
+                    ...campVideos.orchardSanctum,
+                    ...campVideos.haloSpiral,
+                    ...campVideos.generic
+                ];
+            }
+            
+            // Random selection
+            return videoPool[Math.floor(Math.random() * videoPool.length)];
+        }
+        
+        // Open the camp panel
+        function openCampPanel() {
+            // Host-only check in multiplayer
+            if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                showNotification('Only the party leader can set up camp', 'warning');
+                return;
+            }
+            
+            // Close other panels
+            const dungeonMastersPanel = document.getElementById('dungeonMastersPanel');
+            if (dungeonMastersPanel) dungeonMastersPanel.style.display = 'none';
+            
+            // Show camp panel
+            const campPanel = document.getElementById('campPanel');
+            if (campPanel) {
+                campPanel.style.display = 'block';
+                
+                // Update heal preview based on selected hours
+                updateCampHealPreview();
+                
+                // Highlight camp button
+                const campBtn = document.getElementById('campBtn');
+                if (campBtn) {
+                    campBtn.style.background = 'linear-gradient(135deg, rgba(39, 174, 96, 0.7), rgba(39, 174, 96, 0.5))';
+                    campBtn.style.borderColor = '#27AE60';
+                }
+            }
+        }
+        
+        // Close the camp panel
+        function closeCampPanel() {
+            const campPanel = document.getElementById('campPanel');
+            if (campPanel) {
+                campPanel.style.display = 'none';
+                
+                // Reset camp button style
+                const campBtn = document.getElementById('campBtn');
+                if (campBtn) {
+                    campBtn.style.background = '';
+                    campBtn.style.borderColor = '';
+                }
+            }
+        }
+        
+        // Set camp duration
+        function setCampDuration(hours) {
+            campState.selectedHours = hours;
+            
+            // Update button states
+            const buttons = document.querySelectorAll('.campDurationBtn');
+            buttons.forEach(btn => {
+                const btnHours = parseInt(btn.dataset.hours);
+                if (btnHours === hours) {
+                    btn.style.background = 'rgba(39, 174, 96, 0.6)';
+                    btn.style.color = 'white';
+                    btn.classList.add('active');
+                } else {
+                    btn.style.background = 'rgba(39, 174, 96, 0.3)';
+                    btn.style.color = '#27AE60';
+                    btn.classList.remove('active');
+                }
+            });
+            
+            // Update heal preview
+            updateCampHealPreview();
+        }
+        
+        // Update the heal preview in camp panel
+        function updateCampHealPreview() {
+            const hours = campState.selectedHours;
+            const healAmount = hours * campState.healPerHour;
+            
+            // Update each hero's heal preview
+            const heroes = ['Zooko', 'Nate', 'Zancas', 'CyberAxe'];
+            heroes.forEach(hero => {
+                const el = document.getElementById(`campHeal${hero}`);
+                if (el) {
+                    // Calculate actual heal (can't exceed max HP)
+                    const heroData = battleState.heroes.find(h => h.name === hero) || 
+                                     { hp: 100, maxHp: 100 };
+                    const actualHeal = Math.min(healAmount, heroData.maxHp - heroData.hp);
+                    el.textContent = actualHeal > 0 ? `+${actualHeal} HP` : 'FULL';
+                    el.style.color = actualHeal > 0 ? '#E74C3C' : '#27AE60';
+                }
+            });
+        }
+        
+        // Start camping
+        function startCamping() {
+            // Host-only check
+            if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                showNotification('Only the party leader can start camping', 'warning');
+                return;
+            }
+            
+            // Set camp state
+            campState.active = true;
+            campState.hoursRemaining = campState.selectedHours;
+            campState.startTime = Date.now();
+            
+            // Hide dungeon menu
+            document.getElementById('dungeonMenuScreen').style.display = 'none';
+            closeCampPanel();
+            
+            // Show camping screen
+            const campingScreen = document.getElementById('campingScreen');
+            if (campingScreen) {
+                campingScreen.style.display = 'block';
+            }
+            
+            // Load and play camp video
+            const currentLevel = parseInt(document.getElementById('dungeonMenuLevel')?.textContent) || 1;
+            const videoSrc = getCampVideoForLevel(currentLevel);
+            const videoEl = document.getElementById('campVideo');
+            if (videoEl) {
+                videoEl.querySelector('source').src = videoSrc;
+                videoEl.load();
+                videoEl.play().catch(e => console.log('[Camp] Video autoplay blocked:', e));
+                campState.videoPlaying = true;
+            }
+            
+            // Update UI
+            document.getElementById('campTimeRemaining').textContent = campState.hoursRemaining;
+            document.getElementById('campProgressBar').style.width = '0%';
+            document.getElementById('campHealedSoFar').textContent = '0';
+            document.getElementById('campEventLog').innerHTML = '<div style="color: #89A0B4; font-size: 12px; text-align: center;">The campfire crackles softly...</div>';
+            
+            // Start camping timer (1 second = 1 hour in-game for faster gameplay)
+            const totalDuration = campState.selectedHours * 1000; // 1 second per hour
+            let elapsed = 0;
+            let healedSoFar = 0;
+            
+            campState.intervalId = setInterval(() => {
+                elapsed += 100;
+                const progress = (elapsed / totalDuration) * 100;
+                const hoursElapsed = Math.floor(elapsed / 1000);
+                const hoursRemaining = campState.selectedHours - hoursElapsed;
+                
+                // Update UI
+                document.getElementById('campProgressBar').style.width = `${progress}%`;
+                document.getElementById('campTimeRemaining').textContent = Math.max(0, hoursRemaining);
+                
+                // Broadcast progress to clients every 500ms
+                if (multiplayerState.enabled && multiplayerState.role === 'host' && elapsed % 500 === 0) {
+                    sendWebSocketMessage({
+                        type: 'camp_progress',
+                        progress: progress,
+                        hoursRemaining: Math.max(0, hoursRemaining),
+                        healedSoFar: healedSoFar
+                    });
+                }
+                
+                // Heal every "hour" (every 1000ms)
+                if (hoursElapsed > healedSoFar / campState.healPerHour) {
+                    healedSoFar += campState.healPerHour;
+                    document.getElementById('campHealedSoFar').textContent = healedSoFar;
+                    
+                    // Actually heal heroes
+                    applyHealToHeroes(campState.healPerHour);
+                    
+                    // Random camp events (longer rest = more events)
+                    if (Math.random() < 0.15 * campState.selectedHours / 8) {
+                        triggerCampEvent();
+                    }
+                }
+                
+                // Check if camping is complete
+                if (elapsed >= totalDuration) {
+                    completeCamping();
+                }
+            }, 100);
+            
+            // Log start
+            addCampEvent('You set up camp and rest by the fire...');
+            
+            // Broadcast to clients in multiplayer
+            if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                sendWebSocketMessage({
+                    type: 'camp_started',
+                    hours: campState.selectedHours,
+                    videoSrc: videoSrc
+                });
+            }
+            
+            console.log('[Camp] Started camping for', campState.selectedHours, 'hours');
+        }
+        
+        // Apply healing to all heroes
+        function applyHealToHeroes(amount) {
+            battleState.heroes.forEach(hero => {
+                if (hero.hp > 0) { // Only heal living heroes
+                    hero.hp = Math.min(hero.hp + amount, hero.maxHp);
+                }
+            });
+            
+            // Update dungeon menu hero display if visible
+            updateDungeonMenuHeroes();
+        }
+        
+        // Add event to camp log
+        function addCampEvent(message) {
+            const log = document.getElementById('campEventLog');
+            if (log) {
+                const entry = document.createElement('div');
+                entry.style.cssText = 'color: #F2C94C; font-size: 12px; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.1);';
+                entry.textContent = `🌙 ${message}`;
+                log.appendChild(entry);
+                log.scrollTop = log.scrollHeight;
+            }
+        }
+        
+        // Trigger a random camp event
+        function triggerCampEvent() {
+            const goodEvents = [
+                { text: 'A friendly traveler shares supplies with your party!', effect: 'heal', value: 5 },
+                { text: 'The stars align, granting mystical energy!', effect: 'heal', value: 3 },
+                { text: 'You find a hidden cache of gold nearby!', effect: 'gold', value: 10 },
+                { text: 'A wandering merchant offers a fair trade.', effect: 'gold', value: 5 },
+                { text: 'The peaceful rest rejuvenates your spirit.', effect: 'heal', value: 2 }
+            ];
+            
+            const badEvents = [
+                { text: 'Bandits steal some of your gold in the night!', effect: 'gold', value: -5 },
+                { text: 'A strange noise disturbs your rest...', effect: 'none' },
+                { text: 'Wild animals rummage through your supplies.', effect: 'gold', value: -3 },
+                { text: 'The cold night air makes sleeping difficult.', effect: 'none' }
+            ];
+            
+            // 70% good, 30% bad events
+            const events = Math.random() < 0.7 ? goodEvents : badEvents;
+            const event = events[Math.floor(Math.random() * events.length)];
+            
+            addCampEvent(event.text);
+            
+            // Broadcast event to clients
+            if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                sendWebSocketMessage({
+                    type: 'camp_event',
+                    text: event.text
+                });
+            }
+            
+            // Apply event effect
+            if (event.effect === 'heal' && event.value > 0) {
+                applyHealToHeroes(event.value);
+            } else if (event.effect === 'gold') {
+                // Update gold in sharedSave (host only)
+                if (!multiplayerState.enabled || multiplayerState.role === 'host') {
+                    const sharedSave = loadSharedSave();
+                    if (sharedSave) {
+                        if (!sharedSave.dungeonState) sharedSave.dungeonState = {};
+                        sharedSave.dungeonState.gold = Math.max(0, (sharedSave.dungeonState.gold || 0) + event.value);
+                        saveSharedSave(sharedSave);
+                    }
+                }
+                updateGoldDisplay();
+            }
+        }
+        
+        // Cancel camping early
+        function cancelCamping() {
+            if (!campState.active) return;
+            
+            addCampEvent('You break camp early and prepare to move on.');
+            
+            // Clear interval
+            if (campState.intervalId) {
+                clearInterval(campState.intervalId);
+                campState.intervalId = null;
+            }
+            
+            // Stop video
+            const videoEl = document.getElementById('campVideo');
+            if (videoEl) {
+                videoEl.pause();
+                campState.videoPlaying = false;
+            }
+            
+            campState.active = false;
+            
+            // Save hero states (host only in multiplayer)
+            if (!multiplayerState.enabled || multiplayerState.role === 'host') {
+                const sharedSave = loadSharedSave();
+                if (sharedSave && sharedSave.heroes) {
+                    battleState.heroes.forEach(hero => {
+                        const heroKey = hero.name.toLowerCase();
+                        if (sharedSave.heroes[heroKey]) {
+                            sharedSave.heroes[heroKey].hp = hero.hp;
+                            sharedSave.heroes[heroKey].maxHp = hero.maxHp;
+                        }
+                    });
+                    sharedSave.lastPlayed = Date.now();
+                    saveSharedSave(sharedSave);
+                }
+            }
+            
+            // Return to dungeon menu
+            document.getElementById('campingScreen').style.display = 'none';
+            document.getElementById('dungeonMenuScreen').style.display = 'block';
+            
+            showNotification('Camp broken early', 'info');
+        }
+        
+        // Complete camping
+        function completeCamping() {
+            // Clear interval
+            if (campState.intervalId) {
+                clearInterval(campState.intervalId);
+                campState.intervalId = null;
+            }
+            
+            // Final heal summary
+            const totalHealed = campState.selectedHours * campState.healPerHour;
+            addCampEvent(`Well rested! Total healing: ${totalHealed} HP per hero.`);
+            
+            // Stop video
+            const videoEl = document.getElementById('campVideo');
+            if (videoEl) {
+                videoEl.pause();
+                campState.videoPlaying = false;
+            }
+            
+            campState.active = false;
+            
+            // Save hero states (host only in multiplayer)
+            if (!multiplayerState.enabled || multiplayerState.role === 'host') {
+                const sharedSave = loadSharedSave();
+                if (sharedSave && sharedSave.heroes) {
+                    battleState.heroes.forEach(hero => {
+                        const heroKey = hero.name.toLowerCase();
+                        if (sharedSave.heroes[heroKey]) {
+                            sharedSave.heroes[heroKey].hp = hero.hp;
+                            sharedSave.heroes[heroKey].maxHp = hero.maxHp;
+                        }
+                    });
+                    sharedSave.lastPlayed = Date.now();
+                    saveSharedSave(sharedSave);
+                }
+            }
+            
+            // Brief delay before returning to menu
+            setTimeout(() => {
+                document.getElementById('campingScreen').style.display = 'none';
+                document.getElementById('dungeonMenuScreen').style.display = 'block';
+                updateDungeonMenuHeroes();
+                
+                showNotification(`Party rested for ${campState.selectedHours} hours! +${totalHealed} HP healed.`, 'success');
+                
+                // Broadcast completion in multiplayer
+                if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                    sendWebSocketMessage({
+                        type: 'camp_completed',
+                        hoursRested: campState.selectedHours,
+                        healedAmount: totalHealed,
+                        heroes: battleState.heroes.map(h => ({
+                            name: h.name,
+                            hp: h.hp,
+                            maxHp: h.maxHp
+                        }))
+                    });
+                }
+            }, 1500);
+            
+            console.log('[Camp] Camping complete');
+        }
+        
         // Toggle Dungeon Masters panel visibility
         function toggleDungeonMasters() {
+            // Close camp panel if open
+            closeCampPanel();
+            
             const panel = document.getElementById('dungeonMastersPanel');
             const btn = document.getElementById('dungeonMastersBtn');
             if (panel) {
@@ -10224,6 +10772,15 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                         btn.title = 'Only party leader can change difficulty';
                     }
                 });
+                
+                // Disable CAMP button
+                const campBtn = document.getElementById('campBtn');
+                if (campBtn) {
+                    campBtn.disabled = true;
+                    campBtn.style.opacity = '0.5';
+                    campBtn.style.cursor = 'not-allowed';
+                    campBtn.title = 'Only party leader can set up camp';
+                }
             }
         }
         
@@ -11106,6 +11663,89 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 case 'kicked':
                     showNotification(data.message, 'error');
                     resetMultiplayerState();
+                    break;
+                
+                case 'camp_started':
+                    // Host started camping - show camping screen on client
+                    if (multiplayerState.role === 'client') {
+                        console.log('[MP] Received camp_started from host');
+                        
+                        campState.active = true;
+                        campState.selectedHours = data.hours;
+                        campState.hoursRemaining = data.hours;
+                        
+                        // Hide dungeon menu, show camping screen
+                        document.getElementById('dungeonMenuScreen').style.display = 'none';
+                        const campingScreen = document.getElementById('campingScreen');
+                        if (campingScreen) {
+                            campingScreen.style.display = 'block';
+                        }
+                        
+                        // Load and play camp video (same as host)
+                        const videoEl = document.getElementById('campVideo');
+                        if (videoEl && data.videoSrc) {
+                            videoEl.querySelector('source').src = data.videoSrc;
+                            videoEl.load();
+                            videoEl.play().catch(e => console.log('[Camp] Video autoplay blocked:', e));
+                        }
+                        
+                        // Update UI
+                        document.getElementById('campTimeRemaining').textContent = data.hours;
+                        document.getElementById('campProgressBar').style.width = '0%';
+                        document.getElementById('campHealedSoFar').textContent = '0';
+                        document.getElementById('campEventLog').innerHTML = '<div style="color: #89A0B4; font-size: 12px; text-align: center;">The campfire crackles softly...</div>';
+                        
+                        showNotification(`Party leader is setting up camp for ${data.hours} hours`, 'info');
+                    }
+                    break;
+                
+                case 'camp_completed':
+                    // Host finished camping
+                    if (multiplayerState.role === 'client') {
+                        console.log('[MP] Received camp_completed from host');
+                        
+                        campState.active = false;
+                        
+                        // Stop video
+                        const campVideoEl = document.getElementById('campVideo');
+                        if (campVideoEl) {
+                            campVideoEl.pause();
+                        }
+                        
+                        // Update hero HP from host data
+                        if (data.heroes) {
+                            data.heroes.forEach(heroData => {
+                                const hero = battleState.heroes.find(h => h.name === heroData.name);
+                                if (hero) {
+                                    hero.hp = heroData.hp;
+                                    hero.maxHp = heroData.maxHp;
+                                }
+                            });
+                        }
+                        
+                        // Return to dungeon menu
+                        document.getElementById('campingScreen').style.display = 'none';
+                        document.getElementById('dungeonMenuScreen').style.display = 'block';
+                        updateDungeonMenuHeroes();
+                        
+                        showNotification(`Party rested for ${data.hoursRested} hours! +${data.healedAmount} HP healed.`, 'success');
+                    }
+                    break;
+                
+                case 'camp_progress':
+                    // Host sends progress updates during camping
+                    if (multiplayerState.role === 'client' && campState.active) {
+                        document.getElementById('campProgressBar').style.width = `${data.progress}%`;
+                        document.getElementById('campTimeRemaining').textContent = data.hoursRemaining;
+                        document.getElementById('campHealedSoFar').textContent = data.healedSoFar;
+                    }
+                    break;
+                
+                case 'camp_event':
+                    // Host sends camp event text
+                    if (multiplayerState.role === 'client' && campState.active) {
+                        addCampEvent(data.text);
+                    }
                     break;
                 
                 case 'host_disconnected':

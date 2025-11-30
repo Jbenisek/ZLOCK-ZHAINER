@@ -1816,6 +1816,36 @@ async def handle_websocket(websocket, path):
                         await client.send(message)
                     print(f"[WS] Host sent leave_status to room {client_room}")
             
+            # CAMP STARTED (host only - broadcast to clients)
+            elif msg_type == 'camp_started':
+                if client_room and client_room in rooms and client_role == 'host':
+                    # Broadcast camp start to all clients
+                    for client in rooms[client_room]['clients']:
+                        await client.send(message)
+                    print(f"[WS] Host started camp in room {client_room}: {data.get('hours', '?')} hours")
+            
+            # CAMP COMPLETED (host only - broadcast to clients)
+            elif msg_type == 'camp_completed':
+                if client_room and client_room in rooms and client_role == 'host':
+                    # Broadcast camp completion to all clients
+                    for client in rooms[client_room]['clients']:
+                        await client.send(message)
+                    print(f"[WS] Host completed camp in room {client_room}: {data.get('hoursRested', '?')} hours rested")
+            
+            # CAMP PROGRESS (host only - broadcast to clients)
+            elif msg_type == 'camp_progress':
+                if client_room and client_room in rooms and client_role == 'host':
+                    # Broadcast camp progress to all clients
+                    for client in rooms[client_room]['clients']:
+                        await client.send(message)
+            
+            # CAMP EVENT (host only - broadcast to clients)
+            elif msg_type == 'camp_event':
+                if client_room and client_room in rooms and client_role == 'host':
+                    # Broadcast camp event to all clients
+                    for client in rooms[client_room]['clients']:
+                        await client.send(message)
+            
             # SAVE SYNC (host only)
             elif msg_type == 'save_sync':
                 if client_room and client_room in rooms and client_role == 'host':

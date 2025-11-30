@@ -2,6 +2,64 @@
 
 # Changelog
 
+## v0.3.32 - Camp System Multiplayer Fixes (2025-11-30)
+- **Camp System Bug Fixes:**
+  - Fixed `saveGame is not defined` error - now uses proper `loadSharedSave()`/`saveSharedSave()` pattern
+  - Fixed `broadcastFullStateUpdate is not defined` - replaced with direct hero state broadcast
+  - Fixed `gameState.gold is not defined` - now uses `sharedSave.dungeonState.gold`
+  - Fixed 404 errors for non-existent camp video files - updated to use actual filenames
+
+- **Multiplayer Camp Sync:**
+  - Added `camp_started`, `camp_completed`, `camp_progress`, `camp_event` WebSocket handlers to server
+  - Host now broadcasts camp progress every 500ms (progress %, hours remaining, HP healed)
+  - Host now broadcasts camp events to clients in real-time
+  - Clients see synchronized camping screen with same video as host
+
+- **Client UI Improvements:**
+  - Camp button now greyed out for clients (disabled, 50% opacity, "not-allowed" cursor)
+  - Added tooltip "Only party leader can set up camp"
+  - Clients receive real-time updates: timer countdown, HP restoration, event log
+
+- **Camp Video Files:**
+  - Fixed generic camp video array to match actual files in `tunnelsofprivacy/levels/camps/`
+  - Added: `camps_collapsed_gallery_var1.mp4`, `camps_refugee_village_var1.mp4`, `camps_river_tavern_var1.mp4`, `camps_tunnel_inn_var1.mp4`
+  - Removed non-existent: `camps_equihash_forge_var1.mp4`, `camps_hidden_settlement_var1.mp4`, `camps_miner_encampment_var1.mp4`, `camps_tree_fortress_var1.mp4`
+
+## v0.3.31 - Camp System (2025-11-30)
+- **Camp System:**
+  - Changed "REST / SLEEP" button to "🏕️ CAMP" in dungeon menu
+  - Camp is host-only in multiplayer (party leader sets up camp)
+  - Camp panel appears on right side with duration selection (1, 2, 4, 8 hours)
+  - Base healing rate: 2 HP per hour for all heroes
+  - Health preview shows expected healing for each hero
+
+- **Camping Screen:**
+  - Full-screen camping experience with video backgrounds
+  - 20 unique camp videos organized by dungeon level/zone
+  - Progress bar shows rest completion
+  - Real-time HP restoration display
+  - Camp event log with random encounters
+
+- **Camp Events:**
+  - Random events during rest (higher chance with longer rest)
+  - Good events (70%): bonus healing, gold finds, friendly travelers
+  - Bad events (30%): gold theft, disturbed rest, supply loss
+  - Events logged in scrollable camp event panel
+
+- **Camp Videos by Zone:**
+  - Early levels (1-20): General camp videos
+  - Mid levels (21-60): Counterfeit Vaults area
+  - Deep levels (61-90): Descent to Core
+  - Zone-specific: Forked Maze, Fungibility Labyrinth, Halo Spiral, Identity Depths, Orchard Sanctum
+  - Generic camps: Bitgold Bazaar, Crossroads Village, Equihash Forge, Hidden Settlement, Miner Encampment, Tree Fortress
+
+- **Technical Details:**
+  - `campState` object tracks active camp, hours, healing
+  - `getCampVideoForLevel(level)` selects appropriate video
+  - Camp panel and Dungeon Masters panel are mutually exclusive
+  - Camp completion broadcasts hero updates in multiplayer
+  - 1 second = 1 hour for faster gameplay (adjustable)
+
 ## v0.3.30 - Zone-Based Music System (2025-11-29)
 - **Zone Music System:**
   - Added 15 zone-specific music tracks mapped to dungeon zones
