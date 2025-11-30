@@ -2,6 +2,73 @@
 
 # Changelog
 
+## v0.3.36 - Camp Audio (2025-11-30)
+- **Camp Video Audio:**
+  - Enabled audio on camping video backgrounds
+  - Set camp video volume to 20% for ambient campfire sounds
+  - Removed `muted` attribute from campVideo element
+  - Added `videoEl.volume = 0.2` when starting camp video playback
+
+## v0.3.35 - Camp Healing Display Fix (2025-11-30)
+- **Bug Fix: Hero stats not updating on HUD after camping**
+  - Root Cause: `startCamping()` was healing `battleState.heroes` which contained stale data from the last battle
+  - When camping from dungeon menu, `battleState.heroes` wasn't initialized with current save data
+  - Healing was being applied to old hero objects, not the actual saved hero stats
+
+- **Fix Applied:**
+  - Added initialization of `battleState.heroes` from `loadSharedSave()` at start of `startCamping()`
+  - Now loads current HP/maxHP from save file before applying camp healing
+  - `completeCamping()` saves correct healed HP back to save file
+  - `updateDungeonMenuHeroes()` then displays the correct updated values
+
+## v0.3.34 - Hero Stats Sync Fix (2025-11-30)
+- **Bug Fix: Host hero stats not updating after retreat**
+  - Root Cause: `battleState.allHeroes` was not being reset at the start of each battle
+  - When a new battle started, old hero objects (with old HP values) persisted in `allHeroes`
+  - On retreat, the code would merge new heroes with old `allHeroes`, keeping stale HP values
+  - `endBattle()` would then save the stale HP values from `allHeroes`
+
+- **Fixes Applied:**
+  - Added `battleState.allHeroes = []` reset in `startBattle()` for host
+  - Added `battleState.allHeroes = []` reset in `initializeBattleFromHost()` for clients
+  - Added `level` property to hero objects in `startBattle()` (was missing, defaulting to 1)
+  - Added `level` property to hero objects in `initializeBattleFromHost()` for clients
+
+- **Technical Details:**
+  - `allHeroes` is used to preserve hero stats when heroes retreat or die mid-battle
+  - Without reset, heroes from previous battles would pollute the array
+  - The `level` property is now properly loaded from `sharedSave.heroes[heroKey].level`
+
+## v0.3.33 - Video Room Backgrounds (2025-11-30)
+- **Video Background System:**
+  - Battle rooms now use video backgrounds instead of static images
+  - 68 unique room videos in `tunnelsofprivacy/levels/rooms/`
+  - Random video selected for each battle encounter
+  - Video loops automatically during combat
+
+- **Platform Detection Update:**
+  - First frame of video captured for platform detection
+  - Uses canvas to extract frame, converts to image for scanning
+  - Platform detection algorithm unchanged, just uses video frame instead of static image
+
+- **Battle Screen Changes:**
+  - Added `<video id="battleBackgroundVideo">` element behind canvas
+  - Canvas now transparent when using video background
+  - `renderBattle()` clears canvas instead of drawing background when video active
+  - `stopBattleVideo()` helper function stops and hides video on battle end
+
+- **Multiplayer Sync:**
+  - Host sends `backgroundVideoPath` and `useVideoBackground` to clients
+  - Clients load and play same video as host
+  - Fallback to static background if video fails to load
+
+- **Technical Details:**
+  - `battleState.useVideoBackground` flag controls rendering mode
+  - `battleState.backgroundVideoPath` stores current video path
+  - `roomVideos` array contains all 68 video paths
+  - `getRandomRoomVideo()` selects random video from pool
+  - `loadFallbackBackground()` loads static image if video fails
+
 ## v0.3.32 - Camp System Multiplayer Fixes (2025-11-30)
 - **Camp System Bug Fixes:**
   - Fixed `saveGame is not defined` error - now uses proper `loadSharedSave()`/`saveSharedSave()` pattern

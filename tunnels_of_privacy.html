@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.3.32</title>
+    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.3.36</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -1955,7 +1955,7 @@
         <!-- Camping Screen -->
         <div id="campingScreen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 500; background: #000;">
             <!-- Video Background -->
-            <video id="campVideo" autoplay loop muted playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1;">
+            <video id="campVideo" autoplay loop playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1;">
                 <source src="" type="video/mp4">
             </video>
             
@@ -2000,6 +2000,10 @@
         
         <!-- Battle Screen -->
         <div id="battleScreen">
+            <!-- Video Background (behind canvas) -->
+            <video id="battleBackgroundVideo" autoplay loop muted playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; display: none;">
+                <source src="" type="video/mp4">
+            </video>
             <canvas id="battleCanvas"></canvas>
             
             <!-- Battle Notification Banner -->
@@ -2170,7 +2174,7 @@
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.3.32 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.3.36 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div id="aboutDonateBtn" style="
@@ -2602,7 +2606,7 @@
         <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         
         <div style="display: block; width: 100%; margin-top: 15px; padding: 10px 0; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A7A8F; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-            Tunnels of Privacy v0.3.32
+            Tunnels of Privacy v0.3.36
         </div>
     </div>
     
@@ -2696,7 +2700,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.3.32';
+        const GAME_VERSION = 'v0.3.36';
         
         // ===== HACKATHON INFO TOOLTIP SYSTEM =====
         const TOOLTIP_DELAY = 800; // ms before tooltip appears
@@ -4839,12 +4843,36 @@
             ctx: null,
             backgroundImage: null,
             backgroundPath: '',
+            backgroundVideo: null,
+            backgroundVideoPath: '',
+            useVideoBackground: false,
             detectedPlatforms: [],
             targetingMode: false,
             pendingAction: null,
             swapTargetingMode: false,
             swapInitiator: null
         };
+        
+        // Room video backgrounds (68 videos)
+        const roomVideos = [];
+        for (let i = 1; i <= 68; i++) {
+            roomVideos.push(`tunnelsofprivacy/levels/rooms/rooms (${i}).mp4`);
+        }
+        
+        // Get random room video
+        function getRandomRoomVideo() {
+            return roomVideos[Math.floor(Math.random() * roomVideos.length)];
+        }
+        
+        // Stop and hide battle background video
+        function stopBattleVideo() {
+            const videoEl = document.getElementById('battleBackgroundVideo');
+            if (videoEl) {
+                videoEl.pause();
+                videoEl.style.display = 'none';
+            }
+            battleState.useVideoBackground = false;
+        }
         
         // Calculate number of mobs to spawn based on dungeon level
         // Scales from 2 mobs at level 1 up to max 9 mobs at higher levels
@@ -5049,6 +5077,17 @@
                 return;
             }
             
+            // Initialize battleState.heroes from current save data for camping
+            const sharedSave = loadSharedSave();
+            if (sharedSave && sharedSave.heroes) {
+                battleState.heroes = [
+                    { name: 'Zooko', hp: sharedSave.heroes.zooko?.hp ?? 30, maxHp: sharedSave.heroes.zooko?.maxHp ?? 30 },
+                    { name: 'Nate', hp: sharedSave.heroes.nate?.hp ?? 28, maxHp: sharedSave.heroes.nate?.maxHp ?? 30 },
+                    { name: 'Zancas', hp: sharedSave.heroes.zancas?.hp ?? 24, maxHp: sharedSave.heroes.zancas?.maxHp ?? 26 },
+                    { name: 'CyberAxe', hp: sharedSave.heroes.cyberaxe?.hp ?? 32, maxHp: sharedSave.heroes.cyberaxe?.maxHp ?? 35 }
+                ];
+            }
+            
             // Set camp state
             campState.active = true;
             campState.hoursRemaining = campState.selectedHours;
@@ -5071,6 +5110,7 @@
             if (videoEl) {
                 videoEl.querySelector('source').src = videoSrc;
                 videoEl.load();
+                videoEl.volume = 0.2; // 20% volume for ambient camp sounds
                 videoEl.play().catch(e => console.log('[Camp] Video autoplay blocked:', e));
                 campState.videoPlaying = true;
             }
@@ -7323,6 +7363,7 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     hp: sharedSave?.heroes?.zooko?.hp ?? 30, 
                     maxHp: sharedSave?.heroes?.zooko?.maxHp ?? 30,
                     xp: sharedSave?.heroes?.zooko?.xp ?? 0,
+                    level: sharedSave?.heroes?.zooko?.level ?? 1,
                     healsRemaining: 2,
                     stats: sharedSave?.heroes?.zooko || {},
                     color: '#F2C94C',
@@ -7338,6 +7379,7 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     hp: sharedSave?.heroes?.nate?.hp ?? 28, 
                     maxHp: sharedSave?.heroes?.nate?.maxHp ?? 30,
                     xp: sharedSave?.heroes?.nate?.xp ?? 0,
+                    level: sharedSave?.heroes?.nate?.level ?? 1,
                     healsRemaining: 2,
                     stats: sharedSave?.heroes?.nate || {},
                     color: '#E74C3C',
@@ -7353,6 +7395,7 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     hp: sharedSave?.heroes?.zancas?.hp ?? 24, 
                     maxHp: sharedSave?.heroes?.zancas?.maxHp ?? 26,
                     xp: sharedSave?.heroes?.zancas?.xp ?? 0,
+                    level: sharedSave?.heroes?.zancas?.level ?? 1,
                     healsRemaining: 2,
                     stats: sharedSave?.heroes?.zancas || {},
                     color: '#27AE60',
@@ -7368,6 +7411,7 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     hp: sharedSave?.heroes?.cyberaxe?.hp ?? 32, 
                     maxHp: sharedSave?.heroes?.cyberaxe?.maxHp ?? 35,
                     xp: sharedSave?.heroes?.cyberaxe?.xp ?? 0,
+                    level: sharedSave?.heroes?.cyberaxe?.level ?? 1,
                     healsRemaining: 2,
                     stats: sharedSave?.heroes?.cyberaxe || {},
                     color: '#2E86DE',
@@ -7652,38 +7696,61 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 enemy.sprite.src = enemy.spritePath + '?v=' + Date.now();
             });
             
-            // Load background (use pre-generated or pick random)
-            let selectedBg;
-            if (usePreGenerated && preGeneratedEncounter.background) {
-                selectedBg = preGeneratedEncounter.background;
-            } else {
-                const backgroundOptions = [
-                    'backgrounds_lvl1 (8).png',
-                    'backgrounds_lvl1 (10).png',
-                    'backgrounds_lvl1 (12).png',
-                    'backgrounds_lvl1 (14).png',
-                    'backgrounds_lvl1 (15).png',
-                    'backgrounds_lvl1 (16).png'
-                ];
-                selectedBg = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
-            }
-            battleState.backgroundPath = `tunnelsofprivacy/backgrounds/lvl1-10/${selectedBg}`;
-            battleState.backgroundImage = new Image();
-            battleState.backgroundImage.onload = () => {
-                // Only host runs floor scanning
-                if (!multiplayerState.enabled || multiplayerState.role === 'host') {
-                    // Run floor scanning to detect platforms
-                    generateBattleLayout();
-                    
-                    // After layout is generated, send to clients
-                    if (multiplayerState.enabled && multiplayerState.role === 'host') {
-                        sendBattleInitToClients();
-                    }
-                }
+            // Load video background
+            const selectedVideo = getRandomRoomVideo();
+            battleState.backgroundVideoPath = selectedVideo;
+            battleState.useVideoBackground = true;
+            
+            const videoEl = document.getElementById('battleBackgroundVideo');
+            if (videoEl) {
+                videoEl.querySelector('source').src = selectedVideo;
+                videoEl.load();
+                videoEl.style.display = 'block';
                 
-                renderBattle();
-            };
-            battleState.backgroundImage.src = battleState.backgroundPath;
+                // Wait for video to load metadata, then capture first frame for platform detection
+                videoEl.onloadeddata = () => {
+                    console.log('[Battle] Video loaded:', selectedVideo);
+                    
+                    // Capture first frame to an image for platform detection
+                    const tempCanvas = document.createElement('canvas');
+                    tempCanvas.width = videoEl.videoWidth;
+                    tempCanvas.height = videoEl.videoHeight;
+                    const tempCtx = tempCanvas.getContext('2d');
+                    tempCtx.drawImage(videoEl, 0, 0);
+                    
+                    // Create image from first frame
+                    battleState.backgroundImage = new Image();
+                    battleState.backgroundImage.onload = () => {
+                        // Only host runs floor scanning
+                        if (!multiplayerState.enabled || multiplayerState.role === 'host') {
+                            // Run floor scanning to detect platforms
+                            generateBattleLayout();
+                            
+                            // After layout is generated, send to clients
+                            if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                                sendBattleInitToClients();
+                            }
+                        }
+                        
+                        renderBattle();
+                    };
+                    battleState.backgroundImage.src = tempCanvas.toDataURL('image/png');
+                    
+                    // Start playing video
+                    videoEl.play().catch(e => console.log('[Battle] Video autoplay blocked:', e));
+                };
+                
+                videoEl.onerror = () => {
+                    console.error('[Battle] Video failed to load:', selectedVideo);
+                    // Fallback to static image
+                    battleState.useVideoBackground = false;
+                    videoEl.style.display = 'none';
+                    loadFallbackBackground();
+                };
+            } else {
+                // No video element, use fallback
+                loadFallbackBackground();
+            }
             
             // Reset pre-generated encounter after using it
             if (usePreGenerated) {
@@ -7705,6 +7772,7 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             battleState.hadBoss = battleState.enemies.some(e => e.isBoss); // Track if this is a boss battle
             battleState.targetingMode = false;
             battleState.pendingAction = null;
+            battleState.allHeroes = []; // Reset for fresh battle - will be populated on retreat/death
             
             // Update UI
             updateBattleTurnInfo();
@@ -7749,11 +7817,41 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             }
         }
         
+        // Fallback to static background image if video fails
+        function loadFallbackBackground() {
+            const backgroundOptions = [
+                'backgrounds_lvl1 (8).png',
+                'backgrounds_lvl1 (10).png',
+                'backgrounds_lvl1 (12).png',
+                'backgrounds_lvl1 (14).png',
+                'backgrounds_lvl1 (15).png',
+                'backgrounds_lvl1 (16).png'
+            ];
+            const selectedBg = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
+            battleState.backgroundPath = `tunnelsofprivacy/backgrounds/lvl1-10/${selectedBg}`;
+            battleState.useVideoBackground = false;
+            
+            battleState.backgroundImage = new Image();
+            battleState.backgroundImage.onload = () => {
+                // Only host runs floor scanning
+                if (!multiplayerState.enabled || multiplayerState.role === 'host') {
+                    generateBattleLayout();
+                    if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                        sendBattleInitToClients();
+                    }
+                }
+                renderBattle();
+            };
+            battleState.backgroundImage.src = battleState.backgroundPath;
+        }
+        
         // Send battle initialization data to clients (called after floor scanning completes)
         function sendBattleInitToClients() {
             const canvas = battleState.canvas;
             const battleData = {
                 backgroundPath: battleState.backgroundPath,
+                backgroundVideoPath: battleState.backgroundVideoPath,
+                useVideoBackground: battleState.useVideoBackground,
                 canvasWidth: canvas.width,
                 canvasHeight: canvas.height,
                 heroes: battleState.heroes.map(h => ({
@@ -8462,8 +8560,14 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 canvas.hasClickHandler = true;
             }
             
-            // Draw background image if loaded, otherwise fallback to gradient
-            if (battleState.backgroundImage && battleState.backgroundImage.complete && battleState.backgroundImage.naturalHeight !== 0) {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw background - video plays behind transparent canvas, or draw static image
+            if (battleState.useVideoBackground) {
+                // Video is playing behind canvas via HTML video element
+                // Canvas stays transparent to show video
+            } else if (battleState.backgroundImage && battleState.backgroundImage.complete && battleState.backgroundImage.naturalHeight !== 0) {
                 ctx.drawImage(battleState.backgroundImage, 0, 0, canvas.width, canvas.height);
             } else {
                 // Fallback: Clear canvas with gradient
@@ -10396,6 +10500,7 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             
             battleState.active = false;
             currentScreen = 'dungeonMenu';
+            stopBattleVideo(); // Stop and hide video background
             document.getElementById('battleScreen').style.display = 'none';
             document.getElementById('dungeonMenuScreen').style.display = 'block';
             
@@ -11576,6 +11681,7 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                             // Client: Switch UI and display from cached stats
                             battleState.active = false;
                             currentScreen = 'dungeonMenu';
+                            stopBattleVideo(); // Stop and hide video background
                             document.getElementById('battleScreen').style.display = 'none';
                             document.getElementById('dungeonMenuScreen').style.display = 'block';
                             
@@ -11752,6 +11858,7 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     showNotification(data.message, 'error');
                     resetMultiplayerState();
                     currentScreen = 'title';
+                    stopBattleVideo(); // Stop and hide video background
                     document.getElementById('battleScreen').style.display = 'none';
                     document.getElementById('dungeonMenuScreen').style.display = 'none';
                     document.getElementById('titleScreen').style.display = 'block';
@@ -11846,6 +11953,7 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                         
                         // Go to the screen where host is
                         if (data.screen === 'dungeonMenu') {
+                            stopBattleVideo(); // Stop and hide video background
                             document.getElementById('battleScreen').style.display = 'none';
                             document.getElementById('musicTicker').classList.remove('battleActive');
                             document.getElementById('musicControls').classList.add('dungeonMenuActive');
@@ -11956,6 +12064,7 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                         document.getElementById('musicControls').classList.remove('heroSelectionActive');
                         
                         if (data.screen === 'dungeonMenu') {
+                            stopBattleVideo(); // Stop and hide video background
                             document.getElementById('battleScreen').style.display = 'none';
                             document.getElementById('musicTicker').classList.remove('battleActive');
                             document.getElementById('musicControls').classList.add('dungeonMenuActive');
@@ -11995,6 +12104,7 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                             return; // Wait for battle_init
                         } else {
                             // Fallback to dungeon menu for any other screen value
+                            stopBattleVideo(); // Stop and hide video background
                             document.getElementById('battleScreen').style.display = 'none';
                             document.getElementById('musicTicker').classList.remove('battleActive');
                             document.getElementById('musicControls').classList.add('dungeonMenuActive');
@@ -13691,16 +13801,61 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             
             const canvas = battleState.canvas;
             
-            // Set background
+            // Set background - check if host is using video
             battleState.backgroundPath = battleData.backgroundPath;
-            battleState.backgroundImage = new Image();
-            battleState.backgroundImage.onload = () => {
-                renderBattle();
-            };
-            battleState.backgroundImage.onerror = () => {
-                console.error('[MP ERROR] Background failed to load:', battleState.backgroundPath);
-            };
-            battleState.backgroundImage.src = battleState.backgroundPath;
+            battleState.backgroundVideoPath = battleData.backgroundVideoPath || '';
+            battleState.useVideoBackground = battleData.useVideoBackground || false;
+            
+            if (battleState.useVideoBackground && battleData.backgroundVideoPath) {
+                // Load video background (same as host)
+                const videoEl = document.getElementById('battleBackgroundVideo');
+                if (videoEl) {
+                    videoEl.querySelector('source').src = battleData.backgroundVideoPath;
+                    videoEl.load();
+                    videoEl.style.display = 'block';
+                    
+                    videoEl.onloadeddata = () => {
+                        console.log('[MP] Client video loaded:', battleData.backgroundVideoPath);
+                        
+                        // Capture first frame for backgroundImage (used in detection visualization)
+                        const tempCanvas = document.createElement('canvas');
+                        tempCanvas.width = videoEl.videoWidth;
+                        tempCanvas.height = videoEl.videoHeight;
+                        const tempCtx = tempCanvas.getContext('2d');
+                        tempCtx.drawImage(videoEl, 0, 0);
+                        
+                        battleState.backgroundImage = new Image();
+                        battleState.backgroundImage.onload = () => renderBattle();
+                        battleState.backgroundImage.src = tempCanvas.toDataURL('image/png');
+                        
+                        videoEl.play().catch(e => console.log('[MP] Video autoplay blocked:', e));
+                    };
+                    
+                    videoEl.onerror = () => {
+                        console.error('[MP] Client video failed, using fallback');
+                        battleState.useVideoBackground = false;
+                        videoEl.style.display = 'none';
+                        loadClientFallbackBackground(battleData.backgroundPath);
+                    };
+                } else {
+                    loadClientFallbackBackground(battleData.backgroundPath);
+                }
+            } else {
+                // Use static image background
+                loadClientFallbackBackground(battleData.backgroundPath);
+            }
+            
+            // Helper function to load static background for client
+            function loadClientFallbackBackground(bgPath) {
+                battleState.useVideoBackground = false;
+                const videoEl = document.getElementById('battleBackgroundVideo');
+                if (videoEl) videoEl.style.display = 'none';
+                
+                battleState.backgroundImage = new Image();
+                battleState.backgroundImage.onload = () => renderBattle();
+                battleState.backgroundImage.onerror = () => console.error('[MP] Background failed:', bgPath);
+                battleState.backgroundImage.src = bgPath;
+            }
             
             // Setup heroes with host's data
             battleState.heroes = battleData.heroes.map(hData => {
@@ -13709,6 +13864,7 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     hp: hData.hp,
                     maxHp: hData.maxHp,
                     xp: hData.xp,
+                    level: hData.level ?? 1,
                     healsRemaining: hData.healsRemaining,
                     stats: hData.stats,
                     color: hData.name === 'Zooko' ? '#F2C94C' : hData.name === 'Nate' ? '#E74C3C' : hData.name === 'Zancas' ? '#27AE60' : '#2E86DE',
@@ -13847,6 +14003,7 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             battleState.active = true;
             battleState.targetingMode = false;
             battleState.pendingAction = null;
+            battleState.allHeroes = []; // Reset for fresh battle - will be populated on retreat/death
             
             // Update UI
             updateBattleTurnInfo();
