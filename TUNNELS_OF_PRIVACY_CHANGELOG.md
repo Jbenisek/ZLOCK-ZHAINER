@@ -2,6 +2,49 @@
 
 # Changelog
 
+## v0.3.19 - LLM Prompt Fixes & Battle Layout Improvements (2025-11-29)
+- **Fixed LLM JSON Parse Failures:**
+  - Root cause: Ambiguous prompt formatting like `"goldDrop": 5-40` and `true/false`
+  - LLMs were outputting invalid JSON like `5-40` (looks like subtraction) or literal `true/false`
+  - All prompts now use concrete example values with explicit RULES section
+  - Mob prompt: `"goldDrop": 15` with rule "must be a NUMBER between 5 and 40"
+  - Boss prompt: Same fix for goldDrop, negotiation, statModifiers
+  - Captive prompt: Same fix for species/gender/voiceType options
+  - NPC prompt: Same fix for gender/personality/voiceType options
+
+- **Expanded Battle Position System:**
+  - Platform detection now dynamic: `requiredPlatforms = 4 + enemyCount`
+  - Supports up to 20 enemies (previously hardcoded for 3)
+  - Reduced minDistance from 200px to 120px when >5 enemies
+
+- **Improved Enemy Spread in Fallback Layout:**
+  - 20 enemy positions spread across right side (x: 0.50-0.95, y: 0.28-0.80)
+  - Positions ordered for visual variety: corners/edges first, then fill gaps
+  - Prevents enemies from bunching in the middle
+  - No grid pattern - intentionally scattered for natural look
+
+## v0.3.18 - Expanded Mob System & Level Scaling (2025-11-29)
+- **40 New Mob Sprites Added:**
+  - 20 mid-level mobs (mid_1 to mid_20) - minLevel: 10
+  - 20 hard-level mobs (hard_1 to hard_20) - minLevel: 20
+  - All sprites renamed from descriptive names to standardized format
+
+- **Level-Based Mob Filtering:**
+  - Mobs now have `minLevel` property in mobs_data.json
+  - Only mobs with `minLevel <= currentLevel` can spawn
+  - Ensures appropriate enemy difficulty progression
+
+- **Dynamic Mob Count Scaling:**
+  - New `getMobCountForLevel(level)` function
+  - Level 1-4: 2 mobs, Level 5-9: 3 mobs, Level 10-14: 4 mobs
+  - Level 15-19: 5 mobs, Level 20-29: 6 mobs, Level 30-39: 7 mobs
+  - Level 40-49: 8 mobs, Level 50+: 9 mobs (max)
+  - Progress bar distributes evenly across all mob generations
+
+- **New Mob Types:**
+  - Mid-tier: Grave-Fungus Crawler, Iron-Tusk Mole, Shardback Lizard, etc.
+  - Hard-tier: Abyssal Rift Strider, Soul-Drain Myconid, Veinbreaker Goliath, etc.
+
 ## v0.3.17 - Tooltip Content Updates (2025-11-29)
 - **Updated EXPLORE LEVEL Tooltip:**
   - Now shows OpenRouter + Groq as API sources

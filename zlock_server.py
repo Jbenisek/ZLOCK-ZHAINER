@@ -918,19 +918,27 @@ Tone: Dark fantasy with cyberpunk elements. Mix medieval dungeon crawler with cr
 You are the Dungeon Master. Generate a UNIQUE boss for dungeon level {room_level}.
 Base creature: {json.dumps(boss_info)}
 
-Return this JSON:
+Return ONLY this exact JSON structure with your values filled in:
 {{
   "name": "A unique personal name (NOT '{template_name}')",
-  "backstory": "2 sentences about their origin and motivation",
-  "personality": "hostile/cunning/tragic/comedic",
-  "voiceType": "male_deep/monster/female_mature/ethereal",
-  "goldDrop": 50-300 (wealth based on backstory),
-  "negotiation": {{"canNegotiate": true/false, "bribeGold": 50-200, "surrenderChance": 0.0-0.3}},
-  "statModifiers": {{"hpMod": -10 to +30, "damageMod": -3 to +5, "acMod": -2 to +2}},
+  "backstory": "Two sentences about their origin and motivation",
+  "personality": "hostile",
+  "voiceType": "male_deep",
+  "goldDrop": 150,
+  "negotiation": {{"canNegotiate": true, "bribeGold": 100, "surrenderChance": 0.1}},
+  "statModifiers": {{"hpMod": 10, "damageMod": 2, "acMod": 1}},
   "openingLine": "What they say when battle starts"
 }}
 
-Return ONLY valid JSON."""
+RULES:
+- goldDrop must be a NUMBER between 50 and 300
+- canNegotiate must be true or false (no quotes)
+- bribeGold must be a NUMBER between 50 and 200
+- surrenderChance must be a DECIMAL between 0.0 and 0.3
+- hpMod must be a NUMBER between -10 and 30
+- damageMod must be a NUMBER between -3 and 5
+- acMod must be a NUMBER between -2 and 2
+- Return ONLY the JSON object, no other text"""
                 
             elif encounter_type == 'mob':
                 # Extract useful info but NOT loot/items
@@ -952,18 +960,25 @@ Return ONLY valid JSON."""
 You are the Dungeon Master. Generate a UNIQUE mob for dungeon level {room_level}.
 Base creature: {json.dumps(mob_info)}
 
-Return this JSON:
+Return ONLY this exact JSON structure with your values filled in:
 {{
   "name": "A unique name for this {mob_name}",
-  "backstory": "1 sentence about this creature",
-  "personality": "feral/scared/hungry/territorial",
-  "voiceType": "monster/male_deep/ethereal",
-  "goldDrop": 5-40 (scavengers have more, beasts have less),
-  "negotiation": {{"canNegotiate": true/false, "bribeGold": 0-30, "fleeChance": 0.1-0.5}},
-  "statModifiers": {{"hpMod": -3 to +5, "damageMod": -1 to +2}}
+  "backstory": "One sentence about this creature",
+  "personality": "one word like feral or scared or hungry or territorial",
+  "voiceType": "monster",
+  "goldDrop": 15,
+  "negotiation": {{"canNegotiate": false, "bribeGold": 0, "fleeChance": 0.2}},
+  "statModifiers": {{"hpMod": 0, "damageMod": 0}}
 }}
 
-Return ONLY valid JSON."""
+RULES:
+- goldDrop must be a NUMBER between 5 and 40
+- canNegotiate must be true or false (no quotes)
+- bribeGold must be a NUMBER between 0 and 30
+- fleeChance must be a DECIMAL between 0.1 and 0.5
+- hpMod must be a NUMBER between -3 and 5
+- damageMod must be a NUMBER between -1 and 2
+- Return ONLY the JSON object, no other text"""
                 
             elif encounter_type == 'captive':
                 system_prompt = f"""{world_lore}
@@ -971,19 +986,25 @@ Return ONLY valid JSON."""
 You are the Dungeon Master. Generate a captive NPC for dungeon level {room_level}.
 They were captured by enemies and need rescue.
 
-Return this JSON:
+Return ONLY this exact JSON structure with your values filled in:
 {{
   "name": "A unique name",
-  "species": "human/elf/dwarf/gnome",
-  "gender": "male/female",
-  "backstory": "1-2 sentences about who they are and how they got captured",
-  "personality": "grateful/suspicious/traumatized/cheerful",
-  "voiceType": "male_deep/male_young/female_mature/female_young",
-  "rescueReward": {{"gold": 10-80 based on their wealth}},
+  "species": "human",
+  "gender": "female",
+  "backstory": "One or two sentences about who they are and how they got captured",
+  "personality": "grateful",
+  "voiceType": "female_mature",
+  "rescueReward": {{"gold": 40}},
   "dialogueOnRescue": "What they say when freed"
 }}
 
-Return ONLY valid JSON."""
+RULES:
+- species must be one of: human, elf, dwarf, gnome
+- gender must be one of: male, female
+- personality must be one of: grateful, suspicious, traumatized, cheerful
+- voiceType must be one of: male_deep, male_young, female_mature, female_young
+- gold must be a NUMBER between 10 and 80
+- Return ONLY the JSON object, no other text"""
             
             else:  # Generic NPC
                 npc_name = base_data.get('name', 'stranger') if base_data else 'stranger'
@@ -991,17 +1012,21 @@ Return ONLY valid JSON."""
 
 Generate an NPC named "{npc_name}".
 
-Return this JSON:
+Return ONLY this exact JSON structure with your values filled in:
 {{
   "name": "Unique name",
-  "gender": "male/female",
-  "backstory": "1 sentence",
-  "personality": "friendly/mysterious/grumpy",
-  "voiceType": "male_deep/male_young/female_mature/female_young",
+  "gender": "male",
+  "backstory": "One sentence about them",
+  "personality": "friendly",
+  "voiceType": "male_deep",
   "dialogue": "What they say when approached"
 }}
 
-Return ONLY valid JSON."""
+RULES:
+- gender must be one of: male, female
+- personality must be one of: friendly, mysterious, grumpy
+- voiceType must be one of: male_deep, male_young, female_mature, female_young
+- Return ONLY the JSON object, no other text"""
             
             messages = [
                 {'role': 'system', 'content': system_prompt},

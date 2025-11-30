@@ -1887,7 +1887,7 @@
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.3.17 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.3.19 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div style="
@@ -2306,7 +2306,7 @@
         <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         
         <div style="display: block; width: 100%; margin-top: 15px; padding: 10px 0; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A7A8F; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-            Tunnels of Privacy v0.3.17
+            Tunnels of Privacy v0.3.19
         </div>
     </div>
     
@@ -2367,7 +2367,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.3.17';
+        const GAME_VERSION = 'v0.3.19';
         
         // ===== HACKATHON INFO TOOLTIP SYSTEM =====
         const TOOLTIP_DELAY = 800; // ms before tooltip appears
@@ -3690,6 +3690,28 @@
             swapInitiator: null
         };
         
+        // Calculate number of mobs to spawn based on dungeon level
+        // Scales from 2 mobs at level 1 up to max 9 mobs at higher levels
+        function getMobCountForLevel(level) {
+            // Level 1: 2 mobs (intro)
+            // Level 2-4: 2 mobs
+            // Level 5-9: 3 mobs
+            // Level 10-14: 4 mobs
+            // Level 15-19: 5 mobs
+            // Level 20-29: 6 mobs
+            // Level 30-39: 7 mobs
+            // Level 40-49: 8 mobs
+            // Level 50+: 9 mobs (max)
+            if (level < 5) return 2;
+            if (level < 10) return 3;
+            if (level < 15) return 4;
+            if (level < 20) return 5;
+            if (level < 30) return 6;
+            if (level < 40) return 7;
+            if (level < 50) return 8;
+            return 9; // Max mobs
+        }
+        
         // Get boss data file based on difficulty setting
         function getBossDifficultyFile() {
             const difficultyMap = {
@@ -4035,10 +4057,13 @@
                     await new Promise(r => setTimeout(r, 500));  // Brief delay to avoid rate limits
                 }
                 
-                // Generate 2 mobs (progress: 40% -> 70%)
+                // Generate mobs based on level (progress: 40% -> 70%)
                 preGeneratedEncounter.mobs = [];
-                const hostileMobs = mobsData.filter(m => m.behavior?.hostile);
-                for (let i = 0; i < 2 && i < hostileMobs.length; i++) {
+                const hostileMobs = mobsData.filter(m => m.behavior?.hostile && (m.minLevel === undefined || m.minLevel <= roomLevel));
+                const mobCount = getMobCountForLevel(roomLevel);
+                const mobProgressPerMob = 30 / mobCount; // Distribute 30% progress across all mobs
+                console.log(`[PreGen] Spawning ${mobCount} mobs for level ${roomLevel}`);
+                for (let i = 0; i < mobCount && i < hostileMobs.length; i++) {
                     const mob = hostileMobs[Math.floor(Math.random() * hostileMobs.length)];
                     const generatedMob = await generateEncounter('mob', mob, roomLevel);
                     preGeneratedEncounter.mobs.push({
@@ -4046,8 +4071,8 @@
                         generated: generatedMob
                     });
                     console.log('[PreGen] Mob generated:', generatedMob?.name || mob.name);
-                    updateExploreLoadingBar(40 + (i + 1) * 15);  // 55%, 70%
-                    await new Promise(r => setTimeout(r, 500));  // Brief delay to avoid rate limits
+                    updateExploreLoadingBar(40 + Math.round((i + 1) * mobProgressPerMob));
+                    await new Promise(r => setTimeout(r, 300));  // Brief delay to avoid rate limits
                 }
                 
                 // Generate captive (50% chance) (progress: 70% -> 90%)
@@ -5652,8 +5677,10 @@
                 }
             } else if (!usePreGenerated) {
                 // Generate mobs on-the-fly (fallback)
-                const hostileMobs = mobsData.filter(m => m.behavior?.hostile);
-                for (let i = 0; i < 2 && i < hostileMobs.length; i++) {
+                const hostileMobs = mobsData.filter(m => m.behavior?.hostile && (m.minLevel === undefined || m.minLevel <= roomLevel));
+                const mobCount = getMobCountForLevel(roomLevel);
+                console.log(`[Battle] Spawning ${mobCount} mobs for level ${roomLevel}`);
+                for (let i = 0; i < mobCount && i < hostileMobs.length; i++) {
                     const mob = hostileMobs[Math.floor(Math.random() * hostileMobs.length)];
                     const mobEnemy = {
                         name: mob.name,
@@ -6245,19 +6272,24 @@
             
             console.log(`${safe.length} platforms in safe zone`);
             
-            if (safe.length < 7) {
-                console.log('Not enough safe platforms, using fallback');
+            // Calculate required platforms: 4 heroes + enemies (up to ~20)
+            const requiredPlatforms = 4 + battleState.enemies.length;
+            
+            if (safe.length < requiredPlatforms) {
+                console.log(`Not enough safe platforms (need ${requiredPlatforms}), using fallback`);
                 return generateFallbackLayout();
             }
             
             // Shuffle safe platforms for variety each battle
             const shuffled = [...safe].sort(() => Math.random() - 0.5);
             
-            // Pick platforms ensuring spatial separation (300px sprites need 200px+ spacing)
-            const minDistance = 200;
+            // Pick platforms ensuring spatial separation
+            // Reduce distance for more enemies to fit them all
+            const baseMinDistance = 200;
+            const minDistance = battleState.enemies.length > 5 ? 120 : baseMinDistance;
             const selected = [];
             
-            for (let i = 0; i < shuffled.length && selected.length < 7; i++) {
+            for (let i = 0; i < shuffled.length && selected.length < requiredPlatforms; i++) {
                 const candidate = shuffled[i];
                 const candidateX = candidate.x + candidate.w / 2;
                 const candidateY = candidate.y;
@@ -6283,11 +6315,11 @@
                 }
             }
             
-            console.log(`Selected ${selected.length} non-overlapping platforms`);
+            console.log(`Selected ${selected.length} non-overlapping platforms (need ${requiredPlatforms})`);
             
-            // Need at least 7 non-overlapping platforms (4 heroes + 3 enemies)
-            if (selected.length < 7) {
-                console.log('Could not find 7 non-overlapping platforms, using fallback');
+            // Need enough non-overlapping platforms for heroes + enemies
+            if (selected.length < requiredPlatforms) {
+                console.log(`Could not find ${requiredPlatforms} non-overlapping platforms, using fallback`);
                 return generateFallbackLayout();
             }
             
@@ -6369,10 +6401,19 @@
                     { x: 0.15, y: 0.65 },
                     { x: 0.30, y: 0.75 }
                 ],
+                // Extended enemy positions - spread across right side (x: 0.50-0.92, y: 0.28-0.80)
+                // Positions ordered for visual variety: corners first, then fill in
                 enemies: [
-                    { x: 0.75, y: 0.60 },
-                    { x: 0.70, y: 0.45 },
-                    { x: 0.80, y: 0.70 }
+                    // First 4 - spread to corners and edges
+                    { x: 0.55, y: 0.35 }, { x: 0.88, y: 0.72 }, { x: 0.72, y: 0.28 }, { x: 0.60, y: 0.78 },
+                    // Next 4 - fill opposite areas  
+                    { x: 0.92, y: 0.42 }, { x: 0.50, y: 0.55 }, { x: 0.80, y: 0.58 }, { x: 0.65, y: 0.45 },
+                    // Next 4 - continue spreading
+                    { x: 0.75, y: 0.80 }, { x: 0.58, y: 0.32 }, { x: 0.90, y: 0.55 }, { x: 0.52, y: 0.70 },
+                    // Next 4 - fill remaining gaps
+                    { x: 0.82, y: 0.35 }, { x: 0.68, y: 0.65 }, { x: 0.55, y: 0.48 }, { x: 0.85, y: 0.78 },
+                    // Final 4 - last gaps
+                    { x: 0.62, y: 0.60 }, { x: 0.78, y: 0.42 }, { x: 0.70, y: 0.75 }, { x: 0.95, y: 0.65 }
                 ]
             };
             
@@ -6394,8 +6435,11 @@
             }
             
             for (let i = 0; i < battleState.enemies.length; i++) {
-                const pos = safePositions.enemies[i];
-                const enemyX = canvas.width * pos.x;
+                // Use modulo to wrap around if we have more enemies than positions
+                const pos = safePositions.enemies[i % safePositions.enemies.length];
+                // Add slight random offset if wrapping to avoid exact overlap
+                const wrapOffset = Math.floor(i / safePositions.enemies.length) * 0.03;
+                const enemyX = canvas.width * (pos.x + wrapOffset);
                 const enemyY = canvas.height * pos.y;
                 
                 const enemyPlatform = {
