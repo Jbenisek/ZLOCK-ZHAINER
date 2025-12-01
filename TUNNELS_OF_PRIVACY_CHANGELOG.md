@@ -2,6 +2,89 @@
 
 # Changelog
 
+## v0.3.47 - Level Init & Store Discovery Fixes (2025-11-30)
+- **Fixed Level Layout Init on All Entry Points:**
+  - `launchNewGame()` - single player after rolling dice now calls `initializeLevelLayout(1)`
+  - `continueGameMultiplayer()` - multiplayer host continue now calls `initializeLevelLayout()`
+  - Client `game_start` handler - both dungeonMenu paths now call `initializeLevelLayout()`
+  - Rooms display now shows correct count (e.g., "0/6") instead of "0/?" on first load
+
+- **Fixed Store Discovery Not Updating UI:**
+  - Added `markStoreVisited()` call when store is first discovered
+  - Store visited stat now updates from "0/1" to "1/1" immediately
+  - `levelProgress.storeVisited` properly saved and broadcast
+
+- **Multiplayer Store Sync:**
+  - `updateLevelProgressFromHost()` now syncs `currentLevelLayout.storeFound` for clients
+  - Client UI updates `updateDungeonMastersStatus()` and `updateStoreButtonState()` on progress sync
+  - Store button and Dungeon Masters panel now update correctly for clients when host finds store
+
+## v0.3.46 - Dungeon Masters Panel UI Improvements (2025-11-30)
+- **Next Room Preview Moved:**
+  - Moved "Next Room" preview from main dungeon menu to Dungeon Masters panel
+  - Larger, more prominent display in dedicated panel
+  - Cleans up main menu for better visual flow
+
+- **Level Status in Dungeon Masters:**
+  - Added "Level Status" section to Dungeon Masters panel
+  - Shows Store status: "Found ✓" (green), "Not Found" (red), or "None" (gray)
+  - Shows "Rooms Left" count - unexplored rooms + boss if not defeated
+  - Displays "All Clear!" when level is complete
+
+- **New Function: `updateDungeonMastersStatus()`**
+  - Updates store found status and rooms remaining count
+  - Called after room exploration, store discovery, and level layout changes
+  - Integrated with `markRoomExplored()`, `updateStoreButtonState()`, and `preGenerateNextEncounter()`
+
+## v0.3.45 - Level Layout Initialization Fix (2025-11-30)
+- **First-Time Dungeon Entry Fix:**
+  - Fixed "Rooms: 0/?" showing when first entering dungeon on level 1
+  - `continueGameSinglePlayer()` now calls `initializeLevelLayout(currentLevel)` 
+  - `startNewAdventure()` now calls `initializeLevelLayout(1)` for new games
+  - `loadSaveGame()` now calls `initializeLevelLayout(currentLevel)`
+  - All entry points now properly generate/load level layouts and update UI
+
+- **Level Display Sync:**
+  - Entry functions now read `currentLevel` from save data before initializing
+  - Level display updated in dungeon menu before layout generation
+  - `dmRoomsMax` element now populated correctly on first load
+
+- **Consistent Initialization:**
+  - Matched behavior with `proceedWithNewAdventure()` which already had proper init
+  - Level layout generates rooms, sets `levelProgress.roomsMax`, updates progress display
+  - Store button state updated based on `storeFound` flag
+
+## v0.3.44 - Room Tracking System (2025-11-30)
+- **Room Exploration Tracking:**
+  - Rooms are now properly tracked as explored/cleared
+  - Added `currentRoomId` to `preGeneratedEncounter` to track which room is being explored
+  - `markRoomExplored()` is now called when rooms are successfully cleared (was defined but never used)
+  - Rooms only marked as explored on victory, NOT on retreat (retreat leaves room in pool)
+
+- **Store Room Handling:**
+  - Store rooms are filtered from random selection once `storeFound` is true
+  - Players can still revisit stores using the "Enter Level Store" button
+  - Store video backgrounds persist on revisit
+
+- **Level Complete Detection:**
+  - New level completion check: all non-secret rooms explored + boss defeated
+  - "Next Room" preview shows "🏆 LEVEL COMPLETE" when done
+  - "Explore Level" button text changes to "🏆 LEVEL COMPLETE"
+  - Clicking explore when complete shows notification to advance to next level
+
+- **Boss Room Tracking:**
+  - `markBossDefeated()` now marks `bossRoom.explored = true` in level layout
+  - Boss room accessibility is force-unlocked if all normal rooms are explored
+
+- **Combat Victory Tracking:**
+  - `incrementRoomsExplored()` now calls `markRoomExplored(currentRoomId)`
+  - Console logging added for room tracking: `[RoomTracking] Marked room X as explored`
+
+- **Non-Combat Room Tracking:**
+  - `executeLeaveNonCombatRoom()` now marks rooms explored when leaving
+  - Stores, NPC encounters, exploration, and secret rooms all tracked
+  - Room type captured before state reset for proper tracking
+
 ## v0.3.43 - Bug Fixes & Multiplayer 4-Player Support (2025-11-30)
 - **Multiplayer 4-Player Fix:**
   - Fixed WebSocket server limiting rooms to 3 players instead of 4

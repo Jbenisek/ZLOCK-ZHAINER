@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.3.43</title>
+    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.3.47</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -1869,12 +1869,6 @@
                     </div>
                 </div>
                 
-                <!-- Next Room Preview -->
-                <div id="nextRoomPreview" style="background: rgba(0,0,0,0.4); border: 2px solid rgba(139, 69, 255, 0.5); border-radius: 10px; padding: 10px; margin-bottom: 15px; text-align: center;">
-                    <div style="font-size: 10px; color: #89A0B4; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px;">Next Room</div>
-                    <div id="nextRoomType" style="font-size: 16px; font-weight: bold; color: #F2C94C;">⚔️ Combat</div>
-                </div>
-                
                 <button class="menuButton" id="exploreLevelBtn" onclick="startBattle()">
                     <div class="loadingBar" id="exploreLoadingBar"></div>
                     <span class="btnText">EXPLORE LEVEL</span>
@@ -1949,6 +1943,25 @@
                 <div style="text-align: center; margin-bottom: 15px;">
                     <div style="color: #F2C94C; font-size: 18px; font-weight: 900; text-shadow: 0 0 15px rgba(242, 201, 76, 0.5);">🎲 DUNGEON MASTERS</div>
                     <button onclick="toggleDungeonMasters()" style="position: absolute; top: 10px; right: 10px; background: rgba(255,100,100,0.3); border: 2px solid #ff6b6b; border-radius: 50%; width: 28px; height: 28px; color: #ff6b6b; font-size: 16px; cursor: pointer; font-weight: bold;">✕</button>
+                </div>
+                
+                <!-- Next Room Preview -->
+                <div id="nextRoomPreview" style="background: rgba(0,0,0,0.4); border: 2px solid rgba(139, 69, 255, 0.5); border-radius: 10px; padding: 12px; margin-bottom: 15px; text-align: center;">
+                    <div style="font-size: 11px; color: #89A0B4; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px;">Next Room</div>
+                    <div id="nextRoomType" style="font-size: 18px; font-weight: bold; color: #F2C94C;">⚔️ Combat</div>
+                </div>
+                
+                <!-- Level Status -->
+                <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(139, 69, 255, 0.3); border-radius: 8px; padding: 10px; margin-bottom: 15px;">
+                    <div style="font-size: 11px; color: #89A0B4; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; text-align: center;">Level Status</div>
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; color: #BFD1E0;">
+                        <span>🛒 Store:</span>
+                        <span id="dmStoreStatus" style="color: #EB5757; font-weight: bold;">Not Found</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; color: #BFD1E0; margin-top: 4px;">
+                        <span>🚪 Rooms Left:</span>
+                        <span id="dmRoomsRemaining" style="color: #F2C94C; font-weight: bold;">?</span>
+                    </div>
                 </div>
                 
                 <!-- Stairs Section -->
@@ -2177,7 +2190,7 @@
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.3.43 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.3.47 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div id="aboutDonateBtn" style="
@@ -2289,7 +2302,11 @@
     
     <!-- Non-Combat Room Screen (Store, NPC, Secret, Exploration) -->
     <div id="nonCombatRoomScreen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #16213e 100%); z-index: 50;">
-        <!-- Room Background -->
+        <!-- Video Background for Store -->
+        <video id="storeBackgroundVideo" loop playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; display: none;">
+            <source src="" type="video/mp4">
+        </video>
+        <!-- Room Background (static image fallback) -->
         <div id="nonCombatBackground" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; opacity: 0.3;"></div>
         
         <!-- Room Content Container -->
@@ -2671,7 +2688,7 @@
         <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         
         <div style="display: block; width: 100%; margin-top: 15px; padding: 10px 0; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A7A8F; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-            Tunnels of Privacy v0.3.43
+            Tunnels of Privacy v0.3.47
         </div>
     </div>
     
@@ -2765,7 +2782,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.3.43';
+        const GAME_VERSION = 'v0.3.47';
         
         // ===== HACKATHON INFO TOOLTIP SYSTEM =====
         const TOOLTIP_DELAY = 800; // ms before tooltip appears
@@ -3424,6 +3441,12 @@
             updateLevelProgressDisplay();
             saveLevelProgress();
             broadcastLevelProgress();
+            
+            // Mark the current room as explored in the level layout
+            if (preGeneratedEncounter.currentRoomId) {
+                markRoomExplored(preGeneratedEncounter.currentRoomId);
+                console.log(`[RoomTracking] Marked room ${preGeneratedEncounter.currentRoomId} as explored (combat cleared)`);
+            }
         }
         
         function markBossDefeated() {
@@ -3432,6 +3455,13 @@
             updateLevelProgressDisplay();
             saveLevelProgress();
             broadcastLevelProgress();
+            
+            // Mark boss room as explored in level layout
+            if (currentLevelLayout && currentLevelLayout.bossRoom) {
+                currentLevelLayout.bossRoom.explored = true;
+                saveLevelLayout();
+                console.log('[RoomTracking] Boss room marked as explored');
+            }
             
             // Also save to sharedSave bossesDefeated array
             try {
@@ -3562,6 +3592,15 @@
             levelProgress.captivesFreed = progress.captivesFreed || 0;
             levelProgress.totalBossesDefeated = progress.totalBossesDefeated || 0;
             updateLevelProgressDisplay();
+            
+            // Also sync storeFound to currentLevelLayout for UI consistency
+            if (currentLevelLayout && progress.storeVisited) {
+                currentLevelLayout.storeFound = true;
+            }
+            
+            // Update Dungeon Masters panel and store button
+            updateDungeonMastersStatus();
+            updateStoreButtonState();
         }
         // ===== END LEVEL PROGRESS TRACKING =====
         
@@ -3734,8 +3773,14 @@
         function getNextRoomFromLayout() {
             if (!currentLevelLayout) return null;
             
-            // Get unexplored accessible rooms
-            const availableRooms = currentLevelLayout.rooms.filter(r => !r.explored && r.accessible);
+            // Get unexplored accessible rooms, excluding already-found stores
+            let availableRooms = currentLevelLayout.rooms.filter(r => {
+                if (r.explored) return false;
+                if (!r.accessible) return false;
+                // If store already found, don't include store rooms
+                if (r.type === ROOM_TYPES.STORE && currentLevelLayout.storeFound) return false;
+                return true;
+            });
             
             // Check if boss room should be accessible
             const nonBossRoomsExplored = currentLevelLayout.rooms.filter(r => r.explored && r.type !== ROOM_TYPES.SECRET).length;
@@ -3747,10 +3792,11 @@
             
             // If no regular rooms left, check boss
             if (availableRooms.length === 0) {
-                if (currentLevelLayout.bossRoom.accessible && !currentLevelLayout.bossRoom.explored) {
+                if (currentLevelLayout.bossRoom && currentLevelLayout.bossRoom.accessible && !currentLevelLayout.bossRoom.explored) {
                     return currentLevelLayout.bossRoom;
                 }
-                return null; // Level complete
+                // All rooms explored - return null to trigger "nothing found" or NPC encounter
+                return null;
             }
             
             // Calculate room selection weights based on what's been found
@@ -3790,8 +3836,13 @@
             
             // If no room or no layout, default to combat
             if (!nextRoom) {
+                preGeneratedEncounter.currentRoomId = null;
                 return 'combat';
             }
+            
+            // Store the room ID so we can mark it explored when cleared
+            preGeneratedEncounter.currentRoomId = nextRoom.id;
+            console.log(`[RoomTracking] Selected room ${nextRoom.id} (${nextRoom.type})`);
             
             // Map internal room types to the encounter generation types
             const typeMapping = {
@@ -3832,8 +3883,9 @@
                 currentLevelLayout.bossRoom.explored = true;
             }
             
-            // Save layout
+            // Save layout and update UI
             saveLevelLayout();
+            updateDungeonMastersStatus();
         }
         
         // Save level layout to sharedSave
@@ -5228,6 +5280,18 @@
             // Apply client UI restrictions
             applyClientUIRestrictions();
             
+            // Get current level from save
+            const currentLevel = sharedSave?.dungeonState?.currentLevel || sharedSave?.arcadeState?.level || 1;
+            
+            // Update level display
+            const dungeonMenuLevel = document.getElementById('dungeonMenuLevel');
+            if (dungeonMenuLevel) {
+                dungeonMenuLevel.textContent = currentLevel;
+            }
+            
+            // Initialize level layout for current level (generates rooms, updates UI)
+            initializeLevelLayout(currentLevel);
+            
             // Pre-generate next encounter while player is in dungeon menu
             preGenerateNextEncounter();
         }
@@ -5277,6 +5341,36 @@
         // Get random room video
         function getRandomRoomVideo() {
             return roomVideos[Math.floor(Math.random() * roomVideos.length)];
+        }
+        
+        // Trader/Store video backgrounds (12 videos)
+        const traderVideos = [
+            'tunnelsofprivacy/levels/traders/traders_armory_lane_var1.mp4',
+            'tunnelsofprivacy/levels/traders/traders_currency_exchange_var1.mp4',
+            'tunnelsofprivacy/levels/traders/traders_dragon_vault_market_var1.mp4',
+            'tunnelsofprivacy/levels/traders/traders_elevator_hub_var1.mp4',
+            'tunnelsofprivacy/levels/traders/traders_food_bazaar_var1.mp4',
+            'tunnelsofprivacy/levels/traders/traders_fungus_village_var1.mp4',
+            'tunnelsofprivacy/levels/traders/traders_inner_market_var1.mp4',
+            'tunnelsofprivacy/levels/traders/traders_loan_shark_row_var1.mp4',
+            'tunnelsofprivacy/levels/traders/traders_merc_gear_ground_var1.mp4',
+            'tunnelsofprivacy/levels/traders/traders_shady_dealer_alley_var1.mp4',
+            'tunnelsofprivacy/levels/traders/traders_under_bridge_var1.mp4',
+            'tunnelsofprivacy/levels/traders/traders_zec_crystal_plaza_var1.mp4'
+        ];
+        
+        // Get random trader video
+        function getRandomTraderVideo() {
+            return traderVideos[Math.floor(Math.random() * traderVideos.length)];
+        }
+        
+        // Stop and hide store background video
+        function stopStoreVideo() {
+            const videoEl = document.getElementById('storeBackgroundVideo');
+            if (videoEl) {
+                videoEl.pause();
+                videoEl.style.display = 'none';
+            }
         }
         
         // Stop and hide battle background video
@@ -6015,6 +6109,7 @@
             background: null,
             roomLevel: 2,
             roomType: 'combat',   // Room type from level layout
+            currentRoomId: null,  // Track which room from layout we're in
             storeData: null,      // Store room merchant/items
             secretData: null,     // Secret room rewards
             npcData: null,        // NPC room data
@@ -6123,6 +6218,7 @@
                 // Update the Next Room Preview UI
                 updateNextRoomPreview();
                 updateLevelLayoutDisplay();
+                updateDungeonMastersStatus();
                 
             } catch (error) {
                 console.error('[PreGen] Error during pre-generation:', error);
@@ -6464,10 +6560,33 @@
             document.getElementById('musicControls').classList.add('battleActive');
             document.getElementById('musicTicker').classList.add('battleActive');
             
-            // Set background
-            if (preGeneratedEncounter.background) {
-                document.getElementById('nonCombatBackground').style.backgroundImage = 
-                    `url('tunnelsofprivacy/backgrounds/${preGeneratedEncounter.background}')`;
+            // Stop any previous store video
+            stopStoreVideo();
+            
+            // Set background - use video for stores, static image for others
+            if (roomType === 'store') {
+                // Use video background for store
+                const selectedVideo = preGeneratedEncounter.storeVideo || getRandomTraderVideo();
+                preGeneratedEncounter.storeVideo = selectedVideo; // Save for multiplayer sync
+                
+                const videoEl = document.getElementById('storeBackgroundVideo');
+                if (videoEl) {
+                    videoEl.querySelector('source').src = selectedVideo;
+                    videoEl.load();
+                    videoEl.volume = 0.05; // 5% volume for ambient sounds
+                    videoEl.style.display = 'block';
+                    videoEl.play().catch(e => console.log('[Store] Video autoplay blocked:', e));
+                }
+                // Hide static background
+                document.getElementById('nonCombatBackground').style.display = 'none';
+            } else {
+                // Use static background for other room types
+                document.getElementById('storeBackgroundVideo').style.display = 'none';
+                document.getElementById('nonCombatBackground').style.display = 'block';
+                if (preGeneratedEncounter.background) {
+                    document.getElementById('nonCombatBackground').style.backgroundImage = 
+                        `url('tunnelsofprivacy/backgrounds/${preGeneratedEncounter.background}')`;
+                }
             }
             
             // Configure room display based on type
@@ -6526,6 +6645,7 @@
                     roomType: roomType,
                     data: {
                         storeData: preGeneratedEncounter.storeData,
+                        storeVideo: preGeneratedEncounter.storeVideo,
                         npcData: preGeneratedEncounter.npcData,
                         secretData: preGeneratedEncounter.secretData,
                         explorationData: preGeneratedEncounter.explorationData,
@@ -6722,8 +6842,12 @@
         
         // Actually execute leaving the non-combat room
         function executeLeaveNonCombatRoom() {
+            // Track current room type before clearing state
+            const roomType = nonCombatRoomState.roomType;
+            const roomId = preGeneratedEncounter.currentRoomId;
+            
             // If leaving a store, mark it as found and save store data for revisiting
-            if (nonCombatRoomState.roomType === 'store' && currentLevelLayout) {
+            if (roomType === 'store' && currentLevelLayout) {
                 if (!currentLevelLayout.storeFound) {
                     currentLevelLayout.storeFound = true;
                     // Save the store data so player can revisit
@@ -6732,11 +6856,27 @@
                         items: nonCombatRoomState.data?.storeData?.items || [],
                         greeting: nonCombatRoomState.data?.storeData?.greeting
                     };
+                    // Save the store video so it stays consistent on revisit
+                    currentLevelLayout.discoveredStoreVideo = nonCombatRoomState.data?.storeVideo;
                     saveLevelLayout();
                     console.log('[Store] Store discovered and saved for level', currentLevelLayout.level);
+                    
+                    // Update level progress for store visited
+                    markStoreVisited();
+                }
+                // Mark store room explored (so it won't appear in random selection)
+                if (roomId) {
+                    markRoomExplored(roomId);
+                    console.log(`[RoomTracking] Marked store room ${roomId} as explored`);
                 }
                 // Update the store button on dungeon menu
                 updateStoreButtonState();
+                // Stop store video
+                stopStoreVideo();
+            } else if (roomId) {
+                // For non-store rooms (NPC, exploration, secret), mark as explored
+                markRoomExplored(roomId);
+                console.log(`[RoomTracking] Marked ${roomType} room ${roomId} as explored`);
             }
             
             // Save game state
@@ -6786,6 +6926,7 @@
             // Set up the encounter data from host
             preGeneratedEncounter.roomType = roomType;
             preGeneratedEncounter.storeData = data.storeData;
+            preGeneratedEncounter.storeVideo = data.storeVideo;
             preGeneratedEncounter.npcData = data.npcData;
             preGeneratedEncounter.secretData = data.secretData;
             preGeneratedEncounter.explorationData = data.explorationData;
@@ -6818,7 +6959,8 @@
             // Set up the preGeneratedEncounter with saved store data
             preGeneratedEncounter.roomType = 'store';
             preGeneratedEncounter.storeData = currentLevelLayout.discoveredStoreData;
-            preGeneratedEncounter.background = 'store_bg.jpg'; // Default store background
+            // Use saved video or pick a new random one
+            preGeneratedEncounter.storeVideo = currentLevelLayout.discoveredStoreVideo || getRandomTraderVideo();
             
             // Enter the store room (enterNonCombatRoom handles multiplayer broadcast)
             enterNonCombatRoom('store');
@@ -6847,14 +6989,66 @@
                 storeBtn.classList.remove('unlocked');
                 storeBtnText.innerHTML = 'ENTER LEVEL STORE<br><span style="font-size: 12px; font-weight: 400;">(None on Level)</span>';
             }
+            
+            // Also update Dungeon Masters panel
+            updateDungeonMastersStatus();
         }
         
         // ===== END LEVEL STORE SYSTEM =====
+        
+        // Update the Dungeon Masters panel level status
+        function updateDungeonMastersStatus() {
+            const storeStatusEl = document.getElementById('dmStoreStatus');
+            const roomsRemainingEl = document.getElementById('dmRoomsRemaining');
+            
+            // Update store status
+            if (storeStatusEl) {
+                if (currentLevelLayout && currentLevelLayout.storeFound) {
+                    storeStatusEl.textContent = 'Found ✓';
+                    storeStatusEl.style.color = '#27AE60';
+                } else if (currentLevelLayout && currentLevelLayout.hasStore) {
+                    storeStatusEl.textContent = 'Not Found';
+                    storeStatusEl.style.color = '#EB5757';
+                } else {
+                    storeStatusEl.textContent = 'None';
+                    storeStatusEl.style.color = '#89A0B4';
+                }
+            }
+            
+            // Update rooms remaining
+            if (roomsRemainingEl && currentLevelLayout) {
+                const unexploredRooms = currentLevelLayout.rooms.filter(r => !r.explored && r.type !== ROOM_TYPES.SECRET).length;
+                const bossRemaining = currentLevelLayout.bossRoom && !currentLevelLayout.bossRoom.explored ? 1 : 0;
+                const total = unexploredRooms + bossRemaining;
+                
+                if (total === 0) {
+                    roomsRemainingEl.textContent = 'All Clear!';
+                    roomsRemainingEl.style.color = '#27AE60';
+                } else {
+                    roomsRemainingEl.textContent = total.toString();
+                    roomsRemainingEl.style.color = '#F2C94C';
+                }
+            }
+        }
         
         // Update the Next Room Preview UI
         function updateNextRoomPreview() {
             const nextRoomTypeEl = document.getElementById('nextRoomType');
             if (!nextRoomTypeEl) return;
+            
+            // Check if level is complete
+            if (currentLevelLayout) {
+                const allRoomsExplored = currentLevelLayout.rooms
+                    .filter(r => r.type !== ROOM_TYPES.SECRET)
+                    .every(r => r.explored);
+                
+                if (allRoomsExplored && currentLevelLayout.bossRoom?.explored) {
+                    nextRoomTypeEl.innerHTML = '🏆 LEVEL COMPLETE';
+                    nextRoomTypeEl.style.color = '#27AE60';
+                    nextRoomTypeEl.style.textShadow = '0 0 15px #27AE60';
+                    return;
+                }
+            }
             
             const roomType = preGeneratedEncounter.roomType || 'combat';
             
@@ -6901,7 +7095,15 @@
             }
             
             if (exploreBtn) {
-                if (percent >= 100) {
+                // Check if level is complete
+                const levelComplete = currentLevelLayout && 
+                    currentLevelLayout.rooms.filter(r => r.type !== ROOM_TYPES.SECRET).every(r => r.explored) && 
+                    currentLevelLayout.bossRoom?.explored;
+                
+                if (levelComplete) {
+                    exploreBtn.classList.add('ready');
+                    if (btnText) btnText.textContent = '🏆 LEVEL COMPLETE';
+                } else if (percent >= 100) {
                     exploreBtn.classList.add('ready');
                     if (btnText) btnText.textContent = '⚔️ EXPLORE LEVEL';
                 } else if (percent > 0) {
@@ -6929,6 +7131,7 @@
                 background: null,
                 roomLevel: currentLevel,
                 roomType: 'combat', // Will be set by preGenerateNextEncounter
+                currentRoomId: null, // Will be set when room is selected
                 storeData: null,
                 secretData: null,
                 npcData: null,
@@ -8446,6 +8649,24 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             if (multiplayerState.enabled && multiplayerState.role === 'client') {
                 showNotification('Only host can start battles', 'error');
                 return;
+            }
+            
+            // Check if all rooms are explored
+            if (currentLevelLayout) {
+                const allRoomsExplored = currentLevelLayout.rooms
+                    .filter(r => r.type !== ROOM_TYPES.SECRET)
+                    .every(r => r.explored);
+                
+                if (allRoomsExplored && currentLevelLayout.bossRoom?.explored) {
+                    showNotification('Level Complete! All rooms explored. Advance to the next level.', 'success');
+                    return;
+                }
+                
+                if (allRoomsExplored && !currentLevelLayout.bossRoom?.accessible) {
+                    // All normal rooms explored but boss not unlocked - this shouldn't happen
+                    currentLevelLayout.bossRoom.accessible = true;
+                    console.log('[LevelLayout] Force-unlocking boss room');
+                }
             }
             
             // Check room type - route to non-combat room if not a combat type
@@ -13353,6 +13574,10 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                             updateDungeonMenuHeroes();
                             updateGoldDisplay();
                             
+                            // Initialize level layout from saved data
+                            const currentLevel = data.saveData?.dungeonState?.currentLevel || 1;
+                            initializeLevelLayout(currentLevel);
+                            
                             // Apply client UI restrictions
                             applyClientUIRestrictions();
                         } else if (data.screen === 'battle') {
@@ -13390,6 +13615,11 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                             currentScreen = 'dungeonMenu';
                             updateDungeonMenuHeroes();
                             updateGoldDisplay();
+                            
+                            // Initialize level layout from saved data
+                            const currentLevel = data.saveData?.dungeonState?.currentLevel || 1;
+                            initializeLevelLayout(currentLevel);
+                            
                             applyClientUIRestrictions();
                         }
                         showNotification('Host started the game!', 'success');
@@ -14343,6 +14573,12 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             
             showNotification('Continuing from last save...', 'success');
             
+            // Get current level from save
+            const currentLevel = sharedSave?.dungeonState?.currentLevel || sharedSave?.arcadeState?.level || 1;
+            
+            // Initialize level layout for current level
+            initializeLevelLayout(currentLevel);
+            
             // Pre-generate next encounter while in dungeon menu (host only)
             preGenerateNextEncounter();
         }
@@ -14384,6 +14620,18 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             });
             
             showNotification('Load game functionality - showing dungeon menu', 'info');
+            
+            // Get current level from save
+            const currentLevel = sharedSave?.dungeonState?.currentLevel || sharedSave?.arcadeState?.level || 1;
+            
+            // Update level display
+            const dungeonMenuLevel = document.getElementById('dungeonMenuLevel');
+            if (dungeonMenuLevel) {
+                dungeonMenuLevel.textContent = currentLevel;
+            }
+            
+            // Initialize level layout for current level
+            initializeLevelLayout(currentLevel);
             
             // Pre-generate next encounter while in dungeon menu (host only)
             preGenerateNextEncounter();
@@ -14574,6 +14822,9 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             
             showNotification('Adventure begins!', 'success');
             
+            // Initialize level layout for level 1 (new game)
+            initializeLevelLayout(1);
+            
             // Pre-generate next encounter
             preGenerateNextEncounter();
         }
@@ -14621,6 +14872,9 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     });
                     
                     showNotification('Starting new adventure...', 'success');
+                    
+                    // Initialize level layout for level 1 (new game)
+                    initializeLevelLayout(1);
                     
                     // Pre-generate next encounter while in dungeon menu (host only)
                     preGenerateNextEncounter();
