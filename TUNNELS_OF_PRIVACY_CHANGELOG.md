@@ -2,6 +2,23 @@
 
 # Changelog
 
+## v0.3.59 - Battle UI Polish & Tooltip Fixes (2025-12-01)
+- **Battle Hero Card Redesign:**
+  - AC and Level now displayed as hexagon badges on right side of portrait
+  - AC badge: Blue gradient with white number centered inside
+  - Level badge: Gold gradient with white number centered inside
+  - Badges use CSS clip-path for hexagon shape (ready for custom shield art)
+
+- **Heal Potion Display:**
+  - Potion images enlarged from 18x18px to 26x26px in battle cards
+  - Better visual balance with the new AC/Level badges
+
+- **Tooltip Conflict Fix:**
+  - Weapon tooltips now properly hide the Zcash/art info tooltips
+  - Added event.stopPropagation() to prevent tooltip conflicts
+  - Info tooltip explicitly hidden when weapon tooltip shows
+  - Fixed in all three tooltip handlers: store, battle, and dungeon menu
+
 ## v0.3.58 - Hero Signature Weapons & Equipment Shop (2025-12-01)
 - **Hero Signature Weapons:**
   - Each hero now has a unique weapon that cannot be swapped (only upgraded/enchanted)
