@@ -2,6 +2,67 @@
 
 # Changelog
 
+## v0.3.57 - Hero Quadrant Inventory Layout (2025-12-01)
+- **Redesigned Inventory Grid Layout:**
+  - 6x6 grid now divided into 4 hero quadrants (3x3 each)
+  - Top-left: Zooko (gold), Top-right: Nate (red)
+  - Bottom-left: Zancas (green), Bottom-right: CyberAxe (blue)
+  - All cells in each quadrant tinted with hero's color
+
+- **Hero Potion Slots:**
+  - Inner corners (14, 15, 20, 21) are the designated potion slots
+  - Each hero has 1 potion slot at their quadrant's inner corner
+  - Potion slots have stronger color highlight
+
+- **New Unlock Order:**
+  - Phase 1 (12 slots at start): Center 2x2 of each hero quadrant
+  - Subsequent unlocks: 1 slot per hero, rotating evenly
+  - Progression: 12 base → +4 every 10 levels → 36 max at level 60
+
+- **Visual Improvements:**
+  - Locked cells show dimmed quadrant color
+  - Unlocked cells show full quadrant color with glow
+  - Potion slots have extra-strong glow effect
+
+## v0.3.56 - Party Inventory System (2025-12-01)
+- **New Party Inventory System:**
+  - Shared party inventory accessible via INVENTORY button on dungeon menu
+  - 6x6 grid (36 max slots) with progressive unlocking based on party level
+  - Base: 16 slots (4x4) at level 1-9
+  - +2 slots every 10 levels: Lv10→18, Lv20→20, ..., Lv100→36 max
+  - Locked slots appear greyed with 🔒 icon
+
+- **Hero Potion Slots:**
+  - First 8 slots reserved for hero health potions (2 per hero)
+  - Color-coded by hero: Zooko (gold), Nate (red), Zancas (green), CyberAxe (blue)
+  - Potions regenerate each room (not implemented yet - placeholder)
+
+- **Multiplayer Inventory Sync:**
+  - Host broadcasts inventory changes to all clients
+  - Added `inventory_update` message type to WebSocket server
+  - Inventory synced on player join and reconnection
+  - Clients receive inventory via `sync_state` message
+
+- **Item System Foundation:**
+  - Basic item structure: id, name, icon, type, heroSlot, owner
+  - Health potion items use existing sprite
+  - Future: stackable items, item pickup, item use
+
+## v0.3.55 - Volume System Overhaul & Boss Battle Announcement (2025-12-01)
+- **Volume System Overhaul:**
+  - Changed volume divisor from /100 to /500 for music and background sound
+  - Changed voice volume divisor from /100 to /250 for TTS and narrator
+  - New defaults: Music=40 (8%), Voice=30 (12%), Background=25 (5%)
+  - Fixed music control panel slider not matching settings default
+  - Fixed fadeMusic allowing volume up to 1.5 (now clamped to 1.0)
+  - Added console logging when volume changes for debugging
+
+- **Boss Battle Announcement:**
+  - Dramatic "⚔️ BOSS BATTLE ⚔️ LEVEL X" popup when entering boss rooms
+  - Also shows "MINI-BOSS BATTLE" for mini-boss encounters
+  - Purple/gold themed with zoom animation
+  - Auto-fades after 2.5 seconds
+
 ## v0.3.54 - Platform Detection Fix for Video Backgrounds (2025-11-30)
 - **Fixed Platform Detection Not Working with Video Backgrounds:**
   - `onloadeddata` event fires before video frame is actually rendered
