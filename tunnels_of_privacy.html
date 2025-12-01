@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.3.39</title>
+    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.3.43</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -924,6 +924,27 @@
         #exploreLevelBtn .btnText {
             position: relative;
             z-index: 2;
+        }
+        
+        /* Level Store Button - Unlocked State */
+        #levelStoreBtn.unlocked {
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.4), rgba(39, 174, 96, 0.3));
+            border-color: #27AE60;
+            box-shadow: 0 0 15px rgba(39, 174, 96, 0.5);
+            cursor: pointer;
+            opacity: 1;
+        }
+        
+        #levelStoreBtn.unlocked:hover {
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.6), rgba(39, 174, 96, 0.5));
+            border-color: #2ECC71;
+            box-shadow: 0 5px 20px rgba(39, 174, 96, 0.6);
+            transform: translateY(-2px);
+        }
+        
+        #levelStoreBtn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
         
         .portalButton {
@@ -1858,7 +1879,9 @@
                     <div class="loadingBar" id="exploreLoadingBar"></div>
                     <span class="btnText">EXPLORE LEVEL</span>
                 </button>
-                <button class="menuButton comingSoon" id="levelStoreBtn" disabled>ENTER LEVEL STORE<br><span style="font-size: 12px; font-weight: 400;">(If Found)</span></button>
+                <button class="menuButton" id="levelStoreBtn" onclick="enterLevelStore()" disabled>
+                    <span id="levelStoreBtnText">ENTER LEVEL STORE<br><span style="font-size: 12px; font-weight: 400;">(Not Found)</span></span>
+                </button>
                 <button class="menuButton">INVENTORY</button>
                 <button class="menuButton" id="campBtn" onclick="openCampPanel()">🏕️ CAMP</button>
                 <button class="menuButton" id="dungeonMastersBtn" onclick="toggleDungeonMasters()" style="background: linear-gradient(135deg, rgba(139, 69, 255, 0.4), rgba(75, 0, 130, 0.4));">🎲 DUNGEON MASTERS</button>
@@ -1961,7 +1984,7 @@
         <!-- Camping Screen -->
         <div id="campingScreen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 500; background: #000;">
             <!-- Video Background -->
-            <video id="campVideo" autoplay loop playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1;">
+            <video id="campVideo" loop playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1;">
                 <source src="" type="video/mp4">
             </video>
             
@@ -2007,7 +2030,7 @@
         <!-- Battle Screen -->
         <div id="battleScreen">
             <!-- Video Background (behind canvas) -->
-            <video id="battleBackgroundVideo" autoplay loop muted playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; display: none;">
+            <video id="battleBackgroundVideo" loop muted playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; display: none;">
                 <source src="" type="video/mp4">
             </video>
             <canvas id="battleCanvas"></canvas>
@@ -2154,7 +2177,7 @@
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.3.39 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.3.43 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div id="aboutDonateBtn" style="
@@ -2262,6 +2285,68 @@
         <button class="menuButton" id="resyncBtn" onclick="requestResync()" style="display: none; background: linear-gradient(135deg, rgba(155, 89, 182, 0.4), rgba(155, 89, 182, 0.3)); border-color: #9B59B6;">🔄 RESYNC FROM HOST<span style="display: inline-block; width: 26px; height: 26px; background: #9B59B6; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">↻</span></button>
         <button class="menuButton" id="hostControlsBtn" onclick="showHostControls()" style="display: none; background: linear-gradient(135deg, rgba(42, 157, 143, 0.4), rgba(42, 157, 143, 0.3)); border-color: #2A9D8F;">HOST CONTROLS<span style="display: inline-block; width: 26px; height: 26px; background: #2A9D8F; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">🎮</span></button>
         <button class="menuButton" onclick="quitToMenu()">QUIT TO MENU<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 10px; font-weight: bold; color: white; font-size: 12px;">◀</span></button>
+    </div>
+    
+    <!-- Non-Combat Room Screen (Store, NPC, Secret, Exploration) -->
+    <div id="nonCombatRoomScreen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #16213e 100%); z-index: 50;">
+        <!-- Room Background -->
+        <div id="nonCombatBackground" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; opacity: 0.3;"></div>
+        
+        <!-- Room Content Container -->
+        <div style="position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 40px;">
+            
+            <!-- Room Type Header -->
+            <div id="nonCombatRoomHeader" style="text-align: center; margin-bottom: 30px;">
+                <div id="nonCombatRoomIcon" style="font-size: 64px; margin-bottom: 10px;">🏪</div>
+                <div id="nonCombatRoomTitle" style="color: #F2C94C; font-size: 32px; font-weight: 900; text-shadow: 0 0 20px rgba(242, 201, 76, 0.5);">STORE</div>
+                <div id="nonCombatRoomSubtitle" style="color: #89A0B4; font-size: 16px; margin-top: 5px;">A merchant awaits...</div>
+            </div>
+            
+            <!-- Room Content Area -->
+            <div id="nonCombatRoomContent" style="background: rgba(0,0,0,0.7); border: 3px solid #8B45FF; border-radius: 15px; padding: 30px; max-width: 800px; width: 90%; max-height: 50vh; overflow-y: auto; backdrop-filter: blur(10px);">
+                <!-- Content populated dynamically based on room type -->
+                <div id="storeContent" style="display: none;">
+                    <div id="merchantGreeting" style="color: #F2C94C; font-size: 18px; text-align: center; margin-bottom: 20px; font-style: italic;">"Welcome, traveler!"</div>
+                    <div id="storeItems" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <!-- Store items populated dynamically -->
+                    </div>
+                </div>
+                
+                <div id="npcContent" style="display: none;">
+                    <div id="npcName" style="color: #3498DB; font-size: 24px; font-weight: bold; text-align: center; margin-bottom: 10px;">NPC Name</div>
+                    <div id="npcDialogue" style="color: #E0E0E0; font-size: 16px; text-align: center; margin-bottom: 20px; line-height: 1.6;">"Hello there!"</div>
+                    <div id="npcService" style="text-align: center;">
+                        <button class="menuButton" id="npcServiceBtn" onclick="useNPCService()" style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.4), rgba(52, 152, 219, 0.3)); border-color: #3498DB;">Accept Service</button>
+                    </div>
+                </div>
+                
+                <div id="secretContent" style="display: none;">
+                    <div id="secretDescription" style="color: #F1C40F; font-size: 18px; text-align: center; margin-bottom: 20px;">You found something!</div>
+                    <div id="secretReward" style="text-align: center; padding: 20px; background: rgba(241, 196, 15, 0.2); border-radius: 10px; border: 2px solid #F1C40F;">
+                        <div style="font-size: 48px; margin-bottom: 10px;">✨</div>
+                        <div id="secretRewardText" style="color: #F1C40F; font-size: 20px; font-weight: bold;">Reward!</div>
+                    </div>
+                </div>
+                
+                <div id="explorationContent" style="display: none;">
+                    <div id="explorationDescription" style="color: #9B59B6; font-size: 18px; text-align: center; margin-bottom: 20px;">An interesting discovery...</div>
+                    <div id="explorationChallenge" style="text-align: center; padding: 20px; background: rgba(155, 89, 182, 0.2); border-radius: 10px; border: 2px solid #9B59B6;">
+                        <div id="explorationChallengeText" style="color: #E0E0E0; font-size: 16px;">Complete the challenge!</div>
+                        <button class="menuButton" id="explorationActionBtn" onclick="completeExploration()" style="margin-top: 15px; background: linear-gradient(135deg, rgba(155, 89, 182, 0.4), rgba(155, 89, 182, 0.3)); border-color: #9B59B6;">Attempt</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Leave Button -->
+            <div style="margin-top: 30px;">
+                <button class="menuButton" id="nonCombatLeaveBtn" onclick="leaveNonCombatRoom()" style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.4), rgba(231, 76, 60, 0.3)); border-color: #E74C3C; font-size: 18px; padding: 15px 40px;">
+                    🚪 LEAVE ROOM
+                </button>
+                <div id="nonCombatWaitingMsg" style="display: none; color: #F39C12; font-size: 14px; margin-top: 10px; text-align: center;">
+                    ⏳ Waiting for host to leave...
+                </div>
+            </div>
+        </div>
     </div>
     
     <!-- Hero Selection Modal (Multiplayer) -->
@@ -2586,7 +2671,7 @@
         <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         
         <div style="display: block; width: 100%; margin-top: 15px; padding: 10px 0; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A7A8F; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-            Tunnels of Privacy v0.3.39
+            Tunnels of Privacy v0.3.43
         </div>
     </div>
     
@@ -2680,7 +2765,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.3.39';
+        const GAME_VERSION = 'v0.3.43';
         
         // ===== HACKATHON INFO TOOLTIP SYSTEM =====
         const TOOLTIP_DELAY = 800; // ms before tooltip appears
@@ -3788,6 +3873,9 @@
                 // Update level progress max rooms display
                 levelProgress.roomsMax = currentLevelLayout.totalRooms;
                 updateLevelProgressDisplay();
+                
+                // Update store button state based on whether store is found
+                updateStoreButtonState();
                 
             } catch (e) {
                 console.error('[LevelLayout] Error loading/generating:', e);
@@ -6347,6 +6435,422 @@
         
         // ===== END ROOM TYPE GENERATION FUNCTIONS =====
         
+        // ===== NON-COMBAT ROOM SYSTEM =====
+        
+        // State for non-combat rooms
+        let nonCombatRoomState = {
+            active: false,
+            roomType: null,
+            data: null
+        };
+        
+        // Enter a non-combat room (store, NPC, secret, exploration)
+        function enterNonCombatRoom(roomType) {
+            console.log('[NonCombat] Entering room type:', roomType);
+            
+            nonCombatRoomState.active = true;
+            nonCombatRoomState.roomType = roomType;
+            nonCombatRoomState.data = preGeneratedEncounter;
+            
+            // Stop dungeon menu animation
+            stopDungeonMenuAnimation();
+            
+            // Hide dungeon menu, show non-combat room
+            currentScreen = 'nonCombatRoom';
+            document.getElementById('dungeonMenuScreen').style.display = 'none';
+            document.getElementById('nonCombatRoomScreen').style.display = 'block';
+            
+            // Move music controls
+            document.getElementById('musicControls').classList.add('battleActive');
+            document.getElementById('musicTicker').classList.add('battleActive');
+            
+            // Set background
+            if (preGeneratedEncounter.background) {
+                document.getElementById('nonCombatBackground').style.backgroundImage = 
+                    `url('tunnelsofprivacy/backgrounds/${preGeneratedEncounter.background}')`;
+            }
+            
+            // Configure room display based on type
+            const roomConfigs = {
+                'store': { icon: '🏪', title: 'MERCHANT\'S SHOP', subtitle: 'Browse the wares...', color: '#27AE60' },
+                'npc': { icon: '👤', title: 'FRIENDLY ENCOUNTER', subtitle: 'Someone approaches...', color: '#3498DB' },
+                'secret': { icon: '✨', title: 'SECRET ROOM', subtitle: 'You found something hidden!', color: '#F1C40F' },
+                'exploration': { icon: '🔍', title: 'EXPLORATION', subtitle: 'An interesting discovery...', color: '#9B59B6' }
+            };
+            
+            const config = roomConfigs[roomType] || roomConfigs['exploration'];
+            document.getElementById('nonCombatRoomIcon').textContent = config.icon;
+            document.getElementById('nonCombatRoomTitle').textContent = config.title;
+            document.getElementById('nonCombatRoomTitle').style.color = config.color;
+            document.getElementById('nonCombatRoomSubtitle').textContent = config.subtitle;
+            
+            // Hide all content sections first
+            document.getElementById('storeContent').style.display = 'none';
+            document.getElementById('npcContent').style.display = 'none';
+            document.getElementById('secretContent').style.display = 'none';
+            document.getElementById('explorationContent').style.display = 'none';
+            
+            // Show appropriate content
+            switch (roomType) {
+                case 'store':
+                    populateStoreContent();
+                    document.getElementById('storeContent').style.display = 'block';
+                    break;
+                case 'npc':
+                    populateNPCContent();
+                    document.getElementById('npcContent').style.display = 'block';
+                    break;
+                case 'secret':
+                    populateSecretContent();
+                    document.getElementById('secretContent').style.display = 'block';
+                    break;
+                case 'exploration':
+                    populateExplorationContent();
+                    document.getElementById('explorationContent').style.display = 'block';
+                    break;
+            }
+            
+            // Handle multiplayer - client sees waiting message if not host
+            if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                document.getElementById('nonCombatLeaveBtn').style.opacity = '0.5';
+            } else {
+                document.getElementById('nonCombatLeaveBtn').style.opacity = '1';
+            }
+            document.getElementById('nonCombatWaitingMsg').style.display = 'none';
+            
+            // Broadcast to clients in multiplayer
+            if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                sendWebSocketMessage({
+                    type: 'non_combat_room',
+                    action: 'enter',
+                    roomType: roomType,
+                    data: {
+                        storeData: preGeneratedEncounter.storeData,
+                        npcData: preGeneratedEncounter.npcData,
+                        secretData: preGeneratedEncounter.secretData,
+                        explorationData: preGeneratedEncounter.explorationData,
+                        background: preGeneratedEncounter.background
+                    }
+                });
+            }
+        }
+        
+        // Populate store content
+        function populateStoreContent() {
+            const storeData = preGeneratedEncounter.storeData;
+            if (!storeData) return;
+            
+            document.getElementById('merchantGreeting').textContent = `"${storeData.greeting}"`;
+            
+            const itemsContainer = document.getElementById('storeItems');
+            itemsContainer.innerHTML = '';
+            
+            storeData.items.forEach((item, index) => {
+                const itemEl = document.createElement('div');
+                itemEl.style.cssText = 'background: rgba(39, 174, 96, 0.2); border: 2px solid #27AE60; border-radius: 10px; padding: 15px; text-align: center;';
+                itemEl.innerHTML = `
+                    <div style="font-size: 24px; margin-bottom: 5px;">🧪</div>
+                    <div style="color: #27AE60; font-weight: bold; font-size: 14px;">${item.name}</div>
+                    <div style="color: #FFD700; font-size: 16px; margin: 5px 0;">💰 ${item.price}</div>
+                    <div style="color: #89A0B4; font-size: 12px;">Qty: ${item.quantity}</div>
+                    <button onclick="buyItem(${index})" style="margin-top: 10px; padding: 5px 15px; background: #27AE60; border: none; border-radius: 5px; color: white; cursor: pointer; font-weight: bold;">BUY</button>
+                `;
+                itemsContainer.appendChild(itemEl);
+            });
+        }
+        
+        // Populate NPC content
+        function populateNPCContent() {
+            const npcData = preGeneratedEncounter.npcData;
+            if (!npcData) return;
+            
+            document.getElementById('npcName').textContent = npcData.name;
+            document.getElementById('npcDialogue').textContent = `"${npcData.dialogue}"`;
+            
+            const serviceBtn = document.getElementById('npcServiceBtn');
+            serviceBtn.textContent = npcData.service?.description || 'Talk';
+        }
+        
+        // Populate secret room content
+        function populateSecretContent() {
+            const secretData = preGeneratedEncounter.secretData;
+            if (!secretData) return;
+            
+            document.getElementById('secretDescription').textContent = secretData.description;
+            
+            let rewardText = '';
+            if (secretData.reward.gold) rewardText += `💰 ${secretData.reward.gold} Gold\n`;
+            if (secretData.reward.xp) rewardText += `⭐ ${secretData.reward.xp} XP\n`;
+            if (secretData.reward.item) rewardText += `🎁 ${secretData.reward.item}\n`;
+            if (secretData.reward.lore) rewardText += `📜 ${secretData.reward.lore}`;
+            
+            document.getElementById('secretRewardText').textContent = rewardText || 'Mystery reward!';
+        }
+        
+        // Populate exploration content
+        function populateExplorationContent() {
+            const explorationData = preGeneratedEncounter.explorationData;
+            if (!explorationData) return;
+            
+            document.getElementById('explorationDescription').textContent = explorationData.challenge?.description || 'An interesting discovery...';
+            document.getElementById('explorationChallengeText').textContent = 
+                `Difficulty: ${explorationData.challenge?.difficulty || 1}`;
+        }
+        
+        // Buy an item from the store
+        function buyItem(itemIndex) {
+            const storeData = preGeneratedEncounter.storeData;
+            if (!storeData || !storeData.items[itemIndex]) return;
+            
+            const item = storeData.items[itemIndex];
+            const sharedSave = loadSharedSave();
+            
+            if (!sharedSave.dungeonState) sharedSave.dungeonState = {};
+            const currentGold = sharedSave.dungeonState.gold || 0;
+            
+            if (currentGold < item.price) {
+                showNotification('Not enough gold!', 'error');
+                return;
+            }
+            
+            // Deduct gold
+            sharedSave.dungeonState.gold = currentGold - item.price;
+            
+            // Add to inventory (simplified - just track consumables)
+            if (!sharedSave.dungeonState.inventory) sharedSave.dungeonState.inventory = [];
+            sharedSave.dungeonState.inventory.push({ ...item, quantity: 1 });
+            
+            saveSharedSave(sharedSave);
+            updateGoldDisplay();
+            
+            // Reduce item quantity
+            item.quantity--;
+            if (item.quantity <= 0) {
+                storeData.items.splice(itemIndex, 1);
+            }
+            
+            // Refresh display
+            populateStoreContent();
+            showNotification(`Bought ${item.name}!`, 'success');
+        }
+        
+        // Use NPC service
+        function useNPCService() {
+            const npcData = preGeneratedEncounter.npcData;
+            if (!npcData || !npcData.service) return;
+            
+            const sharedSave = loadSharedSave();
+            
+            switch (npcData.service.type) {
+                case 'heal':
+                    // Heal all heroes
+                    const healAmount = npcData.service.value || 25;
+                    ['zooko', 'nate', 'zancas', 'cyberaxe'].forEach(heroKey => {
+                        if (sharedSave.heroes[heroKey]) {
+                            sharedSave.heroes[heroKey].hp = Math.min(
+                                sharedSave.heroes[heroKey].maxHp,
+                                sharedSave.heroes[heroKey].hp + healAmount
+                            );
+                        }
+                    });
+                    showNotification(`Healed all heroes for ${healAmount} HP!`, 'success');
+                    break;
+                case 'hint':
+                    showNotification('The NPC shares valuable combat tips!', 'info');
+                    break;
+                case 'lore':
+                    showNotification('The NPC reveals ancient secrets...', 'info');
+                    break;
+                case 'reveal':
+                    showNotification('The NPC shows you the way forward!', 'info');
+                    break;
+                default:
+                    showNotification('Thanks for chatting!', 'info');
+            }
+            
+            saveSharedSave(sharedSave);
+            
+            // Disable button after use
+            document.getElementById('npcServiceBtn').disabled = true;
+            document.getElementById('npcServiceBtn').style.opacity = '0.5';
+        }
+        
+        // Complete exploration challenge
+        function completeExploration() {
+            const explorationData = preGeneratedEncounter.explorationData;
+            if (!explorationData) return;
+            
+            const sharedSave = loadSharedSave();
+            
+            // Award XP
+            const xpReward = explorationData.reward?.xp || 50;
+            ['zooko', 'nate', 'zancas', 'cyberaxe'].forEach(heroKey => {
+                if (sharedSave.heroes[heroKey]) {
+                    sharedSave.heroes[heroKey].xp += Math.floor(xpReward / 4);
+                }
+            });
+            
+            saveSharedSave(sharedSave);
+            showNotification(`Exploration complete! Gained ${xpReward} XP!`, 'success');
+            
+            // Disable button after completion
+            document.getElementById('explorationActionBtn').disabled = true;
+            document.getElementById('explorationActionBtn').style.opacity = '0.5';
+        }
+        
+        // Leave non-combat room
+        function leaveNonCombatRoom() {
+            console.log('[NonCombat] Leaving room');
+            
+            // In multiplayer, clients wait for host
+            if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                document.getElementById('nonCombatWaitingMsg').style.display = 'block';
+                return;
+            }
+            
+            // Host or single player - actually leave
+            executeLeaveNonCombatRoom();
+            
+            // Broadcast to clients in multiplayer
+            if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                sendWebSocketMessage({
+                    type: 'non_combat_room',
+                    action: 'leave'
+                });
+            }
+        }
+        
+        // Actually execute leaving the non-combat room
+        function executeLeaveNonCombatRoom() {
+            // If leaving a store, mark it as found and save store data for revisiting
+            if (nonCombatRoomState.roomType === 'store' && currentLevelLayout) {
+                if (!currentLevelLayout.storeFound) {
+                    currentLevelLayout.storeFound = true;
+                    // Save the store data so player can revisit
+                    currentLevelLayout.discoveredStoreData = {
+                        merchantName: nonCombatRoomState.data?.storeData?.merchantName,
+                        items: nonCombatRoomState.data?.storeData?.items || [],
+                        greeting: nonCombatRoomState.data?.storeData?.greeting
+                    };
+                    saveLevelLayout();
+                    console.log('[Store] Store discovered and saved for level', currentLevelLayout.level);
+                }
+                // Update the store button on dungeon menu
+                updateStoreButtonState();
+            }
+            
+            // Save game state
+            const sharedSave = loadSharedSave();
+            if (sharedSave) {
+                sharedSave.lastPlayed = Date.now();
+                saveSharedSave(sharedSave);
+            }
+            
+            // Reset state
+            nonCombatRoomState.active = false;
+            nonCombatRoomState.roomType = null;
+            nonCombatRoomState.data = null;
+            
+            // Switch screens
+            currentScreen = 'dungeonMenu';
+            document.getElementById('nonCombatRoomScreen').style.display = 'none';
+            document.getElementById('dungeonMenuScreen').style.display = 'block';
+            
+            // Move music controls back
+            document.getElementById('musicControls').classList.remove('battleActive');
+            document.getElementById('musicControls').classList.add('dungeonMenuActive');
+            document.getElementById('musicTicker').classList.remove('battleActive');
+            document.getElementById('musicTicker').classList.add('dungeonMenuActive');
+            
+            // Update dungeon menu displays
+            updateDungeonMenuHeroes();
+            updateGoldDisplay();
+            
+            // Hide waiting message
+            document.getElementById('nonCombatWaitingMsg').style.display = 'none';
+            
+            // Reset pre-generated encounter and start generating next
+            resetPreGeneratedEncounter();
+            preGenerateNextEncounter();
+            
+            // Update level progress
+            levelProgress.roomsExplored++;
+            updateLevelProgressDisplay();
+            saveLevelProgress();
+        }
+        
+        // Client enters non-combat room (from host message)
+        function clientEnterNonCombatRoom(roomType, data) {
+            console.log('[NonCombat] Client entering room:', roomType);
+            
+            // Set up the encounter data from host
+            preGeneratedEncounter.roomType = roomType;
+            preGeneratedEncounter.storeData = data.storeData;
+            preGeneratedEncounter.npcData = data.npcData;
+            preGeneratedEncounter.secretData = data.secretData;
+            preGeneratedEncounter.explorationData = data.explorationData;
+            preGeneratedEncounter.background = data.background;
+            
+            // Enter the room
+            enterNonCombatRoom(roomType);
+        }
+        
+        // ===== END NON-COMBAT ROOM SYSTEM =====
+        
+        // ===== LEVEL STORE SYSTEM =====
+        
+        // Enter the level store from dungeon menu (revisiting a discovered store)
+        function enterLevelStore() {
+            // Check if store was actually found
+            if (!currentLevelLayout || !currentLevelLayout.storeFound) {
+                showNotification('Store not yet discovered on this level!', 'error');
+                return;
+            }
+            
+            // Check if we have saved store data
+            if (!currentLevelLayout.discoveredStoreData) {
+                showNotification('Store data not available!', 'error');
+                return;
+            }
+            
+            console.log('[Store] Revisiting level store');
+            
+            // Set up the preGeneratedEncounter with saved store data
+            preGeneratedEncounter.roomType = 'store';
+            preGeneratedEncounter.storeData = currentLevelLayout.discoveredStoreData;
+            preGeneratedEncounter.background = 'store_bg.jpg'; // Default store background
+            
+            // Enter the store room (enterNonCombatRoom handles multiplayer broadcast)
+            enterNonCombatRoom('store');
+        }
+        
+        // Update the store button state based on whether store is found
+        function updateStoreButtonState() {
+            const storeBtn = document.getElementById('levelStoreBtn');
+            const storeBtnText = document.getElementById('levelStoreBtnText');
+            
+            if (!storeBtn || !storeBtnText) return;
+            
+            if (currentLevelLayout && currentLevelLayout.storeFound && currentLevelLayout.discoveredStoreData) {
+                // Store was found - enable button
+                storeBtn.disabled = false;
+                storeBtn.classList.add('unlocked');
+                storeBtnText.innerHTML = 'ENTER LEVEL STORE<br><span style="font-size: 12px; font-weight: 400;">🛒 Store Available!</span>';
+            } else if (currentLevelLayout && currentLevelLayout.hasStore && !currentLevelLayout.storeFound) {
+                // Level has a store but not found yet
+                storeBtn.disabled = true;
+                storeBtn.classList.remove('unlocked');
+                storeBtnText.innerHTML = 'ENTER LEVEL STORE<br><span style="font-size: 12px; font-weight: 400;">(Not Found)</span>';
+            } else {
+                // No store on this level or no layout
+                storeBtn.disabled = true;
+                storeBtn.classList.remove('unlocked');
+                storeBtnText.innerHTML = 'ENTER LEVEL STORE<br><span style="font-size: 12px; font-weight: 400;">(None on Level)</span>';
+            }
+        }
+        
+        // ===== END LEVEL STORE SYSTEM =====
+        
         // Update the Next Room Preview UI
         function updateNextRoomPreview() {
             const nextRoomTypeEl = document.getElementById('nextRoomType');
@@ -6381,7 +6885,7 @@
         function updateLevelLayoutDisplay() {
             // Update the Rooms display to show actual room count from layout
             const roomsMaxEl = document.getElementById('dmRoomsMax');
-            if (roomsMaxEl && currentLevelLayout.generated) {
+            if (roomsMaxEl && currentLevelLayout && currentLevelLayout.generated) {
                 roomsMaxEl.textContent = currentLevelLayout.totalRooms;
             }
         }
@@ -7944,6 +8448,17 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 return;
             }
             
+            // Check room type - route to non-combat room if not a combat type
+            const roomType = preGeneratedEncounter.roomType || 'combat';
+            const nonCombatTypes = ['store', 'npc', 'secret', 'exploration'];
+            
+            if (nonCombatTypes.includes(roomType)) {
+                // This is a non-combat room - use the non-combat room system
+                enterNonCombatRoom(roomType);
+                return;
+            }
+            
+            // Combat room types: 'combat', 'boss', 'mini_boss'
             // Stop dungeon menu story background animation
             stopDungeonMenuAnimation();
             
@@ -11895,8 +12410,47 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
         // Preload images and audio into browser cache
         function preloadAssets() {
             const imageList = [
-                // Story intro background
+                // Story intro backgrounds (sprite sheets for dungeon menu animation)
                 'story/intro/intro_a.png',
+                'story/intro/intro_b.png',
+                'story/intro/intro_c.png',
+                'story/intro/intro_d.png',
+                'story/intro/intro_e.png',
+                'story/intro/intro_f.png',
+                // Story level backgrounds
+                'story/lvl1/story_lvl_1.png',
+                'story/lvl1/story_lvl_1_loop.png',
+                'story/lvl2/story_lvl_2.png',
+                'story/lvl2/story_lvl_2_idle.png',
+                'story/lvl3/story_lvl_3.png',
+                'story/lvl3/story_lvl_3_idle.png',
+                'story/lvl4/story_lvl_4.png',
+                'story/lvl4/story_lvl_4_idle.png',
+                'story/lvl5/story_lvl_5.png',
+                'story/lvl5/story_lvl_5_idle.png',
+                'story/lvl6/story_lvl_6.png',
+                'story/lvl6/story_lvl_6_idle.png',
+                'story/lvl7/story_lvl_7.png',
+                'story/lvl7/story_lvl_7_idle.png',
+                'story/lvl8/story_lvl_8.png',
+                'story/lvl8/story_lvl_8_idle.png',
+                'story/lvl9/story_lvl_9.png',
+                'story/lvl9/story_lvl_9_idle.png',
+                'story/lvl10/story_lvl_10.png',
+                'story/lvl10/story_lvl_10_idle.png',
+                // Story up (ascension) backgrounds
+                'story/up_1/story_up_1.png',
+                'story/up_1/story_up_1_idle.png',
+                'story/up_2/story_up_2.png',
+                'story/up_2/story_up_2_idle.png',
+                'story/up_3/story_up_3.png',
+                'story/up_3/story_up_3_idle.png',
+                'story/up_4/story_up_4.png',
+                'story/up_4/story_up_4_idle.png',
+                'story/up_5/story_up_5.png',
+                'story/up_5/story_up_5_idle.png',
+                // Story end
+                'story/end/end.png',
                 // Character head icons
                 'people/zooko_a_head_compressed.png',
                 'people/Nate_a_head_compressed.png',
@@ -11944,7 +12498,67 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 'tunnelsofprivacy/heros/cyberaxe_special_attack.png',
                 'tunnelsofprivacy/heros/cyberaxe_knockout.png',
                 'tunnelsofprivacy/heros/cyberaxe_hit.png',
-                'tunnelsofprivacy/heros/cyberaxe_def.png'
+                'tunnelsofprivacy/heros/cyberaxe_def.png',
+                // Battle backgrounds (lvl 1-10)
+                'tunnelsofprivacy/backgrounds/lvl1-10/backgrounds_lvl1 (8).png',
+                'tunnelsofprivacy/backgrounds/lvl1-10/backgrounds_lvl1 (10).png',
+                'tunnelsofprivacy/backgrounds/lvl1-10/backgrounds_lvl1 (12).png',
+                'tunnelsofprivacy/backgrounds/lvl1-10/backgrounds_lvl1 (14).png',
+                'tunnelsofprivacy/backgrounds/lvl1-10/backgrounds_lvl1 (15).png',
+                'tunnelsofprivacy/backgrounds/lvl1-10/backgrounds_lvl1 (16).png',
+                // Boss sprites (first 10 levels for initial preload)
+                'tunnelsofprivacy/bosses/lvl1/boss_lvl1.png',
+                'tunnelsofprivacy/bosses/lvl2/boss_lvl2.png',
+                'tunnelsofprivacy/bosses/lvl3/boss_lvl3.png',
+                'tunnelsofprivacy/bosses/lvl4/boss_lvl4.png',
+                'tunnelsofprivacy/bosses/lvl5/boss_lvl5.png',
+                'tunnelsofprivacy/bosses/lvl6/boss_lvl6.png',
+                'tunnelsofprivacy/bosses/lvl7/boss_lvl7.png',
+                'tunnelsofprivacy/bosses/lvl8/boss_lvl8.png',
+                'tunnelsofprivacy/bosses/lvl9/boss_lvl9.png',
+                'tunnelsofprivacy/bosses/lvl10/boss_lvl10.png',
+                // Captive/prisoner sprites
+                'tunnelsofprivacy/npcs/captives/prisoners (1).png',
+                'tunnelsofprivacy/npcs/captives/prisoners (2).png',
+                'tunnelsofprivacy/npcs/captives/prisoners (3).png',
+                'tunnelsofprivacy/npcs/captives/prisoners (4).png',
+                'tunnelsofprivacy/npcs/captives/prisoners (5).png',
+                'tunnelsofprivacy/npcs/captives/prisoners (6).png',
+                'tunnelsofprivacy/npcs/captives/prisoners (7).png',
+                'tunnelsofprivacy/npcs/captives/prisoners (8).png',
+                'tunnelsofprivacy/npcs/captives/prisoners (9).png',
+                'tunnelsofprivacy/npcs/captives/prisoners (10).png',
+                'tunnelsofprivacy/npcs/captives/prisoners (11).png',
+                'tunnelsofprivacy/npcs/captives/prisoners (12).png',
+                // Item sprites
+                'tunnelsofprivacy/items/healing_potions_a_cropped.png',
+                'tunnelsofprivacy/items/healing_potions_a_empty.png',
+                // Gear/backpack sprites
+                'tunnelsofprivacy/gear/zooko_backpack.png',
+                'tunnelsofprivacy/gear/nate_backpack.png',
+                'tunnelsofprivacy/gear/zancas_backpack.png',
+                'tunnelsofprivacy/gear/cyberaxe_backpack.png',
+                // Common mob sprites (basic enemies)
+                'tunnelsofprivacy/mobs/beetle1.png',
+                'tunnelsofprivacy/mobs/beetle2.png',
+                'tunnelsofprivacy/mobs/blob1.png',
+                'tunnelsofprivacy/mobs/blob2.png',
+                'tunnelsofprivacy/mobs/rat1.png',
+                'tunnelsofprivacy/mobs/spider1.png',
+                'tunnelsofprivacy/mobs/worm1.png',
+                'tunnelsofprivacy/mobs/mite1.png',
+                'tunnelsofprivacy/mobs/moth1.png',
+                'tunnelsofprivacy/mobs/moth2.png',
+                'tunnelsofprivacy/mobs/orb1.png',
+                'tunnelsofprivacy/mobs/gnawer1.png',
+                'tunnelsofprivacy/mobs/goblin1.png',
+                'tunnelsofprivacy/mobs/insect1.png',
+                'tunnelsofprivacy/mobs/creature1.png',
+                'tunnelsofprivacy/mobs/creature2.png',
+                'tunnelsofprivacy/mobs/creature3.png',
+                'tunnelsofprivacy/mobs/creature4.png',
+                'tunnelsofprivacy/mobs/creature5.png',
+                'tunnelsofprivacy/mobs/creature6.png'
             ];
             
             artTotal = imageList.length;
@@ -12343,6 +12957,21 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                             updateDungeonMenuHeroes();
                             updateGoldDisplay();
                         }, 2000);
+                    }
+                    break;
+                
+                case 'non_combat_room':
+                    // Host notifies about non-combat room (store, NPC, secret, exploration)
+                    if (multiplayerState.role === 'client') {
+                        if (data.action === 'enter') {
+                            // Client enters non-combat room with host's data
+                            clientEnterNonCombatRoom(data.roomType, data.data);
+                        } else if (data.action === 'leave') {
+                            // Host left - client follows immediately
+                            console.log('[MP] Host left non-combat room, following...');
+                            executeLeaveNonCombatRoom();
+                            showNotification('Party left the room', 'info');
+                        }
                     }
                     break;
                 
@@ -13018,11 +13647,16 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 multiplayerState.ws.close();
             }
             resetMultiplayerState();
-            document.getElementById('roomCodeDisplay').style.display = 'none';
-            document.getElementById('createRoomBtn').style.display = 'block';
-            document.getElementById('changeCodeBtn').style.display = 'none';
-            document.getElementById('stopHostingBtn').style.display = 'none';
-            document.getElementById('hostControlsBtn').style.display = 'none';
+            const roomCodeDisplay = document.getElementById('roomCodeDisplay');
+            const createRoomBtn = document.getElementById('createRoomBtn');
+            const changeCodeBtn = document.getElementById('changeCodeBtn');
+            const stopHostingBtn = document.getElementById('stopHostingBtn');
+            const hostControlsBtn = document.getElementById('hostControlsBtn');
+            if (roomCodeDisplay) roomCodeDisplay.style.display = 'none';
+            if (createRoomBtn) createRoomBtn.style.display = 'block';
+            if (changeCodeBtn) changeCodeBtn.style.display = 'none';
+            if (stopHostingBtn) stopHostingBtn.style.display = 'none';
+            if (hostControlsBtn) hostControlsBtn.style.display = 'none';
             showNotification('Stopped hosting', 'info');
         }
         

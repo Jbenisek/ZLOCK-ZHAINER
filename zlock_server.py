@@ -1467,10 +1467,11 @@ async def handle_websocket(websocket, path):
                         'type': 'error',
                         'message': 'Room not found - check code'
                     }))
-                elif len(rooms[room_code]['clients']) >= 3:
+                elif len(rooms[room_code]['clients']) >= 4:
+                    # Max 4 players total: 1 host + 3 clients
                     await websocket.send(json.dumps({
                         'type': 'error',
-                        'message': 'Room full - cannot join'
+                        'message': 'Room full (4/4 players) - cannot join'
                     }))
                 else:
                     player_id = id(websocket)
@@ -1781,6 +1782,16 @@ async def handle_websocket(websocket, path):
                     for client in rooms[client_room]['clients']:
                         await client.send(message)
                     print(f"[WS] Host sent battle_end to room {client_room}: {data.get('reason', 'unknown')}")
+            
+            # NON-COMBAT ROOM (host only - store, NPC, secret, exploration)
+            elif msg_type == 'non_combat_room':
+                if client_room and client_room in rooms and client_role == 'host':
+                    # Broadcast to all clients
+                    for client in rooms[client_room]['clients']:
+                        await client.send(message)
+                    action = data.get('action', 'unknown')
+                    room_type = data.get('roomType', 'unknown')
+                    print(f"[WS] Host sent non_combat_room to room {client_room}: {action} {room_type}")
             
             # LEVEL CHANGE (host only - stairs/fast travel)
             elif msg_type == 'level_change':

@@ -2,6 +2,134 @@
 
 # Changelog
 
+## v0.3.43 - Bug Fixes & Multiplayer 4-Player Support (2025-11-30)
+- **Multiplayer 4-Player Fix:**
+  - Fixed WebSocket server limiting rooms to 3 players instead of 4
+  - Changed `len(clients) >= 3` to `>= 4` in `zlock_server.py`
+  - Now properly supports 1 host + 3 clients = 4 players total
+
+- **stopHosting() Null Reference Fix:**
+  - Fixed `Cannot read properties of null (reading 'style')` error
+  - Added null checks for UI elements that may not exist
+  - Elements: `roomCodeDisplay`, `createRoomBtn`, `changeCodeBtn`, `stopHostingBtn`, `hostControlsBtn`
+
+- **updateLevelLayoutDisplay() Null Check:**
+  - Fixed `Cannot read properties of null (reading 'generated')` error
+  - Added null check for `currentLevelLayout` before accessing `.generated`
+
+## v0.3.42 - Asset Preload Expansion (2025-11-30)
+- **Comprehensive Asset Preloading:**
+  - Expanded `preloadAssets()` from ~50 images to ~150+ images
+  - All story sprite sheets now preloaded (intro, lvl1-10, up_1-5, end)
+  - Battle backgrounds preloaded (lvl1-10 folder)
+  - Boss sprites preloaded (levels 1-10 for initial load)
+  - Captive/prisoner sprites preloaded (all 12)
+  - Item sprites preloaded (healing potions)
+  - Gear/backpack sprites preloaded (all 4 heroes)
+  - Common mob sprites preloaded (20 basic enemies)
+
+- **Asset Categories Added:**
+  - Story intro: `intro_a.png` through `intro_f.png`
+  - Story levels: `story_lvl_1.png`, `story_lvl_1_loop.png`, etc. for lvl1-10
+  - Story ascension: `story_up_1.png`, `story_up_1_idle.png`, etc. for up_1-5
+  - Story end: `end.png`
+  - Battle BGs: 6 backgrounds from lvl1-10 folder
+  - Bosses: `boss_lvl1.png` through `boss_lvl10.png`
+  - Captives: `prisoners (1).png` through `prisoners (12).png`
+  - Items: `healing_potions_a_cropped.png`, `healing_potions_a_empty.png`
+  - Gear: All 4 hero backpacks
+  - Mobs: Basic enemies (beetles, blobs, rats, spiders, worms, moths, orbs, etc.)
+
+- **Video Preloading:** Not needed - story content uses PNG sprite sheets, not video files
+- **Music:** Already handled separately via audio preload system
+
+## v0.3.41 - Level Store Unlock System (2025-11-30)
+- **Level Store Button Unlock:**
+  - Store button on dungeon menu now tracks discovered stores
+  - When store room is first visited, marks `currentLevelLayout.storeFound = true`
+  - Saves `discoveredStoreData` (merchant, items, greeting) to level layout
+  - Button changes from "(Not Found)" to "🛒 Store Available!"
+  - Green highlight styling with glow effect when unlocked
+  - Button becomes clickable to revisit store anytime on that level
+
+- **Store Button States:**
+  - **Disabled + "(Not Found)"**: Level has store but hasn't been discovered yet
+  - **Disabled + "(None on Level)"**: Level doesn't have a store
+  - **Enabled + "🛒 Store Available!"**: Store found, green highlight, clickable
+
+- **enterLevelStore() Function:**
+  - Re-enters discovered store from dungeon menu
+  - Uses saved `discoveredStoreData` instead of regenerating
+  - Multiplayer sync - host broadcasts to clients
+  - Routes through existing `enterNonCombatRoom('store')` system
+
+- **updateStoreButtonState() Function:**
+  - Called when leaving store room (first discovery)
+  - Called when loading/generating level layout
+  - Updates button text, disabled state, and CSS classes
+
+- **Data Persistence:**
+  - Store data saved in `currentLevelLayout.discoveredStoreData`
+  - Persists in `sharedSave.dungeonState.levelLayouts[level]`
+  - Items remain the same when revisiting (inventory depletes as bought)
+
+## v0.3.40 - Non-Combat Room System (2025-11-30)
+- **Non-Combat Room Screen:**
+  - New dedicated screen for store, NPC, secret, and exploration rooms
+  - Separate from battle screen - no combat mechanics, simpler flow
+  - Visual design with room type icons, titles, and themed colors
+  - Background image from pre-generated encounter
+
+- **Room Type Routing:**
+  - `startBattle()` now checks `preGeneratedEncounter.roomType`
+  - Non-combat types (store, npc, secret, exploration) route to `enterNonCombatRoom()`
+  - Combat types (combat, boss, mini_boss) continue to battle system
+
+- **Store Room Implementation:**
+  - Browse merchant items with prices
+  - Buy items with gold (deducts from `dungeonState.gold`)
+  - Items added to `dungeonState.inventory`
+  - Quantity tracking - items disappear when sold out
+
+- **NPC Room Implementation:**
+  - Shows NPC name and dialogue
+  - Service button for NPC-specific action
+  - Healer NPCs restore HP to all heroes
+  - Other NPC types provide hints/lore/reveals
+
+- **Secret Room Implementation:**
+  - Displays secret type description
+  - Shows rewards (gold, XP, items, lore)
+  - Auto-awards on entering room
+
+- **Exploration Room Implementation:**
+  - Challenge description with difficulty
+  - "Attempt" button to complete
+  - Awards XP on completion
+
+- **Multiplayer Sync:**
+  - Host broadcasts `non_combat_room` message with action: 'enter' or 'leave'
+  - Clients receive room data and enter same room
+  - **When host leaves, clients follow immediately** - no waiting
+  - `executeLeaveNonCombatRoom()` shared function for both host and client exit
+
+- **Leave Flow (Fixed from v0.3.39):**
+  - Host clicks Leave → broadcasts 'leave' action → executes leave
+  - Client receives 'leave' → immediately executes leave (no waiting)
+  - Single player → direct leave
+
+- **WebSocket Server:**
+  - Added `non_combat_room` message handler in `zlock_server.py`
+  - Broadcasts enter/leave actions to all clients in room
+
+- **Technical Details:**
+  - `nonCombatRoomState` object tracks active room state
+  - `enterNonCombatRoom(roomType)` - sets up room and shows screen
+  - `leaveNonCombatRoom()` - host/single player leave trigger
+  - `executeLeaveNonCombatRoom()` - actual leave execution (saves game, updates UI)
+  - `clientEnterNonCombatRoom()` - client-specific entry from host message
+  - Room content populated by `populateStoreContent()`, `populateNPCContent()`, etc.
+
 ## v0.3.39 - Level Layout System (2025-11-30)
 - **Level Layout System:**
   - Each dungeon level now has a predetermined room structure
