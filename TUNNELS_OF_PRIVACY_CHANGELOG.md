@@ -2,6 +2,44 @@
 
 # Changelog
 
+## v0.3.61 - Dungeon Masters Menu & Gold Scaling (2025-12-01)
+- **Dungeon Masters Menu Redesign:**
+  - Combined Stairs/Fast Travel on one line for compact layout
+  - Combined Difficulty/Party Level on one line
+  - Added "Set Gold" input field with Apply button
+  - More space-efficient panel design
+
+- **Gold Scaling with Dungeon Level:**
+  - Gold drops now scale with dungeon depth
+  - Formula: baseGold × (1 + (dungeonLevel - 1) × 0.5)
+  - Level 1: 1.0× multiplier (base gold)
+  - Level 10: 5.5× multiplier
+  - Level 50: 25.5× multiplier
+  - Regular enemies: 5-25 base → scales up
+  - Bosses: 50-150 base → scales up
+
+- **Bug Fix:**
+  - Fixed ReferenceError when opening DM menu (partyGold undefined)
+  - Gold value now correctly read from localStorage shared save
+
+## v0.3.60 - Weapon Art Icons & UI Polish (2025-12-01)
+- **Custom Weapon Art Icons:**
+  - All 4 hero weapons now display custom artwork instead of emoji
+  - Zooko: zooko_staff.png (Triangle Staff)
+  - Nate: nate_zcash_zashi_walletpng.png (Zashi Wallet)
+  - Zancas: zancas_zingo_orb.png (Zingo Orb)
+  - CyberAxe: cyberaxe_axe.png (Axe of Creation)
+  - Icons display in dungeon menu, battle screen, store, and tooltips
+  - Enchantment glow uses CSS drop-shadow filter for proper image effects
+
+- **Store UI Cleanup:**
+  - Removed merchant greeting text to reduce screen height
+  - More compact store layout
+
+- **Multiplayer Bug Fix:**
+  - Fixed null reference error in hero selection UI
+  - Added null checks for .heroTakenLabel and .heroPlayerLabel elements
+
 ## v0.3.59 - Battle UI Polish & Tooltip Fixes (2025-12-01)
 - **Battle Hero Card Redesign:**
   - AC and Level now displayed as hexagon badges on right side of portrait
