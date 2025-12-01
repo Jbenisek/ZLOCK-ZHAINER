@@ -2,6 +2,18 @@
 
 # Changelog
 
+## v0.3.54 - Platform Detection Fix for Video Backgrounds (2025-11-30)
+- **Fixed Platform Detection Not Working with Video Backgrounds:**
+  - `onloadeddata` event fires before video frame is actually rendered
+  - Changed to use `onseeked` event after seeking to 0.1s to ensure frame exists
+  - Video frame now captures correctly with actual pixel data (was all black/0 brightness)
+  - Platform detection now finds 500+ valid platforms in video backgrounds
+
+- **Platform Detection Runs Once Per Battle:**
+  - Added `platformsDetected` flag to prevent multiple detection runs
+  - `onseeked` can fire multiple times during video playback - now ignored after first run
+  - Heroes/enemies no longer repositioned repeatedly during battle
+
 ## v0.3.53 - Multiplayer Fixes & UI Polish (2025-11-30)
 - **Fixed Party Level Update Not Syncing to Clients:**
   - Added `party_level_update` handler to `zlock_server.py`
