@@ -2,6 +2,39 @@
 
 # Changelog
 
+## v0.3.58 - Hero Signature Weapons & Equipment Shop (2025-12-01)
+- **Hero Signature Weapons:**
+  - Each hero now has a unique weapon that cannot be swapped (only upgraded/enchanted)
+  - Zooko: "Zooko's Triangle Staff" (DMG: 8, DEF: 2, CRIT: 5%)
+  - Nate: "Zashi Wallet" mobile device (DMG: 6, DEF: 4, CRIT: 8%)
+  - Zancas: "Zingo Orb" device (DMG: 7, DEF: 3, CRIT: 7%)
+  - CyberAxe: "Axe of Creation" (DMG: 10, DEF: 1, CRIT: 4%)
+
+- **Weapon Stats in Combat:**
+  - Weapon damage now added to all attack rolls (light/heavy/special)
+  - Weapon defense reduces incoming damage to heroes (min 1 damage)
+  - Weapon crit % chance for critical hits (double damage)
+  - Critical hits award bonus XP (5 instead of 2)
+  - Dice roll display shows weapon damage and critical hit indicator
+
+- **Equipment Shop (Store Redesign):**
+  - Store now has 3-column layout: Merchant | Inventory | Equipment Shop
+  - Equipment Shop allows upgrading weapons and adding enchantments
+  - 10 upgrade tiers: Iron, Steel, Mithril, Adamant, Dragon, Zcash, Shielded, Sapling, Orchard, Legendary
+  - Each tier adds +2 DMG, +1 DEF, +5% CRIT
+  - 13 enchantment effects with glowing colors (fire, lightning, ice, wind, shadow, holy, zcash)
+
+- **Weapon Tooltips:**
+  - Hovering over weapon slots shows detailed tooltip with stats
+  - Displays base stats + upgrade bonuses in green
+  - Shows enchantment effect with matching glow color
+  - Works in both inventory panel and store screen
+
+- **Visual Enhancements:**
+  - Weapon icons glow with enchantment color when enchanted
+  - Equipment cells show cursor pointer for interactivity
+  - Hero-colored borders on all equipment slots
+
 ## v0.3.57 - Hero Quadrant Inventory Layout (2025-12-01)
 - **Redesigned Inventory Grid Layout:**
   - 6x6 grid now divided into 4 hero quadrants (3x3 each)

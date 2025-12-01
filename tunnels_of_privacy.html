@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.3.57</title>
+    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.3.58</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -1853,6 +1853,9 @@
     <!-- Hackathon Info Tooltip -->
     <div id="infoTooltip"></div>
     
+    <!-- Weapon Tooltip (for equipment slots) -->
+    <div id="weaponTooltip" style="position: fixed; z-index: 10001; pointer-events: none; opacity: 0; transition: opacity 0.2s ease;"></div>
+    
     <!-- Loading Modal -->
     <div id="loadingModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); display: flex; align-items: center; justify-content: center; z-index: 10000;">
         <div style="background: linear-gradient(135deg, #1a2332 0%, #0d1218 100%); padding: 40px 60px; border-radius: 15px; border: 2px solid #8B45FF; box-shadow: 0 10px 50px rgba(139, 69, 255, 0.5); text-align: center; min-width: 500px;">
@@ -2332,7 +2335,7 @@
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.3.57 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.3.58 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div id="aboutDonateBtn" style="
@@ -2453,12 +2456,72 @@
             </div>
             
             <!-- Room Content Area -->
-            <div id="nonCombatRoomContent" style="background: rgba(0,0,0,0.7); border: 3px solid #8B45FF; border-radius: 15px; padding: 30px; max-width: 800px; width: 90%; max-height: 50vh; overflow-y: auto; backdrop-filter: blur(10px);">
+            <div id="nonCombatRoomContent" style="background: rgba(0,0,0,0.7); border: 3px solid #8B45FF; border-radius: 15px; padding: 30px; max-width: 1400px; width: 95%; max-height: 70vh; overflow-y: auto; backdrop-filter: blur(10px);">
                 <!-- Content populated dynamically based on room type -->
                 <div id="storeContent" style="display: none;">
                     <div id="merchantGreeting" style="color: #F2C94C; font-size: 18px; text-align: center; margin-bottom: 20px; font-style: italic;">"Welcome, traveler!"</div>
-                    <div id="storeItems" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                        <!-- Store items populated dynamically -->
+                    
+                    <!-- 3-Column Store Layout -->
+                    <div style="display: grid; grid-template-columns: 1fr 520px 1fr; gap: 20px; align-items: start;">
+                        
+                        <!-- LEFT: Merchant's Shop (Items) -->
+                        <div id="merchantShop" style="background: rgba(39, 174, 96, 0.15); border: 2px solid #27AE60; border-radius: 12px; padding: 15px;">
+                            <div style="color: #27AE60; font-size: 16px; font-weight: 900; text-align: center; margin-bottom: 12px; text-shadow: 0 0 10px rgba(39, 174, 96, 0.5);">🛒 MERCHANT'S WARES</div>
+                            <div id="storeItems" style="display: flex; flex-direction: column; gap: 10px; max-height: 400px; overflow-y: auto;">
+                                <!-- Store items populated dynamically -->
+                            </div>
+                        </div>
+                        
+                        <!-- CENTER: Party Inventory -->
+                        <div id="storeInventorySection" style="background: rgba(45, 156, 219, 0.15); border: 2px solid #2D9CDB; border-radius: 12px; padding: 15px;">
+                            <div style="color: #2D9CDB; font-size: 16px; font-weight: 900; text-align: center; margin-bottom: 8px; text-shadow: 0 0 10px rgba(45, 156, 219, 0.5);">📦 PARTY INVENTORY</div>
+                            <!-- Hero Legend -->
+                            <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 8px; font-size: 10px; font-family: 'JetBrains Mono', monospace;">
+                                <span style="color: #F2C94C;">● Zooko</span>
+                                <span style="color: #E74C3C;">● Nate</span>
+                                <span style="color: #27AE60;">● Zancas</span>
+                                <span style="color: #2E86DE;">● CyberAxe</span>
+                            </div>
+                            <div id="storeInventoryGrid" style="display: grid; grid-template-columns: 54px repeat(6, 54px) 54px; grid-template-rows: repeat(6, 54px); gap: 4px; justify-content: center;"></div>
+                        </div>
+                        
+                        <!-- RIGHT: Equipment Shop (Upgrades & Enchantments) -->
+                        <div id="equipmentShop" style="background: rgba(155, 89, 182, 0.15); border: 2px solid #9B59B6; border-radius: 12px; padding: 15px;">
+                            <div style="color: #9B59B6; font-size: 16px; font-weight: 900; text-align: center; margin-bottom: 12px; text-shadow: 0 0 10px rgba(155, 89, 182, 0.5);">⚒️ EQUIPMENT SHOP</div>
+                            
+                            <!-- Hero Selection for Equipment -->
+                            <div style="display: flex; gap: 5px; justify-content: center; margin-bottom: 12px;">
+                                <button class="equipHeroBtn" onclick="selectEquipHero('zooko')" data-hero="zooko" style="padding: 6px 12px; background: rgba(242, 201, 76, 0.3); border: 2px solid #F2C94C; border-radius: 6px; color: #F2C94C; cursor: pointer; font-size: 11px; font-weight: bold;">Zooko</button>
+                                <button class="equipHeroBtn" onclick="selectEquipHero('nate')" data-hero="nate" style="padding: 6px 12px; background: rgba(231, 76, 60, 0.2); border: 2px solid #E74C3C; border-radius: 6px; color: #E74C3C; cursor: pointer; font-size: 11px; font-weight: bold;">Nate</button>
+                                <button class="equipHeroBtn" onclick="selectEquipHero('zancas')" data-hero="zancas" style="padding: 6px 12px; background: rgba(39, 174, 96, 0.2); border: 2px solid #27AE60; border-radius: 6px; color: #27AE60; cursor: pointer; font-size: 11px; font-weight: bold;">Zancas</button>
+                                <button class="equipHeroBtn" onclick="selectEquipHero('cyberaxe')" data-hero="cyberaxe" style="padding: 6px 12px; background: rgba(46, 134, 222, 0.2); border: 2px solid #2E86DE; border-radius: 6px; color: #2E86DE; cursor: pointer; font-size: 11px; font-weight: bold;">CyberAxe</button>
+                            </div>
+                            
+                            <!-- Current Equipment Display -->
+                            <div id="currentEquipDisplay" style="background: rgba(0,0,0,0.4); border-radius: 8px; padding: 10px; margin-bottom: 12px;">
+                                <div id="equipHeroName" style="color: #F2C94C; font-size: 14px; font-weight: bold; text-align: center; margin-bottom: 8px;">Select a Hero</div>
+                                <div id="equipWeaponInfo" style="color: #E0E0E0; font-size: 12px; text-align: center;">
+                                    <div>Weapon: <span id="equipWeaponLevel" style="color: #9B59B6;">Lv 0</span></div>
+                                    <div>Enchant: <span id="equipEnchantName" style="color: #F39C12;">None</span></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Upgrade Section -->
+                            <div style="margin-bottom: 12px;">
+                                <div style="color: #9B59B6; font-size: 13px; font-weight: bold; margin-bottom: 6px;">⬆️ UPGRADES</div>
+                                <div id="upgradeOptions" style="display: flex; flex-direction: column; gap: 6px; max-height: 120px; overflow-y: auto;">
+                                    <!-- Upgrade options populated dynamically -->
+                                </div>
+                            </div>
+                            
+                            <!-- Enchantment Section -->
+                            <div>
+                                <div style="color: #F39C12; font-size: 13px; font-weight: bold; margin-bottom: 6px;">✨ ENCHANTMENTS</div>
+                                <div id="enchantOptions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; max-height: 150px; overflow-y: auto;">
+                                    <!-- Enchantment options populated dynamically -->
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
@@ -2858,7 +2921,7 @@
         <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         
         <div style="display: block; width: 100%; margin-top: 15px; padding: 10px 0; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A7A8F; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-            Tunnels of Privacy v0.3.57
+            Tunnels of Privacy v0.3.58
         </div>
     </div>
     
@@ -2952,7 +3015,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.3.57';
+        const GAME_VERSION = 'v0.3.58';
         
         // ===== HACKATHON INFO TOOLTIP SYSTEM =====
         const TOOLTIP_DELAY = 800; // ms before tooltip appears
@@ -5267,13 +5330,23 @@
                 const leftHero = row < 3 ? 'zooko' : 'zancas';
                 const leftSlotType = EQUIPMENT_SLOT_TYPES[row % 3];
                 const leftHeroColor = HERO_COLORS[leftHero];
-                const leftEquipped = heroEquipment[leftHero][leftSlotType];
                 
-                let leftContent = leftEquipped 
-                    ? `<img src="${leftEquipped.icon}" alt="${leftEquipped.name}" title="${leftEquipped.name}" style="width: 80%; height: 80%; object-fit: contain;">`
-                    : `<span class="slotIcon">${SLOT_ICONS[leftSlotType]}</span>`;
+                let leftContent, leftTitle;
+                if (leftSlotType === 'weapon') {
+                    // Show hero's signature weapon
+                    const weaponStats = getWeaponStats(leftHero);
+                    const enchantGlow = weaponStats.enchantment ? `; text-shadow: 0 0 10px ${weaponStats.enchantment.color}, 0 0 20px ${weaponStats.enchantment.color}` : '';
+                    leftContent = `<span style="font-size: 24px${enchantGlow}">${weaponStats.icon}</span>`;
+                    leftTitle = `${weaponStats.fullName} - DMG: ${weaponStats.damage} | DEF: ${weaponStats.defense} | CRIT: ${weaponStats.crit}%`;
+                } else {
+                    const leftEquipped = heroEquipment[leftHero][leftSlotType];
+                    leftContent = leftEquipped 
+                        ? `<img src="${leftEquipped.icon}" alt="${leftEquipped.name}" title="${leftEquipped.name}" style="width: 80%; height: 80%; object-fit: contain;">`
+                        : `<span class="slotIcon">${SLOT_ICONS[leftSlotType]}</span>`;
+                    leftTitle = `${leftHero} - ${leftSlotType}`;
+                }
                 
-                html += `<div class="equipmentCell" style="border-color: ${leftHeroColor}80; box-shadow: inset 0 0 12px ${leftHeroColor}30;" data-equip="${leftEquipSlotId}" title="${leftHero} - ${leftSlotType}">${leftContent}</div>`;
+                html += `<div class="equipmentCell" style="border-color: ${leftHeroColor}80; box-shadow: inset 0 0 12px ${leftHeroColor}30;" data-equip="${leftEquipSlotId}" data-hero="${leftHero}" data-slottype="${leftSlotType}" title="${leftTitle}">${leftContent}</div>`;
                 
                 // INVENTORY CELLS (6 per row)
                 for (let col = 0; col < 6; col++) {
@@ -5320,16 +5393,29 @@
                 const rightHero = row < 3 ? 'nate' : 'cyberaxe';
                 const rightSlotType = EQUIPMENT_SLOT_TYPES[row % 3];
                 const rightHeroColor = HERO_COLORS[rightHero];
-                const rightEquipped = heroEquipment[rightHero][rightSlotType];
                 
-                let rightContent = rightEquipped 
-                    ? `<img src="${rightEquipped.icon}" alt="${rightEquipped.name}" title="${rightEquipped.name}" style="width: 80%; height: 80%; object-fit: contain;">`
-                    : `<span class="slotIcon">${SLOT_ICONS[rightSlotType]}</span>`;
+                let rightContent, rightTitle;
+                if (rightSlotType === 'weapon') {
+                    // Show hero's signature weapon
+                    const weaponStats = getWeaponStats(rightHero);
+                    const enchantGlow = weaponStats.enchantment ? `; text-shadow: 0 0 10px ${weaponStats.enchantment.color}, 0 0 20px ${weaponStats.enchantment.color}` : '';
+                    rightContent = `<span style="font-size: 24px${enchantGlow}">${weaponStats.icon}</span>`;
+                    rightTitle = `${weaponStats.fullName} - DMG: ${weaponStats.damage} | DEF: ${weaponStats.defense} | CRIT: ${weaponStats.crit}%`;
+                } else {
+                    const rightEquipped = heroEquipment[rightHero][rightSlotType];
+                    rightContent = rightEquipped 
+                        ? `<img src="${rightEquipped.icon}" alt="${rightEquipped.name}" title="${rightEquipped.name}" style="width: 80%; height: 80%; object-fit: contain;">`
+                        : `<span class="slotIcon">${SLOT_ICONS[rightSlotType]}</span>`;
+                    rightTitle = `${rightHero} - ${rightSlotType}`;
+                }
                 
-                html += `<div class="equipmentCell" style="border-color: ${rightHeroColor}80; box-shadow: inset 0 0 12px ${rightHeroColor}30;" data-equip="${rightEquipSlotId}" title="${rightHero} - ${rightSlotType}">${rightContent}</div>`;
+                html += `<div class="equipmentCell" style="border-color: ${rightHeroColor}80; box-shadow: inset 0 0 12px ${rightHeroColor}30;" data-equip="${rightEquipSlotId}" data-hero="${rightHero}" data-slottype="${rightSlotType}" title="${rightTitle}">${rightContent}</div>`;
             }
             
             grid.innerHTML = html;
+            
+            // Add weapon tooltip event listeners
+            setupWeaponTooltips(grid);
             
             // Update level progress display
             const progressEl = document.getElementById('inventoryLevelProgress');
@@ -5343,6 +5429,542 @@
             }
         }
         
+        // Render inventory in store screen (same grid, different container)
+        function renderStoreInventoryGrid() {
+            const grid = document.getElementById('storeInventoryGrid');
+            if (!grid) return;
+            
+            const currentLevel = partyInventory.partyLevel;
+            const maxSlots = partyInventory.maxSlots;
+            
+            // Equipment slot icons
+            const SLOT_ICONS = { weapon: '⚔️', armor: '🛡️', accessory: '💍' };
+            
+            let html = '';
+            
+            // Render row by row (6 rows)
+            for (let row = 0; row < 6; row++) {
+                // LEFT EQUIPMENT SLOT
+                const leftEquipSlotId = -(row + 1);
+                const leftHero = row < 3 ? 'zooko' : 'zancas';
+                const leftSlotType = EQUIPMENT_SLOT_TYPES[row % 3];
+                const leftHeroColor = HERO_COLORS[leftHero];
+                
+                let leftContent, leftTitle;
+                if (leftSlotType === 'weapon') {
+                    // Show hero's signature weapon
+                    const weaponStats = getWeaponStats(leftHero);
+                    const enchantGlow = weaponStats.enchantment ? `; text-shadow: 0 0 10px ${weaponStats.enchantment.color}, 0 0 20px ${weaponStats.enchantment.color}` : '';
+                    leftContent = `<span style="font-size: 24px${enchantGlow}">${weaponStats.icon}</span>`;
+                    leftTitle = `${weaponStats.fullName} - DMG: ${weaponStats.damage} | DEF: ${weaponStats.defense} | CRIT: ${weaponStats.crit}%`;
+                } else {
+                    const leftEquipped = heroEquipment[leftHero][leftSlotType];
+                    leftContent = leftEquipped 
+                        ? `<img src="${leftEquipped.icon}" alt="${leftEquipped.name}" title="${leftEquipped.name}" style="width: 80%; height: 80%; object-fit: contain;">`
+                        : `<span style="font-size: 18px; opacity: 0.4;">${SLOT_ICONS[leftSlotType]}</span>`;
+                    leftTitle = `${leftHero} - ${leftSlotType}`;
+                }
+                
+                html += `<div class="equipmentCell" style="width: 54px; height: 54px; border-color: ${leftHeroColor}80; box-shadow: inset 0 0 12px ${leftHeroColor}30; display: flex; align-items: center; justify-content: center; background: linear-gradient(145deg, rgba(60, 60, 80, 0.4), rgba(40, 40, 60, 0.3)); border: 2px dashed rgba(150, 150, 180, 0.5); border-radius: 10px; cursor: pointer;" data-equip="${leftEquipSlotId}" data-hero="${leftHero}" data-slottype="${leftSlotType}" title="${leftTitle}">${leftContent}</div>`;
+                
+                // INVENTORY CELLS (6 per row)
+                for (let col = 0; col < 6; col++) {
+                    const gridPos = row * 6 + col;
+                    const item = partyInventory.items[gridPos];
+                    const isUnlocked = isSlotUnlocked(gridPos, maxSlots);
+                    const heroOwner = getSlotHeroOwner(gridPos);
+                    const heroColor = heroOwner ? HERO_COLORS[heroOwner] : null;
+                    const isPotionSlot = isHeroPotionSlot(gridPos);
+                    
+                    let cellStyle = 'width: 54px; height: 54px; display: flex; align-items: center; justify-content: center; border-radius: 8px; ';
+                    
+                    if (!isUnlocked) {
+                        cellStyle += `background: rgba(40, 40, 50, 0.4); border: 2px solid rgba(80, 80, 100, 0.3); opacity: 0.5;`;
+                    } else if (heroColor) {
+                        if (isPotionSlot) {
+                            cellStyle += `background: ${heroColor}30; border: 2px solid ${heroColor}; box-shadow: inset 0 0 15px ${heroColor}50;`;
+                        } else {
+                            cellStyle += `background: ${heroColor}15; border: 2px solid ${heroColor}80; box-shadow: inset 0 0 8px ${heroColor}25;`;
+                        }
+                    } else {
+                        cellStyle += `background: linear-gradient(135deg, rgba(45, 156, 219, 0.15), rgba(20, 80, 120, 0.2)); border: 2px solid rgba(45, 156, 219, 0.5);`;
+                    }
+                    
+                    let content = '';
+                    if (item) {
+                        content = `<img src="${item.icon}" alt="${item.name}" title="${item.name}" style="width: 80%; height: 80%; object-fit: contain;">`;
+                    } else if (!isUnlocked) {
+                        content = `<span style="font-size: 14px; opacity: 0.4;">🔒</span>`;
+                    }
+                    
+                    html += `<div style="${cellStyle}" data-slot="${gridPos}">${content}</div>`;
+                }
+                
+                // RIGHT EQUIPMENT SLOT
+                const rightEquipSlotId = 36 + row;
+                const rightHero = row < 3 ? 'nate' : 'cyberaxe';
+                const rightSlotType = EQUIPMENT_SLOT_TYPES[row % 3];
+                const rightHeroColor = HERO_COLORS[rightHero];
+                
+                let rightContent, rightTitle;
+                if (rightSlotType === 'weapon') {
+                    // Show hero's signature weapon
+                    const weaponStats = getWeaponStats(rightHero);
+                    const enchantGlow = weaponStats.enchantment ? `; text-shadow: 0 0 10px ${weaponStats.enchantment.color}, 0 0 20px ${weaponStats.enchantment.color}` : '';
+                    rightContent = `<span style="font-size: 24px${enchantGlow}">${weaponStats.icon}</span>`;
+                    rightTitle = `${weaponStats.fullName} - DMG: ${weaponStats.damage} | DEF: ${weaponStats.defense} | CRIT: ${weaponStats.crit}%`;
+                } else {
+                    const rightEquipped = heroEquipment[rightHero][rightSlotType];
+                    rightContent = rightEquipped 
+                        ? `<img src="${rightEquipped.icon}" alt="${rightEquipped.name}" title="${rightEquipped.name}" style="width: 80%; height: 80%; object-fit: contain;">`
+                        : `<span style="font-size: 18px; opacity: 0.4;">${SLOT_ICONS[rightSlotType]}</span>`;
+                    rightTitle = `${rightHero} - ${rightSlotType}`;
+                }
+                
+                html += `<div class="equipmentCell" style="width: 54px; height: 54px; border-color: ${rightHeroColor}80; box-shadow: inset 0 0 12px ${rightHeroColor}30; display: flex; align-items: center; justify-content: center; background: linear-gradient(145deg, rgba(60, 60, 80, 0.4), rgba(40, 40, 60, 0.3)); border: 2px dashed rgba(150, 150, 180, 0.5); border-radius: 10px; cursor: pointer;" data-equip="${rightEquipSlotId}" data-hero="${rightHero}" data-slottype="${rightSlotType}" title="${rightTitle}">${rightContent}</div>`;
+            }
+            
+            grid.innerHTML = html;
+            
+            // Add weapon tooltip event listeners
+            setupWeaponTooltips(grid);
+        }
+        
+        // Setup weapon tooltip hover events for equipment slots
+        function setupWeaponTooltips(container) {
+            const tooltip = document.getElementById('weaponTooltip');
+            if (!tooltip) return;
+            
+            container.querySelectorAll('.equipmentCell[data-slottype="weapon"]').forEach(cell => {
+                cell.addEventListener('mouseenter', (e) => {
+                    const heroName = cell.dataset.hero;
+                    if (!heroName) return;
+                    
+                    tooltip.innerHTML = getWeaponTooltipHTML(heroName);
+                    tooltip.style.opacity = '1';
+                    
+                    // Position tooltip
+                    const rect = cell.getBoundingClientRect();
+                    const tooltipWidth = 240;
+                    
+                    // Position to the right of the cell, or left if near right edge
+                    let left = rect.right + 10;
+                    if (left + tooltipWidth > window.innerWidth) {
+                        left = rect.left - tooltipWidth - 10;
+                    }
+                    
+                    tooltip.style.left = left + 'px';
+                    tooltip.style.top = (rect.top - 20) + 'px';
+                });
+                
+                cell.addEventListener('mouseleave', () => {
+                    tooltip.style.opacity = '0';
+                });
+            });
+        }
+        
+        // ============ EQUIPMENT SHOP SYSTEM ============
+        
+        // Equipment upgrade tiers (every 10 levels)
+        const EQUIPMENT_UPGRADES = [
+            { level: 10, name: 'Iron', statBonus: { str: 1, dex: 1 }, cost: 500 },
+            { level: 20, name: 'Steel', statBonus: { str: 2, dex: 2 }, cost: 1500 },
+            { level: 30, name: 'Mithril', statBonus: { str: 3, dex: 3, con: 1 }, cost: 3500 },
+            { level: 40, name: 'Adamant', statBonus: { str: 4, dex: 4, con: 2 }, cost: 7000 },
+            { level: 50, name: 'Dragon', statBonus: { str: 5, dex: 5, con: 3, int: 1 }, cost: 12000 },
+            { level: 60, name: 'Zcash', statBonus: { str: 6, dex: 6, con: 4, int: 2, wis: 1 }, cost: 20000 },
+            { level: 70, name: 'Shielded', statBonus: { str: 7, dex: 7, con: 5, int: 3, wis: 2 }, cost: 35000 },
+            { level: 80, name: 'Sapling', statBonus: { str: 8, dex: 8, con: 6, int: 4, wis: 3, cha: 1 }, cost: 55000 },
+            { level: 90, name: 'Orchard', statBonus: { str: 9, dex: 9, con: 7, int: 5, wis: 4, cha: 2 }, cost: 80000 },
+            { level: 100, name: 'Legendary', statBonus: { str: 10, dex: 10, con: 8, int: 6, wis: 5, cha: 3 }, cost: 150000 }
+        ];
+        
+        // Visual enchantments with effects
+        const ENCHANTMENTS = [
+            { id: 'fire_red', name: 'Red Fire', color: '#FF4500', effect: 'fire', cost: 300 },
+            { id: 'fire_purple', name: 'Purple Fire', color: '#9B59B6', effect: 'fire', cost: 500 },
+            { id: 'fire_blue', name: 'Blue Fire', color: '#3498DB', effect: 'fire', cost: 500 },
+            { id: 'fire_green', name: 'Green Fire', color: '#27AE60', effect: 'fire', cost: 500 },
+            { id: 'lightning_yellow', name: 'Lightning', color: '#F1C40F', effect: 'lightning', cost: 400 },
+            { id: 'lightning_blue', name: 'Arc Lightning', color: '#00BFFF', effect: 'lightning', cost: 600 },
+            { id: 'ice_blue', name: 'Frost', color: '#87CEEB', effect: 'ice', cost: 400 },
+            { id: 'ice_white', name: 'Blizzard', color: '#FFFFFF', effect: 'ice', cost: 600 },
+            { id: 'wind_green', name: 'Gale', color: '#98FB98', effect: 'wind', cost: 350 },
+            { id: 'wind_silver', name: 'Tempest', color: '#C0C0C0', effect: 'wind', cost: 550 },
+            { id: 'shadow_purple', name: 'Shadow', color: '#4B0082', effect: 'shadow', cost: 450 },
+            { id: 'holy_gold', name: 'Divine', color: '#FFD700', effect: 'holy', cost: 700 },
+            { id: 'zcash_orange', name: 'Zcash Glow', color: '#F4B728', effect: 'zcash', cost: 1000 }
+        ];
+        
+        // Hero signature weapons (static, cannot be changed - only upgraded/enchanted)
+        const HERO_WEAPONS = {
+            zooko: {
+                name: "Zooko's Triangle Staff",
+                icon: '🔺', // Placeholder - will use image later
+                description: "A mystical staff channeling the power of cryptographic triangles.",
+                baseDamage: 8,
+                baseDefense: 2,
+                baseCrit: 5
+            },
+            nate: {
+                name: "Zashi Wallet",
+                icon: '📱', // Placeholder - will use image later
+                description: "A powerful mobile device running Zashi - the shielded Zcash wallet.",
+                baseDamage: 6,
+                baseDefense: 4,
+                baseCrit: 8
+            },
+            zancas: {
+                name: "Zingo Orb",
+                icon: '🔮', // Placeholder - will use image later
+                description: "An orb device powered by Zingo wallet technology.",
+                baseDamage: 7,
+                baseDefense: 3,
+                baseCrit: 7
+            },
+            cyberaxe: {
+                name: "Axe of Creation",
+                icon: '🪓', // Placeholder - will use image later
+                description: "The legendary CyberAxe - forged in the fires of innovation.",
+                baseDamage: 10,
+                baseDefense: 1,
+                baseCrit: 4
+            }
+        };
+        
+        // Get weapon stats including upgrades and enchantment
+        function getWeaponStats(heroName) {
+            const baseWeapon = HERO_WEAPONS[heroName];
+            const weaponState = heroWeapons[heroName];
+            if (!baseWeapon) return null;
+            
+            // Calculate upgrade bonuses
+            let upgradeDamage = 0;
+            let upgradeDefense = 0;
+            let upgradeCrit = 0;
+            let upgradeName = '';
+            
+            if (weaponState.upgradeLevel > 0) {
+                const upgradeIndex = weaponState.upgradeLevel - 1;
+                if (upgradeIndex < EQUIPMENT_UPGRADES.length) {
+                    const upgrade = EQUIPMENT_UPGRADES[upgradeIndex];
+                    upgradeName = upgrade.name;
+                    // Each upgrade tier adds +2 damage, +1 defense, +5% crit
+                    upgradeDamage = weaponState.upgradeLevel * 2;
+                    upgradeDefense = weaponState.upgradeLevel;
+                    upgradeCrit = weaponState.upgradeLevel * 5;
+                }
+            }
+            
+            // Get enchantment info
+            let enchantment = null;
+            if (weaponState.enchantment) {
+                enchantment = ENCHANTMENTS.find(e => e.id === weaponState.enchantment);
+            }
+            
+            return {
+                name: baseWeapon.name,
+                fullName: upgradeName ? `${upgradeName} ${baseWeapon.name}` : baseWeapon.name,
+                icon: baseWeapon.icon,
+                description: baseWeapon.description,
+                damage: baseWeapon.baseDamage + upgradeDamage,
+                defense: baseWeapon.baseDefense + upgradeDefense,
+                crit: baseWeapon.baseCrit + upgradeCrit,
+                baseDamage: baseWeapon.baseDamage,
+                baseDefense: baseWeapon.baseDefense,
+                baseCrit: baseWeapon.baseCrit,
+                upgradeDamage,
+                upgradeDefense,
+                upgradeCrit,
+                upgradeTier: upgradeName,
+                upgradeLevel: weaponState.upgradeLevel,
+                enchantment: enchantment
+            };
+        }
+        
+        // Generate weapon tooltip HTML
+        function getWeaponTooltipHTML(heroName) {
+            const stats = getWeaponStats(heroName);
+            if (!stats) return '';
+            
+            const heroColor = HERO_COLORS[heroName];
+            const heroDisplayName = heroName.charAt(0).toUpperCase() + heroName.slice(1);
+            
+            let enchantHTML = '';
+            if (stats.enchantment) {
+                enchantHTML = `
+                    <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
+                        <span style="color: ${stats.enchantment.color}; text-shadow: 0 0 8px ${stats.enchantment.color};">
+                            ✨ ${stats.enchantment.name}
+                        </span>
+                    </div>
+                `;
+            }
+            
+            let upgradeHTML = '';
+            if (stats.upgradeTier) {
+                upgradeHTML = `<span style="color: #F4B728; font-size: 11px;"> [${stats.upgradeTier}]</span>`;
+            }
+            
+            return `
+                <div style="background: linear-gradient(145deg, rgba(30,35,50,0.98), rgba(20,25,35,0.98)); border: 2px solid ${heroColor}; border-radius: 12px; padding: 12px; min-width: 220px; box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 20px ${heroColor}40;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                        <span style="font-size: 28px;">${stats.icon}</span>
+                        <div>
+                            <div style="color: ${heroColor}; font-weight: bold; font-size: 14px;">${stats.fullName}${upgradeHTML}</div>
+                            <div style="color: #888; font-size: 11px;">${heroDisplayName}'s Weapon</div>
+                        </div>
+                    </div>
+                    <div style="color: #AAA; font-size: 11px; font-style: italic; margin-bottom: 10px;">${stats.description}</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; text-align: center;">
+                        <div style="background: rgba(231,76,60,0.2); padding: 6px; border-radius: 6px;">
+                            <div style="color: #E74C3C; font-size: 11px;">⚔️ DMG</div>
+                            <div style="color: #FFF; font-weight: bold;">${stats.damage}</div>
+                            ${stats.upgradeDamage > 0 ? `<div style="color: #2ECC71; font-size: 10px;">+${stats.upgradeDamage}</div>` : ''}
+                        </div>
+                        <div style="background: rgba(52,152,219,0.2); padding: 6px; border-radius: 6px;">
+                            <div style="color: #3498DB; font-size: 11px;">🛡️ DEF</div>
+                            <div style="color: #FFF; font-weight: bold;">${stats.defense}</div>
+                            ${stats.upgradeDefense > 0 ? `<div style="color: #2ECC71; font-size: 10px;">+${stats.upgradeDefense}</div>` : ''}
+                        </div>
+                        <div style="background: rgba(241,196,15,0.2); padding: 6px; border-radius: 6px;">
+                            <div style="color: #F1C40F; font-size: 11px;">💥 CRIT</div>
+                            <div style="color: #FFF; font-weight: bold;">${stats.crit}%</div>
+                            ${stats.upgradeCrit > 0 ? `<div style="color: #2ECC71; font-size: 10px;">+${stats.upgradeCrit}%</div>` : ''}
+                        </div>
+                    </div>
+                    ${enchantHTML}
+                </div>
+            `;
+        }
+        
+        // Currently selected hero in equipment shop
+        let selectedEquipHero = null;
+        
+        // Hero weapon data (stored per hero)
+        let heroWeapons = {
+            zooko: { upgradeLevel: 0, enchantment: null },
+            nate: { upgradeLevel: 0, enchantment: null },
+            zancas: { upgradeLevel: 0, enchantment: null },
+            cyberaxe: { upgradeLevel: 0, enchantment: null }
+        };
+        
+        // Select a hero in the equipment shop
+        function selectEquipHero(heroName) {
+            selectedEquipHero = heroName;
+            
+            // Update button styles
+            document.querySelectorAll('.equipHeroBtn').forEach(btn => {
+                const isSelected = btn.dataset.hero === heroName;
+                btn.style.opacity = isSelected ? '1' : '0.6';
+                btn.style.transform = isSelected ? 'scale(1.05)' : 'scale(1)';
+            });
+            
+            // Update display
+            updateEquipmentShopDisplay();
+        }
+        
+        // Update equipment shop display for selected hero
+        function updateEquipmentShopDisplay() {
+            if (!selectedEquipHero) return;
+            
+            const heroColor = HERO_COLORS[selectedEquipHero];
+            const heroName = selectedEquipHero.charAt(0).toUpperCase() + selectedEquipHero.slice(1);
+            const weapon = heroWeapons[selectedEquipHero];
+            
+            // Update hero name
+            document.getElementById('equipHeroName').textContent = heroName;
+            document.getElementById('equipHeroName').style.color = heroColor;
+            
+            // Get current upgrade info
+            const currentUpgrade = EQUIPMENT_UPGRADES.find(u => u.level === weapon.upgradeLevel * 10) || { name: 'Basic', level: 0 };
+            document.getElementById('equipWeaponLevel').textContent = currentUpgrade.name + (weapon.upgradeLevel > 0 ? ` (Lv ${weapon.upgradeLevel * 10})` : '');
+            
+            // Get enchantment info
+            const enchant = weapon.enchantment ? ENCHANTMENTS.find(e => e.id === weapon.enchantment) : null;
+            document.getElementById('equipEnchantName').textContent = enchant ? enchant.name : 'None';
+            if (enchant) {
+                document.getElementById('equipEnchantName').style.color = enchant.color;
+            } else {
+                document.getElementById('equipEnchantName').style.color = '#888';
+            }
+            
+            // Populate upgrade options
+            populateUpgradeOptions();
+            
+            // Populate enchantment options
+            populateEnchantOptions();
+        }
+        
+        // Populate available upgrades
+        function populateUpgradeOptions() {
+            const container = document.getElementById('upgradeOptions');
+            if (!container || !selectedEquipHero) return;
+            
+            const weapon = heroWeapons[selectedEquipHero];
+            const currentLevel = weapon.upgradeLevel * 10;
+            const partyLevel = partyInventory.partyLevel || 1;
+            
+            // Get gold from save
+            const sharedSave = loadSharedSave();
+            const gold = sharedSave?.dungeonState?.gold || 0;
+            
+            let html = '';
+            
+            EQUIPMENT_UPGRADES.forEach(upgrade => {
+                const isOwned = currentLevel >= upgrade.level;
+                const canAfford = gold >= upgrade.cost;
+                const meetsLevel = partyLevel >= upgrade.level;
+                const isNextUpgrade = currentLevel + 10 === upgrade.level;
+                
+                if (isOwned) {
+                    html += `<div style="background: rgba(39, 174, 96, 0.2); border: 1px solid #27AE60; border-radius: 6px; padding: 6px 10px; opacity: 0.6;">
+                        <span style="color: #27AE60; font-size: 11px;">✓ ${upgrade.name} (Owned)</span>
+                    </div>`;
+                } else if (isNextUpgrade) {
+                    const canBuy = canAfford && meetsLevel;
+                    html += `<div style="background: rgba(155, 89, 182, 0.2); border: 1px solid ${canBuy ? '#9B59B6' : '#666'}; border-radius: 6px; padding: 6px 10px; cursor: ${canBuy ? 'pointer' : 'not-allowed'}; opacity: ${canBuy ? '1' : '0.5'};" onclick="${canBuy ? `buyUpgrade(${upgrade.level})` : ''}">
+                        <div style="color: #9B59B6; font-size: 11px; font-weight: bold;">${upgrade.name} Weapon</div>
+                        <div style="color: #F1C40F; font-size: 10px;">💰 ${upgrade.cost} gold</div>
+                        ${!meetsLevel ? `<div style="color: #E74C3C; font-size: 9px;">Requires Party Lv ${upgrade.level}</div>` : ''}
+                    </div>`;
+                }
+            });
+            
+            if (!html) {
+                html = '<div style="color: #888; font-size: 11px; text-align: center; padding: 10px;">Max upgrades reached!</div>';
+            }
+            
+            container.innerHTML = html;
+        }
+        
+        // Populate available enchantments
+        function populateEnchantOptions() {
+            const container = document.getElementById('enchantOptions');
+            if (!container || !selectedEquipHero) return;
+            
+            const weapon = heroWeapons[selectedEquipHero];
+            
+            // Get gold from save
+            const sharedSave = loadSharedSave();
+            const gold = sharedSave?.dungeonState?.gold || 0;
+            
+            let html = '';
+            
+            ENCHANTMENTS.forEach(enchant => {
+                const isActive = weapon.enchantment === enchant.id;
+                const canAfford = gold >= enchant.cost;
+                
+                html += `<div style="background: ${isActive ? `${enchant.color}30` : 'rgba(0,0,0,0.3)'}; border: 2px solid ${isActive ? enchant.color : (canAfford ? '#666' : '#444')}; border-radius: 6px; padding: 6px; text-align: center; cursor: ${canAfford && !isActive ? 'pointer' : 'default'}; opacity: ${canAfford || isActive ? '1' : '0.5'};" onclick="${canAfford && !isActive ? `buyEnchant('${enchant.id}')` : ''}">
+                    <div style="color: ${enchant.color}; font-size: 10px; font-weight: bold;">${enchant.name}</div>
+                    <div style="font-size: 9px; color: ${isActive ? '#27AE60' : '#F1C40F'};">${isActive ? '✓ Active' : `💰 ${enchant.cost}`}</div>
+                </div>`;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        // Buy an upgrade
+        function buyUpgrade(upgradeLevel) {
+            if (!selectedEquipHero) return;
+            
+            const upgrade = EQUIPMENT_UPGRADES.find(u => u.level === upgradeLevel);
+            if (!upgrade) return;
+            
+            const sharedSave = loadSharedSave();
+            const gold = sharedSave?.dungeonState?.gold || 0;
+            
+            if (gold < upgrade.cost) {
+                showNotification('Not enough gold!', 'error');
+                return;
+            }
+            
+            // Deduct gold
+            sharedSave.dungeonState.gold = gold - upgrade.cost;
+            
+            // Apply upgrade
+            heroWeapons[selectedEquipHero].upgradeLevel = upgradeLevel / 10;
+            
+            // Save
+            saveSharedSave(sharedSave);
+            saveHeroWeapons();
+            
+            // Update display
+            updateEquipmentShopDisplay();
+            updateGoldDisplay();
+            
+            showNotification(`${selectedEquipHero.charAt(0).toUpperCase() + selectedEquipHero.slice(1)} weapon upgraded to ${upgrade.name}!`, 'success');
+            
+            // Sync to multiplayer
+            if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                sendEquipmentUpdate();
+            }
+        }
+        
+        // Buy an enchantment
+        function buyEnchant(enchantId) {
+            if (!selectedEquipHero) return;
+            
+            const enchant = ENCHANTMENTS.find(e => e.id === enchantId);
+            if (!enchant) return;
+            
+            const sharedSave = loadSharedSave();
+            const gold = sharedSave?.dungeonState?.gold || 0;
+            
+            if (gold < enchant.cost) {
+                showNotification('Not enough gold!', 'error');
+                return;
+            }
+            
+            // Deduct gold
+            sharedSave.dungeonState.gold = gold - enchant.cost;
+            
+            // Apply enchantment
+            heroWeapons[selectedEquipHero].enchantment = enchantId;
+            
+            // Save
+            saveSharedSave(sharedSave);
+            saveHeroWeapons();
+            
+            // Update display
+            updateEquipmentShopDisplay();
+            updateGoldDisplay();
+            
+            showNotification(`${enchant.name} enchantment applied!`, 'success');
+            
+            // Sync to multiplayer
+            if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                sendEquipmentUpdate();
+            }
+        }
+        
+        // Save hero weapons to localStorage
+        function saveHeroWeapons() {
+            const sharedSave = loadSharedSave();
+            if (sharedSave) {
+                sharedSave.heroWeapons = heroWeapons;
+                saveSharedSave(sharedSave);
+            }
+        }
+        
+        // Load hero weapons from localStorage
+        function loadHeroWeapons() {
+            const sharedSave = loadSharedSave();
+            if (sharedSave?.heroWeapons) {
+                heroWeapons = sharedSave.heroWeapons;
+            }
+        }
+        
+        // Update gold display in store
+        function updateGoldDisplay() {
+            const sharedSave = loadSharedSave();
+            const gold = sharedSave?.dungeonState?.gold || 0;
+            
+            // Update any gold display elements
+            const goldEls = document.querySelectorAll('.goldDisplay');
+            goldEls.forEach(el => el.textContent = gold);
+        }
+
         function showSettings() {
             document.getElementById('overlay').style.display = 'block';
             document.getElementById('settingsPanel').style.display = 'block';
@@ -5665,7 +6287,7 @@
                 dungeonState: {
                     currentLevel: 1,
                     inventory: [],
-                    gold: 0,
+                    gold: 5000,
                     questProgress: {
                         hasScepter: false,
                         hasReturned: false,
@@ -7363,16 +7985,25 @@
             
             storeData.items.forEach((item, index) => {
                 const itemEl = document.createElement('div');
-                itemEl.style.cssText = 'background: rgba(39, 174, 96, 0.2); border: 2px solid #27AE60; border-radius: 10px; padding: 15px; text-align: center;';
+                itemEl.style.cssText = 'background: rgba(39, 174, 96, 0.2); border: 2px solid #27AE60; border-radius: 8px; padding: 10px; display: flex; align-items: center; gap: 10px;';
                 itemEl.innerHTML = `
-                    <div style="font-size: 24px; margin-bottom: 5px;">🧪</div>
-                    <div style="color: #27AE60; font-weight: bold; font-size: 14px;">${item.name}</div>
-                    <div style="color: #FFD700; font-size: 16px; margin: 5px 0;">💰 ${item.price}</div>
-                    <div style="color: #89A0B4; font-size: 12px;">Qty: ${item.quantity}</div>
-                    <button onclick="buyItem(${index})" style="margin-top: 10px; padding: 5px 15px; background: #27AE60; border: none; border-radius: 5px; color: white; cursor: pointer; font-weight: bold;">BUY</button>
+                    <div style="font-size: 28px;">🧪</div>
+                    <div style="flex: 1;">
+                        <div style="color: #27AE60; font-weight: bold; font-size: 13px;">${item.name}</div>
+                        <div style="color: #89A0B4; font-size: 11px;">Qty: ${item.quantity}</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="color: #FFD700; font-size: 14px; font-weight: bold;">💰 ${item.price}</div>
+                        <button onclick="buyItem(${index})" style="margin-top: 4px; padding: 4px 12px; background: #27AE60; border: none; border-radius: 4px; color: white; cursor: pointer; font-weight: bold; font-size: 11px;">BUY</button>
+                    </div>
                 `;
                 itemsContainer.appendChild(itemEl);
             });
+            
+            // Also render the inventory and equipment shop
+            renderStoreInventoryGrid();
+            loadHeroWeapons();
+            selectEquipHero('zooko'); // Default to Zooko
         }
         
         // Populate NPC content
@@ -12151,27 +12782,50 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             const dex = attackerStats.dex || 10;
             const wis = attackerStats.wis || 10;
             
+            // Get weapon stats for heroes
+            let weaponDamage = 0;
+            let weaponCrit = 0;
+            const attackerKey = attacker.name?.toLowerCase();
+            if (attackerKey && HERO_WEAPONS[attackerKey]) {
+                const weaponStats = getWeaponStats(attackerKey);
+                if (weaponStats) {
+                    weaponDamage = weaponStats.damage;
+                    weaponCrit = weaponStats.crit;
+                }
+            }
+            
             let attackRoll = rollD20();
             let modifier = 0;
             let damageRoll = 0;
             let attackName = '';
+            let isCritical = false;
+            
+            // Check for critical hit based on weapon crit chance
+            if (weaponCrit > 0 && Math.random() * 100 < weaponCrit) {
+                isCritical = true;
+            }
             
             // Calculate attack and damage based on action type
             if (actionType === 'light') {
                 modifier = calculateModifier(dex);
                 attackRoll += calculateModifier(str);
-                damageRoll = rollD6(1) + modifier;
+                damageRoll = rollD6(1) + modifier + weaponDamage;
                 attackName = 'Light Attack';
             } else if (actionType === 'heavy') {
                 modifier = calculateModifier(str);
                 attackRoll += modifier;
-                damageRoll = rollD6(2) + modifier;
+                damageRoll = rollD6(2) + modifier + weaponDamage;
                 attackName = 'Heavy Attack';
             } else if (actionType === 'special') {
                 modifier = calculateModifier(wis);
                 attackRoll += modifier;
-                damageRoll = rollD6(3) + modifier;
+                damageRoll = rollD6(3) + modifier + weaponDamage;
                 attackName = 'Special Attack';
+            }
+            
+            // Apply critical hit bonus (double damage)
+            if (isCritical) {
+                damageRoll *= 2;
             }
             
             // Check if attack hits
@@ -12192,7 +12846,19 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     }
                 }
                 
-                target.hp = Math.max(0, target.hp - damageRoll);
+                // Apply weapon defense reduction for heroes being attacked
+                const targetKey = target.name?.toLowerCase();
+                if (targetKey && HERO_WEAPONS[targetKey]) {
+                    const targetWeaponStats = getWeaponStats(targetKey);
+                    if (targetWeaponStats && targetWeaponStats.defense > 0) {
+                        damageRoll = Math.max(1, damageRoll - targetWeaponStats.defense);
+                    }
+                }
+                
+                // Store final damage for display
+                const finalDamage = damageRoll;
+                
+                target.hp = Math.max(0, target.hp - finalDamage);
                 
                 // Update boss morale when they take damage
                 if (target.isBoss) {
@@ -12213,17 +12879,19 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     triggerFreeWillChat(attacker, 'dealt_damage');
                 }
                 
-                // Award 2 XP for hitting (total 3 including attempt)
-                attacker.xp += 2;
+                // Award 2 XP for hitting (total 3 including attempt), bonus for crit
+                attacker.xp += isCritical ? 5 : 2;
                 
-                // Generate fake dice rolls for display
+                // Generate dice rolls for display
                 const numDice = actionType === 'light' ? 1 : (actionType === 'heavy' ? 2 : 3);
                 const diceRolls = [];
                 for (let i = 0; i < numDice; i++) {
                     diceRolls.push(Math.floor(Math.random() * 6) + 1);
                 }
                 const diceTotal = diceRolls.reduce((a, b) => a + b, 0);
-                showDiceRoll(`🎲 Rolled: ${diceRolls.join(', ')} = <span style="color:#00ff00">${diceTotal}</span> vs <span style="color:#00ff00">${targetAC}</span> <span style="color:#00ff00">✓</span>`);
+                const critText = isCritical ? ' <span style="color:#FFD700; font-weight:bold;">💥 CRITICAL!</span>' : '';
+                const weaponText = weaponDamage > 0 ? ` +${weaponDamage}⚔️` : '';
+                showDiceRoll(`🎲 Rolled: ${diceRolls.join(', ')}${weaponText} = <span style="color:#00ff00">${finalDamage}</span> vs <span style="color:#00ff00">${targetAC}</span> <span style="color:#00ff00">✓</span>${critText}`);
             } else {
                 // Miss - award 1 XP to defender if they're a hero
                 if (battleState.heroes.includes(target)) {
