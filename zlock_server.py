@@ -1857,6 +1857,14 @@ async def handle_websocket(websocket, path):
                     for client in rooms[client_room]['clients']:
                         await client.send(message)
             
+            # PARTY LEVEL UPDATE (host only - dungeon masters set party level)
+            elif msg_type == 'party_level_update':
+                if client_room and client_room in rooms and client_role == 'host':
+                    # Broadcast party level update to all clients
+                    for client in rooms[client_room]['clients']:
+                        await client.send(message)
+                    print(f"[WS] Host set party level to {data.get('targetLevel', '?')} in room {client_room}")
+            
             # SAVE SYNC (host only)
             elif msg_type == 'save_sync':
                 if client_room and client_room in rooms and client_role == 'host':

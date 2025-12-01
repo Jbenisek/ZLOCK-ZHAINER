@@ -2,6 +2,43 @@
 
 # Changelog
 
+## v0.3.53 - Multiplayer Fixes & UI Polish (2025-11-30)
+- **Fixed Party Level Update Not Syncing to Clients:**
+  - Added `party_level_update` handler to `zlock_server.py`
+  - Server now relays party level changes from host to all clients
+  - Client hero stats (STR, DEX, CON, INT, WIS, CHA, HP, XP) now update correctly
+
+- **Client Dungeon Menu Simplified:**
+  - Hide host-only buttons for clients: Explore Level, Store, Camp, Dungeon Masters
+  - Only Inventory button visible for clients
+  - Difficulty buttons remain visible but disabled
+  - Cleaner UI - clients don't see controls they can't use
+
+- **Captive Rescue XP Reward:**
+  - Rescuing captives now awards 250 XP to all heroes
+  - Notification shows "+250 XP" along with gold/item rewards
+  - Captive spawn rate reduced from 40% to 25%
+
+- **Music Volume Default Fixed:**
+  - Default music volume changed from 75 to 10
+  - Fixed `loadSettings()` to apply default settings even without saved localStorage
+  - Music player UI now shows correct default value (10) on startup
+
+- **Background Sound Volume Setting:**
+  - New slider in Settings panel for background video sound (0-100, default 5)
+  - Controls volume for camp, store, and battle background videos
+  - `applyBgSoundVolume()` function updates all video elements
+
+- **Compacted Music Controls:**
+  - Music player now single horizontal row: 🎵 | ⏮ ▶ ⏭ | slider | value
+  - Reduced padding and removed title for smaller footprint
+
+## v0.3.52 - Camp Healing Client Sync Fix (2025-11-30)
+- **Fixed Camp Healing Not Updating Client UI:**
+  - `camp_completed` handler now updates `multiplayerState.heroStatsCache` (not `battleState.heroes`)
+  - `updateDungeonMenuHeroes()` reads from `heroStatsCache` for clients
+  - Client hero HP now displays correctly after camping completes
+
 ## v0.3.51 - Multiplayer Sync Fixes & Simplified Retreat (2025-11-30)
 - **Fixed Client Level Layout Sync:**
   - Clients no longer call `initializeLevelLayout()` which was loading from LOCAL storage

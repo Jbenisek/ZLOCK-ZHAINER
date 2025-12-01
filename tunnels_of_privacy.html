@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.3.51</title>
+    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.3.53</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -1470,9 +1470,7 @@
             background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
             border: 2px solid #2A9D8F;
             border-radius: 8px;
-            padding: 12px;
-            min-width: 240px;
-            max-width: 25%;
+            padding: 8px 12px;
             pointer-events: auto;
             backdrop-filter: blur(10px);
             box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8);
@@ -2233,7 +2231,7 @@
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.3.51 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.3.53 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div id="aboutDonateBtn" style="
@@ -2303,22 +2301,13 @@
         
         <!-- Music Control Panel - Bottom Above Ticker (OUTSIDE titleScreen so always visible) -->
         <div id="musicControls">
-            <h3 class="musicControlTitle">🎵 Music Controls</h3>
-            
-            <!-- Playback Controls -->
-            <div style="display: flex; gap: 6px; justify-content: center; margin-bottom: 12px;">
-                <button onclick="musicPrevious()" class="musicButton" style="padding: 8px 12px; width: auto;">⏮</button>
-                <button id="musicPlayPauseBtn" onclick="musicPlayPause()" class="musicButton" style="padding: 8px 16px; border-color: #F2C94C; width: auto;">▶</button>
-                <button onclick="musicNext()" class="musicButton" style="padding: 8px 12px; width: auto;">⏭</button>
-            </div>
-            
-            <!-- Volume Control -->
-            <div style="margin-bottom: 12px;">
-                <label style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 10px; display: block; margin-bottom: 4px; text-align: center;">Volume:</label>
-                <div style="display: flex; align-items: center; gap: 8px; justify-content: center;">
-                    <input type="range" class="volumeSlider" id="volumeSlider" min="1" max="150" value="75" oninput="updateVolume()" style="flex: 1; max-width: 200px;">
-                    <span id="volumeSliderValue" style="color: #2D9CDB; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: bold; min-width: 30px; text-align: right;">75</span>
-                </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="color: #2A9D8F; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 900;">🎵</span>
+                <button onclick="musicPrevious()" class="musicButton" style="padding: 4px 8px; width: auto; font-size: 12px;">⏮</button>
+                <button id="musicPlayPauseBtn" onclick="musicPlayPause()" class="musicButton" style="padding: 4px 10px; border-color: #F2C94C; width: auto; font-size: 12px;">▶</button>
+                <button onclick="musicNext()" class="musicButton" style="padding: 4px 8px; width: auto; font-size: 12px;">⏭</button>
+                <input type="range" class="volumeSlider" id="volumeSlider" min="1" max="150" value="10" oninput="updateVolume()" style="width: 80px;">
+                <span id="volumeSliderValue" style="color: #2D9CDB; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: bold; min-width: 24px;">10</span>
             </div>
         </div>
         
@@ -2662,7 +2651,13 @@
         <div class="settingRow" style="margin-bottom: 15px;">
             <span class="settingLabel" style="font-size: 16px;">Music Volume</span>
             <input type="range" id="musicVolume" min="1" max="150" value="75" oninput="updateSettings()" style="width: 150px;">
-            <span id="musicVolumeValue" style="margin-left: 8px; font-weight: bold; color: #2D9CDB; font-size: 14px;">75</span>
+            <span id="musicVolumeValue" style="margin-left: 8px; font-weight: bold; color: #2D9CDB; font-size: 14px;">10</span>
+        </div>
+        
+        <div class="settingRow" style="margin-bottom: 15px;">
+            <span class="settingLabel" style="font-size: 16px;">Background Sound</span>
+            <input type="range" id="bgSoundVolume" min="0" max="100" value="5" oninput="updateSettings()" style="width: 150px;">
+            <span id="bgSoundVolumeValue" style="margin-left: 8px; font-weight: bold; color: #27AE60; font-size: 14px;">5</span>
         </div>
         
         <!-- Theme/Zone Music Toggles -->
@@ -2731,7 +2726,7 @@
         <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         
         <div style="display: block; width: 100%; margin-top: 15px; padding: 10px 0; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A7A8F; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-            Tunnels of Privacy v0.3.51
+            Tunnels of Privacy v0.3.53
         </div>
     </div>
     
@@ -2825,7 +2820,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.3.51';
+        const GAME_VERSION = 'v0.3.53';
         
         // ===== HACKATHON INFO TOOLTIP SYSTEM =====
         const TOOLTIP_DELAY = 800; // ms before tooltip appears
@@ -3674,7 +3669,7 @@
             const explorationRooms = Math.max(1, Math.floor(maxRooms * 0.15)); // 15% exploration
             const secretRooms = Math.random() < 0.3 + (level * 0.02) ? 1 : 0; // 30%+ chance of secret room
             const hasStore = Math.random() < 0.6 + (level * 0.02); // 60%+ chance of store
-            const captiveRooms = Math.random() < 0.4 ? 1 : 0; // 40% chance of captive
+            const captiveRooms = Math.random() < 0.25 ? 1 : 0; // 25% chance of captive
             
             // Build rooms array
             const rooms = [];
@@ -4095,7 +4090,7 @@
         // Music System
         let currentMusic = null;
         let musicEnabled = true;
-        let musicVolume = 75; // Music volume (1-150)
+        let musicVolume = 10; // Music volume (1-150)
         let musicStarted = false;
         let currentTrackIndex = 0;
         let mainThemePlayed = false; // Track if main theme has played
@@ -4842,7 +4837,8 @@
         // Settings System
         let settings = {
             musicEnabled: true,
-            musicVolume: 75,
+            musicVolume: 10,
+            bgSoundVolume: 5,         // Background video sound volume (0-100, default 5%)
             themeMusicEnabled: true,  // Theme songs toggle
             zoneMusicEnabled: true,   // Zone music toggle
             showHitboxes: false,
@@ -4862,6 +4858,8 @@
             document.getElementById('musicEnabled').checked = settings.musicEnabled;
             document.getElementById('musicVolume').value = settings.musicVolume;
             document.getElementById('musicVolumeValue').textContent = settings.musicVolume;
+            document.getElementById('bgSoundVolume').value = settings.bgSoundVolume;
+            document.getElementById('bgSoundVolumeValue').textContent = settings.bgSoundVolume;
             document.getElementById('themeMusicEnabled').checked = settings.themeMusicEnabled !== false;
             document.getElementById('zoneMusicEnabled').checked = settings.zoneMusicEnabled !== false;
             document.getElementById('showHitboxes').checked = settings.showHitboxes;
@@ -4869,6 +4867,23 @@
             document.getElementById('llmUsePaid').checked = settings.llmUsePaid;
             document.getElementById('rpMode').checked = settings.rpMode !== false; // Default true
             document.getElementById('diagMode').checked = settings.diagMode === true;
+        }
+        
+        // Apply background sound volume to all active video backgrounds
+        function applyBgSoundVolume() {
+            const vol = (settings.bgSoundVolume || 5) / 100;
+            
+            // Camp video
+            const campVideo = document.getElementById('campVideo');
+            if (campVideo) campVideo.volume = vol;
+            
+            // Store/trader video
+            const storeVideo = document.getElementById('storeBackgroundVideo');
+            if (storeVideo) storeVideo.volume = vol;
+            
+            // Battle background video (if not muted)
+            const battleVideo = document.getElementById('battleBackgroundVideo');
+            if (battleVideo && !battleVideo.muted) battleVideo.volume = vol;
         }
         
         function showAbout() {
@@ -4880,6 +4895,7 @@
             // Read values from UI
             settings.musicEnabled = document.getElementById('musicEnabled').checked;
             settings.musicVolume = parseInt(document.getElementById('musicVolume').value);
+            settings.bgSoundVolume = parseInt(document.getElementById('bgSoundVolume').value);
             settings.showHitboxes = document.getElementById('showHitboxes').checked;
             settings.llmFreeWill = document.getElementById('llmFreeWill').checked;
             settings.llmUsePaid = document.getElementById('llmUsePaid').checked;
@@ -4888,6 +4904,10 @@
             
             // Update display
             document.getElementById('musicVolumeValue').textContent = settings.musicVolume;
+            document.getElementById('bgSoundVolumeValue').textContent = settings.bgSoundVolume;
+            
+            // Apply background sound volume to active videos
+            applyBgSoundVolume();
             
             // Read theme/zone music toggles
             const themeCheckbox = document.getElementById('themeMusicEnabled');
@@ -5661,7 +5681,7 @@
             if (videoEl) {
                 videoEl.querySelector('source').src = videoSrc;
                 videoEl.load();
-                videoEl.volume = 0.05; // 5% volume for ambient camp sounds
+                videoEl.volume = (settings.bgSoundVolume || 5) / 100; // Use settings
                 videoEl.play().catch(e => console.log('[Camp] Video autoplay blocked:', e));
                 campState.videoPlaying = true;
             }
@@ -6734,7 +6754,7 @@
                 if (videoEl) {
                     videoEl.querySelector('source').src = selectedVideo;
                     videoEl.load();
-                    videoEl.volume = 0.05; // 5% volume for ambient sounds
+                    videoEl.volume = (settings.bgSoundVolume || 5) / 100; // Use settings
                     videoEl.style.display = 'block';
                     videoEl.play().catch(e => console.log('[Store] Video autoplay blocked:', e));
                 }
@@ -11729,6 +11749,13 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     if (battleState.captiveNpc && !battleState.captiveNpc.rescued) {
                         battleState.captiveNpc.rescued = true;
                         incrementCaptivesFreed(); // Track captive rescue
+                        
+                        // Award 250 XP to all heroes for rescuing the captive
+                        battleState.heroes.forEach(hero => {
+                            hero.xp = (hero.xp || 0) + 250;
+                        });
+                        updateBattleHeroCards();
+                        
                         setTimeout(() => {
                             // Show rescue dialogue
                             addChatMessage(
@@ -11742,7 +11769,7 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                             
                             // Give reward
                             const reward = battleState.captiveNpc.rescueReward;
-                            let rewardText = 'Rescued ' + battleState.captiveNpc.name + '!';
+                            let rewardText = 'Rescued ' + battleState.captiveNpc.name + '! +250 XP';
                             if (reward.gold) {
                                 rewardText += ` +${reward.gold} gold`;
                             }
@@ -12440,46 +12467,37 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
         // Apply client UI restrictions (disable host-only buttons)
         function applyClientUIRestrictions() {
             if (multiplayerState.enabled && multiplayerState.role === 'client') {
-                // Disable EXPLORE LEVEL button
+                // HIDE EXPLORE LEVEL button and its container row
                 const exploreLevelBtn = document.getElementById('exploreLevelBtn');
-                if (exploreLevelBtn) {
-                    exploreLevelBtn.disabled = true;
-                    exploreLevelBtn.style.opacity = '0.5';
-                    exploreLevelBtn.style.cursor = 'not-allowed';
-                    exploreLevelBtn.innerHTML = 'EXPLORE LEVEL<br>(HOST/PARTY LEADER ONLY)';
+                if (exploreLevelBtn && exploreLevelBtn.parentElement) {
+                    exploreLevelBtn.parentElement.style.display = 'none';
                 }
                 
-                // Disable STAIRS buttons (UP/DOWN)
+                // HIDE STAIRS buttons (UP/DOWN)
                 const stairsUpBtn = document.getElementById('stairsUpBtn');
                 if (stairsUpBtn) {
-                    stairsUpBtn.disabled = true;
-                    stairsUpBtn.style.opacity = '0.5';
-                    stairsUpBtn.style.cursor = 'not-allowed';
-                    stairsUpBtn.title = 'Only party leader can use stairs';
+                    stairsUpBtn.style.display = 'none';
                 }
                 const stairsDownBtn = document.getElementById('stairsDownBtn');
                 if (stairsDownBtn) {
-                    stairsDownBtn.disabled = true;
-                    stairsDownBtn.style.opacity = '0.5';
-                    stairsDownBtn.style.cursor = 'not-allowed';
-                    stairsDownBtn.title = 'Only party leader can use stairs';
+                    stairsDownBtn.style.display = 'none';
+                }
+                const stairsDownBtn2 = document.getElementById('stairsDownBtn2');
+                if (stairsDownBtn2) {
+                    stairsDownBtn2.style.display = 'none';
                 }
                 
-                // Disable FAST TRAVEL button and input
+                // HIDE FAST TRAVEL button and input
                 const fastTravelBtn = document.getElementById('fastTravelBtn');
                 if (fastTravelBtn) {
-                    fastTravelBtn.disabled = true;
-                    fastTravelBtn.style.opacity = '0.5';
-                    fastTravelBtn.style.cursor = 'not-allowed';
-                    fastTravelBtn.title = 'Only party leader can fast travel';
+                    fastTravelBtn.style.display = 'none';
                 }
                 const fastTravelInput = document.getElementById('fastTravelLevel');
                 if (fastTravelInput) {
-                    fastTravelInput.disabled = true;
-                    fastTravelInput.style.opacity = '0.5';
+                    fastTravelInput.style.display = 'none';
                 }
                 
-                // Disable DIFFICULTY buttons
+                // Disable DIFFICULTY buttons (keep visible but disabled)
                 const diffButtons = ['diffCasualBtn', 'diffNormalBtn', 'diffExpertBtn'];
                 diffButtons.forEach(btnId => {
                     const btn = document.getElementById(btnId);
@@ -12490,14 +12508,25 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     }
                 });
                 
-                // Disable CAMP button
+                // HIDE STORE button
+                const storeBtn = document.getElementById('levelStoreBtn');
+                if (storeBtn) {
+                    storeBtn.style.display = 'none';
+                }
+                
+                // HIDE CAMP button
                 const campBtn = document.getElementById('campBtn');
                 if (campBtn) {
-                    campBtn.disabled = true;
-                    campBtn.style.opacity = '0.5';
-                    campBtn.style.cursor = 'not-allowed';
-                    campBtn.title = 'Only party leader can set up camp';
+                    campBtn.style.display = 'none';
                 }
+                
+                // HIDE DUNGEON MASTERS button
+                const dmBtn = document.getElementById('dungeonMastersBtn');
+                if (dmBtn) {
+                    dmBtn.style.display = 'none';
+                }
+                
+                // INVENTORY button stays visible (no changes needed)
             }
         }
         
@@ -13535,6 +13564,7 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                         if (videoEl && data.videoSrc) {
                             videoEl.querySelector('source').src = data.videoSrc;
                             videoEl.load();
+                            videoEl.volume = (settings.bgSoundVolume || 5) / 100; // Use settings
                             videoEl.play().catch(e => console.log('[Camp] Video autoplay blocked:', e));
                         }
                         
@@ -13561,13 +13591,15 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                             campVideoEl.pause();
                         }
                         
-                        // Update hero HP from host data
+                        // Update hero stats cache from host data (this is what updateDungeonMenuHeroes reads)
                         if (data.heroes) {
                             data.heroes.forEach(heroData => {
-                                const hero = battleState.heroes.find(h => h.name === heroData.name);
-                                if (hero) {
-                                    hero.hp = heroData.hp;
-                                    hero.maxHp = heroData.maxHp;
+                                const heroKey = heroData.name.toLowerCase();
+                                if (multiplayerState.heroStatsCache[heroKey]) {
+                                    multiplayerState.heroStatsCache[heroKey].hp = heroData.hp;
+                                    multiplayerState.heroStatsCache[heroKey].maxHp = heroData.maxHp;
+                                } else {
+                                    multiplayerState.heroStatsCache[heroKey] = { hp: heroData.hp, maxHp: heroData.maxHp };
                                 }
                             });
                         }
@@ -13585,10 +13617,12 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     // Host set party level - update client hero stats
                     if (multiplayerState.role === 'client') {
                         console.log('[MP] Received party_level_update from host, level:', data.targetLevel);
+                        console.log('[MP] Party level update heroes data:', JSON.stringify(data.heroes));
                         
                         // Update hero stats cache for display
                         if (data.heroes) {
                             multiplayerState.heroStatsCache = data.heroes;
+                            console.log('[MP] Updated heroStatsCache:', JSON.stringify(multiplayerState.heroStatsCache));
                         }
                         
                         // Update dungeon menu display
