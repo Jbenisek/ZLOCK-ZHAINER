@@ -2,6 +2,107 @@
 
 # Changelog
 
+## v0.3.51 - Multiplayer Sync Fixes & Simplified Retreat (2025-11-30)
+- **Fixed Client Level Layout Sync:**
+  - Clients no longer call `initializeLevelLayout()` which was loading from LOCAL storage
+  - Host now sends `levelLayout` and `levelProgress` directly in `game_start` message
+  - Clients use received data directly - no more generating their own layouts
+  - Fixes: rooms showing wrong counts (e.g., client "0/7" vs host "0/5")
+  - Fixes: boss status mismatch between host and client
+
+- **Fixed Level Change Sync:**
+  - `level_change` message now includes full `progress` and `levelLayout` data
+  - Removed separate `broadcastLevelProgress()` call - single message contains all data
+  - Client `level_change` handler calls `updateLevelProgressFromHost()` immediately
+  - Both `changeLevel()` and `fastTravel()` updated
+
+- **Simplified Retreat System:**
+  - Only host can retreat the party - clients cannot retreat individually
+  - Host retreat = everyone retreats immediately (no more waiting for each player)
+  - Retreat button greyed out and disabled for clients during battle
+  - `battle_end` message includes `heroStats` for stat sync on retreat
+  - Removed complex per-hero retreat tracking and filtering logic
+
+- **UI Improvements:**
+  - Stairs button text shortened to "⬇️ STAIRS" (removed "DOWN")
+  - Stairs button auto-sizes to content with `width: auto; min-width: 0`
+  - Retreat button has ID `battleRetreatBtn` for targeting
+
+## v0.3.50 - Knockout Fix, Stairs Button & Party Level Control (2025-01-30)
+- **Knockout Animation for 0 HP Heroes:**
+  - Heroes with 0 HP entering new rooms now display knockout animation immediately
+  - Added knockout check to `startBattle()` for host and `initializeBattleFromHost()` for clients
+  - Uses `setAnimationState(hero, 'knockout', 'once')` to show fallen heroes
+  - Prevents confusion when heroes with no HP appear standing during battles
+
+- **Stairs Down Button After Boss Defeated:**
+  - New "Stairs Down 🚪" button appears next to "Explore Level" after boss is defeated
+  - Host only: clients see disabled button with "(HOST ONLY)" text
+  - `updateDungeonMastersStatus()` controls visibility based on boss.explored
+  - Allows quick level progression without finishing all rooms
+
+- **Party Level Control (Dungeon Masters Panel):**
+  - New Party Level input (1-100) with "Apply" button in Dungeon Masters panel
+  - `setPartyLevel(level)` scales all 4 heroes to target level
+  - Primary stats: +1 per 4 levels (STR for Zooko/CyberAxe, INT for Zancas, DEX for Nate)
+  - Secondary stats: +1 per 5 levels
+  - HP = base 20 + (levels × (5 + CON modifier))
+  - Broadcasts `party_level_update` to sync all clients in multiplayer
+
+- **UI Layout Improvements:**
+  - "Explore Level" and "Stairs Down" buttons now side-by-side in flex row
+  - Difficulty buttons condensed to single row with icons only: 🌼 ⚔️ 💀
+  - Compact difficulty buttons: `width: auto; padding: 6px 12px; font-size: 11px`
+  - Cleaner dungeon menu with less vertical space usage
+
+- **Level 1 Boss Spawn Fix:**
+  - Removed `if (roomLevel < 2)` restriction from `generateBossRoomContent()`
+  - Boss can now spawn on level 1 (previously was locked until level 2)
+  - Boss probability system applies to all levels equally
+
+## v0.3.49 - Boss Probability System & Simplified Sync (2025-11-30)
+- **Boss Room Probability System:**
+  - Boss is now always in the room pool - no longer "locked"
+  - Probability = 1 / (remaining rooms + 1)
+  - 10 rooms left → 1/11 chance of boss, 5 rooms → 1/6 chance, 0 rooms → 100%
+  - Hero can encounter boss on first room by luck, clear it, then finish remaining rooms
+  - Boss UI now shows "0/1" (yellow) or "1/1 ✓" (green) like other room types
+
+- **Simplified Multiplayer Sync:**
+  - `broadcastLevelProgress()` now sends FULL `levelProgress` and `currentLevelLayout`
+  - `updateLevelProgressFromHost()` receives and copies entire objects
+  - Clients have exact same data as host - no partial syncs or caches
+  - Simple full-state sync for 4-player max turn-based game
+
+- **Removed Complexity:**
+  - Removed `clientLevelLayoutCache` - clients use `currentLevelLayout` directly
+  - Removed `updateDungeonMastersStatusFromCache()` - single function for host and client
+  - Removed room counts calculation in broadcast - just send the data
+
+## v0.3.48 - Complete Level Status Panel (2025-11-30)
+- **Expanded Level Status Section:**
+  - Added all room type tracking to Dungeon Masters Level Status panel
+  - 👹 Boss: Shows "0/1" or "1/1 ✓" (cleared)
+  - 💀 Mini-Boss: Shows explored/total count (e.g., "0/2") or "None" if level has no mini-bosses
+  - ⚔️ Encounters: Shows combat rooms cleared vs total (e.g., "1/3")
+  - 🛒 Store: Shows "Not Found" (red), "Found ✓" (green), or "None" (gray)
+  - 💬 NPCs: Shows NPC rooms visited vs total
+  - 🔍 Exploration: Shows exploration rooms cleared vs total
+  - 🔓 Captives: Shows captive rooms rescued vs total
+  - ✨ Secrets: Shows discovered secrets with hidden total (e.g., "0/?") for mystery
+  - 🚪 Rooms Left: Total unexplored rooms including boss, shows "All Clear!" when done
+
+- **Helper Functions in `updateDungeonMastersStatus()`:**
+  - `countRoomsByType(type)` - counts explored and total rooms of a specific type
+  - `updateRoomTypeStatus(el, counts, noneText)` - updates element color and text based on progress
+  - Green checkmark shown when all rooms of a type are explored
+  - Yellow for in-progress, gray for "None", red for "Not Found"
+
+- **Visual Improvements:**
+  - Added separator line above "Rooms Left" total
+  - Consistent 4px spacing between status rows
+  - All checkmarks use ✓ character for completion states
+
 ## v0.3.47 - Level Init & Store Discovery Fixes (2025-11-30)
 - **Fixed Level Layout Init on All Entry Points:**
   - `launchNewGame()` - single player after rolling dice now calls `initializeLevelLayout(1)`
