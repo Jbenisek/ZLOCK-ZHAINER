@@ -2,6 +2,132 @@
 
 # Changelog
 
+## v0.3.66 - Enemy Privacy Breach Tooltip System (2025-12-01)
+- **NEW: Enemy Privacy Breach Tooltips!**
+  - Hover over any enemy/boss card during combat to reveal their "private" data
+  - Enemies use public ledgers so ALL their information is exposed!
+  
+- **Exposed Data Categories:**
+  - Personal Info: Real name, age, SSN, mother's maiden name
+  - Financial: Credit score (always bad), tax status, BTC wallet balance
+  - Security: 1-5 leaked passwords (all terrible like "password123")
+  - Embarrassing: Last meal, last relations, secret fears, browser history
+  - Combat Stats: HP, AC, damage range
+  - Backstory: Unique generated backstory for bosses and mobs
+  
+- **Thematic Elements:**
+  - Red "Privacy Breach Detected" warning header with blinking animation
+  - Dark red theme to contrast with friendly hero tooltips
+  - Footer reminder: "This entity uses a PUBLIC LEDGER"
+  - Consistent data per enemy (seeded by name)
+  
+- **Technical:**
+  - Data cached per enemy for consistency
+  - Tooltip follows mouse movement
+  - 300ms hover delay before showing
+  - Auto-positions to stay on screen
+  
+- **Also Updated:**
+  - Narrate button now uses 48x48 icon
+  - Gold bag in dungeon menu now 64x64
+  - Added 30 UI icons to precache system
+
+## v0.3.65 - Music Control Icon Fix (2025-12-01)
+- **Fixed music play button not displaying:**
+  - Changed music control buttons from CSS background-image spans to `<img>` tags
+  - Play button now properly shows `music_play.png` icon at 64x64
+  - Added `music_pause.png` icon support for pause state
+  - Play/pause button now swaps between play and pause icons dynamically
+  - Previous/Next buttons also converted to reliable `<img>` tags
+
+## v0.3.64 - XP Scaling & Progression Balance (2025-12-01)
+- **XP Now Scales with Dungeon Level:**
+  - All XP gains now scale with dungeon depth
+  - Formula: baseXP × (1 + (dungeonLevel - 1) × 0.25)
+  - Level 1: 1.0× multiplier (base XP)
+  - Level 10: 3.25× multiplier
+  - Level 50: 13.25× multiplier
+  - Level 100: 25.75× multiplier
+
+- **Scaled XP Sources:**
+  - Hit XP: 2 base → scales up
+  - Critical hit XP: 5 base → scales up
+  - Kill XP: 10 base → scales up
+  - Boss kill XP: 50 base (NEW bonus!) → scales up
+  - Dodge XP: 1 base → scales up
+  - Exploration XP: 50 base → scales up
+
+- **Progression Impact (Hero Level milestones):**
+  - Level 10 hero (10,000 XP): Now ~Dungeon 25 (was ~50)
+  - Level 25 hero (62,500 XP): Now ~Dungeon 75 (was ~250)
+  - Level 50 hero (250,000 XP): Now ~Dungeon 200 (was ~950)
+
+- **Weapon Upgrade Cost Analysis:**
+  - Per hero (all 10 tiers): 364,500g
+  - All 4 heroes fully upgraded: 1,458,000g
+  - Achievable around Dungeon 150-200 with gold scaling
+
+## v0.3.63 - Icon Size Improvements (2025-12-01)
+- **Larger Menu Button Icons:**
+  - Explore Level: Added combat icon (24px)
+  - Enter Level Store: Added store icon (24px)
+  - Inventory: Added inventory icon (24px)
+  - Camp: Increased from 20px to 24px
+  - Dungeon Masters: Increased from 20px to 24px
+  - Gold display: Increased from 20px to 24px
+
+- **Music Control Panel Overhaul:**
+  - Previous/Play/Next buttons now 64x64px borderless icon buttons
+  - Removed button padding - image IS the button
+  - Volume indicator increased to 48px
+  - Hover effect: 15% scale + brightness boost
+  - Click effect: 5% scale down
+  - Fixed music play button not displaying
+
+- **Dynamic Icon Updates:**
+  - Store button text updates preserve icon
+  - Explore button text updates use innerHTML for icon support
+
+## v0.3.62 - Custom Icon Art System (2025-12-01)
+- **Custom Icon Art Overhaul:**
+  - Added 29 custom PNG icon images replacing emojis throughout UI
+  - Icons stored in `tunnelsofprivacy/icons/` folder
+  - CSS icon classes with size variants (xs/sm/md/lg/xl/xxl)
+  - All icons use background-image for consistent sizing
+
+- **Icons Replaced:**
+  - arcade.png: Arcade portal button
+  - back.png: Back/return buttons
+  - camping.png: Camp button & screen
+  - combat.png: Combat/battle indicators
+  - difficulty_easy/normal/hard.png: Difficulty selectors
+  - donate.png: Donate button
+  - dungeon_master.png: DM menu button & title
+  - explore.png: Explore/door buttons
+  - goldbag.png: Gold displays throughout
+  - heart.png: Health displays
+  - help.png: Help/info buttons
+  - inventory.png: Inventory buttons
+  - lootcrate.png: Party inventory title
+  - music_back/forward/play.png: Music controls
+  - narrate.png: TTS toggle
+  - questlog.png: Quest log
+  - settings.png: Settings buttons
+  - stairs_down/up.png: Stairs buttons
+  - store.png: Store room icon
+  - volume.png: Volume indicator
+  - zcashbag.png: Zcash-themed bag
+
+- **Updated UI Areas:**
+  - Title screen (settings, arcade portal)
+  - Dungeon menu (gold, camp, DM, stairs)
+  - DM panel (title, difficulty, stairs, gold setter)
+  - Battle screen (gold display)
+  - Camping screen (title, HP restored)
+  - Music controls (prev/play/next buttons)
+  - Store/inventory panels
+  - Pause screen (settings)
+
 ## v0.3.61 - Dungeon Masters Menu & Gold Scaling (2025-12-01)
 - **Dungeon Masters Menu Redesign:**
   - Combined Stairs/Fast Travel on one line for compact layout

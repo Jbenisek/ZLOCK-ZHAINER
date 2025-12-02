@@ -259,6 +259,139 @@
             z-index: 10;
         }
         
+        /* Enemy Privacy Breach Tooltip - They have no privacy! */
+        #enemyPrivacyTooltip {
+            position: fixed;
+            width: 420px;
+            background: linear-gradient(135deg, rgba(20, 5, 5, 0.98), rgba(40, 10, 10, 0.98));
+            border: 2px solid #E74C3C;
+            border-radius: 12px;
+            padding: 15px 18px;
+            z-index: 100000;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 8px 32px rgba(231, 76, 60, 0.4), 0 0 60px rgba(139, 69, 255, 0.2);
+            backdrop-filter: blur(10px);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        #enemyPrivacyTooltip.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        #enemyPrivacyTooltip .privacy-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(231, 76, 60, 0.5);
+        }
+        
+        #enemyPrivacyTooltip .privacy-warning {
+            color: #E74C3C;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: privacyBlink 1s ease-in-out infinite;
+        }
+        
+        @keyframes privacyBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        #enemyPrivacyTooltip .privacy-title {
+            color: #FF6B6B;
+            font-size: 18px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        #enemyPrivacyTooltip .privacy-subtitle {
+            color: #E74C3C;
+            font-size: 11px;
+            font-style: italic;
+            margin-top: 2px;
+        }
+        
+        #enemyPrivacyTooltip .privacy-section {
+            margin-bottom: 10px;
+        }
+        
+        #enemyPrivacyTooltip .privacy-section-title {
+            color: #E74C3C;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        #enemyPrivacyTooltip .privacy-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 0;
+            border-bottom: 1px solid rgba(231, 76, 60, 0.15);
+        }
+        
+        #enemyPrivacyTooltip .privacy-label {
+            color: #89A0B4;
+            font-size: 11px;
+        }
+        
+        #enemyPrivacyTooltip .privacy-value {
+            color: #FFD700;
+            font-size: 11px;
+            font-weight: 600;
+            text-align: right;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        #enemyPrivacyTooltip .privacy-value.embarrassing {
+            color: #FF69B4;
+        }
+        
+        #enemyPrivacyTooltip .privacy-value.password {
+            color: #00FF00;
+            font-family: 'Courier New', monospace;
+        }
+        
+        #enemyPrivacyTooltip .privacy-backstory {
+            color: #BFD1E0;
+            font-size: 11px;
+            line-height: 1.5;
+            font-style: italic;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            border-left: 3px solid #E74C3C;
+        }
+        
+        #enemyPrivacyTooltip .privacy-footer {
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(231, 76, 60, 0.3);
+            text-align: center;
+        }
+        
+        #enemyPrivacyTooltip .privacy-footer-text {
+            color: #E74C3C;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
         /* Chat Window Styles */
         #battleChatWindow {
             position: absolute;
@@ -1628,6 +1761,31 @@
             transform: translateY(1px);
         }
         
+        .musicIconBtn {
+            padding: 0;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .musicIconBtn:hover {
+            transform: scale(1.15);
+            filter: brightness(1.3);
+        }
+        
+        .musicIconBtn:active {
+            transform: scale(0.95);
+        }
+        
+        .musicIconBtn .icon {
+            width: 64px;
+            height: 64px;
+        }
+        
         .volumeControl {
             margin: 10px 0 0 0;
         }
@@ -1847,11 +2005,57 @@
             position: relative;
         }
         /* ===== END HACKATHON INFO TOOLTIPS ===== */
+        
+        /* ===== CUSTOM ICON IMAGES ===== */
+        .icon {
+            display: inline-block;
+            vertical-align: middle;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .icon-xs { width: 12px; height: 12px; }
+        .icon-sm { width: 16px; height: 16px; }
+        .icon-md { width: 20px; height: 20px; }
+        .icon-lg { width: 24px; height: 24px; }
+        .icon-xl { width: 32px; height: 32px; }
+        .icon-xxl { width: 48px; height: 48px; }
+        .icon-arcade { background-image: url('tunnelsofprivacy/icons/arcade.png'); }
+        .icon-back { background-image: url('tunnelsofprivacy/icons/back.png'); }
+        .icon-camping { background-image: url('tunnelsofprivacy/icons/camping.png'); }
+        .icon-combat { background-image: url('tunnelsofprivacy/icons/combat.png'); }
+        .icon-diff-easy { background-image: url('tunnelsofprivacy/icons/difficulty_easy.png'); }
+        .icon-diff-hard { background-image: url('tunnelsofprivacy/icons/difficulty_hard.png'); }
+        .icon-diff-normal { background-image: url('tunnelsofprivacy/icons/difficulty_normal.png'); }
+        .icon-donate { background-image: url('tunnelsofprivacy/icons/donate.png'); }
+        .icon-dm { background-image: url('tunnelsofprivacy/icons/dungeon_master.png'); }
+        .icon-explore { background-image: url('tunnelsofprivacy/icons/explore.png'); }
+        .icon-gold { background-image: url('tunnelsofprivacy/icons/goldbag.png'); }
+        .icon-heart { background-image: url('tunnelsofprivacy/icons/heart.png'); }
+        .icon-help { background-image: url('tunnelsofprivacy/icons/help.png'); }
+        .icon-inventory { background-image: url('tunnelsofprivacy/icons/inventory.png'); }
+        .icon-loot { background-image: url('tunnelsofprivacy/icons/lootcrate.png'); }
+        .icon-music-back { background-image: url('tunnelsofprivacy/icons/music_back.png'); }
+        .icon-music-forward { background-image: url('tunnelsofprivacy/icons/music_forward.png'); }
+        .icon-music-play { background-image: url('tunnelsofprivacy/icons/music_play.png'); }
+        .icon-narrate { background-image: url('tunnelsofprivacy/icons/narrate.png'); }
+        .icon-party-inv { background-image: url('tunnelsofprivacy/icons/party_inventory.png'); }
+        .icon-quest { background-image: url('tunnelsofprivacy/icons/questlog.png'); }
+        .icon-settings { background-image: url('tunnelsofprivacy/icons/settings.png'); }
+        .icon-stairs-down { background-image: url('tunnelsofprivacy/icons/stairs_down.png'); }
+        .icon-stairs-up { background-image: url('tunnelsofprivacy/icons/stairs_up.png'); }
+        .icon-store { background-image: url('tunnelsofprivacy/icons/store.png'); }
+        .icon-volume { background-image: url('tunnelsofprivacy/icons/volume.png'); }
+        .icon-zcash { background-image: url('tunnelsofprivacy/icons/zcashbag.png'); }
+        /* ===== END CUSTOM ICON IMAGES ===== */
     </style>
 </head>
 <body>
     <!-- Hackathon Info Tooltip -->
     <div id="infoTooltip"></div>
+    
+    <!-- Enemy Privacy Breach Tooltip - They have no privacy! -->
+    <div id="enemyPrivacyTooltip"></div>
     
     <!-- Weapon Tooltip (for equipment slots) -->
     <div id="weaponTooltip" style="position: fixed; z-index: 10001; pointer-events: none; opacity: 0; transition: opacity 0.2s ease;"></div>
@@ -1867,7 +2071,7 @@
             <!-- Category breakdown -->
             <div style="margin-bottom: 15px; text-align: left; font-size: 13px; color: #BFD1E0;">
                 <div id="loadingArt" style="margin-bottom: 5px;">🎨 Art: <span style="color: #8B45FF; font-weight: bold;">0/0</span></div>
-                <div id="loadingSound" style="margin-bottom: 5px;">🔊 Sound: <span style="color: #8B45FF; font-weight: bold;">0/0</span></div>
+                <div id="loadingSound" style="margin-bottom: 5px;"><span class="icon icon-sm icon-volume"></span> Sound: <span style="color: #8B45FF; font-weight: bold;">0/0</span></div>
             </div>
             
             <!-- Overall progress -->
@@ -1897,7 +2101,7 @@
             
             <!-- Narrator Button (Top Right) -->
             <button id="narratorBtn" onclick="toggleNarrator()" title="Listen to level narration">
-                <span class="narratorIcon">🎭</span>
+                <img src="tunnelsofprivacy/icons/narrate.png" alt="" style="width: 48px; height: 48px; vertical-align: middle;">
                 <span id="narratorBtnText">NARRATE</span>
             </button>
             
@@ -1967,7 +2171,7 @@
                 <div style="text-align: center; padding: 15px; background: linear-gradient(135deg, rgba(139, 69, 255, 0.2), rgba(75, 0, 130, 0.2)); border: 2px solid #8B45FF; border-radius: 10px; width: 380px; backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); margin-bottom: 10px;">
                     <div style="color: #BFD1E0; font-size: 14px; margin-bottom: 5px;">Dungeon Menu</div>
                     <div style="color: #F2C94C; font-size: 28px; font-weight: 900; text-shadow: 0 0 20px rgba(242, 201, 76, 0.5);">LEVEL <span id="dungeonMenuLevel">1</span></div>
-                    <div style="color: #FFD700; font-size: 16px; font-weight: 700; margin-top: 5px;">💰 <span id="dungeonMenuGold">0</span> Gold</div>
+                    <div style="color: #FFD700; font-size: 16px; font-weight: 700; margin-top: 5px;"><img src="tunnelsofprivacy/icons/goldbag.png" alt="" style="width: 64px; height: 64px; vertical-align: middle;"> <span id="dungeonMenuGold">0</span> Gold</div>
                     <div class="levelStatsGrid" style="margin-top: 10px;">
                         <div class="levelStatItem">
                             <span class="levelStatLabel">Rooms</span>
@@ -1994,18 +2198,18 @@
                 <div style="display: flex; gap: 10px; width: 100%; justify-content: center;">
                     <button class="menuButton" id="exploreLevelBtn" onclick="startBattle()" style="flex: 1;">
                         <div class="loadingBar" id="exploreLoadingBar"></div>
-                        <span class="btnText">EXPLORE LEVEL</span>
+                        <span class="btnText"><span class="icon icon-lg icon-combat"></span> EXPLORE LEVEL</span>
                     </button>
                     <button class="menuButton" id="stairsDownBtn2" onclick="changeLevel(1)" style="display: none; width: auto; min-width: 0; padding: 10px 16px; background: linear-gradient(135deg, rgba(39, 174, 96, 0.4), rgba(20, 100, 50, 0.4)); border-color: #27AE60;">
-                        <span>⬇️ STAIRS</span>
+                        <span><span class="icon icon-md icon-stairs-down"></span> STAIRS</span>
                     </button>
                 </div>
                 <button class="menuButton" id="levelStoreBtn" onclick="enterLevelStore()" disabled>
-                    <span id="levelStoreBtnText">ENTER LEVEL STORE<br><span style="font-size: 12px; font-weight: 400;">(Not Found)</span></span>
+                    <span id="levelStoreBtnText"><span class="icon icon-lg icon-store"></span> ENTER LEVEL STORE<br><span style="font-size: 12px; font-weight: 400;">(Not Found)</span></span>
                 </button>
-                <button class="menuButton" onclick="openInventory()">INVENTORY</button>
-                <button class="menuButton" id="campBtn" onclick="openCampPanel()">🏕️ CAMP</button>
-                <button class="menuButton" id="dungeonMastersBtn" onclick="toggleDungeonMasters()" style="background: linear-gradient(135deg, rgba(139, 69, 255, 0.4), rgba(75, 0, 130, 0.4));">🎲 DUNGEON MASTERS</button>
+                <button class="menuButton" onclick="openInventory()"><span class="icon icon-lg icon-inventory"></span> INVENTORY</button>
+                <button class="menuButton" id="campBtn" onclick="openCampPanel()"><span class="icon icon-lg icon-camping"></span> CAMP</button>
+                <button class="menuButton" id="dungeonMastersBtn" onclick="toggleDungeonMasters()" style="background: linear-gradient(135deg, rgba(139, 69, 255, 0.4), rgba(75, 0, 130, 0.4));"><span class="icon icon-lg icon-dm"></span> DUNGEON MASTERS</button>
             </div>
             
             <!-- Camp Panel (Right Side) -->
@@ -2028,7 +2232,7 @@
                 
                 <!-- Health Regen Preview -->
                 <div style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 12px; margin-bottom: 15px;">
-                    <div style="color: #F2C94C; font-size: 14px; font-weight: 700; text-align: center; margin-bottom: 8px;">❤️ HEALTH RESTORED</div>
+                    <div style="color: #F2C94C; font-size: 14px; font-weight: 700; text-align: center; margin-bottom: 8px;"><span class="icon icon-md icon-heart"></span> HEALTH RESTORED</div>
                     <div style="display: flex; justify-content: space-around; font-size: 12px;">
                         <div style="text-align: center;">
                             <div style="color: #E74C3C; font-weight: bold;" id="campHealZooko">+16 HP</div>
@@ -2068,14 +2272,14 @@
             <!-- Dungeon Masters Panel (Right Side) -->
             <div id="dungeonMastersPanel" style="display: none; position: absolute; top: 50%; right: 20px; transform: translateY(-50%); background: linear-gradient(135deg, rgba(20, 10, 40, 0.95), rgba(40, 20, 60, 0.95)); border: 3px solid #8B45FF; border-radius: 15px; padding: 20px; backdrop-filter: blur(15px); box-shadow: 0 0 30px rgba(139, 69, 255, 0.4), inset 0 0 20px rgba(139, 69, 255, 0.1); min-width: 280px;">
                 <div style="text-align: center; margin-bottom: 15px;">
-                    <div style="color: #F2C94C; font-size: 18px; font-weight: 900; text-shadow: 0 0 15px rgba(242, 201, 76, 0.5);">🎲 DUNGEON MASTERS</div>
+                    <div style="color: #F2C94C; font-size: 18px; font-weight: 900; text-shadow: 0 0 15px rgba(242, 201, 76, 0.5);"><span class="icon icon-lg icon-dm"></span> DUNGEON MASTERS</div>
                     <button onclick="toggleDungeonMasters()" style="position: absolute; top: 10px; right: 10px; background: rgba(255,100,100,0.3); border: 2px solid #ff6b6b; border-radius: 50%; width: 28px; height: 28px; color: #ff6b6b; font-size: 16px; cursor: pointer; font-weight: bold;">✕</button>
                 </div>
                 
                 <!-- Next Room Preview -->
                 <div id="nextRoomPreview" style="background: rgba(0,0,0,0.4); border: 2px solid rgba(139, 69, 255, 0.5); border-radius: 10px; padding: 12px; margin-bottom: 15px; text-align: center;">
                     <div style="font-size: 11px; color: #89A0B4; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px;">Next Room</div>
-                    <div id="nextRoomType" style="font-size: 18px; font-weight: bold; color: #F2C94C;">⚔️ Combat</div>
+                    <div id="nextRoomType" style="font-size: 18px; font-weight: bold; color: #F2C94C;"><span class="icon icon-md icon-combat"></span> Combat</div>
                 </div>
                 
                 <!-- Level Status -->
@@ -2114,7 +2318,7 @@
                         <span id="dmSecretsStatus" style="color: #89A0B4; font-weight: bold;">0/0</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; font-size: 12px; color: #BFD1E0; margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(139, 69, 255, 0.3);">
-                        <span>🚪 Rooms Left:</span>
+                        <span><span class="icon icon-sm icon-explore"></span> Rooms Left:</span>
                         <span id="dmRoomsRemaining" style="color: #F2C94C; font-weight: bold;">?</span>
                     </div>
                 </div>
@@ -2123,8 +2327,8 @@
                 <div style="text-align: center; margin-bottom: 12px;">
                     <div style="color: #BFD1E0; font-size: 12px; font-weight: 700; margin-bottom: 6px; text-shadow: 0 0 10px rgba(139, 69, 255, 0.5);">STAIRS / FAST TRAVEL</div>
                     <div style="display: flex; gap: 6px; justify-content: center; align-items: center;">
-                        <button id="stairsUpBtn" class="menuButton" onclick="changeLevel(-1)" style="width: 50px; padding: 8px 6px; font-size: 12px;">⬆️</button>
-                        <button id="stairsDownBtn" class="menuButton" onclick="changeLevel(1)" style="width: 50px; padding: 8px 6px; font-size: 12px;">⬇️</button>
+                        <button id="stairsUpBtn" class="menuButton" onclick="changeLevel(-1)" style="width: 50px; padding: 8px 6px; font-size: 12px;"><span class="icon icon-md icon-stairs-up"></span></button>
+                        <button id="stairsDownBtn" class="menuButton" onclick="changeLevel(1)" style="width: 50px; padding: 8px 6px; font-size: 12px;"><span class="icon icon-md icon-stairs-down"></span></button>
                         <input type="number" id="fastTravelLevel" min="1" value="1" style="width: 50px; padding: 6px; font-size: 13px; text-align: center; background: rgba(0,0,0,0.5); border: 2px solid #8B45FF; border-radius: 5px; color: #F2C94C; font-family: 'JetBrains Mono', monospace;">
                         <button id="fastTravelBtn" class="menuButton" onclick="fastTravel()" style="width: 60px; padding: 8px 6px; font-size: 12px;">🚀 GO</button>
                     </div>
@@ -2134,9 +2338,9 @@
                 <div style="text-align: center; margin-bottom: 12px;">
                     <div style="color: #BFD1E0; font-size: 12px; font-weight: 700; margin-bottom: 6px; text-shadow: 0 0 10px rgba(139, 69, 255, 0.5);">DIFFICULTY / PARTY LEVEL</div>
                     <div style="display: flex; gap: 6px; justify-content: center; align-items: center;">
-                        <button id="diffCasualBtn" class="menuButton" onclick="setDifficulty('casual')" style="width: auto; padding: 6px 8px; font-size: 11px;">🌼</button>
-                        <button id="diffNormalBtn" class="menuButton" onclick="setDifficulty('normal')" style="width: auto; padding: 6px 8px; font-size: 11px;">⚔️</button>
-                        <button id="diffExpertBtn" class="menuButton" onclick="setDifficulty('expert')" style="width: auto; padding: 6px 8px; font-size: 11px;">💀</button>
+                        <button id="diffCasualBtn" class="menuButton" onclick="setDifficulty('casual')" style="width: auto; padding: 6px 8px; font-size: 11px;"><span class="icon icon-md icon-diff-easy"></span></button>
+                        <button id="diffNormalBtn" class="menuButton" onclick="setDifficulty('normal')" style="width: auto; padding: 6px 8px; font-size: 11px;"><span class="icon icon-md icon-diff-normal"></span></button>
+                        <button id="diffExpertBtn" class="menuButton" onclick="setDifficulty('expert')" style="width: auto; padding: 6px 8px; font-size: 11px;"><span class="icon icon-md icon-diff-hard"></span></button>
                         <input type="number" id="partyLevelInput" min="1" max="100" value="1" style="width: 50px; padding: 6px; font-size: 13px; text-align: center; background: rgba(0,0,0,0.5); border: 2px solid #F2C94C; border-radius: 5px; color: #F2C94C; font-family: 'JetBrains Mono', monospace;">
                         <button class="menuButton" onclick="setPartyLevel()" style="width: 60px; padding: 8px 6px; font-size: 12px; background: linear-gradient(135deg, rgba(242, 201, 76, 0.4), rgba(200, 150, 50, 0.4)); border-color: #F2C94C;">SET</button>
                     </div>
@@ -2146,7 +2350,7 @@
                 <div style="text-align: center;">
                     <div style="color: #BFD1E0; font-size: 12px; font-weight: 700; margin-bottom: 6px; text-shadow: 0 0 10px rgba(139, 69, 255, 0.5);">SET GOLD</div>
                     <div style="display: flex; gap: 6px; justify-content: center; align-items: center;">
-                        <span style="color: #F2C94C; font-size: 16px;">💰</span>
+                        <span class="icon icon-lg icon-gold"></span>
                         <input type="number" id="setGoldInput" min="0" value="0" style="width: 80px; padding: 6px; font-size: 13px; text-align: center; background: rgba(0,0,0,0.5); border: 2px solid #F2C94C; border-radius: 5px; color: #F2C94C; font-family: 'JetBrains Mono', monospace;">
                         <button class="menuButton" onclick="setPartyGold()" style="width: 60px; padding: 8px 6px; font-size: 12px; background: linear-gradient(135deg, rgba(242, 201, 76, 0.4), rgba(200, 150, 50, 0.4)); border-color: #F2C94C;">SET</button>
                     </div>
@@ -2168,7 +2372,7 @@
             <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: center;">
                 <!-- Camp Title -->
                 <div style="color: #F2C94C; font-size: 36px; font-weight: 900; text-shadow: 0 0 30px rgba(242, 201, 76, 0.8), 2px 2px 4px rgba(0,0,0,0.8); margin-bottom: 20px;">
-                    🏕️ RESTING AT CAMP
+                    <span class="icon icon-xxl icon-camping"></span> RESTING AT CAMP
                 </div>
                 
                 <!-- Progress Info -->
@@ -2184,7 +2388,7 @@
                     
                     <!-- Health Regen Status -->
                     <div style="color: #E74C3C; font-size: 18px; margin-bottom: 15px;">
-                        ❤️ +<span id="campHealedSoFar">0</span> HP Restored
+                        <span class="icon icon-lg icon-heart"></span> +<span id="campHealedSoFar">0</span> HP Restored
                     </div>
                     
                     <!-- Cancel Button -->
@@ -2213,7 +2417,7 @@
             
             <!-- Gold Display (Top Center) -->
             <div id="battleGoldDisplay" style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(30, 30, 30, 0.8)); border: 2px solid #FFD700; border-radius: 8px; padding: 8px 20px; z-index: 100; display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: 20px;">💰</span>
+                <span class="icon icon-lg icon-gold"></span>
                 <span id="battleGold" style="color: #FFD700; font-size: 18px; font-weight: 700; font-family: 'JetBrains Mono', monospace;">0</span>
             </div>
             
@@ -2349,7 +2553,7 @@
                     <span id="chatStatus" style="font-size: 11px; color: #aaa;"></span>
                     <label id="ttsToggleLabel" title="Enable text-to-speech for NPC responses">
                         <input type="checkbox" id="ttsToggle" checked onchange="toggleTTS()">
-                        <span style="font-size: 11px;">🔊</span>
+                        <span class="icon icon-sm icon-narrate"></span>
                     </label>
                     <button id="chatExpandBtn" onclick="toggleChatExpand()" title="Expand/Shrink">⇕</button>
                     <button id="chatCloseBtn" onclick="toggleChatWindow()">✕</button>
@@ -2394,19 +2598,22 @@
                 <button id="startAdventureBtn" class="menuButton" onclick="startAdventure()">START ADVENTURE<span style="display: inline-block; width: 26px; height: 26px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">A</span></button>
                 <button id="continueBtn" class="menuButton comingSoon" disabled onclick="continueGame()">CONTINUE<span style="display: inline-block; width: 26px; height: 26px; background: #EB5757; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">A</span></button>
                 <button class="menuButton" onclick="showLoadSave()">LOAD SAVE FILE<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
-                <button class="menuButton" onclick="showSettings()">SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #2A9D8F; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">Y</span></button>
+                <button class="menuButton" onclick="showSettings()"><span class="icon icon-md icon-settings"></span> SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #2A9D8F; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">Y</span></button>
                 <button id="enterArcadeBtn" class="menuButton portalButton" onclick="exitPortal()">
                     <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                        <div style="text-align: left;">
-                            <div style="font-size: 18px; font-weight: 700;">ENTER ARCADE</div>
-                            <div style="font-size: 10px; font-weight: 400; margin-top: 2px;">(ZLOCK ZHAINER)</div>
+                        <div style="text-align: left; display: flex; align-items: center; gap: 8px;">
+                            <span class="icon icon-lg icon-arcade"></span>
+                            <div>
+                                <div style="font-size: 18px; font-weight: 700;">ENTER ARCADE</div>
+                                <div style="font-size: 10px; font-weight: 400; margin-top: 2px;">(ZLOCK ZHAINER)</div>
+                            </div>
                         </div>
-                        <span style="display: inline-block; padding: 4px 10px; background: #8B45FF; border-radius: 5px; font-weight: bold; color: white; font-size: 12px;">BACK</span>
+                        <span style="display: inline-block; padding: 4px 10px; background: #8B45FF; border-radius: 5px; font-weight: bold; color: white; font-size: 12px;"><span class="icon icon-sm icon-back"></span></span>
                     </div>
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.3.61 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.3.66 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div id="aboutDonateBtn" style="
@@ -2476,11 +2683,11 @@
         
         <!-- Music Control Panel - Bottom Above Ticker (OUTSIDE titleScreen so always visible) -->
         <div id="musicControls">
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <span style="color: #2A9D8F; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 900;">🎵</span>
-                <button onclick="musicPrevious()" class="musicButton" style="padding: 4px 8px; width: auto; font-size: 12px;">⏮</button>
-                <button id="musicPlayPauseBtn" onclick="musicPlayPause()" class="musicButton" style="padding: 4px 10px; border-color: #F2C94C; width: auto; font-size: 12px;">▶</button>
-                <button onclick="musicNext()" class="musicButton" style="padding: 4px 8px; width: auto; font-size: 12px;">⏭</button>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="tunnelsofprivacy/icons/volume.png" alt="" style="width: 48px; height: 48px;">
+                <button onclick="musicPrevious()" class="musicIconBtn" title="Previous Track"><img src="tunnelsofprivacy/icons/music_back.png" alt="Previous" style="width: 64px; height: 64px;"></button>
+                <button id="musicPlayPauseBtn" onclick="musicPlayPause()" class="musicIconBtn" title="Play/Pause"><img id="playPauseIcon" src="tunnelsofprivacy/icons/music_play.png" alt="Play" style="width: 64px; height: 64px;"></button>
+                <button onclick="musicNext()" class="musicIconBtn" title="Next Track"><img src="tunnelsofprivacy/icons/music_forward.png" alt="Next" style="width: 64px; height: 64px;"></button>
                 <input type="range" class="volumeSlider" id="volumeSlider" min="1" max="150" value="40" oninput="updateVolume()" style="width: 80px;">
                 <span id="volumeSliderValue" style="color: #2D9CDB; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: bold; min-width: 24px;">40</span>
             </div>
@@ -2501,7 +2708,7 @@
         <button class="menuButton" onclick="resumeGame()">RESUME<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         <button class="menuButton" onclick="saveGameFromPause()" style="background: linear-gradient(135deg, rgba(46, 134, 222, 0.4), rgba(46, 134, 222, 0.3)); border-color: #3498DB;">SAVE GAME<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">💾</span></button>
         <button class="menuButton" onclick="downloadSaveFile()" style="background: linear-gradient(135deg, rgba(39, 174, 96, 0.4), rgba(39, 174, 96, 0.3)); border-color: #27AE60;">SAVE GAME FILE<span style="display: inline-block; width: 26px; height: 26px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">⬇</span></button>
-        <button class="menuButton" onclick="showSettingsFromPause()">SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">Y</span></button>
+        <button class="menuButton" onclick="showSettingsFromPause()"><span class="icon icon-md icon-settings"></span> SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">Y</span></button>
         <button class="menuButton" id="resyncBtn" onclick="requestResync()" style="display: none; background: linear-gradient(135deg, rgba(155, 89, 182, 0.4), rgba(155, 89, 182, 0.3)); border-color: #9B59B6;">🔄 RESYNC FROM HOST<span style="display: inline-block; width: 26px; height: 26px; background: #9B59B6; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">↻</span></button>
         <button class="menuButton" id="hostControlsBtn" onclick="showHostControls()" style="display: none; background: linear-gradient(135deg, rgba(42, 157, 143, 0.4), rgba(42, 157, 143, 0.3)); border-color: #2A9D8F;">HOST CONTROLS<span style="display: inline-block; width: 26px; height: 26px; background: #2A9D8F; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">🎮</span></button>
         <button class="menuButton" onclick="quitToMenu()">QUIT TO MENU<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 10px; font-weight: bold; color: white; font-size: 12px;">◀</span></button>
@@ -2521,7 +2728,7 @@
             
             <!-- Room Type Header -->
             <div id="nonCombatRoomHeader" style="text-align: center; margin-bottom: 30px;">
-                <div id="nonCombatRoomIcon" style="font-size: 64px; margin-bottom: 10px;">🏪</div>
+                <div id="nonCombatRoomIcon" style="font-size: 64px; margin-bottom: 10px;"><span class="icon icon-xxl icon-store"></span></div>
                 <div id="nonCombatRoomTitle" style="color: #F2C94C; font-size: 32px; font-weight: 900; text-shadow: 0 0 20px rgba(242, 201, 76, 0.5);">STORE</div>
                 <div id="nonCombatRoomSubtitle" style="color: #89A0B4; font-size: 16px; margin-top: 5px;">A merchant awaits...</div>
             </div>
@@ -2544,7 +2751,7 @@
                         
                         <!-- CENTER: Party Inventory -->
                         <div id="storeInventorySection" style="background: rgba(45, 156, 219, 0.15); border: 2px solid #2D9CDB; border-radius: 12px; padding: 15px;">
-                            <div style="color: #2D9CDB; font-size: 16px; font-weight: 900; text-align: center; margin-bottom: 8px; text-shadow: 0 0 10px rgba(45, 156, 219, 0.5);">📦 PARTY INVENTORY</div>
+                            <div style="color: #2D9CDB; font-size: 16px; font-weight: 900; text-align: center; margin-bottom: 8px; text-shadow: 0 0 10px rgba(45, 156, 219, 0.5);"><span class="icon icon-md icon-loot"></span> PARTY INVENTORY</div>
                             <!-- Hero Legend -->
                             <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 8px; font-size: 10px; font-family: 'JetBrains Mono', monospace;">
                                 <span style="color: #F2C94C;">● Zooko</span>
@@ -2623,7 +2830,7 @@
             <!-- Leave Button -->
             <div style="margin-top: 30px;">
                 <button class="menuButton" id="nonCombatLeaveBtn" onclick="leaveNonCombatRoom()" style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.4), rgba(231, 76, 60, 0.3)); border-color: #E74C3C; font-size: 18px; padding: 15px 40px;">
-                    🚪 LEAVE ROOM
+                    <span class="icon icon-lg icon-explore"></span> LEAVE ROOM
                 </button>
                 <div id="nonCombatWaitingMsg" style="display: none; color: #F39C12; font-size: 14px; margin-top: 10px; text-align: center;">
                     ⏳ Waiting for host to leave...
@@ -2654,7 +2861,7 @@
                     <span id="playerCountDisplay" style="color: #F2C94C; font-size: 18px; font-weight: bold;">1/4</span>
                 </div>
                 <div style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.1)); padding: 8px 16px; border-radius: 8px; border: 2px solid #FFD700;">
-                    <span style="color: #89A0B4; font-size: 11px; margin-right: 8px;">💰 GOLD:</span>
+                    <span style="color: #89A0B4; font-size: 11px; margin-right: 8px;"><span class="icon icon-sm icon-gold"></span> GOLD:</span>
                     <span id="sel-party-gold-top" style="color: #FFD700; font-size: 18px; font-weight: bold;">0</span>
                 </div>
             </div>
@@ -2875,7 +3082,7 @@
     <!-- Party Inventory Panel -->
     <div id="inventoryPanel">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <div style="color: #2D9CDB; font-size: 20px; font-weight: 900; text-shadow: 0 0 15px rgba(45, 156, 219, 0.5);">📦 PARTY INVENTORY</div>
+            <div style="color: #2D9CDB; font-size: 20px; font-weight: 900; text-shadow: 0 0 15px rgba(45, 156, 219, 0.5);"><span class="icon icon-lg icon-loot"></span> PARTY INVENTORY</div>
             <button onclick="closeInventory()" style="background: rgba(255,100,100,0.3); border: 2px solid #ff6b6b; border-radius: 50%; width: 28px; height: 28px; color: #ff6b6b; font-size: 16px; cursor: pointer; font-weight: bold;">✕</button>
         </div>
         
@@ -2991,7 +3198,7 @@
         <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         
         <div style="display: block; width: 100%; margin-top: 15px; padding: 10px 0; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A7A8F; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-            Tunnels of Privacy v0.3.61
+            Tunnels of Privacy v0.3.66
         </div>
     </div>
     
@@ -3085,7 +3292,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.3.61';
+        const GAME_VERSION = 'v0.3.66';
         
         // ===== HACKATHON INFO TOOLTIP SYSTEM =====
         const TOOLTIP_DELAY = 800; // ms before tooltip appears
@@ -3685,6 +3892,312 @@
             currentSlideIndex = 0;
         }
         // ===== END HACKATHON INFO TOOLTIP SYSTEM =====
+        
+        // ===== ENEMY PRIVACY BREACH SYSTEM =====
+        // Enemies use public ledgers and have NO privacy - we expose everything!
+        
+        const PRIVACY_DATA = {
+            // Mother's maiden names (all fake of course)
+            maidenNames: [
+                'Blockchain', 'Nakamoto', 'Buterin', 'Hoskinson', 'Szabo', 'Finney',
+                'McAfee', 'Ver', 'Wright', 'Antonopoulos', 'Pomp', 'Saylor',
+                'Gensler', 'Munger', 'Dimon', 'Yellen', 'Powell', 'Lagarde',
+                'Silvergate', 'FTX', 'Celsius', 'Luna', 'Terra', 'Three Arrows'
+            ],
+            // Bad passwords
+            passwords: [
+                'password123', '123456789', 'letmein', 'bitcoin', 'ethereum',
+                'hodl2themoon', 'ilovecrypto', 'notmykeys', 'trustme', 'admin',
+                'qwerty123', 'dragon', 'monkey', 'abc123', 'password1',
+                '12345678', 'iloveyou', 'princess', 'sunshine', 'welcome',
+                'shadow', 'football', 'michael', 'ninja', 'mustang',
+                'supersecret', 'p@ssw0rd', 'changeme', 'default', 'letmein123',
+                'goldenbull', 'tothemoon', 'buythedip', 'wagmi', 'ngmi'
+            ],
+            // Last meals
+            meals: [
+                'cold ramen from 3 days ago', 'stolen goblin cheese', 'raw cave mushrooms',
+                'a suspicious potion they found', 'their own toenails', 'dungeon moss',
+                'adventurer leftovers', 'pickled bat wings', 'stale bread crust',
+                'mystery meat (don\'t ask)', 'expired milk', 'floor candy',
+                'a boot they found', 'cave spider eggs', 'moldy cheese',
+                'unidentified slime', 'old pizza crusts', 'regret and sadness',
+                'the last adventurer\'s lunch', 'fermented goblin juice',
+                'crystallized tears', 'burnt toast', 'raw potatoes', 'ice soup'
+            ],
+            // Time since last "relations"
+            relations: [
+                'Never (too busy hoarding gold)', '47 years, 3 months, 2 days',
+                'What\'s that?', 'Before the great blockchain war',
+                'They claim "last week" but nobody believes them',
+                'Sometime during the Byzantine era', 'Error: Data not found',
+                'Their diary says "soon" for 200 years', 'Ask their imaginary friend',
+                'The prophecy says "eventually"', 'When pigs fly (so never)',
+                'Before Bitcoin existed', 'In their dreams only',
+                'Last decade, maybe?', 'It\'s complicated...',
+                'During the last bull run (so 2 years)', 'Pending transaction...',
+                'When gas fees were low (so never)', 'Before the rugpull',
+                'They\'re on a waitlist', 'Their mom says "someday"',
+                '404: Romance Not Found', 'Blocked by firewall'
+            ],
+            // Boss backstories
+            bossBackstories: [
+                'Once a promising DeFi developer who lost everything in a rugpull. Now guards this dungeon out of spite.',
+                'Former Bitcoin maximalist who went mad after the 2022 crash. Blames all adventurers for not buying the dip.',
+                'Used to run a successful NFT marketplace until everyone realized JPEGs aren\'t worth millions.',
+                'Was rejected from the Zcash Foundation for "excessive evil tendencies." Holds a grudge.',
+                'Claims to be Satoshi Nakamoto. Nobody believes them. The rejection drove them to villainy.',
+                'Lost their life savings to a "guaranteed 10000x gem" Telegram group. Now robs adventurers.',
+                'Former crypto influencer whose audience discovered they paper-traded. Fled to the dungeons in shame.',
+                'Believed they could "time the market." They could not. Now they guard treasure they can\'t spend.',
+                'Created a meme coin called $EVIL. It pumped, then dumped. They kept the evil, lost the money.',
+                'Once tried to explain blockchain to their family at Thanksgiving. Became a dungeon boss the next day.'
+            ],
+            // Mob backstories
+            mobBackstories: [
+                'Just following orders. Doesn\'t even get dental.',
+                'Was promised equity in the dungeon. Got paid in exposure instead.',
+                'Applied for a desk job. This was the only callback.',
+                'Student loans. So many student loans.',
+                'Their LinkedIn says "Dungeon Minion | Aspiring Boss"',
+                'Dropped out of evil henchman school. Parents disappointed.',
+                'Has a side hustle selling dungeon souvenirs.',
+                'Just here for the health insurance.',
+                'Actually wanted to be a bard. Life had other plans.',
+                'Roommate with three other minions. Rent is still too high.'
+            ],
+            // Embarrassing fears
+            fears: [
+                'Public speaking', 'Commitment', 'Being audited',
+                'Smart contracts', 'Tax season', 'Private keys',
+                'Hardware wallets', 'KYC verification', 'SEC investigations',
+                'Ledger updates', 'Seed phrases', 'The IRS',
+                'Angry adventurers', 'Performance reviews', 'Mondays',
+                'Stairs', 'Shielded transactions', 'Zcash holders'
+            ],
+            // Browser history (embarrassing)
+            browserHistory: [
+                'how to be scary tutorial', 'why do adventurers keep beating me',
+                'boss motivation quotes', 'evil laugh practice videos',
+                'is hoarding gold a personality', 'dungeon interior design ideas',
+                'cheap minion recruitment', 'how to make friends (evil edition)',
+                'adventurer weaknesses wikihow', 'therapy for dungeon bosses',
+                'how to file dungeon taxes', 'best evil monologue examples',
+                'why does nobody like me quiz', 'free evil lair blueprints',
+                'how to sound menacing', 'villain support group near me'
+            ]
+        };
+        
+        // Cache for generated enemy privacy data (so it stays consistent)
+        const enemyPrivacyCache = new Map();
+        
+        function generateEnemyPrivacyData(enemy) {
+            // Check cache first
+            const cacheKey = `${enemy.name}_${enemy.level || 1}`;
+            if (enemyPrivacyCache.has(cacheKey)) {
+                return enemyPrivacyCache.get(cacheKey);
+            }
+            
+            // Seeded random based on enemy name for consistency
+            const seed = enemy.name.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+            const rand = (arr) => arr[(seed + arr.length) % arr.length];
+            const randNum = (min, max) => min + (seed % (max - min + 1));
+            
+            // Generate 1-5 passwords
+            const numPasswords = 1 + (seed % 5);
+            const passwords = [];
+            for (let i = 0; i < numPasswords; i++) {
+                const pwIndex = (seed + i * 7) % PRIVACY_DATA.passwords.length;
+                passwords.push(PRIVACY_DATA.passwords[pwIndex] + (i > 0 ? (seed % 99) : ''));
+            }
+            
+            // Pick backstory based on boss vs mob
+            const backstory = enemy.isBoss || !enemy.isMob 
+                ? PRIVACY_DATA.bossBackstories[(seed) % PRIVACY_DATA.bossBackstories.length]
+                : PRIVACY_DATA.mobBackstories[(seed) % PRIVACY_DATA.mobBackstories.length];
+            
+            const data = {
+                realName: `${enemy.name.split(' ')[0]}icus McEvil${seed % 100}`,
+                age: randNum(23, 847),
+                mothersMaidenName: rand(PRIVACY_DATA.maidenNames),
+                passwords: passwords,
+                lastMeal: rand(PRIVACY_DATA.meals),
+                lastRelations: rand(PRIVACY_DATA.relations),
+                backstory: backstory,
+                ssn: `${randNum(100,999)}-${randNum(10,99)}-${randNum(1000,9999)}`,
+                creditScore: randNum(300, 450), // Always bad
+                fear: rand(PRIVACY_DATA.fears),
+                browserHistory: rand(PRIVACY_DATA.browserHistory),
+                walletBalance: `${randNum(0, 5)}.${randNum(0,99).toString().padStart(2,'0')} BTC (all traceable)`,
+                taxStatus: seed % 3 === 0 ? 'DELINQUENT' : seed % 3 === 1 ? 'AUDITED' : 'FRAUDULENT'
+            };
+            
+            // Cache it
+            enemyPrivacyCache.set(cacheKey, data);
+            return data;
+        }
+        
+        function showEnemyPrivacyTooltip(event, enemy) {
+            const tooltip = document.getElementById('enemyPrivacyTooltip');
+            if (!tooltip || !enemy) return;
+            
+            const data = generateEnemyPrivacyData(enemy);
+            const isBoss = enemy.isBoss || !enemy.isMob;
+            
+            tooltip.innerHTML = `
+                <div class="privacy-header">
+                    <div>
+                        <div class="privacy-warning">⚠️ PRIVACY BREACH DETECTED ⚠️</div>
+                        <div class="privacy-title">${enemy.name}</div>
+                        <div class="privacy-subtitle">${isBoss ? '👑 Dungeon Boss' : '👹 Minion'} • No Privacy Detected</div>
+                    </div>
+                </div>
+                
+                <div class="privacy-section">
+                    <div class="privacy-section-title">📋 EXPOSED PERSONAL DATA</div>
+                    <div class="privacy-row">
+                        <span class="privacy-label">Legal Name:</span>
+                        <span class="privacy-value">${data.realName}</span>
+                    </div>
+                    <div class="privacy-row">
+                        <span class="privacy-label">Age:</span>
+                        <span class="privacy-value">${data.age} years old</span>
+                    </div>
+                    <div class="privacy-row">
+                        <span class="privacy-label">Mother's Maiden Name:</span>
+                        <span class="privacy-value">${data.mothersMaidenName}</span>
+                    </div>
+                    <div class="privacy-row">
+                        <span class="privacy-label">SSN:</span>
+                        <span class="privacy-value password">${data.ssn}</span>
+                    </div>
+                    <div class="privacy-row">
+                        <span class="privacy-label">Credit Score:</span>
+                        <span class="privacy-value embarrassing">${data.creditScore} (POOR)</span>
+                    </div>
+                    <div class="privacy-row">
+                        <span class="privacy-label">Tax Status:</span>
+                        <span class="privacy-value embarrassing">${data.taxStatus}</span>
+                    </div>
+                </div>
+                
+                <div class="privacy-section">
+                    <div class="privacy-section-title">🔐 LEAKED PASSWORDS (${data.passwords.length})</div>
+                    ${data.passwords.map(pw => `
+                        <div class="privacy-row">
+                            <span class="privacy-label">Password:</span>
+                            <span class="privacy-value password">${pw}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="privacy-section">
+                    <div class="privacy-section-title">💰 FINANCIAL DATA</div>
+                    <div class="privacy-row">
+                        <span class="privacy-label">Wallet Balance:</span>
+                        <span class="privacy-value">${data.walletBalance}</span>
+                    </div>
+                    <div class="privacy-row">
+                        <span class="privacy-label">Gold on Hand:</span>
+                        <span class="privacy-value" style="color: #FFD700;">${enemy.goldDrop || 0} gold</span>
+                    </div>
+                </div>
+                
+                <div class="privacy-section">
+                    <div class="privacy-section-title">😳 EMBARRASSING INFO</div>
+                    <div class="privacy-row">
+                        <span class="privacy-label">Last Meal:</span>
+                        <span class="privacy-value embarrassing">${data.lastMeal}</span>
+                    </div>
+                    <div class="privacy-row">
+                        <span class="privacy-label">Last Relations:</span>
+                        <span class="privacy-value embarrassing">${data.lastRelations}</span>
+                    </div>
+                    <div class="privacy-row">
+                        <span class="privacy-label">Secret Fear:</span>
+                        <span class="privacy-value embarrassing">${data.fear}</span>
+                    </div>
+                    <div class="privacy-row">
+                        <span class="privacy-label">Recent Search:</span>
+                        <span class="privacy-value embarrassing">"${data.browserHistory}"</span>
+                    </div>
+                </div>
+                
+                <div class="privacy-section">
+                    <div class="privacy-section-title">📖 BACKSTORY (LEAKED)</div>
+                    <div class="privacy-backstory">${data.backstory}</div>
+                </div>
+                
+                <div class="privacy-section">
+                    <div class="privacy-section-title">⚔️ COMBAT STATS</div>
+                    <div class="privacy-row">
+                        <span class="privacy-label">HP:</span>
+                        <span class="privacy-value" style="color: #ff6b6b;">${enemy.hp}/${enemy.maxHp}</span>
+                    </div>
+                    <div class="privacy-row">
+                        <span class="privacy-label">AC:</span>
+                        <span class="privacy-value">${enemy.ac || 10}</span>
+                    </div>
+                    <div class="privacy-row">
+                        <span class="privacy-label">Damage:</span>
+                        <span class="privacy-value">${enemy.minDamage || 1}-${enemy.maxDamage || 4}</span>
+                    </div>
+                </div>
+                
+                <div class="privacy-footer">
+                    <div class="privacy-footer-text">🔓 This entity uses a PUBLIC LEDGER • All data is PERMANENTLY VISIBLE</div>
+                </div>
+            `;
+            
+            // Position tooltip
+            const padding = 15;
+            let x = event.clientX + padding;
+            let y = event.clientY + padding;
+            
+            // Keep on screen
+            tooltip.style.left = `${x}px`;
+            tooltip.style.top = `${y}px`;
+            tooltip.classList.add('visible');
+            
+            // Adjust if off screen
+            setTimeout(() => {
+                const rect = tooltip.getBoundingClientRect();
+                if (rect.right > window.innerWidth - padding) {
+                    tooltip.style.left = `${event.clientX - rect.width - padding}px`;
+                }
+                if (rect.bottom > window.innerHeight - padding) {
+                    tooltip.style.top = `${Math.max(padding, event.clientY - rect.height - padding)}px`;
+                }
+            }, 10);
+        }
+        
+        function hideEnemyPrivacyTooltip() {
+            const tooltip = document.getElementById('enemyPrivacyTooltip');
+            if (tooltip) {
+                tooltip.classList.remove('visible');
+            }
+        }
+        
+        function updateEnemyPrivacyTooltipPosition(event) {
+            const tooltip = document.getElementById('enemyPrivacyTooltip');
+            if (!tooltip || !tooltip.classList.contains('visible')) return;
+            
+            const padding = 15;
+            let x = event.clientX + padding;
+            let y = event.clientY + padding;
+            
+            const rect = tooltip.getBoundingClientRect();
+            if (x + rect.width > window.innerWidth - padding) {
+                x = event.clientX - rect.width - padding;
+            }
+            if (y + rect.height > window.innerHeight - padding) {
+                y = Math.max(padding, event.clientY - rect.height - padding);
+            }
+            
+            tooltip.style.left = `${x}px`;
+            tooltip.style.top = `${y}px`;
+        }
+        // ===== END ENEMY PRIVACY BREACH SYSTEM =====
         
         // ===== LEVEL PROGRESS TRACKING =====
         let levelProgress = {
@@ -4946,14 +5459,14 @@
         
         // Music Control Functions
         function musicPlayPause() {
-            const btn = document.getElementById('musicPlayPauseBtn');
+            const icon = document.getElementById('playPauseIcon');
             
             if (!currentMusic) {
                 // No music loaded yet, start music system
                 musicEnabled = true;
                 userPausedMusic = false;
                 startMusicSystem();
-                if (btn) btn.textContent = '⏸';
+                if (icon) icon.src = 'tunnelsofprivacy/icons/music_pause.png';
                 return;
             }
             
@@ -4961,11 +5474,11 @@
                 currentMusic.play().catch(err => console.log('Play error:', err));
                 musicEnabled = true;
                 userPausedMusic = false;
-                if (btn) btn.textContent = '⏸';
+                if (icon) icon.src = 'tunnelsofprivacy/icons/music_pause.png';
             } else {
                 currentMusic.pause();
                 userPausedMusic = true;
-                if (btn) btn.textContent = '▶';
+                if (icon) icon.src = 'tunnelsofprivacy/icons/music_play.png';
             }
         }
         
@@ -5019,12 +5532,12 @@
         }
         
         function updateMusicButton() {
-            const btn = document.getElementById('musicPlayPauseBtn');
-            if (btn) {
+            const icon = document.getElementById('playPauseIcon');
+            if (icon) {
                 if (currentMusic && !currentMusic.paused) {
-                    btn.textContent = '⏸';
+                    icon.src = 'tunnelsofprivacy/icons/music_pause.png';
                 } else {
-                    btn.textContent = '▶';
+                    icon.src = 'tunnelsofprivacy/icons/music_play.png';
                 }
             }
         }
@@ -8034,14 +8547,14 @@
             
             // Configure room display based on type
             const roomConfigs = {
-                'store': { icon: '🏪', title: 'MERCHANT\'S SHOP', subtitle: 'Browse the wares...', color: '#27AE60' },
+                'store': { icon: '<span class="icon icon-xxl icon-store"></span>', title: 'MERCHANT\'S SHOP', subtitle: 'Browse the wares...', color: '#27AE60' },
                 'npc': { icon: '👤', title: 'FRIENDLY ENCOUNTER', subtitle: 'Someone approaches...', color: '#3498DB' },
                 'secret': { icon: '✨', title: 'SECRET ROOM', subtitle: 'You found something hidden!', color: '#F1C40F' },
-                'exploration': { icon: '🔍', title: 'EXPLORATION', subtitle: 'An interesting discovery...', color: '#9B59B6' }
+                'exploration': { icon: '<span class="icon icon-xxl icon-explore"></span>', title: 'EXPLORATION', subtitle: 'An interesting discovery...', color: '#9B59B6' }
             };
             
             const config = roomConfigs[roomType] || roomConfigs['exploration'];
-            document.getElementById('nonCombatRoomIcon').textContent = config.icon;
+            document.getElementById('nonCombatRoomIcon').innerHTML = config.icon;
             document.getElementById('nonCombatRoomTitle').textContent = config.title;
             document.getElementById('nonCombatRoomTitle').style.color = config.color;
             document.getElementById('nonCombatRoomSubtitle').textContent = config.subtitle;
@@ -8252,8 +8765,13 @@
             
             const sharedSave = loadSharedSave();
             
-            // Award XP
-            const xpReward = explorationData.reward?.xp || 50;
+            // Calculate XP multiplier based on dungeon level
+            const dungeonLevel = sharedSave.dungeonState?.currentLevel || 1;
+            const xpMultiplier = 1 + (dungeonLevel - 1) * 0.25; // +25% per level
+            
+            // Award XP - scaled by dungeon level
+            const baseXpReward = explorationData.reward?.xp || 50;
+            const xpReward = Math.floor(baseXpReward * xpMultiplier);
             ['zooko', 'nate', 'zancas', 'cyberaxe'].forEach(heroKey => {
                 if (sharedSave.heroes[heroKey]) {
                     sharedSave.heroes[heroKey].xp += Math.floor(xpReward / 4);
@@ -8436,17 +8954,17 @@
                 // Store was found - enable button
                 storeBtn.disabled = false;
                 storeBtn.classList.add('unlocked');
-                storeBtnText.innerHTML = 'ENTER LEVEL STORE<br><span style="font-size: 12px; font-weight: 400;">🛒 Store Available!</span>';
+                storeBtnText.innerHTML = '<span class="icon icon-lg icon-store"></span> ENTER LEVEL STORE<br><span style="font-size: 12px; font-weight: 400;">🛒 Store Available!</span>';
             } else if (currentLevelLayout && currentLevelLayout.hasStore && !currentLevelLayout.storeFound) {
                 // Level has a store but not found yet
                 storeBtn.disabled = true;
                 storeBtn.classList.remove('unlocked');
-                storeBtnText.innerHTML = 'ENTER LEVEL STORE<br><span style="font-size: 12px; font-weight: 400;">(Not Found)</span>';
+                storeBtnText.innerHTML = '<span class="icon icon-lg icon-store"></span> ENTER LEVEL STORE<br><span style="font-size: 12px; font-weight: 400;">(Not Found)</span>';
             } else {
                 // No store on this level or no layout
                 storeBtn.disabled = true;
                 storeBtn.classList.remove('unlocked');
-                storeBtnText.innerHTML = 'ENTER LEVEL STORE<br><span style="font-size: 12px; font-weight: 400;">(None on Level)</span>';
+                storeBtnText.innerHTML = '<span class="icon icon-lg icon-store"></span> ENTER LEVEL STORE<br><span style="font-size: 12px; font-weight: 400;">(None on Level)</span>';
             }
             
             // Also update Dungeon Masters panel
@@ -8576,12 +9094,12 @@
                         stairsDownBtn2.disabled = true;
                         stairsDownBtn2.style.opacity = '0.5';
                         stairsDownBtn2.style.cursor = 'not-allowed';
-                        stairsDownBtn2.innerHTML = '⬇️ STAIRS<br><span style="font-size: 10px;">(HOST ONLY)</span>';
+                        stairsDownBtn2.innerHTML = '<span class="icon icon-md icon-stairs-down"></span> STAIRS<br><span style="font-size: 10px;">(HOST ONLY)</span>';
                     } else {
                         stairsDownBtn2.disabled = false;
                         stairsDownBtn2.style.opacity = '1';
                         stairsDownBtn2.style.cursor = 'pointer';
-                        stairsDownBtn2.innerHTML = '⬇️ STAIRS';
+                        stairsDownBtn2.innerHTML = '<span class="icon icon-md icon-stairs-down"></span> STAIRS';
                     }
                 } else {
                     stairsDownBtn2.style.display = 'none';
@@ -8612,13 +9130,13 @@
             
             // Map room types to display text and icons
             const roomTypeDisplay = {
-                'combat': { icon: '⚔️', text: 'Combat', color: '#E74C3C' },
+                'combat': { icon: '<span class="icon icon-md icon-combat"></span>', text: 'Combat', color: '#E74C3C' },
                 'boss': { icon: '👹', text: 'BOSS BATTLE', color: '#8B45FF' },
                 'mini_boss': { icon: '💀', text: 'Mini-Boss', color: '#E67E22' },
-                'store': { icon: '🛒', text: 'Store', color: '#27AE60' },
+                'store': { icon: '<span class="icon icon-md icon-store"></span>', text: 'Store', color: '#27AE60' },
                 'secret': { icon: '✨', text: 'Secret Room', color: '#F1C40F' },
                 'npc': { icon: '👤', text: 'NPC Encounter', color: '#3498DB' },
-                'exploration': { icon: '🔍', text: 'Exploration', color: '#9B59B6' }
+                'exploration': { icon: '<span class="icon icon-md icon-explore"></span>', text: 'Exploration', color: '#9B59B6' }
             };
             
             const display = roomTypeDisplay[roomType] || roomTypeDisplay['combat'];
@@ -8660,16 +9178,16 @@
                 
                 if (levelComplete) {
                     exploreBtn.classList.add('ready');
-                    if (btnText) btnText.textContent = '🏆 LEVEL COMPLETE';
+                    if (btnText) btnText.innerHTML = '🏆 LEVEL COMPLETE';
                 } else if (percent >= 100) {
                     exploreBtn.classList.add('ready');
-                    if (btnText) btnText.textContent = '⚔️ EXPLORE LEVEL';
+                    if (btnText) btnText.innerHTML = '<span class="icon icon-lg icon-combat"></span> EXPLORE LEVEL';
                 } else if (percent > 0) {
                     exploreBtn.classList.remove('ready');
-                    if (btnText) btnText.textContent = `PREPARING... ${percent}%`;
+                    if (btnText) btnText.innerHTML = `PREPARING... ${percent}%`;
                 } else {
                     exploreBtn.classList.remove('ready');
-                    if (btnText) btnText.textContent = 'EXPLORE LEVEL';
+                    if (btnText) btnText.innerHTML = '<span class="icon icon-lg icon-combat"></span> EXPLORE LEVEL';
                 }
             }
         }
@@ -12431,24 +12949,19 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     }
                 });
                 
-                // Hover-to-enlarge functionality (hold for 0.5s)
-                let hoverTimeout = null;
-                card.addEventListener('mouseenter', () => {
-                    hoverTimeout = setTimeout(() => {
-                        // Get card position for proper enlargement
-                        const rect = card.getBoundingClientRect();
-                        card.style.position = 'fixed';
-                        card.style.left = rect.left + 'px';
-                        card.style.top = rect.top + 'px';
-                        card.classList.add('enlarged');
-                    }, 500);
+                // Hover to show privacy breach tooltip (hold for 0.3s)
+                let privacyTimeout = null;
+                card.addEventListener('mouseenter', (e) => {
+                    privacyTimeout = setTimeout(() => {
+                        showEnemyPrivacyTooltip(e, enemy);
+                    }, 300);
+                });
+                card.addEventListener('mousemove', (e) => {
+                    updateEnemyPrivacyTooltipPosition(e);
                 });
                 card.addEventListener('mouseleave', () => {
-                    clearTimeout(hoverTimeout);
-                    card.classList.remove('enlarged');
-                    card.style.position = '';
-                    card.style.left = '';
-                    card.style.top = '';
+                    clearTimeout(privacyTimeout);
+                    hideEnemyPrivacyTooltip();
                 });
                 
                 container.appendChild(card);
@@ -13074,8 +13587,14 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     triggerFreeWillChat(attacker, 'dealt_damage');
                 }
                 
-                // Award 2 XP for hitting (total 3 including attempt), bonus for crit
-                attacker.xp += isCritical ? 5 : 2;
+                // Calculate XP multiplier based on dungeon level (same formula as gold)
+                const dungeonLevel = battleState.currentLevel || 1;
+                const xpMultiplier = 1 + (dungeonLevel - 1) * 0.25; // +25% per level (half of gold scaling)
+                
+                // Award XP for hitting, bonus for crit - scaled by dungeon level
+                const baseXP = isCritical ? 5 : 2;
+                const scaledXP = Math.floor(baseXP * xpMultiplier);
+                attacker.xp += scaledXP;
                 
                 // Generate dice rolls for display
                 const numDice = actionType === 'light' ? 1 : (actionType === 'heavy' ? 2 : 3);
@@ -13088,9 +13607,12 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 const weaponText = weaponDamage > 0 ? ` +${weaponDamage}⚔️` : '';
                 showDiceRoll(`🎲 Rolled: ${diceRolls.join(', ')}${weaponText} = <span style="color:#00ff00">${finalDamage}</span> vs <span style="color:#00ff00">${targetAC}</span> <span style="color:#00ff00">✓</span>${critText}`);
             } else {
-                // Miss - award 1 XP to defender if they're a hero
+                // Miss - award XP to defender if they're a hero (scaled)
                 if (battleState.heroes.includes(target)) {
-                    target.xp = (target.xp || 0) + 1;
+                    const dungeonLevel = battleState.currentLevel || 1;
+                    const xpMultiplier = 1 + (dungeonLevel - 1) * 0.25;
+                    const scaledDodgeXP = Math.floor(1 * xpMultiplier);
+                    target.xp = (target.xp || 0) + scaledDodgeXP;
                 }
                 // Generate fake dice rolls for display
                 const numDice = actionType === 'light' ? 1 : (actionType === 'heavy' ? 2 : 3);
@@ -13109,11 +13631,16 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             
             // Check if target is dead
             if (target.hp <= 0) {
-                // Award 10 XP for killing blow
-                attacker.xp += 10;
+                // Calculate XP multiplier based on dungeon level
+                const dungeonLevel = battleState.currentLevel || 1;
+                const xpMultiplier = 1 + (dungeonLevel - 1) * 0.25; // +25% per level
+                
+                // Award XP for killing blow - scaled by dungeon level, bonus for bosses
+                const baseKillXP = target.isBoss ? 50 : 10;
+                const scaledKillXP = Math.floor(baseKillXP * xpMultiplier);
+                attacker.xp += scaledKillXP;
                 
                 // Award gold from enemy (scales with dungeon level)
-                const dungeonLevel = battleState.currentLevel || 1;
                 const levelMultiplier = 1 + (dungeonLevel - 1) * 0.5;
                 const baseGold = target.isBoss ? 100 : 10;
                 const goldDrop = target.goldDrop || Math.floor(baseGold * levelMultiplier);
@@ -14518,7 +15045,38 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 'tunnelsofprivacy/mobs/creature3.png',
                 'tunnelsofprivacy/mobs/creature4.png',
                 'tunnelsofprivacy/mobs/creature5.png',
-                'tunnelsofprivacy/mobs/creature6.png'
+                'tunnelsofprivacy/mobs/creature6.png',
+                // UI Icons
+                'tunnelsofprivacy/icons/arcade.png',
+                'tunnelsofprivacy/icons/back.png',
+                'tunnelsofprivacy/icons/border.png',
+                'tunnelsofprivacy/icons/camping.png',
+                'tunnelsofprivacy/icons/combat.png',
+                'tunnelsofprivacy/icons/difficulty_easy.png',
+                'tunnelsofprivacy/icons/difficulty_hard.png',
+                'tunnelsofprivacy/icons/difficulty_normal.png',
+                'tunnelsofprivacy/icons/donate.png',
+                'tunnelsofprivacy/icons/dungeon_master.png',
+                'tunnelsofprivacy/icons/explore.png',
+                'tunnelsofprivacy/icons/goldbag.png',
+                'tunnelsofprivacy/icons/heart.png',
+                'tunnelsofprivacy/icons/heart_a.png',
+                'tunnelsofprivacy/icons/help.png',
+                'tunnelsofprivacy/icons/inventory.png',
+                'tunnelsofprivacy/icons/lootcrate.png',
+                'tunnelsofprivacy/icons/music_back.png',
+                'tunnelsofprivacy/icons/music_forward.png',
+                'tunnelsofprivacy/icons/music_pause.png',
+                'tunnelsofprivacy/icons/music_play.png',
+                'tunnelsofprivacy/icons/narrate.png',
+                'tunnelsofprivacy/icons/party_inventory.png',
+                'tunnelsofprivacy/icons/questlog.png',
+                'tunnelsofprivacy/icons/settings.png',
+                'tunnelsofprivacy/icons/stairs_down.png',
+                'tunnelsofprivacy/icons/stairs_up.png',
+                'tunnelsofprivacy/icons/store.png',
+                'tunnelsofprivacy/icons/volume.png',
+                'tunnelsofprivacy/icons/zcashbag.png'
             ];
             
             artTotal = imageList.length;
@@ -14610,7 +15168,7 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     loadingArt.innerHTML = `🎨 Art: <span style="color: #8B45FF; font-weight: bold;">${artLoaded}/${artTotal}</span>`;
                 }
                 if (loadingSound) {
-                    loadingSound.innerHTML = `🔊 Sound: <span style="color: #8B45FF; font-weight: bold;">${audioLoaded}/${audioTotal}</span>`;
+                    loadingSound.innerHTML = `<span class="icon icon-sm icon-volume"></span> Sound: <span style="color: #8B45FF; font-weight: bold;">${audioLoaded}/${audioTotal}</span>`;
                 }
             }
             
