@@ -392,6 +392,313 @@
             letter-spacing: 1px;
         }
         
+        /* ===== ACHIEVEMENTS & BESTIARY PANELS ===== */
+        #achievementsPanel, #bestiaryPanel {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, rgba(15, 10, 35, 0.98), rgba(30, 20, 50, 0.98));
+            border: 3px solid #8B45FF;
+            border-radius: 15px;
+            padding: 20px 25px;
+            z-index: 10002;
+            max-width: 900px;
+            width: 90%;
+            max-height: 85vh;
+            box-shadow: 0 10px 50px rgba(139, 69, 255, 0.4), 0 0 80px rgba(139, 69, 255, 0.3);
+            backdrop-filter: blur(15px);
+        }
+        
+        #bestiaryPanel {
+            border-color: #E74C3C;
+            box-shadow: 0 10px 50px rgba(231, 76, 60, 0.4), 0 0 80px rgba(139, 69, 255, 0.3);
+        }
+        
+        .panelTitle {
+            color: #8B45FF;
+            font-size: 24px;
+            font-weight: 900;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px rgba(139, 69, 255, 0.5);
+        }
+        
+        #bestiaryPanel .panelTitle {
+            color: #E74C3C;
+            text-shadow: 0 0 20px rgba(231, 76, 60, 0.5);
+        }
+        
+        .panelCloseBtn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 100, 100, 0.3);
+            border: 2px solid #ff6b6b;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            color: #ff6b6b;
+            font-size: 18px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        
+        .panelCloseBtn:hover {
+            background: rgba(255, 100, 100, 0.6);
+            transform: scale(1.1);
+        }
+        
+        /* Achievement Tabs */
+        .achievementTabs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        .achievementTab {
+            padding: 10px 25px;
+            background: rgba(139, 69, 255, 0.2);
+            border: 2px solid #8B45FF;
+            border-radius: 8px;
+            color: #8B45FF;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .achievementTab:hover {
+            background: rgba(139, 69, 255, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .achievementTab.active {
+            background: #8B45FF;
+            color: white;
+            box-shadow: 0 4px 15px rgba(139, 69, 255, 0.5);
+        }
+        
+        /* Bestiary Tabs */
+        .bestiaryTab {
+            padding: 10px 25px;
+            background: rgba(231, 76, 60, 0.2);
+            border: 2px solid #E74C3C;
+            border-radius: 8px;
+            color: #E74C3C;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .bestiaryTab:hover {
+            background: rgba(231, 76, 60, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .bestiaryTab.active {
+            background: #E74C3C;
+            color: white;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.5);
+        }
+        
+        /* Achievement Grid */
+        .achievementGrid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 6px;
+        }
+        
+        .achievementItem {
+            background: rgba(10, 14, 18, 0.6);
+            border: 2px solid #26313B;
+            border-radius: 6px;
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s;
+            cursor: default;
+        }
+        
+        .achievementItem.unlocked {
+            border-color: #8B45FF;
+            background: linear-gradient(135deg, rgba(139, 69, 255, 0.2), rgba(179, 136, 255, 0.1));
+            box-shadow: 0 2px 10px rgba(139, 69, 255, 0.3);
+        }
+        
+        .achievementItem:hover {
+            transform: translateY(-3px);
+            filter: brightness(1.2);
+        }
+        
+        .achievementIcon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        
+        .achievementIcon.unlocked {
+            background: #F2C94C;
+            color: #0B0E12;
+        }
+        
+        .achievementIcon.locked {
+            background: #1B2836;
+            color: #89A0B4;
+        }
+        
+        .achievementName {
+            font-size: 9px;
+            font-weight: 700;
+            text-align: center;
+            color: #D4E3F0;
+            line-height: 1.1;
+        }
+        
+        .achievementItem.unlocked .achievementName {
+            color: #B388FF;
+        }
+        
+        /* Bestiary Grid */
+        .bestiaryGrid {
+            display: grid;
+            grid-template-columns: repeat(11, 1fr);
+            gap: 6px;
+        }
+        
+        .bossEntry {
+            background: rgba(10, 14, 18, 0.6);
+            border: 2px solid #26313B;
+            border-radius: 8px;
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .bossEntry.defeated {
+            border-color: #27AE60;
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.15), rgba(46, 204, 113, 0.1));
+        }
+        
+        .bossEntry.locked {
+            opacity: 0.5;
+            filter: grayscale(1);
+        }
+        
+        .bossEntry:hover {
+            transform: translateY(-2px) scale(1.05);
+            z-index: 10;
+        }
+        
+        .bossEntry:hover .bossTooltip {
+            display: block;
+        }
+        
+        .bossPortrait {
+            width: 50px;
+            height: 50px;
+            border-radius: 6px;
+            background-size: 300%;
+            background-position: center 15%;
+            border: 2px solid #444;
+        }
+        
+        .bossEntry.defeated .bossPortrait {
+            border-color: #27AE60;
+        }
+        
+        .bossEntry.locked .bossPortrait {
+            background: #1B2836;
+            border-color: #26313B;
+        }
+        
+        .bossLevel {
+            font-size: 10px;
+            font-weight: 700;
+            color: #89A0B4;
+        }
+        
+        .bossEntry.defeated .bossLevel {
+            color: #27AE60;
+        }
+        
+        .bossTooltip {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 14, 18, 0.95);
+            border: 2px solid #E74C3C;
+            border-radius: 8px;
+            padding: 10px;
+            width: 180px;
+            z-index: 100;
+            margin-bottom: 8px;
+        }
+        
+        .bossTooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent;
+            border-top-color: #E74C3C;
+        }
+        
+        .bossTooltipName {
+            color: #E74C3C;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 6px;
+        }
+        
+        .bossTooltipStats {
+            font-size: 10px;
+            color: #BFD1E0;
+            line-height: 1.4;
+        }
+        
+        .panelProgress {
+            text-align: center;
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 2px solid rgba(42, 157, 143, 0.3);
+            font-size: 16px;
+            font-weight: 700;
+            color: #4ECDC4;
+        }
+        
+        #bestiaryPanel .panelProgress {
+            border-top-color: rgba(231, 76, 60, 0.3);
+            color: #E74C3C;
+        }
+        /* ===== END ACHIEVEMENTS & BESTIARY PANELS ===== */
+        
         /* Chat Window Styles */
         #battleChatWindow {
             position: absolute;
@@ -2060,6 +2367,42 @@
     <!-- Weapon Tooltip (for equipment slots) -->
     <div id="weaponTooltip" style="position: fixed; z-index: 10001; pointer-events: none; opacity: 0; transition: opacity 0.2s ease;"></div>
     
+    <!-- Overlay for modal panels -->
+    <div id="panelOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 10001;" onclick="closeAllPanels()"></div>
+    
+    <!-- Achievements Panel -->
+    <div id="achievementsPanel">
+        <button class="panelCloseBtn" onclick="closeAchievementsPanel()">✕</button>
+        <div class="panelTitle">🏆 ACHIEVEMENTS</div>
+        <div class="achievementTabs">
+            <button class="achievementTab active" onclick="showAchievementTab('achievements')">ACHIEVEMENTS</button>
+            <button class="achievementTab" onclick="showAchievementTab('bestiary')" style="background: rgba(231, 76, 60, 0.2); border-color: #E74C3C; color: #E74C3C;">👹 BESTIARY</button>
+        </div>
+        <div class="achievementTabs" style="margin-top: 10px;">
+            <button class="achievementTab active" id="achieveTabPage1" onclick="showAchievementPage(1)">COMBAT / EXPLORE</button>
+            <button class="achievementTab" id="achieveTabPage2" onclick="showAchievementPage(2)">ECONOMY / HEROES / SPECIAL</button>
+        </div>
+        <div id="achievementsList"></div>
+        <div class="panelProgress" id="achievementsProgress">0/30 Unlocked</div>
+    </div>
+    
+    <!-- Bestiary Panel -->
+    <div id="bestiaryPanel">
+        <button class="panelCloseBtn" onclick="closeBestiaryPanel()">✕</button>
+        <div class="panelTitle">👹 BESTIARY</div>
+        <div class="achievementTabs">
+            <button class="bestiaryTab" onclick="showAchievementTab('achievements')" style="background: rgba(42, 157, 143, 0.2); border-color: #2A9D8F; color: #2A9D8F;">🏆 ACHIEVEMENTS</button>
+            <button class="bestiaryTab active" onclick="showAchievementTab('bestiary')">👹 BESTIARY</button>
+        </div>
+        <div class="achievementTabs" style="margin-top: 10px;">
+            <button class="bestiaryTab active" id="bestiaryTabEasy" onclick="showBestiaryPage('easy')">EASY (2-34)</button>
+            <button class="bestiaryTab" id="bestiaryTabNormal" onclick="showBestiaryPage('normal')">NORMAL (35-67)</button>
+            <button class="bestiaryTab" id="bestiaryTabHard" onclick="showBestiaryPage('hard')">HARD (68-100)</button>
+        </div>
+        <div id="bestiaryList"></div>
+        <div class="panelProgress" id="bestiaryProgress">0/99 Bosses Defeated</div>
+    </div>
+    
     <!-- Loading Modal -->
     <div id="loadingModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); display: flex; align-items: center; justify-content: center; z-index: 10000;">
         <div style="background: linear-gradient(135deg, #1a2332 0%, #0d1218 100%); padding: 40px 60px; border-radius: 15px; border: 2px solid #8B45FF; box-shadow: 0 10px 50px rgba(139, 69, 255, 0.5); text-align: center; min-width: 500px;">
@@ -2263,10 +2606,13 @@
                     </div>
                 </div>
                 
-                <!-- Camp Button -->
-                <button id="startCampBtn" class="menuButton" onclick="startCamping()" style="width: 100%; padding: 12px; font-size: 16px; background: linear-gradient(135deg, rgba(39, 174, 96, 0.5), rgba(39, 174, 96, 0.3));">
-                    🔥 MAKE CAMP
-                </button>
+                <!-- Camp Button + Achievements Row -->
+                <div style="display: flex; gap: 8px;">
+                    <button id="startCampBtn" onclick="startCamping()" style="flex: 1; padding: 10px; font-size: 14px; background: linear-gradient(135deg, rgba(39, 174, 96, 0.5), rgba(39, 174, 96, 0.3)); border: 2px solid #27AE60; border-radius: 8px; color: #27AE60; font-weight: 700; cursor: pointer;">
+                        🔥 CAMP
+                    </button>
+                    <button onclick="showAchievementsPanelFromGame(); closeCampPanel();" style="flex: 1; padding: 10px; background: linear-gradient(135deg, rgba(139, 69, 255, 0.4), rgba(139, 69, 255, 0.2)); border: 2px solid #8B45FF; border-radius: 8px; color: #8B45FF; font-weight: 700; font-size: 14px; cursor: pointer;">🏆 ACHIEVEMENTS</button>
+                </div>
             </div>
             
             <!-- Dungeon Masters Panel (Right Side) -->
@@ -2598,7 +2944,8 @@
                 <button id="startAdventureBtn" class="menuButton" onclick="startAdventure()">START ADVENTURE<span style="display: inline-block; width: 26px; height: 26px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">A</span></button>
                 <button id="continueBtn" class="menuButton comingSoon" disabled onclick="continueGame()">CONTINUE<span style="display: inline-block; width: 26px; height: 26px; background: #EB5757; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">A</span></button>
                 <button class="menuButton" onclick="showLoadSave()">LOAD SAVE FILE<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
-                <button class="menuButton" onclick="showSettings()"><span class="icon icon-md icon-settings"></span> SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #2A9D8F; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">Y</span></button>
+                <button class="menuButton" onclick="showAchievementsPanel()">🏆 ACHIEVEMENTS<span style="display: inline-block; width: 26px; height: 26px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">Y</span></button>
+                <button class="menuButton" onclick="showSettings()"><span class="icon icon-md icon-settings"></span> SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #2A9D8F; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">X</span></button>
                 <button id="enterArcadeBtn" class="menuButton portalButton" onclick="exitPortal()">
                     <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                         <div style="text-align: left; display: flex; align-items: center; gap: 8px;">
@@ -2613,7 +2960,7 @@
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.3.66 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.3.67 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div id="aboutDonateBtn" style="
@@ -2635,6 +2982,85 @@
                 <div style="font-size: 14px; font-weight: 700; color: #F2C94C; margin-bottom: 3px;">ABOUT / DONATE</div>
                 <div style="font-size: 11px; color: #89A0B4;">Support Development</div>
             </div>
+            
+            <!-- YouTube Intro Video Link -->
+            <a href="https://www.youtube.com/watch?v=R967tFtDSME" target="_blank" style="
+                position: absolute;
+                right: 60px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 320px;
+                background: linear-gradient(135deg, rgba(10, 14, 18, 0.98), rgba(20, 27, 34, 0.95));
+                border: 3px solid #FF0000;
+                border-radius: 16px;
+                padding: 0;
+                overflow: hidden;
+                text-decoration: none;
+                transition: all 0.3s ease;
+                box-shadow: 0 8px 32px rgba(255, 0, 0, 0.4);
+                cursor: pointer;
+                pointer-events: all;
+                z-index: 100;
+            " onmouseover="this.style.transform='translateY(-50%) scale(1.05)'; this.style.boxShadow='0 12px 40px rgba(255, 0, 0, 0.6)'; this.style.borderColor='#FF3333';" onmouseout="this.style.transform='translateY(-50%) scale(1)'; this.style.boxShadow='0 8px 32px rgba(255, 0, 0, 0.4)'; this.style.borderColor='#FF0000';">
+                <!-- YouTube Thumbnail -->
+                <div style="position: relative; width: 100%; height: 180px; background: #000;">
+                    <img src="https://img.youtube.com/vi/R967tFtDSME/maxresdefault.jpg" style="width: 100%; height: 100%; object-fit: cover;" alt="Intro Video">
+                    <!-- Play Button Overlay -->
+                    <div style="
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        width: 68px;
+                        height: 48px;
+                        background: rgba(255, 0, 0, 0.9);
+                        border-radius: 14px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        transition: all 0.3s ease;
+                    ">
+                        <div style="
+                            width: 0;
+                            height: 0;
+                            border-left: 18px solid white;
+                            border-top: 12px solid transparent;
+                            border-bottom: 12px solid transparent;
+                            margin-left: 4px;
+                        "></div>
+                    </div>
+                </div>
+                <!-- Video Info -->
+                <div style="padding: 16px; text-align: center;">
+                    <div style="
+                        font-family: 'JetBrains Mono', monospace;
+                        font-size: 18px;
+                        font-weight: 900;
+                        color: #8B45FF;
+                        margin-bottom: 8px;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                    ">🎬 Watch Intro</div>
+                    <div style="
+                        font-family: 'JetBrains Mono', monospace;
+                        font-size: 13px;
+                        color: #89A0B4;
+                        line-height: 1.4;
+                    ">The TUNNELS OF PRIVACY<br>animated intro video</div>
+                    <div style="
+                        margin-top: 12px;
+                        padding: 8px 16px;
+                        background: rgba(255, 0, 0, 0.15);
+                        border: 1px solid #FF0000;
+                        border-radius: 8px;
+                        font-family: 'JetBrains Mono', monospace;
+                        font-size: 12px;
+                        font-weight: 700;
+                        color: #FF6B6B;
+                        display: inline-block;
+                    ">▶ WATCH ON YOUTUBE</div>
+                </div>
+            </a>
             
             <!-- Multiplayer Controls (Top Left) -->
             <div style="position: absolute; top: 20px; left: 20px; display: flex; flex-direction: column; gap: 10px; align-items: flex-start; pointer-events: all; z-index: 100;">
@@ -2709,6 +3135,7 @@
         <button class="menuButton" onclick="saveGameFromPause()" style="background: linear-gradient(135deg, rgba(46, 134, 222, 0.4), rgba(46, 134, 222, 0.3)); border-color: #3498DB;">SAVE GAME<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">💾</span></button>
         <button class="menuButton" onclick="downloadSaveFile()" style="background: linear-gradient(135deg, rgba(39, 174, 96, 0.4), rgba(39, 174, 96, 0.3)); border-color: #27AE60;">SAVE GAME FILE<span style="display: inline-block; width: 26px; height: 26px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">⬇</span></button>
         <button class="menuButton" onclick="showSettingsFromPause()"><span class="icon icon-md icon-settings"></span> SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">Y</span></button>
+        <button class="menuButton" onclick="showAchievementsPanelFromGame()" style="background: linear-gradient(135deg, rgba(42, 157, 143, 0.4), rgba(42, 157, 143, 0.3)); border-color: #2A9D8F;">🏆 ACHIEVEMENTS<span style="display: inline-block; width: 26px; height: 26px; background: #2A9D8F; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">A</span></button>
         <button class="menuButton" id="resyncBtn" onclick="requestResync()" style="display: none; background: linear-gradient(135deg, rgba(155, 89, 182, 0.4), rgba(155, 89, 182, 0.3)); border-color: #9B59B6;">🔄 RESYNC FROM HOST<span style="display: inline-block; width: 26px; height: 26px; background: #9B59B6; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">↻</span></button>
         <button class="menuButton" id="hostControlsBtn" onclick="showHostControls()" style="display: none; background: linear-gradient(135deg, rgba(42, 157, 143, 0.4), rgba(42, 157, 143, 0.3)); border-color: #2A9D8F;">HOST CONTROLS<span style="display: inline-block; width: 26px; height: 26px; background: #2A9D8F; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">🎮</span></button>
         <button class="menuButton" onclick="quitToMenu()">QUIT TO MENU<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 10px; font-weight: bold; color: white; font-size: 12px;">◀</span></button>
@@ -3198,7 +3625,7 @@
         <button class="menuButton" onclick="closeAllPanels()" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 14px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
         
         <div style="display: block; width: 100%; margin-top: 15px; padding: 10px 0; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A7A8F; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-            Tunnels of Privacy v0.3.66
+            Tunnels of Privacy v0.3.67
         </div>
     </div>
     
@@ -3292,7 +3719,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.3.66';
+        const GAME_VERSION = 'v0.3.70';
         
         // ===== HACKATHON INFO TOOLTIP SYSTEM =====
         const TOOLTIP_DELAY = 800; // ms before tooltip appears
@@ -4041,6 +4468,9 @@
             const tooltip = document.getElementById('enemyPrivacyTooltip');
             if (!tooltip || !enemy) return;
             
+            // Track privacy breach views for achievement
+            updateAchievementStats('privacyBreachesViewed', 1);
+            
             const data = generateEnemyPrivacyData(enemy);
             const isBoss = enemy.isBoss || !enemy.isMob;
             
@@ -4199,6 +4629,531 @@
         }
         // ===== END ENEMY PRIVACY BREACH SYSTEM =====
         
+        // ===== ACHIEVEMENTS & BESTIARY SYSTEM =====
+        const STORAGE_KEY_ACHIEVEMENTS = 'top_achievements';
+        const STORAGE_KEY_BESTIARY = 'top_bestiary';
+        
+        // Achievement definitions
+        const ACHIEVEMENTS = [
+            // Combat Achievements
+            { id: 'first_blood', name: 'First Blood', desc: 'Defeat your first enemy', icon: '⚔️', category: 'combat' },
+            { id: 'boss_slayer_1', name: 'Boss Slayer', desc: 'Defeat your first boss', icon: '👑', category: 'combat' },
+            { id: 'boss_slayer_10', name: 'Boss Hunter', desc: 'Defeat 10 bosses', icon: '🏆', category: 'combat' },
+            { id: 'boss_slayer_50', name: 'Boss Exterminator', desc: 'Defeat 50 bosses', icon: '💀', category: 'combat' },
+            { id: 'boss_slayer_99', name: 'Boss Annihilator', desc: 'Defeat all 99 unique bosses', icon: '🔥', category: 'combat' },
+            { id: 'critical_king', name: 'Critical King', desc: 'Land 100 critical hits', icon: '💥', category: 'combat' },
+            { id: 'dodge_master', name: 'Dodge Master', desc: 'Dodge 50 attacks', icon: '💨', category: 'combat' },
+            { id: 'perfect_battle', name: 'Flawless Victory', desc: 'Win a boss battle without taking damage', icon: '✨', category: 'combat' },
+            
+            // Exploration Achievements
+            { id: 'explorer_10', name: 'Novice Explorer', desc: 'Clear 10 rooms', icon: '🚪', category: 'explore' },
+            { id: 'explorer_100', name: 'Dungeon Delver', desc: 'Clear 100 rooms', icon: '🗺️', category: 'explore' },
+            { id: 'explorer_500', name: 'Master Explorer', desc: 'Clear 500 rooms', icon: '🏛️', category: 'explore' },
+            { id: 'deep_dive_25', name: 'Deep Diver', desc: 'Reach dungeon level 25', icon: '⬇️', category: 'explore' },
+            { id: 'deep_dive_50', name: 'Abyss Walker', desc: 'Reach dungeon level 50', icon: '🌑', category: 'explore' },
+            { id: 'deep_dive_100', name: 'Bottom Feeder', desc: 'Reach dungeon level 100', icon: '🕳️', category: 'explore' },
+            
+            // Economy Achievements
+            { id: 'gold_1000', name: 'Coin Collector', desc: 'Collect 1,000 gold total', icon: '🪙', category: 'economy' },
+            { id: 'gold_10000', name: 'Wealthy Adventurer', desc: 'Collect 10,000 gold total', icon: '💰', category: 'economy' },
+            { id: 'gold_100000', name: 'Dragon Hoarder', desc: 'Collect 100,000 gold total', icon: '🐉', category: 'economy' },
+            { id: 'shop_regular', name: 'Frequent Shopper', desc: 'Visit 10 stores', icon: '🛒', category: 'economy' },
+            { id: 'weapon_upgrade', name: 'Upgraded', desc: 'Upgrade a weapon', icon: '⬆️', category: 'economy' },
+            { id: 'weapon_max', name: 'Master Smith', desc: 'Max out a weapon', icon: '🔨', category: 'economy' },
+            
+            // Hero Achievements
+            { id: 'level_10', name: 'Getting Stronger', desc: 'Reach hero level 10', icon: '💪', category: 'hero' },
+            { id: 'level_25', name: 'Veteran', desc: 'Reach hero level 25', icon: '🎖️', category: 'hero' },
+            { id: 'level_50', name: 'Champion', desc: 'Reach hero level 50', icon: '👑', category: 'hero' },
+            { id: 'healer', name: 'Healer', desc: 'Heal 1,000 HP total', icon: '❤️‍🩹', category: 'hero' },
+            { id: 'rescuer_10', name: 'Rescuer', desc: 'Free 10 captives', icon: '🔓', category: 'hero' },
+            
+            // Special Achievements
+            { id: 'night_owl', name: 'Night Owl', desc: 'Play at 3 AM', icon: '🦉', category: 'special' },
+            { id: 'marathon', name: 'Marathon Runner', desc: 'Play for 2 hours straight', icon: '🏃', category: 'special' },
+            { id: 'privacy_advocate', name: 'Privacy Advocate', desc: 'View 50 enemy privacy breaches', icon: '🔒', category: 'special' }
+        ];
+        
+        // Boss data for bestiary (levels 2-100)
+        const BOSS_DATA = [];
+        for (let level = 2; level <= 100; level++) {
+            // Boss names based on level ranges
+            const bossNames = {
+                2: 'Metadata Swarm Mass', 3: 'Open Ledger Golem', 4: 'Leak-Channel Imp',
+                5: 'Fingerprint Fiend', 6: 'Cookie Stalker', 7: 'Browser Phantom',
+                8: 'Data Broker Beast', 9: 'Spyware Specter', 10: 'Tracker Titan',
+                11: 'Keylogger Kraken', 12: 'Phishing Phantom', 13: 'Ransomware Reaper',
+                14: 'Botnet Behemoth', 15: 'Zero-Day Zealot', 16: 'Backdoor Basilisk',
+                17: 'Rootkit Revenant', 18: 'Trojan Tyrant', 19: 'Worm Warden',
+                20: 'Virus Vanguard', 21: 'Adware Aberration', 22: 'Scareware Shade',
+                23: 'Cryptojacker', 24: 'Man-in-Middle Monster', 25: 'SQL Injector',
+                26: 'XSS Executor'
+            };
+            
+            // Get boss name - known names for 2-26, generated for rest
+            let bossName = bossNames[level];
+            if (!bossName) {
+                const prefixes = ['Shadow', 'Dark', 'Corrupted', 'Malicious', 'Invasive', 'Lurking', 'Hidden', 'Surveilling'];
+                const types = ['Watcher', 'Harvester', 'Tracker', 'Leaker', 'Breacher', 'Collector', 'Stalker', 'Exposer'];
+                const prefix = prefixes[(level * 7) % prefixes.length];
+                const type = types[(level * 13) % types.length];
+                bossName = `${prefix} ${type} ${level}`;
+            }
+            
+            // Determine if we have art (levels 2-26)
+            const hasArt = level <= 26;
+            const spritePath = hasArt 
+                ? `tunnelsofprivacy/bosses/lvl${level}/boss_lvl${level}.png`
+                : null;
+            
+            BOSS_DATA.push({
+                level: level,
+                name: bossName,
+                spritePath: spritePath,
+                hasArt: hasArt
+            });
+        }
+        
+        // Achievement state
+        let achievementState = {
+            unlocked: {},
+            stats: {
+                enemiesDefeated: 0,
+                bossesDefeated: 0,
+                criticalHits: 0,
+                dodges: 0,
+                roomsCleared: 0,
+                goldCollected: 0,
+                storesVisited: 0,
+                captivesFreed: 0,
+                hpHealed: 0,
+                privacyBreachesViewed: 0,
+                sessionStartTime: Date.now()
+            }
+        };
+        
+        // Bestiary state - tracks which bosses have been defeated
+        let bestiaryState = {
+            defeated: {} // keyed by level number
+        };
+        
+        // Load achievement state from localStorage
+        function loadAchievementState() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY_ACHIEVEMENTS);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    achievementState.unlocked = parsed.unlocked || {};
+                    achievementState.stats = { ...achievementState.stats, ...parsed.stats };
+                }
+            } catch (e) {
+                console.error('Failed to load achievements:', e);
+            }
+        }
+        
+        // Save achievement state
+        function saveAchievementState() {
+            try {
+                localStorage.setItem(STORAGE_KEY_ACHIEVEMENTS, JSON.stringify(achievementState));
+            } catch (e) {
+                console.error('Failed to save achievements:', e);
+            }
+        }
+        
+        // Load bestiary state
+        function loadBestiaryState() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY_BESTIARY);
+                if (saved) {
+                    bestiaryState = JSON.parse(saved);
+                }
+            } catch (e) {
+                console.error('Failed to load bestiary:', e);
+            }
+        }
+        
+        // Save bestiary state
+        function saveBestiaryState() {
+            try {
+                localStorage.setItem(STORAGE_KEY_BESTIARY, JSON.stringify(bestiaryState));
+            } catch (e) {
+                console.error('Failed to save bestiary:', e);
+            }
+        }
+        
+        // Unlock an achievement
+        function unlockAchievement(achievementId) {
+            if (achievementState.unlocked[achievementId]) return; // Already unlocked
+            
+            const achievement = ACHIEVEMENTS.find(a => a.id === achievementId);
+            if (!achievement) return;
+            
+            achievementState.unlocked[achievementId] = {
+                unlockedAt: Date.now()
+            };
+            saveAchievementState();
+            
+            // Show notification
+            showAchievementNotification(achievement);
+            
+            // Play sound if available
+            if (typeof playSound === 'function') {
+                playSound('UI_Victory');
+            }
+        }
+        
+        // Show achievement notification
+        function showAchievementNotification(achievement) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: linear-gradient(135deg, rgba(42, 157, 143, 0.95), rgba(39, 174, 96, 0.95));
+                border: 3px solid #F2C94C;
+                border-radius: 12px;
+                padding: 15px 20px;
+                z-index: 100000;
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                box-shadow: 0 5px 30px rgba(242, 201, 76, 0.5);
+                animation: slideInRight 0.5s ease, fadeOut 0.5s ease 3.5s forwards;
+                font-family: 'JetBrains Mono', monospace;
+            `;
+            notification.innerHTML = `
+                <div style="width: 50px; height: 50px; background: #F2C94C; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px;">${achievement.icon}</div>
+                <div>
+                    <div style="color: #F2C94C; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Achievement Unlocked!</div>
+                    <div style="color: white; font-size: 16px; font-weight: 700;">${achievement.name}</div>
+                    <div style="color: rgba(255,255,255,0.8); font-size: 12px;">${achievement.desc}</div>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            // Remove after animation
+            setTimeout(() => notification.remove(), 4000);
+        }
+        
+        // Mark boss as defeated in bestiary
+        function markBossDefeated(level) {
+            if (level < 2 || level > 100) return;
+            
+            // Normalize to 2-100 range (bosses repeat after 100)
+            const normalizedLevel = ((level - 2) % 99) + 2;
+            
+            if (!bestiaryState.defeated[normalizedLevel]) {
+                bestiaryState.defeated[normalizedLevel] = {
+                    defeatedAt: Date.now(),
+                    originalLevel: level
+                };
+                saveBestiaryState();
+                
+                // Check for boss-related achievements
+                const totalDefeated = Object.keys(bestiaryState.defeated).length;
+                if (totalDefeated >= 1) unlockAchievement('boss_slayer_1');
+                if (totalDefeated >= 10) unlockAchievement('boss_slayer_10');
+                if (totalDefeated >= 50) unlockAchievement('boss_slayer_50');
+                if (totalDefeated >= 99) unlockAchievement('boss_slayer_99');
+            }
+        }
+        
+        // Show achievements panel
+        let currentAchievementPage = 1;
+        
+        function showAchievementsPanel() {
+            document.getElementById('panelOverlay').style.display = 'block';
+            document.getElementById('achievementsPanel').style.display = 'block';
+            document.getElementById('bestiaryPanel').style.display = 'none';
+            showAchievementPage(currentAchievementPage);
+        }
+        
+        // Show achievement page (1 or 2)
+        function showAchievementPage(page) {
+            currentAchievementPage = page;
+            
+            // Update tab buttons
+            document.getElementById('achieveTabPage1').classList.toggle('active', page === 1);
+            document.getElementById('achieveTabPage2').classList.toggle('active', page === 2);
+            
+            renderAchievementsList(page);
+        }
+        
+        // Close achievements panel
+        function closeAchievementsPanel() {
+            document.getElementById('panelOverlay').style.display = 'none';
+            document.getElementById('achievementsPanel').style.display = 'none';
+        }
+        
+        // Show achievements panel from in-game (pause menu, camp, etc.)
+        function showAchievementsPanelFromGame() {
+            document.getElementById('panelOverlay').style.display = 'block';
+            document.getElementById('achievementsPanel').style.display = 'block';
+            document.getElementById('bestiaryPanel').style.display = 'none';
+            showAchievementPage(currentAchievementPage);
+        }
+        
+        // Show bestiary panel
+        function showBestiaryPanel() {
+            document.getElementById('panelOverlay').style.display = 'block';
+            document.getElementById('bestiaryPanel').style.display = 'block';
+            document.getElementById('achievementsPanel').style.display = 'none';
+            renderBestiaryList('easy');
+        }
+        
+        // Close bestiary panel
+        function closeBestiaryPanel() {
+            document.getElementById('panelOverlay').style.display = 'none';
+            document.getElementById('bestiaryPanel').style.display = 'none';
+        }
+        
+        // Close all panels
+        function closeAllPanels() {
+            document.getElementById('panelOverlay').style.display = 'none';
+            document.getElementById('achievementsPanel').style.display = 'none';
+            document.getElementById('bestiaryPanel').style.display = 'none';
+        }
+        
+        // Switch between achievements and bestiary tabs
+        function showAchievementTab(tab) {
+            if (tab === 'achievements') {
+                showAchievementsPanel();
+            } else {
+                showBestiaryPanel();
+            }
+        }
+        
+        // Show bestiary page (easy/normal/hard)
+        function showBestiaryPage(page) {
+            // Update tab buttons
+            document.getElementById('bestiaryTabEasy').classList.toggle('active', page === 'easy');
+            document.getElementById('bestiaryTabNormal').classList.toggle('active', page === 'normal');
+            document.getElementById('bestiaryTabHard').classList.toggle('active', page === 'hard');
+            
+            renderBestiaryList(page);
+        }
+        
+        // Render achievements list
+        function renderAchievementsList(page = 1) {
+            const list = document.getElementById('achievementsList');
+            if (!list) return;
+            
+            // Page 1: Combat + Explore, Page 2: Economy + Heroes + Special
+            const page1Categories = ['combat', 'explore'];
+            const page2Categories = ['economy', 'hero', 'special'];
+            const activeCategories = page === 1 ? page1Categories : page2Categories;
+            
+            const categories = {
+                combat: { name: 'Combat', achievements: [] },
+                explore: { name: 'Exploration', achievements: [] },
+                economy: { name: 'Economy', achievements: [] },
+                hero: { name: 'Heroes', achievements: [] },
+                special: { name: 'Special', achievements: [] }
+            };
+            
+            // Group achievements by category
+            ACHIEVEMENTS.forEach(a => {
+                if (categories[a.category]) {
+                    categories[a.category].achievements.push(a);
+                }
+            });
+            
+            let html = '';
+            let totalUnlocked = 0;
+            
+            // Count total unlocked across ALL categories for progress bar
+            Object.entries(categories).forEach(([key, cat]) => {
+                totalUnlocked += cat.achievements.filter(a => achievementState.unlocked[a.id]).length;
+            });
+            
+            // Render only categories for current page
+            activeCategories.forEach(key => {
+                const cat = categories[key];
+                const catUnlocked = cat.achievements.filter(a => achievementState.unlocked[a.id]).length;
+                
+                html += `
+                    <div style="margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding-bottom: 4px; border-bottom: 2px solid #B388FF;">
+                            <span style="color: #B388FF; font-size: 13px; font-weight: 700; text-transform: uppercase;">${cat.name}</span>
+                            <span style="color: #BFD1E0; font-size: 11px;">${catUnlocked}/${cat.achievements.length}</span>
+                        </div>
+                        <div class="achievementGrid">
+                `;
+                
+                cat.achievements.forEach(achievement => {
+                    const isUnlocked = achievementState.unlocked[achievement.id];
+                    html += `
+                        <div class="achievementItem ${isUnlocked ? 'unlocked' : ''}" title="${achievement.desc}">
+                            <div class="achievementIcon ${isUnlocked ? 'unlocked' : 'locked'}">
+                                ${isUnlocked ? achievement.icon : '🔒'}
+                            </div>
+                            <div class="achievementName">${achievement.name}</div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div></div>';
+            });
+            
+            list.innerHTML = html;
+            document.getElementById('achievementsProgress').textContent = `${totalUnlocked}/${ACHIEVEMENTS.length} Unlocked`;
+        }
+        
+        // Render bestiary list
+        function renderBestiaryList(page) {
+            const list = document.getElementById('bestiaryList');
+            if (!list) return;
+            
+            // Determine level range based on page
+            let startLevel, endLevel;
+            if (page === 'easy') {
+                startLevel = 2;
+                endLevel = 34;
+            } else if (page === 'normal') {
+                startLevel = 35;
+                endLevel = 67;
+            } else {
+                startLevel = 68;
+                endLevel = 100;
+            }
+            
+            const bosses = BOSS_DATA.filter(b => b.level >= startLevel && b.level <= endLevel);
+            const totalDefeated = Object.keys(bestiaryState.defeated).length;
+            
+            let html = '<div class="bestiaryGrid">';
+            
+            bosses.forEach(boss => {
+                const isDefeated = bestiaryState.defeated[boss.level];
+                const portraitStyle = boss.hasArt 
+                    ? `background-image: url('${boss.spritePath}');`
+                    : `background: linear-gradient(135deg, #2a2a4a, #1a1a2e); display: flex; align-items: center; justify-content: center; font-size: 20px; color: #666;`;
+                
+                html += `
+                    <div class="bossEntry ${isDefeated ? 'defeated' : ''} ${!boss.hasArt ? 'noart' : ''}">
+                        <div class="bossPortrait" style="${portraitStyle}">
+                            ${!boss.hasArt ? '?' : ''}
+                        </div>
+                        <div class="bossLevel">Lv ${boss.level}</div>
+                        <div class="bossTooltip">
+                            <div class="bossTooltipName">${isDefeated ? boss.name : '???'}</div>
+                            <div class="bossTooltipStats">
+                                ${isDefeated ? `<div>✓ Defeated</div>` : `<div style="color: #E74C3C;">Not yet defeated</div>`}
+                                <div style="margin-top: 4px; color: #89A0B4;">Level ${boss.level} Boss</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            list.innerHTML = html;
+            
+            // Update progress
+            document.getElementById('bestiaryProgress').textContent = `${totalDefeated}/99 Bosses Defeated`;
+        }
+        
+        // Check and unlock time-based achievements
+        function checkTimeAchievements() {
+            const now = new Date();
+            const hour = now.getHours();
+            
+            // Night Owl - playing at 3 AM
+            if (hour === 3) {
+                unlockAchievement('night_owl');
+            }
+            
+            // Marathon - 2 hours straight
+            const sessionDuration = Date.now() - achievementState.stats.sessionStartTime;
+            if (sessionDuration >= 2 * 60 * 60 * 1000) {
+                unlockAchievement('marathon');
+            }
+        }
+        
+        // Update achievement stats (call after relevant game events)
+        function updateAchievementStats(statName, amount = 1) {
+            if (!achievementState.stats[statName]) {
+                achievementState.stats[statName] = 0;
+            }
+            achievementState.stats[statName] += amount;
+            saveAchievementState();
+            
+            // Check for stat-based achievements
+            const stats = achievementState.stats;
+            
+            if (statName === 'enemiesDefeated' && stats.enemiesDefeated >= 1) {
+                unlockAchievement('first_blood');
+            }
+            if (statName === 'criticalHits' && stats.criticalHits >= 100) {
+                unlockAchievement('critical_king');
+            }
+            if (statName === 'dodges' && stats.dodges >= 50) {
+                unlockAchievement('dodge_master');
+            }
+            if (statName === 'roomsCleared') {
+                if (stats.roomsCleared >= 10) unlockAchievement('explorer_10');
+                if (stats.roomsCleared >= 100) unlockAchievement('explorer_100');
+                if (stats.roomsCleared >= 500) unlockAchievement('explorer_500');
+            }
+            if (statName === 'goldCollected') {
+                if (stats.goldCollected >= 1000) unlockAchievement('gold_1000');
+                if (stats.goldCollected >= 10000) unlockAchievement('gold_10000');
+                if (stats.goldCollected >= 100000) unlockAchievement('gold_100000');
+            }
+            if (statName === 'storesVisited' && stats.storesVisited >= 10) {
+                unlockAchievement('shop_regular');
+            }
+            if (statName === 'captivesFreed' && stats.captivesFreed >= 10) {
+                unlockAchievement('rescuer_10');
+            }
+            if (statName === 'hpHealed' && stats.hpHealed >= 1000) {
+                unlockAchievement('healer');
+            }
+            if (statName === 'privacyBreachesViewed' && stats.privacyBreachesViewed >= 50) {
+                unlockAchievement('privacy_advocate');
+            }
+        }
+        
+        // Check dungeon level achievements
+        function checkDungeonLevelAchievements(level) {
+            if (level >= 25) unlockAchievement('deep_dive_25');
+            if (level >= 50) unlockAchievement('deep_dive_50');
+            if (level >= 100) unlockAchievement('deep_dive_100');
+        }
+        
+        // Check hero level achievements
+        function checkHeroLevelAchievements(heroLevel) {
+            if (heroLevel >= 10) unlockAchievement('level_10');
+            if (heroLevel >= 25) unlockAchievement('level_25');
+            if (heroLevel >= 50) unlockAchievement('level_50');
+        }
+        
+        // Initialize achievements system
+        function initAchievementsSystem() {
+            loadAchievementState();
+            loadBestiaryState();
+            
+            // Reset session start time
+            achievementState.stats.sessionStartTime = Date.now();
+            
+            // Check time-based achievements periodically
+            setInterval(checkTimeAchievements, 60000);
+        }
+        
+        // Add CSS animation for notification
+        const achievementAnimStyle = document.createElement('style');
+        achievementAnimStyle.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes fadeOut {
+                from { opacity: 1; }
+                to { opacity: 0; }
+            }
+        `;
+        document.head.appendChild(achievementAnimStyle);
+        // ===== END ACHIEVEMENTS & BESTIARY SYSTEM =====
+        
         // ===== LEVEL PROGRESS TRACKING =====
         let levelProgress = {
             roomsExplored: 0,
@@ -4272,6 +5227,14 @@
             saveLevelProgress();
             broadcastLevelProgress();
             
+            // Get current dungeon level for bestiary
+            const currentLevel = parseInt(document.getElementById('dungeonLevel')?.textContent || document.getElementById('dungeonMenuLevel')?.textContent) || 1;
+            
+            // Mark in bestiary (only levels 2-100, repeating after that)
+            if (currentLevel >= 2) {
+                markBossDefeatedInBestiary(currentLevel);
+            }
+            
             // Mark boss room as explored in level layout
             if (currentLevelLayout && currentLevelLayout.bossRoom) {
                 currentLevelLayout.bossRoom.explored = true;
@@ -4283,7 +5246,6 @@
             try {
                 const sharedSave = loadSharedSave();
                 if (sharedSave && sharedSave.dungeonState && sharedSave.dungeonState.questProgress) {
-                    const currentLevel = parseInt(document.getElementById('dungeonLevel')?.textContent || document.getElementById('dungeonMenuLevel')?.textContent) || 1;
                     if (!sharedSave.dungeonState.questProgress.bossesDefeated.includes(currentLevel)) {
                         sharedSave.dungeonState.questProgress.bossesDefeated.push(currentLevel);
                         saveSharedSave(sharedSave);
@@ -4294,8 +5256,34 @@
             }
         }
         
+        // Wrapper for bestiary marking (separate from levelProgress)
+        function markBossDefeatedInBestiary(level) {
+            if (typeof markBossDefeated === 'function' && level >= 2) {
+                // Normalize to 2-100 range (bosses repeat after 100)
+                const normalizedLevel = ((level - 2) % 99) + 2;
+                
+                if (!bestiaryState.defeated[normalizedLevel]) {
+                    bestiaryState.defeated[normalizedLevel] = {
+                        defeatedAt: Date.now(),
+                        originalLevel: level
+                    };
+                    saveBestiaryState();
+                    
+                    // Check for boss-related achievements
+                    const totalDefeated = Object.keys(bestiaryState.defeated).length;
+                    if (totalDefeated >= 1) unlockAchievement('boss_slayer_1');
+                    if (totalDefeated >= 10) unlockAchievement('boss_slayer_10');
+                    if (totalDefeated >= 50) unlockAchievement('boss_slayer_50');
+                    if (totalDefeated >= 99) unlockAchievement('boss_slayer_99');
+                    
+                    console.log(`[Bestiary] Boss at level ${level} (normalized: ${normalizedLevel}) marked as defeated. Total: ${totalDefeated}/99`);
+                }
+            }
+        }
+        
         function markStoreVisited() {
             levelProgress.storeVisited = true;
+            updateAchievementStats('storesVisited', 1);
             updateLevelProgressDisplay();
             saveLevelProgress();
             broadcastLevelProgress();
@@ -4303,6 +5291,7 @@
         
         function incrementCaptivesFreed() {
             levelProgress.captivesFreed++;
+            updateAchievementStats('captivesFreed', 1);
             updateLevelProgressDisplay();
             saveLevelProgress();
             broadcastLevelProgress();
@@ -14105,38 +15094,38 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
         // Exit portal and return to arcade game
         function exitPortal() {
             try {
-                // Load shared save
+                // Load shared save (may not exist - that's OK)
                 const sharedSave = loadSharedSave();
-                if (!sharedSave) {
-                    alert('No shared save found! Cannot return to arcade.');
-                    return;
+                
+                // If we have a save, update it before leaving
+                if (sharedSave) {
+                    // Get current dungeon level
+                    const dungeonLevelEl = document.getElementById('dungeonMenuLevel') || document.getElementById('dungeonLevel');
+                    const currentLevel = dungeonLevelEl ? (parseInt(dungeonLevelEl.textContent) || 1) : 1;
+                    
+                    // Update dungeon state
+                    sharedSave.dungeonState = {
+                        currentLevel: currentLevel,
+                        inventory: sharedSave.dungeonState?.inventory || [],
+                        gold: sharedSave.dungeonState?.gold || 0,
+                        questProgress: sharedSave.dungeonState?.questProgress || {
+                            hasScepter: false,
+                            hasReturned: false,
+                            bossesDefeated: []
+                        }
+                    };
+                    sharedSave.lastPlayed = Date.now();
+                    
+                    // Save updated shared state
+                    saveSharedSave(sharedSave);
                 }
                 
-                // Get current dungeon level
-                const dungeonLevelEl = document.getElementById('dungeonMenuLevel') || document.getElementById('dungeonLevel');
-                const currentLevel = dungeonLevelEl ? (parseInt(dungeonLevelEl.textContent) || 1) : 1;
-                
-                // Update dungeon state
-                sharedSave.dungeonState = {
-                    currentLevel: currentLevel,
-                    inventory: sharedSave.dungeonState?.inventory || [],
-                    gold: sharedSave.dungeonState?.gold || 0,
-                    questProgress: sharedSave.dungeonState?.questProgress || {
-                        hasScepter: false,
-                        hasReturned: false,
-                        bossesDefeated: []
-                    }
-                };
-                sharedSave.lastPlayed = Date.now();
-                
-                // Save updated shared state
-                saveSharedSave(sharedSave);
-                
-                // Navigate back to arcade
+                // Navigate to arcade (no save required)
                 window.location.href = 'zlock_consensus.html';
             } catch (e) {
                 console.error('Failed to exit portal:', e);
-                alert('Portal exit failed! ' + e.message);
+                // Still try to navigate even on error
+                window.location.href = 'zlock_consensus.html';
             }
         }
         
@@ -18190,6 +19179,9 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             // Start gamepad polling loop
             gamepadLoop();
             // ===== END GAMEPAD SUPPORT =====
+            
+            // Initialize achievements and bestiary system
+            initAchievementsSystem();
             
             // Preload assets
             preloadAssets();

@@ -2,6 +2,86 @@
 
 # Changelog
 
+## v0.3.70 - YouTube Intro Video Panel (2025-12-02)
+- **Added YouTube Intro Video panel to Title Screen:**
+  - Positioned on right side, vertically centered (matching arcade game style)
+  - Auto-pulls thumbnail from YouTube video ID
+  - Red YouTube play button overlay on thumbnail
+  - Purple "🎬 Watch Intro" title to match dungeon theme
+  - "TUNNELS OF PRIVACY animated intro video" description
+  - "▶ WATCH ON YOUTUBE" button
+  - Hover effect: scales up with enhanced red glow
+  - Opens in new tab when clicked
+  
+- **UI Polish:**
+  - Camp panel buttons now same height and side-by-side
+  - Achievements button changed to purple theme throughout
+  - Category headers use light purple (#B388FF)
+
+## v0.3.69 - Achievements Quick Access (2025-12-01)
+- **Added Achievements button to Pause Menu:**
+  - New "🏆 ACHIEVEMENTS" button with teal styling
+  - Keyboard shortcut hint shows "A" badge
+  - Opens achievements panel directly from pause screen
+  
+- **Added Achievements link to Camp Panel:**
+  - "🏆 VIEW ACHIEVEMENTS" button in camp screen
+  - Quick access while resting between rooms
+  - Auto-closes camp panel when opening achievements
+  
+- **Technical:**
+  - Added `showAchievementsPanelFromGame()` function for in-game access
+  - Works from any game state (pause, camp, etc.)
+
+## v0.3.68 - Achievements Multi-Tab UI (2025-12-01)
+- **Achievements panel now uses multi-tab system like Bestiary:**
+  - Page 1: Combat & Exploration achievements (14 total)
+  - Page 2: Economy, Heroes & Special achievements (16 total)
+  - No scrollbars needed - all achievements fit on screen
+  
+- **Achievement items made more compact:**
+  - Grid now uses 8 columns instead of 5
+  - Icon size reduced from 40px to 32px
+  - Font size reduced from 11px to 9px
+  - Padding and gaps tightened throughout
+  
+- **Technical:**
+  - Added `currentAchievementPage` state tracking
+  - `showAchievementPage(page)` function for tab switching
+  - `renderAchievementsList()` now filters by page
+  - Added title tooltips to show achievement descriptions
+
+## v0.3.67 - Achievements & Bestiary System (2025-12-01)
+- **NEW: Full Achievements System!**
+  - 30 achievements across 5 categories: Combat, Exploration, Economy, Heroes, Special
+  - Pop-up notifications with sound when unlocking achievements
+  - Progress tracked and saved to localStorage
+  - Combat: First Blood, Boss Slayer (1/10/50/99), Critical King, Dodge Master, Flawless Victory
+  - Exploration: Explorer (10/100/500 rooms), Deep Diver (25/50/100 levels)
+  - Economy: Gold collector milestones, Shop regular, Weapon upgrades
+  - Heroes: Level milestones (10/25/50), Healer, Rescuer
+  - Special: Night Owl (play at 3 AM), Marathon (2 hours), Privacy Advocate (50 breaches)
+  
+- **NEW: Boss Bestiary (99 Bosses)!**
+  - Track all 99 unique bosses from levels 2-100
+  - Three pages: Easy (2-34), Normal (35-67), Hard (68-100)
+  - Boss portraits with tooltips showing name and defeat status
+  - Defeated bosses show in color, undefeated are greyed out
+  - Bosses have art for levels 2-26, placeholder for 27-100
+  - Progress counter: X/99 Bosses Defeated
+  
+- **UI Integration:**
+  - New "ACHIEVEMENTS" button in title screen menu (Y button)
+  - Tab navigation between Achievements and Bestiary panels
+  - Panel overlay with click-to-close
+  - Compact grid layouts - no scrollbars needed
+  
+- **Technical:**
+  - Separate localStorage keys for achievements and bestiary
+  - Boss defeats normalized to 2-100 range (repeats after level 100)
+  - Achievement stat tracking integrates with existing game events
+  - Store visits and captive rescues now track for achievements
+
 ## v0.3.66 - Enemy Privacy Breach Tooltip System (2025-12-01)
 - **NEW: Enemy Privacy Breach Tooltips!**
   - Hover over any enemy/boss card during combat to reveal their "private" data

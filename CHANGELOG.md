@@ -192,6 +192,12 @@
   - Settings now appear above pause screen (pause z-index: 1000)
   - Settings accessible from pause menu again
 
+## v0.21.3 - Portal Button Rename (2025-12-02)
+- **UI Changes:**
+  - Renamed "ENTER PORTAL" button to "ENTER DUNGEON" (clearer destination)
+  - Updated in both pause menu and title screen
+  - Icon remains the same (🌀)
+
 ## v0.21.2 - Unified Save System (2025-11-25)
 - **Summary:**
   - Fixed save file download to export complete shared save with hero data
