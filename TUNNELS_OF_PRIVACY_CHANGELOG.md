@@ -2,6 +2,82 @@
 
 # Changelog
 
+## v0.3.75 - Mob Size Variation & Background Cleanup (2025-12-02)
+- **Random mob size variation:**
+  - Mobs now spawn with random sizes between 0.7x and 3.0x
+  - Size stored on enemy object for consistency during battle
+  - HP bar and hitbox positioning adjusts to match sprite size
+  
+- **Captive NPC repositioned:**
+  - Moved from left side (x: 0.10) to right side (x: 0.90)
+  - Now appears near enemies like a prisoner being held
+  
+- **Room background cleanup:**
+  - Removed 5 more bad backgrounds: 11, 26, 53, 63, 67
+  - Total excluded: 8, 9, 11, 13, 25, 26, 30, 33, 43, 46, 52, 53, 54, 63, 66, 67
+  - 52 valid room videos remain
+
+## v0.3.74 - Mob Size Scaling (2025-12-02)
+- **Mobs now render at different sizes based on creature type:**
+  - Tiny (0.6x): mites, wisps, orbs
+  - Small (0.75x): rats, spiders, beetles, insects, moths, worms
+  - Medium (1.0x): blobs, slimes, gnawers, goblins, lurkers (default)
+  - Large (1.2x): guardians, dwellers, creatures, stone enemies, deep ones
+  - Huge (1.4x): horrors, terrors, titans, colossi, behemoths
+  
+- **Size scaling applies to:**
+  - Sprite rendering (baseHeight * sizeScale)
+  - HP bar positioning (adjusts for taller/shorter sprites)
+  - Debug hitbox visualization (accurate to rendered size)
+  
+- **Technical details:**
+  - Size determined by checking enemy.species or enemy.name for keywords
+  - Base height of 75px multiplied by sizeScale (0.6-1.4)
+  - Depth scaling still applies on top of size scaling
+
+## v0.3.73 - Chat Window Spawn Exclusion Zone (2025-12-02)
+- **Added spawn exclusion zone for chat window area:**
+  - Mobs no longer spawn behind the chat window (bottom-right corner)
+  - New `isInChatExclusionZone()` helper function checks spawn positions
+  - Exclusion zone: 350x600px area with 50px buffer around chat window
+  
+- **Updated platform detection filtering:**
+  - `generateBattleLayout()` now filters out platforms in chat zone
+  - Platforms in exclusion zone are skipped when assigning enemy positions
+  
+- **Updated fallback spawn positions:**
+  - All 20 enemy fallback positions moved to avoid chat area
+  - Enemy X positions now range 0.50-0.72 (was 0.50-0.95)
+  - Enemy Y positions now range 0.28-0.55 (was 0.28-0.80)
+  - Ensures enemies visible and clickable regardless of chat visibility
+
+## v0.3.72 - Settings Panel Redesign (2025-12-02)
+- **Redesigned settings panel to be wider and more square:**
+  - Changed from narrow 450px to wide 800px max-width
+  - 2-column grid layout with 4 organized sections
+  - Matches visual style of achievements panel
+  
+- **New section organization:**
+  - 🔊 Audio: Music enabled, music volume, background sound, voice volume
+  - 🎵 Music Types: Theme songs toggle, zone music toggle
+  - 🤖 AI Settings: Free will chat, paid LLM, roleplay mode
+  - 🔧 Debug: Hitboxes, network debug, diag mode
+  
+- **CSS improvements:**
+  - Added `.settingsGrid` - 2-column grid with 40px gap
+  - Added `.settingsSection` - bordered cards with subtle teal background
+  - Added `.settingsSectionTitle` - uppercase section headers
+  - Added `.settingsRow` - flexbox rows for label/control alignment
+  - Added `.settingsSlider` - styled range inputs with teal thumb
+  - Added `.settingsCheckbox` - larger 18px checkboxes with teal accent
+  - Added `.settingsFooter` - flexbox button row
+  
+- **Visual enhancements:**
+  - Teal glow border and shadow (matching achievements purple glow)
+  - Close button (✕) in top-right corner
+  - Compact hint text next to toggle labels
+  - Side-by-side Clear Cache and Close buttons
+
 ## v0.3.71 - Save Filename Update (2025-12-02)
 - **Changed save file naming convention:**
   - Filename now: `tunnelsofprivacy-save-level{X}-{date}-{time}.json`
