@@ -3719,7 +3719,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.3.70';
+        const GAME_VERSION = 'v0.3.71';
         
         // ===== HACKATHON INFO TOOLTIP SYSTEM =====
         const TOOLTIP_DELAY = 800; // ms before tooltip appears
@@ -15418,8 +15418,12 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             document.getElementById('musicControls').classList.add('dungeonMenuActive');
             document.getElementById('musicTicker').classList.add('dungeonMenuActive');
             
-            // Create fresh save
+            // Create fresh save but preserve arcade progress
+            const existingSave = loadSharedSave();
             let sharedSave = createDefaultSharedSave();
+            if (existingSave?.arcadeState) {
+                sharedSave.arcadeState = existingSave.arcadeState; // Keep arcade progress
+            }
             saveSharedSave(sharedSave);
             
             // Sync dungeon level display
@@ -18178,8 +18182,12 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 if (backBtn) backBtn.style.display = '';
             }
             
-            // Create fresh save with rolled stats
+            // Create fresh save with rolled stats, but preserve arcade progress
+            const existingSave = loadSharedSave();
             const newSave = createDefaultSharedSave();
+            if (existingSave?.arcadeState) {
+                newSave.arcadeState = existingSave.arcadeState; // Keep arcade progress
+            }
             saveSharedSave(newSave);
             
             inRollPhase = false;

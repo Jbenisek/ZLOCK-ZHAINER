@@ -2,6 +2,22 @@
 
 # Changelog
 
+## v0.3.71 - Save System Improvements (2025-12-02)
+- **Arcade Progress Preservation:**
+  - Starting new dungeon game no longer wipes arcade save
+  - `arcadeState` preserved when creating new dungeon adventure
+  - Works for both quick start and after hero stat rolling
+  
+- **Portal Exit Fix:**
+  - "Enter Arcade" button no longer requires existing save
+  - Players can freely travel to arcade even without save
+  - If save exists, dungeon state is updated before leaving
+  
+- **Technical:**
+  - `proceedWithNewAdventure()` preserves `existingSave.arcadeState`
+  - `confirmStartGame()` preserves arcade state after rolling
+  - `exitPortal()` gracefully handles missing saves
+
 ## v0.3.70 - YouTube Intro Video Panel (2025-12-02)
 - **Added YouTube Intro Video panel to Title Screen:**
   - Positioned on right side, vertically centered (matching arcade game style)
