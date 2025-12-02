@@ -933,6 +933,56 @@
             100% { transform: translateX(-50%); }
         }
         
+        /* Music Icon Buttons */
+        .musicIconBtn {
+            padding: 0;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .musicIconBtn:hover {
+            transform: scale(1.15);
+            filter: brightness(1.3);
+        }
+        
+        .musicIconBtn:active {
+            transform: scale(0.95);
+        }
+        
+        .volumeSlider {
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(42, 157, 143, 0.2);
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        
+        .volumeSlider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #2A9D8F;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(42, 157, 143, 0.5);
+        }
+        
+        .volumeSlider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #2A9D8F;
+            cursor: pointer;
+            border: none;
+        }
+        
         #gameControlsButtons {
             display: flex;
             gap: 4px;
@@ -1036,7 +1086,7 @@
             }
         }
         
-        #settingsPanel, #highScoresPanel, #achievementsPanel, #aboutPanel {
+        #settingsPanel, #highScoresPanel, #aboutPanel {
             display: none;
             position: fixed;
             top: 50%;
@@ -1054,13 +1104,27 @@
             backdrop-filter: blur(10px);
         }
         
-        #highScoresPanel {
-            max-width: 1300px;
-            width: 85vw;
+        #achievementsPanel {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, rgba(15, 10, 35, 0.98), rgba(30, 20, 50, 0.98));
+            border: 3px solid #8B45FF;
+            border-radius: 15px;
+            padding: 20px 25px;
+            z-index: 200;
+            max-width: 900px;
+            width: 90%;
+            max-height: 85vh;
+            box-shadow: 0 10px 50px rgba(139, 69, 255, 0.4), 0 0 80px rgba(139, 69, 255, 0.3);
+            backdrop-filter: blur(15px);
+            pointer-events: all;
         }
         
-        #achievementsPanel {
-            max-width: 1200px;
+        #highScoresPanel {
+            max-width: 1300px;
             width: 85vw;
         }
         
@@ -1090,38 +1154,84 @@
             letter-spacing: 2px;
         }
         
+        #achievementsPanel .panelTitle {
+            color: #8B45FF;
+            text-shadow: 0 0 20px rgba(139, 69, 255, 0.5);
+            margin-bottom: 15px;
+        }
+        
+        /* Achievement Tabs */
+        .achievementTabs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        .achievementTab {
+            padding: 10px 25px;
+            background: rgba(139, 69, 255, 0.2);
+            border: 2px solid #8B45FF;
+            border-radius: 8px;
+            color: #8B45FF;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .achievementTab:hover {
+            background: rgba(139, 69, 255, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .achievementTab.active {
+            background: #8B45FF;
+            color: white;
+            box-shadow: 0 4px 15px rgba(139, 69, 255, 0.5);
+        }
+        
+        /* Achievement Grid */
+        .achievementGrid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+        }
+        
         .achievementItem {
-            background: rgba(10, 14, 18, 0.5);
-            border: 1px solid #26313B;
+            background: rgba(10, 14, 18, 0.6);
+            border: 2px solid #26313B;
             border-radius: 6px;
             padding: 6px;
-            margin: 4px 0;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             transition: all 0.2s;
+            cursor: default;
         }
         
         .achievementItem.unlocked {
-            border-color: #2A9D8F;
-            background: linear-gradient(135deg, rgba(42, 157, 143, 0.2), rgba(78, 205, 196, 0.1));
-            box-shadow: 0 2px 8px rgba(42, 157, 143, 0.3);
+            border-color: #8B45FF;
+            background: linear-gradient(135deg, rgba(139, 69, 255, 0.2), rgba(179, 136, 255, 0.1));
+            box-shadow: 0 2px 10px rgba(139, 69, 255, 0.3);
         }
         
         .achievementItem:hover {
-            transform: translateX(3px);
-            background: rgba(20, 27, 34, 0.8);
+            transform: translateY(-3px);
             filter: brightness(1.2);
         }
         
         .achievementIcon {
-            width: 50px;
-            height: 50px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 16px;
             flex-shrink: 0;
         }
         
@@ -1135,19 +1245,47 @@
             color: #89A0B4;
         }
         
-        .achievementInfo {
-            flex: 1;
-        }
-        
         .achievementName {
-            font-size: 18px;
+            font-size: 9px;
             font-weight: 700;
-            margin-bottom: 4px;
+            text-align: center;
+            color: #D4E3F0;
+            line-height: 1.1;
         }
         
-        .achievementDesc {
+        .achievementItem.unlocked .achievementName {
+            color: #B388FF;
+        }
+        
+        .panelProgress {
+            text-align: center;
             font-size: 14px;
-            color: #BFD1E0;
+            font-weight: 700;
+            color: #B388FF;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 2px solid rgba(139, 69, 255, 0.3);
+        }
+        
+        .panelCloseBtn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 100, 100, 0.3);
+            border: 2px solid #ff6b6b;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            color: #ff6b6b;
+            font-size: 18px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        
+        .panelCloseBtn:hover {
+            background: rgba(255, 100, 100, 0.6);
+            transform: scale(1.1);
         }
         
         .achievementTier {
@@ -1971,9 +2109,14 @@
     </div>
     
     <div id="achievementsPanel">
-        <div class="panelTitle">ACHIEVEMENTS</div>
+        <button class="panelCloseBtn" onclick="closeAllPanels()">✕</button>
+        <div class="panelTitle">🏆 ACHIEVEMENTS</div>
+        <div class="achievementTabs">
+            <button class="achievementTab active" id="achieveTabPage1" onclick="showAchievementPage(1)">EASIER / EASY / MEDIUM</button>
+            <button class="achievementTab" id="achieveTabPage2" onclick="showAchievementPage(2)">MED-HARD / VERY HARD</button>
+        </div>
         <div id="achievementsList"></div>
-        <button class="button closeButton" onclick="closeAllPanels()" style="width: 100%; margin-top: 20px;">CLOSE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
+        <div class="panelProgress" id="achievementsProgress">0/50 Unlocked</div>
     </div>
     
     <div id="aboutPanel">
@@ -2531,29 +2674,23 @@
                 border-radius: 8px;
                 padding: 12px;
                 z-index: 10000;
-                min-width: 280px;
+                min-width: 320px;
                 pointer-events: auto;
                 backdrop-filter: blur(10px);
                 box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8);
             ">
-                <h3 style="margin: 0 0 10px 0; color: #2A9D8F; font-family: 'JetBrains Mono', monospace; font-size: 12px; text-align: center; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">Music Controls</h3>
-                
-                <!-- Playback Controls -->
-                <div style="display: flex; gap: 6px; justify-content: center; margin-bottom: 12px;">
-                    <button onclick="musicPrevious()" style="padding: 8px 12px; background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); color: #F2C94C; border: 2px solid #2A9D8F; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">⏮</button>
-                    <button id="musicPlayPauseBtn" onclick="musicPlayPause()" style="padding: 8px 16px; background: linear-gradient(135deg, rgba(42, 157, 143, 0.4), rgba(42, 157, 143, 0.3)); color: #F2C94C; border: 2px solid #F2C94C; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">▶</button>
-                    <button onclick="musicNext()" style="padding: 8px 12px; background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); color: #F2C94C; border: 2px solid #2A9D8F; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">⏭</button>
-                </div>
-                
-                <!-- Volume Control -->
-                <div style="margin-bottom: 12px;">
-                    <label style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 10px; display: block; margin-bottom: 4px;">Volume:</label>
-                    <input type="range" id="musicVolumeSlider" min="1" max="150" value="75" oninput="updateMusicVolumeFromSlider()" style="width: 100%;">
-                    <span id="musicVolumeSliderValue" style="color: #2D9CDB; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: bold;">75</span>
+                <!-- Playback Controls with Icons -->
+                <div style="display: flex; align-items: center; gap: 12px; justify-content: center; margin-bottom: 12px;">
+                    <img src="tunnelsofprivacy/icons/volume.png" style="width: 48px; height: 48px;">
+                    <button onclick="musicPrevious()" class="musicIconBtn"><img src="tunnelsofprivacy/icons/music_back.png" style="width: 64px; height: 64px;"></button>
+                    <button id="musicPlayPauseBtn" onclick="musicPlayPause()" class="musicIconBtn"><img id="musicPlayPauseIcon" src="tunnelsofprivacy/icons/music_play.png" style="width: 64px; height: 64px;"></button>
+                    <button onclick="musicNext()" class="musicIconBtn"><img src="tunnelsofprivacy/icons/music_forward.png" style="width: 64px; height: 64px;"></button>
+                    <input type="range" class="volumeSlider" id="musicVolumeSlider" min="1" max="150" value="75" oninput="updateMusicVolumeFromSlider()" style="width: 100px;">
+                    <span id="musicVolumeSliderValue" style="color: #2D9CDB; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: bold; min-width: 30px;">75</span>
                 </div>
                 
                 <!-- Music Type Toggles -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+                <div style="display: flex; justify-content: center; gap: 24px; margin-bottom: 10px;">
                     <div style="display: flex; align-items: center; gap: 6px;">
                         <input type="checkbox" id="themeMusicToggle" checked onchange="updateThemeMusicToggle()" style="cursor: pointer;">
                         <label for="themeMusicToggle" style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 10px; cursor: pointer;">Themes</label>
@@ -2879,8 +3016,27 @@
                     🛠️ PARTICLE EDITOR
                 </a>
                 
-                <!-- Custom Particle Import Panel -->
-                <div style="
+                <!-- Particle Replacement Toggle Button -->
+                <button id="particleReplacementToggle" onclick="toggleParticleReplacement()" style="
+                    padding: 10px 15px;
+                    background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
+                    border: 2px solid #E67E22;
+                    border-radius: 8px;
+                    font-family: 'JetBrains Mono', monospace;
+                    font-size: 12px;
+                    font-weight: 700;
+                    color: #F39C12;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 4px 15px rgba(230, 126, 34, 0.3);
+                    text-align: center;
+                " onmouseover="this.style.background='linear-gradient(135deg, rgba(230, 126, 34, 0.3), rgba(230, 126, 34, 0.2))'; this.style.boxShadow='0 6px 20px rgba(230, 126, 34, 0.5)';" onmouseout="this.style.background='linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9))'; this.style.boxShadow='0 4px 15px rgba(230, 126, 34, 0.3)';">
+                    📦 PARTICLE REPLACEMENT ▼
+                </button>
+                
+                <!-- Custom Particle Import Panel (Collapsible) -->
+                <div id="particleReplacementPanel" style="
+                    display: none;
                     padding: 15px;
                     background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9));
                     border: 2px solid #E67E22;
@@ -2947,13 +3103,18 @@
             </div>
             
             <button id="resumeGameBtn" class="menuButton" onclick="resumeSavedGame()" style="display: none; background: linear-gradient(135deg, rgba(46, 134, 222, 0.4), rgba(46, 134, 222, 0.3)); border-color: #3498DB;">RESUME GAME<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">↻</span></button>
+            <button class="menuButton" onclick="startGame()" disabled style="opacity: 0.5; cursor: not-allowed;">START NEW GAME<span style="display: inline-block; width: 26px; height: 26px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">A</span></button>
             <button class="menuButton" onclick="triggerLoadSaveFile()" style="background: linear-gradient(135deg, rgba(230, 126, 34, 0.4), rgba(230, 126, 34, 0.3)); border-color: #E67E22;">LOAD GAME FILE<span style="display: inline-block; width: 26px; height: 26px; background: #E67E22; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">⬆</span></button>
             <input type="file" id="loadSaveFileInput" accept=".json" style="display: none;" onchange="loadSaveFile(event)">
-            <button class="menuButton" onclick="startGame()" disabled style="opacity: 0.5; cursor: not-allowed;">START NEW GAME<span style="display: inline-block; width: 26px; height: 26px; background: #27AE60; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">A</span></button>
-            <button class="menuButton" onclick="enterPortalFromMenu()" style="background: linear-gradient(135deg, rgba(139, 69, 255, 0.4), rgba(139, 69, 255, 0.3)); border-color: #8B45FF;">ENTER DUNGEON<span style="display: inline-block; width: 26px; height: 26px; background: #8B45FF; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">🌀</span></button>
             <button class="menuButton" onclick="showSettings()">SETTINGS<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">▶</span></button>
-            <button class="menuButton" onclick="showHighScores()">HIGH SCORES<span style="display: inline-block; width: 26px; height: 26px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">X</span></button>
-            <button class="menuButton" onclick="showAchievements()">ACHIEVEMENTS<span style="display: inline-block; width: 26px; height: 26px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">Y</span></button>
+            
+            <!-- High Scores / Enter Dungeon / Achievements Row -->
+            <div style="display: flex; gap: 10px; width: 100%; max-width: 600px; margin: 5px auto;">
+                <button class="menuButton" onclick="showHighScores()" style="flex: 1; padding: 12px 8px; font-size: 13px;">HIGH SCORES<span style="display: inline-block; width: 22px; height: 22px; background: #3498DB; border-radius: 50%; text-align: center; line-height: 22px; margin-left: 6px; font-weight: bold; color: white; font-size: 12px;">X</span></button>
+                <button class="menuButton" onclick="enterPortalFromMenu()" style="flex: 1; padding: 12px 8px; font-size: 13px; background: linear-gradient(135deg, rgba(139, 69, 255, 0.4), rgba(139, 69, 255, 0.3)); border-color: #8B45FF;">DUNGEON<span style="display: inline-block; width: 22px; height: 22px; background: #8B45FF; border-radius: 50%; text-align: center; line-height: 22px; margin-left: 6px; font-weight: bold; color: white; font-size: 12px;">🌀</span></button>
+                <button class="menuButton" onclick="showAchievements()" style="flex: 1; padding: 12px 8px; font-size: 13px; background: linear-gradient(135deg, rgba(139, 69, 255, 0.4), rgba(139, 69, 255, 0.3)); border-color: #8B45FF;">ACHIEVEMENTS<span style="display: inline-block; width: 22px; height: 22px; background: #F39C12; border-radius: 50%; text-align: center; line-height: 22px; margin-left: 6px; font-weight: bold; color: white; font-size: 12px;">Y</span></button>
+            </div>
+            
             <button class="aboutButton" onclick="showHowToPlay()" style="background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); border-color: #2A9D8F; bottom: 125px;">📖 HOW TO PLAY & CONTROLS<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 10px; font-weight: bold; color: white; font-size: 12px;">SELECT</span></button>
             <button class="aboutButton" onclick="showAbout()">ABOUT / DONATE<span style="display: inline-block; width: 26px; height: 26px; background: #E74C3C; border-radius: 50%; text-align: center; line-height: 26px; margin-left: 10px; font-weight: bold; color: white; font-size: 14px;">B</span></button>
             <button class="preFillButton" onclick="startGameWithPreFill()" disabled style="opacity: 0.5; cursor: not-allowed;">NEED MORE ACTION? PRE-FILLED GRID<span style="display: inline-block; padding: 4px 10px; background: #555; border-radius: 5px; margin-left: 8px; font-weight: bold; color: white; font-size: 12px;">▲</span></button>
@@ -2967,8 +3128,7 @@
             <a href="https://youtu.be/GukOAeaMuyw" target="_blank" style="
                 position: absolute;
                 right: 60px;
-                top: 50%;
-                transform: translateY(-50%);
+                bottom: 200px;
                 width: 320px;
                 background: linear-gradient(135deg, rgba(10, 14, 18, 0.98), rgba(20, 27, 34, 0.95));
                 border: 3px solid #FF0000;
@@ -2979,7 +3139,7 @@
                 transition: all 0.3s ease;
                 box-shadow: 0 8px 32px rgba(255, 0, 0, 0.4);
                 cursor: pointer;
-            " onmouseover="this.style.transform='translateY(-50%) scale(1.05)'; this.style.boxShadow='0 12px 40px rgba(255, 0, 0, 0.6)'; this.style.borderColor='#FF3333';" onmouseout="this.style.transform='translateY(-50%) scale(1)'; this.style.boxShadow='0 8px 32px rgba(255, 0, 0, 0.4)'; this.style.borderColor='#FF0000';">
+            " onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 12px 40px rgba(255, 0, 0, 0.6)'; this.style.borderColor='#FF3333';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 8px 32px rgba(255, 0, 0, 0.4)'; this.style.borderColor='#FF0000';">
                 <!-- YouTube Thumbnail -->
                 <div style="position: relative; width: 100%; height: 180px; background: #000;">
                     <img src="https://img.youtube.com/vi/GukOAeaMuyw/maxresdefault.jpg" style="width: 100%; height: 100%; object-fit: cover;" alt="Full Story Video">
@@ -3097,22 +3257,14 @@
                 backdrop-filter: blur(10px);
                 box-shadow: 0 10px 50px rgba(0, 0, 0, 0.6);
             ">
-                <h3 style="margin: 0 0 10px 0; color: #2A9D8F; font-family: 'JetBrains Mono', monospace; font-size: 12px; text-align: center; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">🎵 Music Controls</h3>
-                
-                <!-- Playback Controls -->
-                <div style="display: flex; gap: 6px; justify-content: center; margin-bottom: 12px;">
-                    <button onclick="musicPrevious()" style="padding: 8px 12px; background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); color: #F2C94C; border: 2px solid #2A9D8F; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">⏮</button>
-                    <button id="titleMusicPlayPauseBtn" onclick="musicPlayPause()" style="padding: 8px 16px; background: linear-gradient(135deg, rgba(42, 157, 143, 0.4), rgba(42, 157, 143, 0.3)); color: #F2C94C; border: 2px solid #F2C94C; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">▶</button>
-                    <button onclick="musicNext()" style="padding: 8px 12px; background: linear-gradient(135deg, rgba(10, 14, 18, 0.95), rgba(20, 27, 34, 0.9)); color: #F2C94C; border: 2px solid #2A9D8F; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">⏭</button>
-                </div>
-                
-                <!-- Volume Control -->
-                <div style="margin-bottom: 12px;">
-                    <label style="color: #BFD1E0; font-family: 'JetBrains Mono', monospace; font-size: 10px; display: block; margin-bottom: 4px;">Volume:</label>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <input type="range" id="titleMusicVolumeSlider" min="1" max="150" value="75" oninput="updateMusicVolumeFromTitleSlider()" style="flex: 1;">
-                        <span id="titleMusicVolumeSliderValue" style="color: #2D9CDB; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: bold; min-width: 30px; text-align: right;">75</span>
-                    </div>
+                <!-- Playback Controls with Icons -->
+                <div id="musicControls" style="display: flex; align-items: center; gap: 12px; justify-content: center; margin-bottom: 12px;">
+                    <img src="tunnelsofprivacy/icons/volume.png" style="width: 48px; height: 48px;">
+                    <button onclick="musicPrevious()" class="musicIconBtn"><img src="tunnelsofprivacy/icons/music_back.png" style="width: 64px; height: 64px;"></button>
+                    <button id="titleMusicPlayPauseBtn" onclick="musicPlayPause()" class="musicIconBtn"><img id="titleMusicPlayPauseIcon" src="tunnelsofprivacy/icons/music_play.png" style="width: 64px; height: 64px;"></button>
+                    <button onclick="musicNext()" class="musicIconBtn"><img src="tunnelsofprivacy/icons/music_forward.png" style="width: 64px; height: 64px;"></button>
+                    <input type="range" class="volumeSlider" id="titleMusicVolumeSlider" min="1" max="150" value="75" oninput="updateMusicVolumeFromTitleSlider()" style="width: 100px;">
+                    <span id="titleMusicVolumeSliderValue" style="color: #2D9CDB; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: bold; min-width: 30px;">75</span>
                 </div>
                 
                 <!-- Music Type Toggles -->
@@ -3136,7 +3288,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.21.3';
+        const GAME_VERSION = 'v0.21.10';
         
         // ===== AUDIO SYSTEM =====
         const audioCache = {}; // Cache for all audio files
@@ -3649,6 +3801,17 @@
         
         // Room walls for LED pulse effect
         let roomWalls = [];
+        
+        // Wall theme sets (changes every 10 levels)
+        const wallThemeSets = [
+            { name: 'futuristic', north: 'walls/wall_n.png', south: 'walls/wall_s.png', east: 'walls/wall_e.png', west: 'walls/wall_w.png' },
+            { name: 'medieval', north: 'walls/medievel/wall_n_castle.webp', south: 'walls/medievel/wall_s_castle.webp', east: 'walls/medievel/wall_e_castle.webp', west: 'walls/medievel/wall_w_castle.webp' },
+            { name: 'water', north: 'walls/water/wall_n_water.png', south: 'walls/water/wall_s_water.png', east: 'walls/water/wall_e_water.png', west: 'walls/water/wall_w_water.png' },
+            { name: 'zebra', north: 'walls/zebra/wall_n_zebra.png', south: 'walls/zebra/wall_s_zebra.png', east: 'walls/zebra/wall_e_zebra.png', west: 'walls/zebra/wall_w_zebra.png' },
+            { name: 'forest', north: 'walls/forest/wall_n_forest.png', south: 'walls/forest/wall_s_forest.png', east: 'walls/forest/wall_e_forest.png', west: 'walls/forest/wall_w_forest.png' }
+        ];
+        let currentWallTheme = 'futuristic';
+        let lastWallThemeLevel = 0; // Track which 10-level bracket we're in
         
         // Corner feed tubes
         let cornerTubes = [];
@@ -5716,11 +5879,11 @@
                 document.getElementById('levelMusicToggle').checked = levelMusicEnabled;
                 
                 // Update play/pause button state
-                const playPauseBtn = document.getElementById('musicPlayPauseBtn');
+                const playPauseIcon = document.getElementById('musicPlayPauseIcon');
                 if (currentMusic && !currentMusic.paused) {
-                    playPauseBtn.textContent = '⏸';
+                    if (playPauseIcon) playPauseIcon.src = 'tunnelsofprivacy/icons/music_pause.png';
                 } else {
-                    playPauseBtn.textContent = '▶';
+                    if (playPauseIcon) playPauseIcon.src = 'tunnelsofprivacy/icons/music_play.png';
                 }
                 
                 modal.style.display = 'block';
@@ -5744,7 +5907,7 @@
             
             // Apply volume to current music
             if (currentMusic) {
-                currentMusic.volume = musicVolume / 100;
+                currentMusic.volume = musicVolume / 500;
             }
             
             // Sync title screen slider
@@ -5764,7 +5927,7 @@
             
             // Apply volume to current music
             if (currentMusic) {
-                currentMusic.volume = musicVolume / 100;
+                currentMusic.volume = musicVolume / 500;
             }
             
             // Sync in-game sliders
@@ -5866,27 +6029,27 @@
         }
         
         function musicPlayPause() {
-            const btn = document.getElementById('musicPlayPauseBtn');
-            const titleBtn = document.getElementById('titleMusicPlayPauseBtn');
+            const iconImg = document.getElementById('musicPlayPauseIcon');
+            const titleIconImg = document.getElementById('titleMusicPlayPauseIcon');
             
             if (!currentMusic) {
                 // No music loaded yet, start the music system
                 startMusicSystem();
-                if (btn) btn.textContent = '⏸';
-                if (titleBtn) titleBtn.textContent = '⏸';
+                if (iconImg) iconImg.src = 'tunnelsofprivacy/icons/music_pause.png';
+                if (titleIconImg) titleIconImg.src = 'tunnelsofprivacy/icons/music_pause.png';
                 return;
             }
             
             if (currentMusic.paused) {
                 currentMusic.play().catch(err => console.log('Play error:', err));
                 userPausedMusic = false; // User resumed
-                if (btn) btn.textContent = '⏸';
-                if (titleBtn) titleBtn.textContent = '⏸';
+                if (iconImg) iconImg.src = 'tunnelsofprivacy/icons/music_pause.png';
+                if (titleIconImg) titleIconImg.src = 'tunnelsofprivacy/icons/music_pause.png';
             } else {
                 currentMusic.pause();
                 userPausedMusic = true; // User paused
-                if (btn) btn.textContent = '▶';
-                if (titleBtn) titleBtn.textContent = '▶';
+                if (iconImg) iconImg.src = 'tunnelsofprivacy/icons/music_play.png';
+                if (titleIconImg) titleIconImg.src = 'tunnelsofprivacy/icons/music_play.png';
             }
         }
         
@@ -10632,7 +10795,7 @@
             }
             
             // Convert musicVolume (1-150) to multiplier (0.01-1.5)
-            const volumeScale = musicVolume / 100;
+            const volumeScale = musicVolume / 500;
             
             // Create new audio element
             const newMusic = new Audio(trackData.file);
@@ -10701,14 +10864,14 @@
             }
             
             // Update play/pause button based on play state
-            const btn = document.getElementById('musicPlayPauseBtn');
-            const titleBtn = document.getElementById('titleMusicPlayPauseBtn');
+            const iconImg = document.getElementById('musicPlayPauseIcon');
+            const titleIconImg = document.getElementById('titleMusicPlayPauseIcon');
             if (!userPausedMusic) {
-                if (btn) btn.textContent = '⏸';
-                if (titleBtn) titleBtn.textContent = '⏸';
+                if (iconImg) iconImg.src = 'tunnelsofprivacy/icons/music_pause.png';
+                if (titleIconImg) titleIconImg.src = 'tunnelsofprivacy/icons/music_pause.png';
             } else {
-                if (btn) btn.textContent = '▶';
-                if (titleBtn) titleBtn.textContent = '▶';
+                if (iconImg) iconImg.src = 'tunnelsofprivacy/icons/music_play.png';
+                if (titleIconImg) titleIconImg.src = 'tunnelsofprivacy/icons/music_play.png';
             }
             
             // Crossfade: fade out old, fade in new
@@ -10767,7 +10930,7 @@
             
             // Update volume dynamically based on musicVolume (1-150 range)
             if (currentMusic) {
-                const volumeScale = musicVolume / 100;
+                const volumeScale = musicVolume / 500;
                 currentMusic.volume = volumeScale;
             }
         }
@@ -10780,7 +10943,7 @@
                 // But only if theme music is enabled
                 if (themeMusicEnabled) {
                     const randomTheme = themeTracks[Math.floor(Math.random() * themeTracks.length)];
-                    const volumeScale = musicVolume / 100;
+                    const volumeScale = musicVolume / 500;
                     
                     const themeAudio = new Audio(randomTheme.file);
                     themeAudio.volume = volumeScale;
@@ -10813,10 +10976,10 @@
                     currentMusic = themeAudio;
                     
                     // Update play/pause button to show pause icon
-                    const btn = document.getElementById('musicPlayPauseBtn');
-                    const titleBtn = document.getElementById('titleMusicPlayPauseBtn');
-                    if (btn) btn.textContent = '⏸';
-                    if (titleBtn) titleBtn.textContent = '⏸';
+                    const iconImg = document.getElementById('musicPlayPauseIcon');
+                    const titleIconImg = document.getElementById('titleMusicPlayPauseIcon');
+                    if (iconImg) iconImg.src = 'tunnelsofprivacy/icons/music_pause.png';
+                    if (titleIconImg) titleIconImg.src = 'tunnelsofprivacy/icons/music_pause.png';
                 } else if (levelMusicEnabled) {
                     // If theme music is disabled, start directly with level track
                     const levelTrack = getMusicForLevel(level);
@@ -10901,6 +11064,8 @@
                 fetch(effectPath)
                     .then(response => response.json())
                     .then(data => {
+                        // Store in cache for later use
+                        particleEffectCache[effectPath] = data;
                         assetsLoaded++;
                         effectsLoaded++;
                         loadedBytes += 5000; // Estimate ~5KB per JSON
@@ -11159,6 +11324,37 @@
                 floorMesh.material.needsUpdate = true;
             });
         }
+        
+        // Swap wall theme every 10 levels
+        function checkAndSwapWallTheme(currentLevel) {
+            const levelBracket = Math.floor(currentLevel / 10);
+            
+            // Only swap if we've moved to a new 10-level bracket
+            if (levelBracket === lastWallThemeLevel) return;
+            lastWallThemeLevel = levelBracket;
+            
+            // Don't swap on level 1-9 (keep futuristic)
+            if (currentLevel < 10) return;
+            
+            // Pick a random theme that's different from current
+            const availableThemes = wallThemeSets.filter(t => t.name !== currentWallTheme);
+            const newTheme = availableThemes[Math.floor(Math.random() * availableThemes.length)];
+            currentWallTheme = newTheme.name;
+            
+            // Swap wall textures (roomWalls: 0=north, 1=south, 2=east, 3=west)
+            const textureLoader = new THREE.TextureLoader();
+            const wallPaths = [newTheme.north, newTheme.south, newTheme.east, newTheme.west];
+            
+            roomWalls.slice(0, 4).forEach((wall, index) => {
+                textureLoader.load(wallPaths[index], (texture) => {
+                    wall.material.map = texture;
+                    wall.material.emissiveMap = texture;
+                    wall.material.needsUpdate = true;
+                });
+            });
+            
+            console.log(`Wall theme changed to: ${newTheme.name} at level ${currentLevel}`);
+        }
 
         function startFloorSwapping() {
             // Randomly swap floor every 30 seconds (testing)
@@ -11246,6 +11442,9 @@
             scene.add(westWall);
             roomWalls.push(westWall);
             
+            // Store wall mesh references for texture swapping (indices 0-3 in roomWalls)
+            // 0 = north, 1 = south, 2 = east, 3 = west
+            
             // Floor (Dark Gray) - pick random floor texture to start
             const initialFloor = floorTextures[Math.floor(Math.random() * floorTextures.length)];
             const floorTexture = new THREE.TextureLoader().load(initialFloor);
@@ -11309,7 +11508,64 @@
             cyberaxe: { str: 12, dex: 10, con: 12, int: 8, wis: 9, cha: 10, hp: 28, ac: 14 }
         };
         
+        // Base stats for each hero (used for level-based scaling)
+        const heroBaseStats = {
+            zancas: { str: 10, dex: 12, con: 11, int: 9, wis: 12, cha: 10, hp: 24, ac: 13 },
+            nate: { str: 9, dex: 13, con: 10, int: 11, wis: 12, cha: 8, hp: 22, ac: 12 },
+            zooko: { str: 8, dex: 11, con: 10, int: 13, wis: 11, cha: 9, hp: 18, ac: 11 },
+            cyberaxe: { str: 12, dex: 10, con: 12, int: 8, wis: 9, cha: 10, hp: 28, ac: 14 }
+        };
+        
+        // Track last level we updated stats for (to avoid redundant updates)
+        let lastHeroStatsLevel = 0;
+        
+        // Calculate hero stats based on arcade level with some randomness
+        function updateHeroStatsForLevel(arcadeLevel) {
+            if (arcadeLevel === lastHeroStatsLevel) return; // No change needed
+            lastHeroStatsLevel = arcadeLevel;
+            
+            // Seeded random based on level for consistency within a level
+            const seededRandom = (seed, offset) => {
+                const x = Math.sin(seed * 9999 + offset * 7777) * 10000;
+                return x - Math.floor(x);
+            };
+            
+            Object.keys(heroBaseStats).forEach((heroKey, heroIndex) => {
+                const base = heroBaseStats[heroKey];
+                
+                // Calculate level-based bonuses
+                // Every 10 levels = roughly +1 to each stat, with variance
+                const levelBonus = Math.floor(arcadeLevel / 10);
+                
+                // Each stat gets slight random variance (-1 to +2) based on level seed
+                const variance = (statIndex) => {
+                    const rand = seededRandom(arcadeLevel, heroIndex * 10 + statIndex);
+                    return Math.floor(rand * 4) - 1; // -1 to +2
+                };
+                
+                // Update stats with level scaling
+                heroStats[heroKey] = {
+                    str: base.str + levelBonus + variance(0),
+                    dex: base.dex + levelBonus + variance(1),
+                    con: base.con + levelBonus + variance(2),
+                    int: base.int + levelBonus + variance(3),
+                    wis: base.wis + levelBonus + variance(4),
+                    cha: base.cha + levelBonus + variance(5),
+                    hp: base.hp + (levelBonus * 4) + Math.floor(variance(6) * 2), // HP scales faster
+                    ac: base.ac + Math.floor(levelBonus / 2) + Math.floor(variance(7) / 2) // AC scales slower
+                };
+                
+                // Redraw the card if it exists
+                if (heroStatCards[heroKey]) {
+                    drawHeroStatCard(heroKey);
+                }
+            });
+        }
+        
         function createHeroStatCards() {
+            // Initialize hero stats based on current level
+            updateHeroStatsForLevel(level);
+            
             const cardWidth = 512;
             const cardHeight = 910; // 9:16 ratio (512 * 16/9 = 910)
             
@@ -12109,6 +12365,21 @@
             themeMusicEnabled = settings.themeMusicEnabled;
             levelMusicEnabled = settings.levelMusicEnabled;
             
+            // Apply volume to current music
+            if (currentMusic) {
+                currentMusic.volume = musicVolume / 500;
+            }
+            
+            // Sync all music volume sliders
+            if (document.getElementById('musicVolumeSlider')) {
+                document.getElementById('musicVolumeSlider').value = musicVolume;
+                document.getElementById('musicVolumeSliderValue').textContent = musicVolume;
+            }
+            if (document.getElementById('titleMusicVolumeSlider')) {
+                document.getElementById('titleMusicVolumeSlider').value = musicVolume;
+                document.getElementById('titleMusicVolumeSliderValue').textContent = musicVolume;
+            }
+            
             // Update global TV toggle
             tvEnabled = settings.tvEnabled;
             if (tvEnabled) {
@@ -12208,60 +12479,78 @@
             closeAllPanels();
         }
         
+        // Achievement page tracking
+        let currentAchievementPage = 1;
+        
         function showAchievements() {
             playSound('UI_Menu_Open');
             document.getElementById('overlay').style.display = 'block';
             document.getElementById('achievementsPanel').style.display = 'block';
+            showAchievementPage(currentAchievementPage);
+        }
+        
+        function showAchievementPage(page) {
+            currentAchievementPage = page;
             
+            // Update tab buttons
+            document.getElementById('achieveTabPage1').classList.toggle('active', page === 1);
+            document.getElementById('achieveTabPage2').classList.toggle('active', page === 2);
+            
+            renderAchievementsList(page);
+        }
+        
+        function renderAchievementsList(page = 1) {
             const list = document.getElementById('achievementsList');
             list.innerHTML = '';
             
-            const tiers = ['easier', 'easy', 'mid', 'mid-hard', 'very-hard'];
+            // Page 1: easier, easy, mid - Page 2: mid-hard, very-hard
+            const page1Tiers = ['easier', 'easy', 'mid'];
+            const page2Tiers = ['mid-hard', 'very-hard'];
+            const activeTiers = page === 1 ? page1Tiers : page2Tiers;
+            
             const tierNames = {
                 'easier': 'Easier',
                 'easy': 'Easy',
                 'mid': 'Medium',
                 'mid-hard': 'Med-Hard',
-                'very-hard': 'V-Hard'
+                'very-hard': 'Very Hard'
             };
             
-            tiers.forEach(tier => {
+            activeTiers.forEach(tier => {
                 const tierSection = document.createElement('div');
-                tierSection.style.cssText = 'margin-bottom: 15px;';
+                tierSection.style.cssText = 'margin-bottom: 12px;';
                 
                 const tierHeader = document.createElement('div');
-                tierHeader.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 2px solid #2A9D8F;';
+                tierHeader.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding-bottom: 4px; border-bottom: 2px solid #B388FF;';
                 
-                const tierTitle = document.createElement('h3');
+                const tierTitle = document.createElement('span');
                 tierTitle.textContent = tierNames[tier];
-                tierTitle.style.cssText = 'color: #2A9D8F; margin: 0; font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;';
+                tierTitle.style.cssText = 'color: #B388FF; font-size: 13px; font-weight: 700; text-transform: uppercase;';
                 
                 const tierAchievements = achievements.filter(a => a.tier === tier);
                 const unlockedCount = tierAchievements.filter(a => a.unlocked).length;
                 
                 const progress = document.createElement('span');
                 progress.textContent = `${unlockedCount}/${tierAchievements.length}`;
-                progress.style.cssText = 'color: #BFD1E0; font-size: 13px; font-weight: 700;';
+                progress.style.cssText = 'color: #BFD1E0; font-size: 11px;';
                 
                 tierHeader.appendChild(tierTitle);
                 tierHeader.appendChild(progress);
                 tierSection.appendChild(tierHeader);
                 
                 const grid = document.createElement('div');
-                grid.style.cssText = 'display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px;';
+                grid.className = 'achievementGrid';
                 
                 tierAchievements.forEach(achievement => {
                     const item = document.createElement('div');
                     item.className = 'achievementItem' + (achievement.unlocked ? ' unlocked' : '');
+                    item.title = achievement.desc;
                     
                     item.innerHTML = `
-                        <div style="width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; background: ${achievement.unlocked ? '#2A9D8F' : '#141B22'}; color: #fff; border: 2px solid ${achievement.unlocked ? '#4ECDC4' : '#26313B'};">
+                        <div class="achievementIcon ${achievement.unlocked ? 'unlocked' : 'locked'}">
                             ${achievement.unlocked ? '✓' : '🔒'}
                         </div>
-                        <div style="flex: 1; min-width: 0;">
-                            <div style="font-size: 12px; font-weight: 700; margin-bottom: 2px; color: ${achievement.unlocked ? '#4ECDC4' : '#D4E3F0'}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${achievement.name}</div>
-                            <div style="font-size: 10px; color: #89A0B4; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">${achievement.desc}</div>
-                        </div>
+                        <div class="achievementName">${achievement.name}</div>
                     `;
                     
                     grid.appendChild(item);
@@ -12271,11 +12560,9 @@
                 list.appendChild(tierSection);
             });
             
+            // Update total progress
             const totalUnlocked = achievements.filter(a => a.unlocked).length;
-            const summary = document.createElement('div');
-            summary.style.cssText = 'margin-top: 15px; padding-top: 12px; border-top: 2px solid #2A9D8F; text-align: center; font-size: 16px; font-weight: 700; color: #4ECDC4;';
-            summary.textContent = `${totalUnlocked}/50 Unlocked`;
-            list.appendChild(summary);
+            document.getElementById('achievementsProgress').textContent = `${totalUnlocked}/50 Unlocked`;
         }
         
         function showAbout() {
@@ -12758,16 +13045,19 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
-                    const gameState = JSON.parse(e.target.result);
+                    const saveData = JSON.parse(e.target.result);
                     
-                    // Validate save data has required fields
-                    if (!gameState.version || !gameState.level || !gameState.occupiedCells) {
+                    // Validate shared save format
+                    if (!saveData.saveVersion || !saveData.arcadeState || !saveData.arcadeState.level) {
                         alert('Invalid save file! Missing required data.');
                         return;
                     }
                     
-                    // Save to localStorage
-                    localStorage.setItem(STORAGE_KEYS.SAVED_GAME, JSON.stringify(gameState));
+                    // Save the arcade state to localStorage
+                    localStorage.setItem(STORAGE_KEYS.SAVED_GAME, JSON.stringify(saveData.arcadeState));
+                    
+                    // Also save the full shared save to preserve heroes
+                    localStorage.setItem(STORAGE_KEYS.SHARED_SAVE, JSON.stringify(saveData));
                     
                     // Show notification
                     const notif = document.createElement('div');
@@ -12841,6 +13131,10 @@
                 if (newAnim) {
                     loadTVStoryAnimation(newAnim);
                 }
+                // Update hero stat cards based on new level
+                updateHeroStatsForLevel(level);
+                // Check if wall theme should change (every 10 levels)
+                checkAndSwapWallTheme(level);
             }
             
             document.getElementById('scoreValue').textContent = score.toLocaleString();
@@ -14007,6 +14301,9 @@
         const customParticleEffects = {};
         let pendingCustomParticleData = null;
         
+        // Cache for preloaded particle effects
+        const particleEffectCache = {};
+        
         // All game particle effect files (for dropdown)
         const gameParticleEffects = [
             { path: 'effect/blue_break_a.json', name: 'Blue Break A' },
@@ -14095,6 +14392,19 @@
                 option.textContent = effect.name;
                 dropdown.appendChild(option);
             });
+        }
+        
+        // Toggle particle replacement panel visibility
+        function toggleParticleReplacement() {
+            const panel = document.getElementById('particleReplacementPanel');
+            const toggleBtn = document.getElementById('particleReplacementToggle');
+            if (panel.style.display === 'none') {
+                panel.style.display = 'block';
+                toggleBtn.innerHTML = '📦 PARTICLE REPLACEMENT ▲';
+            } else {
+                panel.style.display = 'none';
+                toggleBtn.innerHTML = '📦 PARTICLE REPLACEMENT ▼';
+            }
         }
         
         // Handle custom particle file selection
@@ -14196,10 +14506,19 @@
                 return;
             }
             
+            // Check preloaded cache
+            if (particleEffectCache[jsonPath]) {
+                if (callback) callback(particleEffectCache[jsonPath]);
+                return;
+            }
+            
+            // Fallback to fetch (shouldn't happen if preloaded properly)
             fetch(jsonPath)
                 .then(response => response.text())
                 .then(text => {
                     const config = JSON.parse(text);
+                    // Store in cache for future use
+                    particleEffectCache[jsonPath] = config;
                     if (callback) callback(config);
                 })
                 .catch(err => {});

@@ -2,6 +2,13 @@
 
 # Changelog
 
+## v0.3.71 - Save Filename Update (2025-12-02)
+- **Changed save file naming convention:**
+  - Filename now: `tunnelsofprivacy-save-level{X}-{date}-{time}.json`
+  - Previously: `tunnels-save-level{X}-{date}-{time}.json`
+  - Now uses `dungeonState.currentLevel` instead of `arcadeState.level`
+  - Distinguishes tunnels saves from arcade saves (`zlock-save-...`)
+
 ## v0.3.70 - YouTube Intro Video Panel (2025-12-02)
 - **Added YouTube Intro Video panel to Title Screen:**
   - Positioned on right side, vertically centered (matching arcade game style)

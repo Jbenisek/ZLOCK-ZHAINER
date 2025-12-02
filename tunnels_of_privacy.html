@@ -3719,7 +3719,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.3.70';
+        const GAME_VERSION = 'v0.3.71';
         
         // ===== HACKATHON INFO TOOLTIP SYSTEM =====
         const TOOLTIP_DELAY = 800; // ms before tooltip appears
@@ -15613,8 +15613,8 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 const hour12 = hours % 12 || 12;
                 const timeStr = `${hour12}_${minutes}_${ampm}`;
                 
-                const level = sharedSave.arcadeState ? sharedSave.arcadeState.level : 1;
-                const filename = `tunnels-save-level${level}-${dateStr}-${timeStr}.json`;
+                const level = sharedSave.dungeonState ? sharedSave.dungeonState.currentLevel : 1;
+                const filename = `tunnelsofprivacy-save-level${level}-${dateStr}-${timeStr}.json`;
                 
                 // Download JSON
                 const jsonString = JSON.stringify(sharedSave, null, 2);

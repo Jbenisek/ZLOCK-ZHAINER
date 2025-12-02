@@ -192,6 +192,112 @@
   - Settings now appear above pause screen (pause z-index: 1000)
   - Settings accessible from pause menu again
 
+## v0.21.10 - Music Volume Sync Fix (2025-12-02)
+- **Settings volume slider now connected to music player:**
+  - `updateSettings()` now applies volume to `currentMusic` when changed
+  - Syncs all three volume sliders: Settings, in-game modal, title screen
+  - All sliders update each other bidirectionally
+
+- **Volume scaling adjusted:**
+  - Changed from `/100` to `/500` for quieter default volume
+  - Affects all volume calculations: `loadMusic()`, `animateMusicSystem()`, `startMusicSystem()`
+  - Volume range 1-150 now maps to 0.002-0.3 instead of 0.01-1.5
+
+## v0.21.9 - Icon-Based Music Controls (2025-12-02)
+- **Music controls redesigned to match Tunnels of Privacy style:**
+  - Replaced emoji buttons (⏮ ▶ ⏭) with icon images
+  - Uses same icon assets: `music_back.png`, `music_play.png`, `music_pause.png`, `music_forward.png`
+  - Added volume icon (48x48) next to playback controls
+  - Compact single-row layout with flexbox
+  
+- **CSS Additions:**
+  - `.musicIconBtn` class with transparent background, no border
+  - Hover effect: scale(1.15) + brightness(1.3)
+  - Active effect: scale(0.95)
+  - `.volumeSlider` styled with teal thumb and custom track
+
+- **Technical Updates:**
+  - `musicPlayPause()` now updates img `src` instead of button `textContent`
+  - Added `musicPlayPauseIcon` and `titleMusicPlayPauseIcon` img elements
+  - Both in-game modal and title screen music controls use icon style
+  - Removed "Music Controls" header text for cleaner look
+
+## v0.21.8 - Save/Load File Fix (2025-12-02)
+- **Fixed save file loading:**
+  - Load function now correctly handles shared save format
+  - Validates `saveVersion` and `arcadeState.level` from shared save structure
+  - Saves both arcade state and full shared save (preserves hero data)
+  - Removed legacy format fallback for cleaner code
+  
+- **Menu button order:**
+  - Swapped START NEW GAME and LOAD GAME FILE order
+  - START NEW GAME now appears above LOAD GAME FILE
+
+## v0.21.7 - Menu Button Consolidation (2025-12-02)
+- **Main menu reorganization:**
+  - HIGH SCORES, DUNGEON, and ACHIEVEMENTS buttons now on single row
+  - Compact button styling: smaller padding (12px 8px), smaller font (13px)
+  - Smaller button badges (22x22px instead of 26x26px)
+  - Removed duplicate ENTER DUNGEON button from main button list
+  - Row uses flexbox with 10px gap, max-width 600px, centered
+
+## v0.21.6 - Multi-Tab Purple Achievements (2025-12-02)
+- **Achievements panel redesigned to match Tunnels of Privacy style:**
+  - Purple theme (#8B45FF) instead of teal
+  - Multi-tab layout: Page 1 (Easier/Easy/Medium), Page 2 (Med-Hard/Very Hard)
+  - Compact grid layout with 5 columns per tier
+  - Smaller icons (32x32px) with centered achievement names
+  - Hover effect: shows achievement description as tooltip
+  
+- **UI Improvements:**
+  - Purple glowing border and shadow effects
+  - Tab buttons with active/inactive states
+  - Close button (✕) in top-right corner
+  - Progress counter at bottom: "X/50 Unlocked"
+  - Achievement icons show ✓ for unlocked, 🔒 for locked
+  
+- **Technical:**
+  - Added `currentAchievementPage` variable for page tracking
+  - Added `showAchievementPage(page)` function for tab switching
+  - Added `renderAchievementsList(page)` function for filtered display
+  - New CSS classes: `.achievementTabs`, `.achievementTab`, `.achievementGrid`
+  - Panel uses fixed positioning with `max-width: 900px`
+
+## v0.21.5 - Dynamic Wall Themes (2025-12-02)
+- **Wall textures now change every 10 levels:**
+  - 5 wall theme sets: Futuristic (default), Medieval, Water, Zebra, Forest
+  - Random theme selected at levels 10, 20, 30, etc.
+  - Never picks the same theme twice in a row
+  - All 4 walls (N/S/E/W) swap together
+  
+- **Theme Assets:**
+  - Futuristic: `walls/wall_*.png` (original)
+  - Medieval: `walls/medievel/wall_*_castle.webp`
+  - Water: `walls/water/wall_*_water.png`
+  - Zebra: `walls/zebra/wall_*_zebra.png`
+  - Forest: `walls/forest/wall_*_forest.png`
+  
+- **Technical:**
+  - Added `wallThemeSets` array with all theme paths
+  - Added `checkAndSwapWallTheme()` function
+  - Tracks current theme to avoid repeats
+  - Textures swap seamlessly via TextureLoader
+
+## v0.21.4 - Dynamic Hero Stat Cards (2025-12-02)
+- **Hero Stat Cards now scale with arcade level:**
+  - Stats increase as player progresses through levels
+  - Every 10 levels adds ~+1 to each stat (STR, DEX, CON, INT, WIS, CHA)
+  - HP scales faster (+4 per 10 levels)
+  - AC scales slower (+1 per 20 levels)
+  - Random variance (-1 to +2) per stat for natural feel
+  - Seeded randomness ensures consistent stats within same level
+  
+- **Technical:**
+  - Added `heroBaseStats` constant with starting values
+  - Added `updateHeroStatsForLevel()` function
+  - Cards redraw automatically when level changes
+  - No effect on Tunnels of Privacy game
+
 ## v0.21.3 - Portal Button Rename (2025-12-02)
 - **UI Changes:**
   - Renamed "ENTER PORTAL" button to "ENTER DUNGEON" (clearer destination)
