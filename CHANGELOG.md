@@ -192,18 +192,6 @@
   - Settings now appear above pause screen (pause z-index: 1000)
   - Settings accessible from pause menu again
 
-## v0.21.4 - Hero Stats Sync from Dungeon (2025-12-02)
-- **Portal System Improvements:**
-  - Arcade now loads hero stats from shared save on page load
-  - Hero stat cards update with dungeon-rolled stats (str, dex, con, int, wis, cha)
-  - Added `loadHeroStatsFromSave()` function
-  - Stats include: hp, maxHp, ac, xp, level
-  - Hero stat cards automatically redraw when stats are loaded
-  
-- **Technical:**
-  - `loadFromPortal()` now loads hero stats even without arcade save
-  - Hero stats persist between games via shared save
-
 ## v0.21.3 - Portal Button Rename (2025-12-02)
 - **UI Changes:**
   - Renamed "ENTER PORTAL" button to "ENTER DUNGEON" (clearer destination)

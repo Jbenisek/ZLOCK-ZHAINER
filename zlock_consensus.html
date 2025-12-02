@@ -3136,7 +3136,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
     <script>
         // Game Version
-        const GAME_VERSION = 'v0.21.4';
+        const GAME_VERSION = 'v0.21.3';
         
         // ===== AUDIO SYSTEM =====
         const audioCache = {}; // Cache for all audio files
@@ -4938,11 +4938,6 @@
         function loadFromPortal() {
             try {
                 const sharedSave = loadSharedSave();
-                
-                // Always load hero stats from shared save (even if no arcade state)
-                if (sharedSave && sharedSave.heroes) {
-                    loadHeroStatsFromSave();
-                }
                 
                 if (sharedSave && sharedSave.arcadeState) {
                     // Validate arcade state has required fields
@@ -11308,52 +11303,11 @@
         // Hero Stat Card System
         let heroStatCards = {};
         let heroStats = {
-            zancas: { str: 10, dex: 12, con: 11, int: 9, wis: 12, cha: 10, hp: 24, maxHp: 26, ac: 13, xp: 0, level: 1 },
-            nate: { str: 9, dex: 13, con: 10, int: 11, wis: 12, cha: 8, hp: 22, maxHp: 22, ac: 12, xp: 0, level: 1 },
-            zooko: { str: 8, dex: 11, con: 10, int: 13, wis: 11, cha: 9, hp: 18, maxHp: 18, ac: 11, xp: 0, level: 1 },
-            cyberaxe: { str: 12, dex: 10, con: 12, int: 8, wis: 9, cha: 10, hp: 28, maxHp: 28, ac: 14, xp: 0, level: 1 }
+            zancas: { str: 10, dex: 12, con: 11, int: 9, wis: 12, cha: 10, hp: 24, ac: 13 },
+            nate: { str: 9, dex: 13, con: 10, int: 11, wis: 12, cha: 8, hp: 22, ac: 12 },
+            zooko: { str: 8, dex: 11, con: 10, int: 13, wis: 11, cha: 9, hp: 18, ac: 11 },
+            cyberaxe: { str: 12, dex: 10, con: 12, int: 8, wis: 9, cha: 10, hp: 28, ac: 14 }
         };
-        
-        // Load hero stats from shared save (if available)
-        function loadHeroStatsFromSave() {
-            try {
-                const sharedSave = loadSharedSave();
-                if (sharedSave && sharedSave.heroes) {
-                    // Update each hero's stats from save
-                    ['zooko', 'nate', 'zancas', 'cyberaxe'].forEach(heroKey => {
-                        if (sharedSave.heroes[heroKey]) {
-                            const saved = sharedSave.heroes[heroKey];
-                            heroStats[heroKey] = {
-                                str: saved.str ?? heroStats[heroKey].str,
-                                dex: saved.dex ?? heroStats[heroKey].dex,
-                                con: saved.con ?? heroStats[heroKey].con,
-                                int: saved.int ?? heroStats[heroKey].int,
-                                wis: saved.wis ?? heroStats[heroKey].wis,
-                                cha: saved.cha ?? heroStats[heroKey].cha,
-                                hp: saved.hp ?? heroStats[heroKey].hp,
-                                maxHp: saved.maxHp ?? heroStats[heroKey].maxHp,
-                                ac: saved.ac ?? heroStats[heroKey].ac,
-                                xp: saved.xp ?? 0,
-                                level: saved.level ?? 1
-                            };
-                        }
-                    });
-                    console.log('Loaded hero stats from shared save:', heroStats);
-                    
-                    // Redraw hero stat cards if they exist
-                    Object.keys(heroStatCards).forEach(key => {
-                        if (heroStatCards[key]) {
-                            drawHeroStatCard(key);
-                            if (heroStatCards[key].texture) {
-                                heroStatCards[key].texture.needsUpdate = true;
-                            }
-                        }
-                    });
-                }
-            } catch (e) {
-                console.error('Failed to load hero stats from save:', e);
-            }
-        }
         
         function createHeroStatCards() {
             const cardWidth = 512;
