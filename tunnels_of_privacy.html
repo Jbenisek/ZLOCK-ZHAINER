@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.3.95</title>
+    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.3.98</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -520,6 +520,119 @@
             border-top: 1px solid rgba(39, 174, 96, 0.3);
             text-align: center;
             color: #27AE60;
+            font-size: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* ===== POTION TRANSPARENCY TOOLTIP ===== */
+        #potionTooltip {
+            position: fixed;
+            min-width: 280px;
+            max-width: 340px;
+            background: linear-gradient(135deg, rgba(20, 5, 30, 0.98), rgba(40, 10, 50, 0.98));
+            border: 2px solid #9B59B6;
+            border-radius: 12px;
+            padding: 15px 18px;
+            z-index: 100000;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 8px 32px rgba(155, 89, 182, 0.4), 0 0 60px rgba(41, 128, 185, 0.2);
+            backdrop-filter: blur(10px);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        #potionTooltip.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        #potionTooltip .potion-header {
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(155, 89, 182, 0.5);
+        }
+        
+        #potionTooltip .potion-label {
+            color: #9B59B6;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        #potionTooltip .potion-title {
+            color: #BB8FCE;
+            font-size: 16px;
+            font-weight: 800;
+            margin-top: 2px;
+        }
+        
+        #potionTooltip .potion-section-title {
+            color: #9B59B6;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 8px 0 5px 0;
+        }
+        
+        #potionTooltip .potion-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 2px 0;
+            font-size: 11px;
+        }
+        
+        #potionTooltip .potion-row-label {
+            color: #89A0B4;
+        }
+        
+        #potionTooltip .potion-row-value {
+            color: #3498DB;
+            font-weight: 600;
+            max-width: 180px;
+            text-align: right;
+        }
+        
+        #potionTooltip .potion-row-value.warning {
+            color: #E74C3C;
+        }
+        
+        #potionTooltip .potion-row-value.magic {
+            color: #BB8FCE;
+        }
+        
+        #potionTooltip .potion-backstory {
+            color: #BFD1E0;
+            font-size: 10px;
+            line-height: 1.4;
+            font-style: italic;
+            padding: 6px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            border-left: 3px solid #9B59B6;
+            margin-top: 8px;
+        }
+        
+        #potionTooltip .potion-warning {
+            color: #E74C3C;
+            font-size: 9px;
+            text-align: center;
+            margin-top: 6px;
+            padding: 4px;
+            background: rgba(231, 76, 60, 0.1);
+            border-radius: 4px;
+        }
+        
+        #potionTooltip .potion-footer {
+            margin-top: 10px;
+            padding-top: 6px;
+            border-top: 1px solid rgba(155, 89, 182, 0.3);
+            text-align: center;
+            color: #9B59B6;
             font-size: 8px;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -2599,6 +2712,7 @@
     
     <!-- Food Transparency Tooltip - Know what you're eating! -->
     <div id="foodTooltip"></div>
+    <div id="potionTooltip"></div>
     
     <!-- Weapon Tooltip (for equipment slots) -->
     <div id="weaponTooltip" style="position: fixed; z-index: 10001; pointer-events: none; opacity: 0; transition: opacity 0.2s ease;"></div>
@@ -3028,11 +3142,11 @@
                             <div class="battleHeroPotions" id="bzooko-heals" style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 2px;">❤️<br>❤️</div>
                             <div class="battleHeroPortrait" style="background-image: url('people/zooko_a_head_compressed.png'); border-color: #F2C94C;"></div>
                             <div class="battleHeroRightStats" style="position: absolute; right: -2px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 3px;">
-                                <div class="acBadge" style="width: 26px; height: 30px; background: linear-gradient(180deg, #6495ED 0%, #4169E1 100%); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); display: flex; align-items: center; justify-content: center; position: relative;" title="Armor Class">
-                                    <span id="bzooko-ac" style="color: #fff; font-weight: bold; font-size: 11px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">12</span>
+                                <div class="acBadge" style="width: 32px; height: 32px; background-image: url('tunnelsofprivacy/icons/border.png'); background-size: contain; background-repeat: no-repeat; background-position: center; display: flex; align-items: center; justify-content: center; position: relative;" title="Armor Class">
+                                    <span id="bzooko-ac" style="color: #6495ED; font-weight: bold; font-size: 12px; text-shadow: 0 0 4px rgba(100,149,237,0.8), 1px 1px 2px rgba(0,0,0,0.8);">12</span>
                                 </div>
-                                <div class="levelBadge" style="width: 26px; height: 30px; background: linear-gradient(180deg, #FFD700 0%, #DAA520 100%); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); display: flex; align-items: center; justify-content: center; position: relative;" title="Hero Level">
-                                    <span id="bzooko-level" style="color: #fff; font-weight: bold; font-size: 11px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">1</span>
+                                <div class="levelBadge" style="width: 32px; height: 32px; background-image: url('tunnelsofprivacy/icons/border.png'); background-size: contain; background-repeat: no-repeat; background-position: center; display: flex; align-items: center; justify-content: center; position: relative;" title="Hero Level">
+                                    <span id="bzooko-level" style="color: #FFD700; font-weight: bold; font-size: 12px; text-shadow: 0 0 4px rgba(255,215,0,0.8), 1px 1px 2px rgba(0,0,0,0.8);">1</span>
                                 </div>
                             </div>
                         </div>
@@ -3050,11 +3164,11 @@
                             <div class="battleHeroPotions" id="bnate-heals" style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 2px;">❤️<br>❤️</div>
                             <div class="battleHeroPortrait" style="background-image: url('people/Nate_a_head_compressed.png'); border-color: #E74C3C;"></div>
                             <div class="battleHeroRightStats" style="position: absolute; right: -2px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 3px;">
-                                <div class="acBadge" style="width: 26px; height: 30px; background: linear-gradient(180deg, #6495ED 0%, #4169E1 100%); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); display: flex; align-items: center; justify-content: center; position: relative;" title="Armor Class">
-                                    <span id="bnate-ac" style="color: #fff; font-weight: bold; font-size: 11px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">14</span>
+                                <div class="acBadge" style="width: 32px; height: 32px; background-image: url('tunnelsofprivacy/icons/border.png'); background-size: contain; background-repeat: no-repeat; background-position: center; display: flex; align-items: center; justify-content: center; position: relative;" title="Armor Class">
+                                    <span id="bnate-ac" style="color: #6495ED; font-weight: bold; font-size: 12px; text-shadow: 0 0 4px rgba(100,149,237,0.8), 1px 1px 2px rgba(0,0,0,0.8);">14</span>
                                 </div>
-                                <div class="levelBadge" style="width: 26px; height: 30px; background: linear-gradient(180deg, #FFD700 0%, #DAA520 100%); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); display: flex; align-items: center; justify-content: center; position: relative;" title="Hero Level">
-                                    <span id="bnate-level" style="color: #fff; font-weight: bold; font-size: 11px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">1</span>
+                                <div class="levelBadge" style="width: 32px; height: 32px; background-image: url('tunnelsofprivacy/icons/border.png'); background-size: contain; background-repeat: no-repeat; background-position: center; display: flex; align-items: center; justify-content: center; position: relative;" title="Hero Level">
+                                    <span id="bnate-level" style="color: #FFD700; font-weight: bold; font-size: 12px; text-shadow: 0 0 4px rgba(255,215,0,0.8), 1px 1px 2px rgba(0,0,0,0.8);">1</span>
                                 </div>
                             </div>
                         </div>
@@ -3097,11 +3211,11 @@
                             <div class="battleHeroPotions" id="bzancas-heals" style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 2px;">❤️<br>❤️</div>
                             <div class="battleHeroPortrait" style="background-image: url('people/Zancas_a_head_compressed.png'); border-color: #27AE60;"></div>
                             <div class="battleHeroRightStats" style="position: absolute; right: -2px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 3px;">
-                                <div class="acBadge" style="width: 26px; height: 30px; background: linear-gradient(180deg, #6495ED 0%, #4169E1 100%); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); display: flex; align-items: center; justify-content: center; position: relative;" title="Armor Class">
-                                    <span id="bzancas-ac" style="color: #fff; font-weight: bold; font-size: 11px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">15</span>
+                                <div class="acBadge" style="width: 32px; height: 32px; background-image: url('tunnelsofprivacy/icons/border.png'); background-size: contain; background-repeat: no-repeat; background-position: center; display: flex; align-items: center; justify-content: center; position: relative;" title="Armor Class">
+                                    <span id="bzancas-ac" style="color: #6495ED; font-weight: bold; font-size: 12px; text-shadow: 0 0 4px rgba(100,149,237,0.8), 1px 1px 2px rgba(0,0,0,0.8);">15</span>
                                 </div>
-                                <div class="levelBadge" style="width: 26px; height: 30px; background: linear-gradient(180deg, #FFD700 0%, #DAA520 100%); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); display: flex; align-items: center; justify-content: center; position: relative;" title="Hero Level">
-                                    <span id="bzancas-level" style="color: #fff; font-weight: bold; font-size: 11px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">1</span>
+                                <div class="levelBadge" style="width: 32px; height: 32px; background-image: url('tunnelsofprivacy/icons/border.png'); background-size: contain; background-repeat: no-repeat; background-position: center; display: flex; align-items: center; justify-content: center; position: relative;" title="Hero Level">
+                                    <span id="bzancas-level" style="color: #FFD700; font-weight: bold; font-size: 12px; text-shadow: 0 0 4px rgba(255,215,0,0.8), 1px 1px 2px rgba(0,0,0,0.8);">1</span>
                                 </div>
                             </div>
                         </div>
@@ -3119,11 +3233,11 @@
                             <div class="battleHeroPotions" id="bcyberaxe-heals" style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 2px;">❤️<br>❤️</div>
                             <div class="battleHeroPortrait" style="background-image: url('people/cyberaxe_a_head_compressed.png'); border-color: #2E86DE;"></div>
                             <div class="battleHeroRightStats" style="position: absolute; right: -2px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 3px;">
-                                <div class="acBadge" style="width: 26px; height: 30px; background: linear-gradient(180deg, #6495ED 0%, #4169E1 100%); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); display: flex; align-items: center; justify-content: center; position: relative;" title="Armor Class">
-                                    <span id="bcyberaxe-ac" style="color: #fff; font-weight: bold; font-size: 11px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">15</span>
+                                <div class="acBadge" style="width: 32px; height: 32px; background-image: url('tunnelsofprivacy/icons/border.png'); background-size: contain; background-repeat: no-repeat; background-position: center; display: flex; align-items: center; justify-content: center; position: relative;" title="Armor Class">
+                                    <span id="bcyberaxe-ac" style="color: #6495ED; font-weight: bold; font-size: 12px; text-shadow: 0 0 4px rgba(100,149,237,0.8), 1px 1px 2px rgba(0,0,0,0.8);">15</span>
                                 </div>
-                                <div class="levelBadge" style="width: 26px; height: 30px; background: linear-gradient(180deg, #FFD700 0%, #DAA520 100%); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); display: flex; align-items: center; justify-content: center; position: relative;" title="Hero Level">
-                                    <span id="bcyberaxe-level" style="color: #fff; font-weight: bold; font-size: 11px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">1</span>
+                                <div class="levelBadge" style="width: 32px; height: 32px; background-image: url('tunnelsofprivacy/icons/border.png'); background-size: contain; background-repeat: no-repeat; background-position: center; display: flex; align-items: center; justify-content: center; position: relative;" title="Hero Level">
+                                    <span id="bcyberaxe-level" style="color: #FFD700; font-weight: bold; font-size: 12px; text-shadow: 0 0 4px rgba(255,215,0,0.8), 1px 1px 2px rgba(0,0,0,0.8);">1</span>
                                 </div>
                             </div>
                         </div>
@@ -3208,7 +3322,7 @@
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.3.96 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.3.99 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div id="aboutDonateBtn" style="
@@ -3531,6 +3645,16 @@
             <div id="nonCombatRoomContent" style="background: rgba(0,0,0,0.7); border: 3px solid #8B45FF; border-radius: 15px; padding: 30px; max-width: 1400px; width: 95%; max-height: 70vh; overflow-y: auto; backdrop-filter: blur(10px);">
                 <!-- Content populated dynamically based on room type -->
                 <div id="storeContent" style="display: none;">
+                    
+                    <!-- Shielded Gold Display -->
+                    <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+                        <div style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.1)); padding: 12px 24px; border-radius: 12px; border: 2px solid #FFD700; display: flex; align-items: center; gap: 12px;">
+                            <span class="icon icon-md icon-gold"></span>
+                            <span style="color: #89A0B4; font-size: 14px; font-weight: bold;">PARTY GOLD:</span>
+                            <span id="storeGoldDisplay" style="color: #FFD700; font-size: 24px; font-weight: 900; letter-spacing: 2px; font-family: 'JetBrains Mono', monospace; min-width: 80px; text-align: center;">🛡️🛡️🛡️🛡️</span>
+                            <button onclick="toggleStoreGoldVisibility()" id="storeGoldToggleBtn" style="background: linear-gradient(135deg, rgba(155, 89, 182, 0.4), rgba(155, 89, 182, 0.2)); border: 2px solid #9B59B6; border-radius: 6px; color: #BB8FCE; cursor: pointer; font-size: 12px; padding: 6px 12px; font-weight: bold; transition: all 0.2s;">🛡️ REVEAL</button>
+                        </div>
+                    </div>
                     
                     <!-- 3-Column Store Layout -->
                     <div style="display: grid; grid-template-columns: 1fr 520px 1fr; gap: 20px; align-items: start;">
@@ -4169,7 +4293,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.3.96';
+        const GAME_VERSION = 'v0.3.99';
         
         // ===== HACKATHON INFO TOOLTIP SYSTEM =====
         const TOOLTIP_DELAY = 800; // ms before tooltip appears
@@ -5290,6 +5414,192 @@
             });
         }
         // ===== END FOOD TRANSPARENCY SYSTEM =====
+        
+        // ===== POTION TRANSPARENCY SYSTEM =====
+        // Because you deserve to know what's in your magical elixirs!
+        
+        const POTION_DATA = {
+            // Base ingredients
+            baseIngredients: [
+                'distilled moonwater', 'cave fungus extract', 'luminescent moss juice',
+                'liquified starlight', 'concentrated hope', 'purified dungeon tears',
+                'fermented mystery', 'condensed magic vapor', 'ancient spring water'
+            ],
+            // Active compounds
+            activeCompounds: [
+                'essence of phoenix feather', 'crystallized dragon breath', 'unicorn sweat (ethically sourced)',
+                'ground fairy wings (they grew back)', 'troll regeneration factor', 'basilisk tear extract',
+                'bottled determination', 'powdered miracle', 'concentrated "please work"'
+            ],
+            // Questionable additives
+            additives: [
+                'red dye #47 (for that healing look)', 'artificial strawberry flavor', 'glitter (non-toxic)',
+                'placebo particles', 'hope flavoring', 'essence of marketing',
+                'customer confidence extract', 'sparkle dust (cosmetic only)', 'brand loyalty enhancer'
+            ],
+            // Brewing methods
+            brewingMethods: [
+                'Stirred counterclockwise under a full moon', 'Whispered ancient words during brewing',
+                'Aged in a wizard\'s beard for 3 months', 'Blessed by a slightly drunk cleric',
+                'Fermented in absolute darkness', 'Shaken, not stirred (very important)',
+                'Left near a magic crystal until it "felt right"', 'Brewed during a solar eclipse (or just cloudy)',
+                'Made with love (and some other stuff)'
+            ],
+            // Alchemist backgrounds
+            alchemists: [
+                'a wizard who failed chemistry but passed vibes', 'an ex-snake-oil salesman turned legitimate',
+                'a very optimistic goblin', 'someone who read half a potion book',
+                'a reformed poison maker', 'an AI trained on 3 recipe scrolls',
+                'a hedge witch with a 60% success rate', 'a dwarf who was "pretty sure" about the measurements',
+                'an elf who eyeballed all the ingredients'
+            ],
+            // Side effects
+            sideEffects: [
+                'May cause temporary optimism', 'Slight tingling is normal (we think)',
+                'Do not operate siege weapons after consumption', 'May attract butterflies',
+                'Occasional prophetic dreams (unrelated)', 'Your burps might sparkle',
+                'Hair may temporarily change color', 'Sudden urge to fight dragons (ignore this)',
+                'Enhanced appreciation for nature', 'Brief sense of invincibility (do not test)'
+            ],
+            // Efficacy claims
+            efficacy: [
+                'Clinically tested on volunteers (they survived)', 'Approved by 3 out of 4 wizards',
+                'Works 60% of the time, every time', 'Better than nothing, probably',
+                'Endorsed by a famous adventurer (name withheld)', 'Satisfaction somewhat guaranteed',
+                'As seen in Ye Olde Alchemy Weekly', 'Winner of "Most Drinkable" award',
+                'Now with 20% more magic (unverified)'
+            ],
+            // Container conditions
+            containerNotes: [
+                'Bottle recycled from previous potion (washed... mostly)', 'Cork has been pre-chewed for easy opening',
+                'Glowing is normal, flickering is fine, screaming is rare', 'Some settling of magic may occur',
+                'If seal is broken, contents are still probably fine', 'Best consumed before the label fades',
+                'Store away from direct prophecy', 'Do not expose to strong opinions',
+                'Shake well (or don\'t, we\'re not sure it matters)'
+            ]
+        };
+        
+        // Generate potion transparency data
+        function generatePotionData(item) {
+            const seed = (item.name || 'Health Potion').split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+            const rand = (arr) => arr[seed % arr.length];
+            const randOffset = (arr, offset) => arr[(seed + offset) % arr.length];
+            
+            return {
+                baseIngredient: rand(POTION_DATA.baseIngredients),
+                activeCompound: randOffset(POTION_DATA.activeCompounds, 1),
+                additive: randOffset(POTION_DATA.additives, 2),
+                brewingMethod: randOffset(POTION_DATA.brewingMethods, 3),
+                alchemist: randOffset(POTION_DATA.alchemists, 4),
+                sideEffect: randOffset(POTION_DATA.sideEffects, 5),
+                efficacy: randOffset(POTION_DATA.efficacy, 6),
+                containerNote: randOffset(POTION_DATA.containerNotes, 7)
+            };
+        }
+        
+        function showPotionTooltip(event, item) {
+            const tooltip = document.getElementById('potionTooltip');
+            if (!tooltip || !item) return;
+            
+            const data = generatePotionData(item);
+            
+            tooltip.innerHTML = `
+                <div class="potion-header">
+                    <div class="potion-label">⚗️ ALCHEMICAL ANALYSIS REPORT</div>
+                    <div class="potion-title">${item.name || 'Health Potion'}</div>
+                </div>
+                
+                <div class="potion-section-title">🧪 Composition</div>
+                <div class="potion-row">
+                    <span class="potion-row-label">Base:</span>
+                    <span class="potion-row-value">${data.baseIngredient}</span>
+                </div>
+                <div class="potion-row">
+                    <span class="potion-row-label">Active Compound:</span>
+                    <span class="potion-row-value magic">${data.activeCompound}</span>
+                </div>
+                <div class="potion-row">
+                    <span class="potion-row-label">Additive:</span>
+                    <span class="potion-row-value warning">${data.additive}</span>
+                </div>
+                
+                <div class="potion-section-title">📜 Brewing Details</div>
+                <div class="potion-row">
+                    <span class="potion-row-label">Method:</span>
+                    <span class="potion-row-value">${data.brewingMethod}</span>
+                </div>
+                <div class="potion-row">
+                    <span class="potion-row-label">Brewed By:</span>
+                    <span class="potion-row-value">${data.alchemist}</span>
+                </div>
+                <div class="potion-row">
+                    <span class="potion-row-label">Efficacy:</span>
+                    <span class="potion-row-value magic">${data.efficacy}</span>
+                </div>
+                
+                <div class="potion-section-title">⚠️ Consumer Information</div>
+                <div class="potion-backstory">${data.containerNote}</div>
+                <div class="potion-warning">⚠️ Side Effect: ${data.sideEffect}</div>
+                
+                <div class="potion-footer">✨ Alchemy Guild Certified • Drink Responsibly ✨</div>
+            `;
+            
+            tooltip.classList.add('visible');
+            updatePotionTooltipPosition(event);
+        }
+        
+        function hidePotionTooltip() {
+            const tooltip = document.getElementById('potionTooltip');
+            if (tooltip) {
+                tooltip.classList.remove('visible');
+            }
+        }
+        
+        function updatePotionTooltipPosition(event) {
+            const tooltip = document.getElementById('potionTooltip');
+            if (!tooltip || !tooltip.classList.contains('visible')) return;
+            
+            const padding = 15;
+            let x = event.clientX + padding;
+            let y = event.clientY + padding;
+            
+            const rect = tooltip.getBoundingClientRect();
+            if (x + rect.width > window.innerWidth - padding) {
+                x = event.clientX - rect.width - padding;
+            }
+            if (y + rect.height > window.innerHeight - padding) {
+                y = Math.max(padding, event.clientY - rect.height - padding);
+            }
+            
+            tooltip.style.left = `${x}px`;
+            tooltip.style.top = `${y}px`;
+        }
+        
+        // Set up potion tooltip hover events for inventory cells with consumable items
+        function setupPotionTooltips(container) {
+            if (!container) return;
+            
+            container.querySelectorAll('[data-slot]').forEach(cell => {
+                const slotIndex = parseInt(cell.dataset.slot);
+                const item = partyInventory.items[slotIndex];
+                
+                // Only attach to cells with consumable (potion) items
+                if (!item || item.type !== 'consumable') return;
+                
+                cell.addEventListener('mouseenter', (e) => {
+                    showPotionTooltip(e, item);
+                });
+                
+                cell.addEventListener('mousemove', (e) => {
+                    updatePotionTooltipPosition(e);
+                });
+                
+                cell.addEventListener('mouseleave', () => {
+                    hidePotionTooltip();
+                });
+            });
+        }
+        // ===== END POTION TRANSPARENCY SYSTEM =====
         
         // ===== ACHIEVEMENTS & BESTIARY SYSTEM =====
         const STORAGE_KEY_ACHIEVEMENTS = 'top_achievements';
@@ -6706,6 +7016,11 @@
             emitters: [],           // Active particle emitters
             atlasCache: {},         // Cached atlas images
             effectCache: {},        // Cached effect JSON configs
+            tintedSpriteCache: {},  // Cached pre-tinted sprites by key
+            tintedSpriteCacheKeys: [], // LRU tracking for cache eviction
+            MAX_TINT_CACHE: 100,    // Max cached tinted sprites
+            MAX_EMITTERS: 30,       // Max concurrent emitters
+            MAX_TOTAL_PARTICLES: 500, // Max total particles across all emitters
             lastTime: 0,            // For delta time calculation
             // Reusable offscreen canvas for color tinting (performance optimization)
             _offscreen: null,
@@ -6770,6 +7085,12 @@
             
             // Spawn a particle effect at a position
             async spawn(effectPath, x, y, options = {}) {
+                // Enforce emitter limit
+                if (this.emitters.length >= this.MAX_EMITTERS) {
+                    console.warn('Max emitters reached, skipping spawn');
+                    return null;
+                }
+                
                 const effectData = await this.loadEffect(effectPath);
                 if (!effectData) return null;
                 
@@ -6787,7 +7108,8 @@
                     active: true,
                     loop: options.loop || false, // NEW: Loop the emitter
                     followTarget: options.followTarget || null, // NEW: Object with x,y to follow
-                    onComplete: options.onComplete || null
+                    onComplete: options.onComplete || null,
+                    colorOverride: options.colorOverride || null // NEW: Override particle color with enchantment
                 };
                 
                 this.emitters.push(emitter);
@@ -6848,7 +7170,53 @@
                     isProjectile: true,
                     targetX: endX,
                     targetY: endY,
-                    onComplete: options.onComplete || null
+                    onComplete: options.onComplete || null,
+                    colorOverride: options.colorOverride || null
+                };
+                
+                this.emitters.push(emitter);
+                return emitter;
+            },
+            
+            // Spawn a rising particle effect that moves from bottom to top (for heavy attacks)
+            async spawnRising(effectPath, x, y, options = {}) {
+                const effectData = await this.loadEffect(effectPath);
+                if (!effectData) return null;
+                
+                const duration = options.duration || 2.0; // Time to rise in seconds
+                const riseDistance = options.riseDistance || 300; // Pixels to rise
+                const speed = riseDistance / duration;
+                
+                // Create a modified effect data with upward velocity
+                const risingEffectData = {
+                    ...effectData,
+                    // Override velocity to go straight up (negative Y)
+                    velocityDirX: 0,
+                    velocityDirY: -speed / 20, // Negative Y = upward, divide by WORLD_TO_PIXEL
+                    velocity: 0, // Use velocityDir directly
+                    spread: options.spread !== undefined ? options.spread : 20, // Some horizontal spread
+                    emitDuration: duration * 0.6, // Emit for 60% of rise time
+                    lifetime: duration * 1.5, // Particles live longer to rise off screen
+                    gravity: effectData.gravity ? effectData.gravity * 0.3 : 0 // Reduce gravity effect
+                };
+                
+                const emitter = {
+                    id: Date.now() + Math.random(),
+                    effectData: risingEffectData,
+                    x: x,
+                    y: y, // Start at bottom of target
+                    scale: options.scale || 1,
+                    rotation: options.rotation || 0,
+                    particles: [],
+                    emitTimer: 0,
+                    emitDuration: risingEffectData.emitDuration,
+                    emitElapsed: 0,
+                    active: true,
+                    loop: false,
+                    followTarget: null,
+                    isRising: true,
+                    onComplete: options.onComplete || null,
+                    colorOverride: options.colorOverride || null
                 };
                 
                 this.emitters.push(emitter);
@@ -6892,9 +7260,22 @@
                 const velX = baseVelX + Math.sin(theta) * velocity;
                 const velY = baseVelY + Math.cos(theta) * velocity;
                 
-                // Parse colors
-                const startColor = this.parseColor(ed.colorStart || '#ffffff');
-                const endColor = this.parseColor(ed.colorEnd || '#ffffff');
+                // Parse colors - use enchantment color override if provided
+                let startColor, endColor;
+                if (emitter.colorOverride) {
+                    // Use enchantment color for both start and end (brighter start, dimmer end)
+                    const baseColor = this.parseColor(emitter.colorOverride);
+                    startColor = baseColor;
+                    // Create slightly dimmer end color
+                    endColor = {
+                        r: Math.floor(baseColor.r * 0.6),
+                        g: Math.floor(baseColor.g * 0.6),
+                        b: Math.floor(baseColor.b * 0.6)
+                    };
+                } else {
+                    startColor = this.parseColor(ed.colorStart || '#ffffff');
+                    endColor = this.parseColor(ed.colorEnd || '#ffffff');
+                }
                 
                 // Calculate initial rotation (matching arcade)
                 const spawnRotationRad = ((ed.spawnRotation || 0) * Math.PI) / 180;
@@ -6993,8 +7374,13 @@
                         // Accumulator pattern: emissionRate = particles per second
                         emitter.particleAccumulator = (emitter.particleAccumulator || 0) + (ed.emissionRate || 1) * dt;
                         
-                        // Emit particles while accumulator >= 1, capped at particleCount max
-                        while (emitter.particleAccumulator >= 1 && emitter.particles.length < (ed.particleCount || 10)) {
+                        // Count total particles across all emitters for global limit
+                        const totalParticles = this.emitters.reduce((sum, e) => sum + e.particles.length, 0);
+                        
+                        // Emit particles while accumulator >= 1, capped at particleCount max AND global limit
+                        while (emitter.particleAccumulator >= 1 && 
+                               emitter.particles.length < (ed.particleCount || 10) &&
+                               totalParticles + emitter.particles.length < this.MAX_TOTAL_PARTICLES) {
                             emitter.particles.push(this.createParticle(emitter));
                             emitter.particleAccumulator -= 1;
                         }
@@ -7103,39 +7489,57 @@
                             const srcW = uvW * atlas.width;
                             const srcH = uvH * atlas.height;
                             
-                            // Use cached offscreen canvas for color tinting
-                            const { canvas: offscreen, ctx: offCtx, size: offSize } = this.getOffscreenCanvas(size);
+                            // Generate cache key for this tinted sprite
+                            const blendKey = ed.blendMode === 'additive' ? 'a' : 'm';
+                            const cacheKey = `${ed.atlasPath}_${Math.round(srcX)}_${Math.round(srcY)}_${size}_${r}_${g}_${b}_${blendKey}`;
                             
-                            // Clear the area we'll use
-                            offCtx.clearRect(0, 0, offSize, offSize);
+                            let tintedCanvas = this.tintedSpriteCache[cacheKey];
                             
-                            // Draw sprite to offscreen canvas
-                            offCtx.globalCompositeOperation = 'source-over';
-                            offCtx.drawImage(
-                                atlas,
-                                srcX, srcY, srcW, srcH,
-                                0, 0, size, size
-                            );
-                            
-                            // Apply color tint - use lighter for additive, multiply for normal
-                            if (ed.blendMode === 'additive') {
-                                offCtx.globalCompositeOperation = 'lighter';
-                            } else {
-                                offCtx.globalCompositeOperation = 'multiply';
+                            if (!tintedCanvas) {
+                                // Create and cache the tinted sprite
+                                tintedCanvas = document.createElement('canvas');
+                                tintedCanvas.width = size;
+                                tintedCanvas.height = size;
+                                const tintCtx = tintedCanvas.getContext('2d');
+                                
+                                // Draw sprite to canvas
+                                tintCtx.globalCompositeOperation = 'source-over';
+                                tintCtx.drawImage(
+                                    atlas,
+                                    srcX, srcY, srcW, srcH,
+                                    0, 0, size, size
+                                );
+                                
+                                // Apply color tint
+                                if (ed.blendMode === 'additive') {
+                                    tintCtx.globalCompositeOperation = 'lighter';
+                                } else {
+                                    tintCtx.globalCompositeOperation = 'multiply';
+                                }
+                                tintCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+                                tintCtx.fillRect(0, 0, size, size);
+                                
+                                // Restore alpha from original sprite
+                                tintCtx.globalCompositeOperation = 'destination-in';
+                                tintCtx.drawImage(
+                                    atlas,
+                                    srcX, srcY, srcW, srcH,
+                                    0, 0, size, size
+                                );
+                                
+                                // Cache it with LRU eviction
+                                this.tintedSpriteCache[cacheKey] = tintedCanvas;
+                                this.tintedSpriteCacheKeys.push(cacheKey);
+                                
+                                // Evict oldest if over limit
+                                if (this.tintedSpriteCacheKeys.length > this.MAX_TINT_CACHE) {
+                                    const oldKey = this.tintedSpriteCacheKeys.shift();
+                                    delete this.tintedSpriteCache[oldKey];
+                                }
                             }
-                            offCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-                            offCtx.fillRect(0, 0, size, size);
                             
-                            // Restore alpha from original sprite
-                            offCtx.globalCompositeOperation = 'destination-in';
-                            offCtx.drawImage(
-                                atlas,
-                                srcX, srcY, srcW, srcH,
-                                0, 0, size, size
-                            );
-                            
-                            // Draw the tinted sprite to main canvas
-                            ctx.drawImage(offscreen, 0, 0, size, size, -size / 2, -size / 2, size, size);
+                            // Draw the cached tinted sprite to main canvas (single drawImage!)
+                            ctx.drawImage(tintedCanvas, -size / 2, -size / 2);
                         } else {
                             // Draw colored circle fallback
                             ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
@@ -7184,7 +7588,33 @@
                 'tunnelsofprivacy/effects/heros/zooko_idle.json',
                 'tunnelsofprivacy/effects/heros/nate_idle.json',
                 'tunnelsofprivacy/effects/heros/zancas_idle.json',
-                'tunnelsofprivacy/effects/heros/cyberaxe_idle.json'
+                'tunnelsofprivacy/effects/heros/cyberaxe_idle.json',
+                // Hero light attack effects
+                'tunnelsofprivacy/effects/heros/zooko_light_attack.json',
+                'tunnelsofprivacy/effects/heros/nate_light_attack.json',
+                'tunnelsofprivacy/effects/heros/zancas_light_attack.json',
+                'tunnelsofprivacy/effects/heros/cyberaxe_light_attack.json',
+                // Hero heavy attack effects
+                'tunnelsofprivacy/effects/heros/zooko_heavy_attack.json',
+                'tunnelsofprivacy/effects/heros/nate_heavy_attack.json',
+                'tunnelsofprivacy/effects/heros/zancas_heavy_attack.json',
+                'tunnelsofprivacy/effects/heros/cyberaxe_heavy_attack.json',
+                // Hero special attack effects
+                'tunnelsofprivacy/effects/heros/zooko_special_attack.json',
+                'tunnelsofprivacy/effects/heros/nate_special_attack.json',
+                'tunnelsofprivacy/effects/heros/zancas_special_attack.json',
+                'tunnelsofprivacy/effects/heros/cyberaxe_special_attack.json',
+                // Mob attack effects
+                'tunnelsofprivacy/effects/mobs/mob_light_attack_a.json',
+                'tunnelsofprivacy/effects/mobs/mob_light_attack_b.json',
+                'tunnelsofprivacy/effects/mobs/mob_light_attack_c.json',
+                'tunnelsofprivacy/effects/mobs/mob_light_attack_d.json',
+                'tunnelsofprivacy/effects/mobs/mob_light_attack_e.json',
+                'tunnelsofprivacy/effects/mobs/mob_heavy_attack_a.json',
+                'tunnelsofprivacy/effects/mobs/mob_heavy_attack_b.json',
+                'tunnelsofprivacy/effects/mobs/mob_heavy_attack_c.json',
+                'tunnelsofprivacy/effects/mobs/mob_heavy_attack_d.json',
+                'tunnelsofprivacy/effects/mobs/mob_heavy_attack_e.json'
             ];
             
             for (const effectPath of commonEffects) {
@@ -7215,6 +7645,40 @@
             cyberaxe: { x: -40, y: 40 }   // Down 40px, left 40px
         };
         
+        // Get enchantment color for a hero (returns null if no enchantment)
+        function getHeroEnchantmentColor(heroName) {
+            const key = heroName.toLowerCase();
+            const weapon = heroWeapons[key];
+            if (!weapon || !weapon.enchantment) return null;
+            
+            const enchant = ENCHANTMENTS.find(e => e.id === weapon.enchantment);
+            return enchant ? enchant.color : null;
+        }
+        
+        // Mob attack particle effects (randomly selected)
+        const MOB_LIGHT_ATTACK_EFFECTS = [
+            'tunnelsofprivacy/effects/mobs/mob_light_attack_a.json',
+            'tunnelsofprivacy/effects/mobs/mob_light_attack_b.json',
+            'tunnelsofprivacy/effects/mobs/mob_light_attack_c.json',
+            'tunnelsofprivacy/effects/mobs/mob_light_attack_d.json',
+            'tunnelsofprivacy/effects/mobs/mob_light_attack_e.json'
+        ];
+        
+        const MOB_HEAVY_ATTACK_EFFECTS = [
+            'tunnelsofprivacy/effects/mobs/mob_heavy_attack_a.json',
+            'tunnelsofprivacy/effects/mobs/mob_heavy_attack_b.json',
+            'tunnelsofprivacy/effects/mobs/mob_heavy_attack_c.json',
+            'tunnelsofprivacy/effects/mobs/mob_heavy_attack_d.json',
+            'tunnelsofprivacy/effects/mobs/mob_heavy_attack_e.json'
+        ];
+        
+        // Small mobs (rat-sized) - these render at 40% normal size
+        const SMALL_MOB_IDS = [
+            'rat1', 'beetle2', 'creature1', 'creature2', 'creature3', 
+            'creature4', 'creature5', 'insect1', 'mite1', 'spider1',
+            'worm1', 'moth1', 'moth2'
+        ];
+        
         // Start looping particle effects on all heroes
         async function startHeroIdleParticles() {
             // Stop any existing emitters first
@@ -7225,6 +7689,9 @@
                 const effectPath = `tunnelsofprivacy/effects/heros/${heroName}_idle.json`;
                 const yOffset = heroIdleParticleOffsets[heroName] || 0;
                 
+                // Get enchantment color for this hero (if any)
+                const enchantColor = getHeroEnchantmentColor(heroName);
+                
                 // Create a target object with offset
                 const particleTarget = {
                     get x() { return hero.x; },
@@ -7233,7 +7700,8 @@
                 
                 try {
                     const emitter = await particleSystem.spawnLooping(effectPath, particleTarget, {
-                        scale: 1.0 // Will auto-scale based on hero depth
+                        scale: 1.0, // Will auto-scale based on hero depth
+                        colorOverride: enchantColor // Apply enchantment color
                     });
                     if (emitter) {
                         heroIdleEmitters[heroName] = emitter;
@@ -7362,9 +7830,23 @@
         // Supports 9x9 atlas (81 frames), 16fps, ping-pong/loop/once modes
         // Used for heroes, mobs, bosses in battle
         
-        const ANIM_GRID_SIZE = 9; // 9x9 grid
+        const ANIM_GRID_SIZE = 9; // 9x9 grid (default for heroes)
         const ANIM_TOTAL_FRAMES = 81;
         const ANIM_DEFAULT_FPS = 16;
+        
+        // Boss animation configurations (grid size differs from heroes)
+        // Format: { cols, rows, totalFrames }
+        const BOSS_ANIM_CONFIG = {
+            'lvl100': { cols: 5, rows: 19, totalFrames: 95, frameSize: 768 }
+        };
+        
+        // Boss animation state paths
+        const BOSS_ANIM_PATHS = {
+            'lvl100': {
+                idle: 'tunnelsofprivacy/bosses/lvl100/boss_lvl100_idle.png',
+                attack: 'tunnelsofprivacy/bosses/lvl100/boss_lvl100_attack.png'
+            }
+        };
         
         // Animation state paths for heroes
         // States can be a single path (string) or array of variants for random selection
@@ -7380,7 +7862,8 @@
                 special_attack: 'tunnelsofprivacy/heros/zooko_special_attack.png',
                 knockout: 'tunnelsofprivacy/heros/zooko_knockout.png',
                 hit: 'tunnelsofprivacy/heros/zooko_hit.png',
-                defend: 'tunnelsofprivacy/heros/zooko_def.png'
+                defend: 'tunnelsofprivacy/heros/zooko_def.png',
+                taunt: 'tunnelsofprivacy/heros/zooko_taunt.png'
             },
             nate: { 
                 idle: [
@@ -7455,21 +7938,40 @@
             combatant.anim = {
                 sheet: null,
                 sheetPath: sheetPath,
-                frameSize: 0,       // Auto-calculated from sheet.width / 9
-                frame: 0,           // Current frame 0-80
+                frameSize: 0,       // Auto-calculated from sheet
+                frame: 0,           // Current frame
                 fps: ANIM_DEFAULT_FPS,
                 lastTime: 0,        // Last frame update timestamp
                 direction: 1,       // 1 = forward, -1 = reverse
                 playMode: playMode, // 'pingpong', 'loop', 'once'
                 state: 'idle',
                 playing: true,
-                onComplete: null    // Callback when animation completes (for 'once' mode)
+                onComplete: null,   // Callback when animation completes (for 'once' mode)
+                // Grid config (default to hero 9x9, can be overridden for bosses)
+                gridCols: ANIM_GRID_SIZE,
+                gridRows: ANIM_GRID_SIZE,
+                totalFrames: ANIM_TOTAL_FRAMES
             };
+            
+            // Check if this is a boss with custom animation config
+            if (combatant.isBoss && combatant.bossLevel) {
+                const bossKey = 'lvl' + combatant.bossLevel;
+                const bossConfig = BOSS_ANIM_CONFIG[bossKey];
+                if (bossConfig) {
+                    combatant.anim.gridCols = bossConfig.cols;
+                    combatant.anim.gridRows = bossConfig.rows;
+                    combatant.anim.totalFrames = bossConfig.totalFrames;
+                    combatant.anim.frameSize = bossConfig.frameSize; // Fixed frame size for bosses
+                }
+            }
             
             // Load the sprite sheet
             loadSpriteSheet(sheetPath).then(sheet => {
                 combatant.anim.sheet = sheet;
-                combatant.anim.frameSize = sheet.width / ANIM_GRID_SIZE;
+                // Only auto-calculate frameSize if not already set (bosses have fixed size)
+                if (!combatant.anim.frameSize) {
+                    combatant.anim.frameSize = sheet.width / combatant.anim.gridCols;
+                }
             }).catch(err => {
                 console.error('Failed to load sprite sheet:', sheetPath, err);
             });
@@ -7495,10 +7997,13 @@
                 // Advance frame
                 anim.frame += anim.direction;
                 
+                // Use per-combatant totalFrames (default 81 for heroes, 95 for lvl100 boss)
+                const totalFrames = anim.totalFrames || ANIM_TOTAL_FRAMES;
+                
                 // Handle boundaries based on play mode
                 if (anim.playMode === 'pingpong') {
-                    if (anim.frame >= ANIM_TOTAL_FRAMES - 1) {
-                        anim.frame = ANIM_TOTAL_FRAMES - 1;
+                    if (anim.frame >= totalFrames - 1) {
+                        anim.frame = totalFrames - 1;
                         anim.direction = -1;
                     } else if (anim.frame <= 0) {
                         anim.frame = 0;
@@ -7510,12 +8015,12 @@
                         }
                     }
                 } else if (anim.playMode === 'loop') {
-                    if (anim.frame >= ANIM_TOTAL_FRAMES) {
+                    if (anim.frame >= totalFrames) {
                         anim.frame = 0;
                     }
                 } else if (anim.playMode === 'once') {
-                    if (anim.frame >= ANIM_TOTAL_FRAMES - 1) {
-                        anim.frame = ANIM_TOTAL_FRAMES - 1;
+                    if (anim.frame >= totalFrames - 1) {
+                        anim.frame = totalFrames - 1;
                         anim.playing = false;
                         if (anim.onComplete) anim.onComplete();
                     }
@@ -7562,6 +8067,40 @@
             }
         }
         
+        // Preload ALL hero and boss animations at game startup (prevents hitches during combat)
+        function preloadAllAnimations() {
+            console.log('[Preload] Loading all hero/boss animations...');
+            const promises = [];
+            
+            // Preload all hero animations
+            for (const [heroKey, paths] of Object.entries(HERO_ANIM_PATHS)) {
+                for (const [state, pathOrArray] of Object.entries(paths)) {
+                    if (Array.isArray(pathOrArray)) {
+                        pathOrArray.forEach(p => promises.push(loadSpriteSheet(p)));
+                    } else {
+                        promises.push(loadSpriteSheet(pathOrArray));
+                    }
+                }
+            }
+            
+            // Preload all boss animations
+            for (const [bossKey, paths] of Object.entries(BOSS_ANIM_PATHS)) {
+                for (const [state, pathOrArray] of Object.entries(paths)) {
+                    if (Array.isArray(pathOrArray)) {
+                        pathOrArray.forEach(p => promises.push(loadSpriteSheet(p)));
+                    } else {
+                        promises.push(loadSpriteSheet(pathOrArray));
+                    }
+                }
+            }
+            
+            Promise.all(promises).then(() => {
+                console.log(`[Preload] All ${promises.length} animation sheets cached`);
+            }).catch(err => {
+                console.warn('[Preload] Some animations failed to load:', err);
+            });
+        }
+        
         // Draw animated sprite from atlas
         function drawAnimatedSprite(ctx, combatant, destX, destY, destWidth, destHeight, flipX = false) {
             const anim = combatant.anim;
@@ -7580,9 +8119,10 @@
                 return;
             }
             
-            // Calculate source rectangle from 9x9 grid
-            const col = anim.frame % ANIM_GRID_SIZE;
-            const row = Math.floor(anim.frame / ANIM_GRID_SIZE);
+            // Calculate source rectangle from grid (use per-combatant gridCols)
+            const gridCols = anim.gridCols || ANIM_GRID_SIZE;
+            const col = anim.frame % gridCols;
+            const row = Math.floor(anim.frame / gridCols);
             const srcX = col * anim.frameSize;
             const srcY = row * anim.frameSize;
             const srcSize = anim.frameSize;
@@ -7607,10 +8147,25 @@
             if (!anim) return;
             
             // Get the path for this combatant's new state
-            const heroKey = combatant.name.toLowerCase();
-            const paths = HERO_ANIM_PATHS[heroKey];
+            // Check if it's a boss first, then hero
+            let paths = null;
+            let bossKey = null;
+            
+            if (combatant.isBoss && combatant.bossLevel) {
+                bossKey = 'lvl' + combatant.bossLevel;
+                paths = BOSS_ANIM_PATHS[bossKey];
+            }
+            
+            if (!paths) {
+                const heroKey = combatant.name.toLowerCase();
+                paths = HERO_ANIM_PATHS[heroKey];
+            }
+            
             if (!paths || !paths[newState]) {
-                console.warn('No animation path for:', heroKey, newState);
+                // No animation for this state - silently ignore for bosses without all anims
+                if (!combatant.isBoss) {
+                    console.warn('No animation path for:', combatant.name, newState);
+                }
                 return;
             }
             
@@ -7647,7 +8202,12 @@
             // Load new sprite sheet
             loadSpriteSheet(newPath).then(sheet => {
                 anim.sheet = sheet;
-                anim.frameSize = sheet.width / ANIM_GRID_SIZE;
+                // Use per-combatant grid config if available
+                if (!anim.frameSize || anim.gridCols !== ANIM_GRID_SIZE) {
+                    anim.frameSize = sheet.width / anim.gridCols;
+                } else {
+                    anim.frameSize = sheet.width / ANIM_GRID_SIZE;
+                }
             });
         }
         // ===== END SPRITE SHEET ANIMATION SYSTEM =====
@@ -7803,7 +8363,8 @@
             if (oldMusic) {
                 fadeMusic(oldMusic, oldMusic.volume, 0, 1000, () => {
                     oldMusic.pause();
-                    oldMusic.src = '';
+                    oldMusic.removeAttribute('src'); // More thorough cleanup
+                    oldMusic.load(); // Force browser to release buffered data
                 });
             }
         }
@@ -8420,6 +8981,9 @@
             // Add food tooltip event listeners for party meals
             setupFoodTooltips(grid);
             
+            // Add potion tooltip event listeners for consumables
+            setupPotionTooltips(grid);
+            
             // Update level progress display
             const progressEl = document.getElementById('inventoryLevelProgress');
             if (progressEl) {
@@ -8534,6 +9098,9 @@
             
             // Add food tooltip event listeners for party meals
             setupFoodTooltips(grid);
+            
+            // Add potion tooltip event listeners for consumables
+            setupPotionTooltips(grid);
         }
         
         // Setup weapon tooltip hover events for equipment slots
@@ -8942,6 +9509,11 @@
             
             showNotification(`${enchant.name} enchantment applied!`, 'success');
             
+            // Restart hero idle particles to apply new enchantment color
+            if (battleState.heroes && battleState.heroes.length > 0) {
+                startHeroIdleParticles();
+            }
+            
             // Sync to multiplayer
             if (multiplayerState.enabled && multiplayerState.role === 'host') {
                 sendEquipmentUpdate();
@@ -8973,6 +9545,9 @@
             // Update any gold display elements
             const goldEls = document.querySelectorAll('.goldDisplay');
             goldEls.forEach(el => el.textContent = gold);
+            
+            // Update shielded store gold display (if revealed)
+            updateStoreGoldDisplay();
         }
 
         function showSettings() {
@@ -9720,6 +10295,36 @@
             if (level < 40) return 7;
             if (level < 50) return 8;
             return 9; // Max mobs
+        }
+        
+        // Scale mob stats for early levels (1-9) to make them easier
+        // Mobs in JSON are balanced for level 10+, so we reduce stats for early game
+        function getEarlyLevelScaling(level) {
+            // Level 1-2: 50% stats (learning phase)
+            // Level 3-4: 60% stats
+            // Level 5-6: 70% stats
+            // Level 7-8: 80% stats
+            // Level 9: 90% stats
+            // Level 10+: 100% stats (full power)
+            if (level <= 2) return 0.50;
+            if (level <= 4) return 0.60;
+            if (level <= 6) return 0.70;
+            if (level <= 8) return 0.80;
+            if (level <= 9) return 0.90;
+            return 1.0; // Full stats at level 10+
+        }
+        
+        // Apply early-level scaling to mob stats
+        function applyEarlyLevelScaling(mobEnemy, roomLevel) {
+            const scale = getEarlyLevelScaling(roomLevel);
+            if (scale < 1.0) {
+                mobEnemy.hp = Math.max(1, Math.floor(mobEnemy.hp * scale));
+                mobEnemy.maxHp = Math.max(1, Math.floor(mobEnemy.maxHp * scale));
+                mobEnemy.attackDamage = Math.max(1, Math.floor(mobEnemy.attackDamage * scale));
+                // AC reduction is smaller (only reduce by half the scaling difference)
+                const acReduction = Math.floor((1 - scale) * mobEnemy.ac * 0.5);
+                mobEnemy.ac = Math.max(8, mobEnemy.ac - acReduction);
+            }
         }
         
         // Get boss data file based on difficulty setting
@@ -14427,6 +15032,7 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     hostile: boss.behavior?.hostile !== false,
                     backstory: boss.backstory || null,
                     isBoss: true,
+                    bossLevel: bossLevel, // Store for animation lookup
                     color: '#8B45FF',
                     x: 0, y: 0, platform: null, facing: 'center',
                     sprite: new Image(),
@@ -14466,6 +15072,7 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                         hostile: boss.behavior?.hostile !== false,
                         backstory: boss.backstory || null,
                         isBoss: true,
+                        bossLevel: bossLevel, // Store for animation lookup
                         color: '#8B45FF',
                         x: 0, y: 0, platform: null, facing: 'center',
                         sprite: new Image(),
@@ -14502,9 +15109,11 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                         x: 0, y: 0, platform: null, facing: 'center',
                         sprite: new Image(),
                         spritePath: mob.spritePath,
-                        isMob: true
+                        isMob: true,
+                        mobId: mob.id || '' // Store mob ID for size lookup
                     };
                     applyGeneratedData(mobEnemy, mobData.generated);
+                    applyEarlyLevelScaling(mobEnemy, roomLevel);
                     if (settings.diagMode) {
                         mobEnemy.hp = 5;
                         mobEnemy.maxHp = 5;
@@ -14535,10 +15144,12 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                         x: 0, y: 0, platform: null, facing: 'center',
                         sprite: new Image(),
                         spritePath: mob.spritePath,
-                        isMob: true
+                        isMob: true,
+                        mobId: mob.id || '' // Store mob ID for size lookup
                     };
                     const generatedMob = await generateEncounter('mob', mob, roomLevel);
                     applyGeneratedData(mobEnemy, generatedMob);
+                    applyEarlyLevelScaling(mobEnemy, roomLevel);
                     if (settings.diagMode) {
                         mobEnemy.hp = 5;
                         mobEnemy.maxHp = 5;
@@ -14734,6 +15345,18 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             
             // Start hero idle particle effects
             startHeroIdleParticles();
+            
+            // Initialize boss animations (for bosses with sprite sheet animations)
+            battleState.enemies.forEach(enemy => {
+                if (enemy.isBoss && enemy.bossLevel) {
+                    const bossKey = 'lvl' + enemy.bossLevel;
+                    const bossAnimPaths = BOSS_ANIM_PATHS[bossKey];
+                    if (bossAnimPaths && bossAnimPaths.idle) {
+                        initAnimation(enemy, bossAnimPaths.idle, 'pingpong');
+                        console.log(`[Battle] Initialized boss animation for level ${enemy.bossLevel}`);
+                    }
+                }
+            });
             
             // Check for heroes that entered battle already knocked out (0 HP)
             battleState.heroes.forEach(hero => {
@@ -15490,8 +16113,14 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 let hitWidth, hitHeight, hitX, hitY;
                 
                 if (enemy.isMob) {
-                    const mobAspectRatio = 1344 / 768;
-                    const baseHeight = 75;
+                    // Use actual sprite dimensions for proper aspect ratio
+                    const imgWidth = enemy.sprite?.naturalWidth || 768;
+                    const imgHeight = enemy.sprite?.naturalHeight || 768;
+                    const mobAspectRatio = imgWidth / imgHeight;
+                    
+                    // Small mobs use sizeScale for differentiation
+                    const baseHeight = 75 * (enemy.sizeScale || 2.5);
+                    
                     const spriteHeight = baseHeight * depthScale;
                     const spriteWidth = spriteHeight * mobAspectRatio;
                     hitWidth = spriteWidth;
@@ -15796,17 +16425,27 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 // Calculate depth-based scale (higher Y = farther back = smaller)
                 const depthScale = 0.6 + (enemy.y / canvas.height) * 0.4;
                 
+                // Update boss animations
+                if (enemy.anim) {
+                    const currentTime = performance.now();
+                    updateAnimation(enemy, currentTime);
+                }
+                
                 // Draw enemy sprite
                 if (enemy.sprite && enemy.sprite.complete && enemy.sprite.naturalHeight !== 0) {
                     let spriteWidth, spriteHeight, spriteX, spriteY;
                     
                     if (enemy.isMob) {
-                        // Mobs are 1344x768, render with random size variation
-                        const mobAspectRatio = 1344 / 768; // 1.75
+                        // Use actual sprite dimensions for proper aspect ratio
+                        const imgWidth = enemy.sprite.naturalWidth || 768;
+                        const imgHeight = enemy.sprite.naturalHeight || 768;
+                        const mobAspectRatio = imgWidth / imgHeight;
                         
-                        // Random size scale (1.5 to 5.0) - stored on enemy for consistency
+                        // Random size scale - stored on enemy for consistency
+                        // Small mobs: 1.5-3.0, Normal mobs: 2.0-5.0
                         if (enemy.sizeScale === undefined) {
-                            enemy.sizeScale = 1.5 + Math.random() * 3.5;
+                            const isSmallMob = SMALL_MOB_IDS.includes(enemy.mobId);
+                            enemy.sizeScale = isSmallMob ? (1.5 + Math.random() * 1.5) : (2.0 + Math.random() * 3.0);
                         }
                         
                         const baseHeight = 75 * enemy.sizeScale;
@@ -15817,15 +16456,23 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                         spriteY = enemy.y - spriteHeight / 2;
                     } else {
                         // Bosses: use actual image dimensions for proper aspect ratio
-                        // Original bosses: 300x300 (square), New bosses: 917x512 (wide)
-                        const imgWidth = enemy.sprite.naturalWidth || 300;
-                        const imgHeight = enemy.sprite.naturalHeight || 300;
+                        // For animated bosses, use frame size; otherwise use sprite dimensions
+                        let imgWidth, imgHeight;
+                        if (enemy.anim && enemy.anim.frameSize) {
+                            // Animated boss - frames are square
+                            imgWidth = enemy.anim.frameSize;
+                            imgHeight = enemy.anim.frameSize;
+                        } else {
+                            // Static boss sprite
+                            imgWidth = enemy.sprite.naturalWidth || 300;
+                            imgHeight = enemy.sprite.naturalHeight || 300;
+                        }
                         const bossAspectRatio = imgWidth / imgHeight;
                         
                         // Base height that looks good, scaled by depth
-                        // Level 100 boss (Auric Hoard Dragon) is 2x larger
+                        // Level 100 boss (Auric Hoard Dragon) is 2.5x larger
                         const isLevel100 = enemy.spritePath && enemy.spritePath.includes('lvl100');
-                        const sizeMultiplier = isLevel100 ? 2.0 : 1.0;
+                        const sizeMultiplier = isLevel100 ? 2.5 : 1.0;
                         const baseHeight = 250 * depthScale * sizeMultiplier;
                         spriteHeight = baseHeight;
                         spriteWidth = baseHeight * bossAspectRatio;
@@ -15834,14 +16481,20 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                         spriteY = enemy.y - spriteHeight / 2;
                     }
                     
-                    ctx.save();
-                    if (enemy.facing === 'left') {
-                        ctx.translate(enemy.x, enemy.y);
-                        ctx.scale(-1, 1);
-                        ctx.translate(-enemy.x, -enemy.y);
+                    // Check if this enemy has animation (boss with sprite sheets)
+                    if (enemy.anim && enemy.anim.sheet) {
+                        const flipX = enemy.facing === 'left';
+                        drawAnimatedSprite(ctx, enemy, spriteX, spriteY, spriteWidth, spriteHeight, flipX);
+                    } else {
+                        ctx.save();
+                        if (enemy.facing === 'left') {
+                            ctx.translate(enemy.x, enemy.y);
+                            ctx.scale(-1, 1);
+                            ctx.translate(-enemy.x, -enemy.y);
+                        }
+                        ctx.drawImage(enemy.sprite, spriteX, spriteY, spriteWidth, spriteHeight);
+                        ctx.restore();
                     }
-                    ctx.drawImage(enemy.sprite, spriteX, spriteY, spriteWidth, spriteHeight);
-                    ctx.restore();
                 } else {
                     // Fallback to colored circle if sprite not loaded
                     ctx.fillStyle = enemy.color;
@@ -16244,6 +16897,9 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             
             if (dungeonMenuGold) dungeonMenuGold.textContent = gold;
             if (battleGold) battleGold.textContent = gold;
+            
+            // Update shielded store gold display (if revealed)
+            updateStoreGoldDisplay();
         }
         
         // Update battle hero card stats
@@ -16997,20 +17653,61 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 });
             }
             
-            // Spawn projectile particle effect for light attacks (test with cyberaxe_electric)
+            // Spawn projectile particle effect for light attacks (hero-specific effects)
             if (isHero && actionType === 'light') {
                 // Get per-hero projectile offset
                 const heroName = attacker.name.toLowerCase();
                 const projOffset = heroProjectileOffsets[heroName] || { x: 0, y: 0 };
+                const lightAttackEffect = `tunnelsofprivacy/effects/heros/${heroName}_light_attack.json`;
+                const enchantColor = getHeroEnchantmentColor(heroName);
                 
                 // Spawn projectile from hero to target
                 particleSystem.spawnProjectile(
-                    'effect/cyberaxe_electric.json',
+                    lightAttackEffect,
                     attacker.x + projOffset.x,
                     attacker.y - 50 + projOffset.y, // Base offset + per-hero offset
                     target.x,
                     target.y - 30, // Offset up from target feet
-                    { scale: 1.0, duration: 1.5 }
+                    { scale: 1.0, duration: 1.5, colorOverride: enchantColor }
+                );
+            }
+            
+            // Spawn rising particle effect for heavy attacks (spawn at target, rise upward)
+            if (isHero && actionType === 'heavy') {
+                const heroName = attacker.name.toLowerCase();
+                const heavyAttackEffect = `tunnelsofprivacy/effects/heros/${heroName}_heavy_attack.json`;
+                const enchantColor = getHeroEnchantmentColor(heroName);
+                
+                // Spawn at target's feet (bottom of hitbox), particles rise upward off screen
+                // target.y is center of sprite, add ~150px to get to feet (half of ~300px sprite height)
+                particleSystem.spawnRising(
+                    heavyAttackEffect,
+                    target.x,
+                    target.y + 120, // Bottom of target sprite (feet)
+                    { scale: 1.2, duration: 2.5, riseDistance: 400, colorOverride: enchantColor }
+                );
+            }
+            
+            // Spawn special attack particles on BOTH hero and target simultaneously
+            if (isHero && actionType === 'special') {
+                const heroName = attacker.name.toLowerCase();
+                const specialAttackEffect = `tunnelsofprivacy/effects/heros/${heroName}_special_attack.json`;
+                const enchantColor = getHeroEnchantmentColor(heroName);
+                
+                // Spawn on the hero (centered on hero sprite)
+                particleSystem.spawn(
+                    specialAttackEffect,
+                    attacker.x,
+                    attacker.y - 50, // Slightly above center
+                    { scale: 1.5, colorOverride: enchantColor }
+                );
+                
+                // Spawn on the target (centered on target sprite)
+                particleSystem.spawn(
+                    specialAttackEffect,
+                    target.x,
+                    target.y - 30, // Slightly above center
+                    { scale: 1.5, colorOverride: enchantColor }
                 );
             }
             
@@ -17444,6 +18141,42 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             
             // Play enemy attack sound
             playEnemySfx(combatant, 'attack');
+            
+            // Trigger boss attack animation if available
+            if (combatant.isBoss && combatant.anim) {
+                const bossKey = 'lvl' + combatant.bossLevel;
+                const bossAnimPaths = BOSS_ANIM_PATHS[bossKey];
+                if (bossAnimPaths && bossAnimPaths.attack) {
+                    setAnimationState(combatant, 'attack', 'once', () => {
+                        // Return to idle after attack
+                        setAnimationState(combatant, 'idle', 'pingpong');
+                    });
+                }
+            }
+            
+            // Spawn mob attack particle effect (randomly choose light or heavy style)
+            const useLightAttack = Math.random() > 0.5;
+            if (useLightAttack) {
+                // Light attack: projectile from mob to hero target
+                const lightEffect = MOB_LIGHT_ATTACK_EFFECTS[Math.floor(Math.random() * MOB_LIGHT_ATTACK_EFFECTS.length)];
+                particleSystem.spawnProjectile(
+                    lightEffect,
+                    combatant.x,
+                    combatant.y - 30, // From mob center
+                    target.x,
+                    target.y - 50, // To hero center
+                    { scale: 1.0, duration: 1.2 }
+                );
+            } else {
+                // Heavy attack: rising effect from hero's feet upward
+                const heavyEffect = MOB_HEAVY_ATTACK_EFFECTS[Math.floor(Math.random() * MOB_HEAVY_ATTACK_EFFECTS.length)];
+                particleSystem.spawnRising(
+                    heavyEffect,
+                    target.x,
+                    target.y + 100, // Start at hero's feet
+                    { scale: 1.0, duration: 2.0, riseDistance: 350 }
+                );
+            }
             
             // Don't damage heroes already at 0 HP
             if (target.hp <= 0) {
@@ -18700,6 +19433,8 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 'tunnelsofprivacy/bosses/lvl98/boss_lvl98.png',
                 'tunnelsofprivacy/bosses/lvl99/boss_lvl99.png',
                 'tunnelsofprivacy/bosses/lvl100/boss_lvl100.png',
+                'tunnelsofprivacy/bosses/lvl100/boss_lvl100_idle.png',
+                'tunnelsofprivacy/bosses/lvl100/boss_lvl100_attack.png',
                 // Captive/prisoner sprites
                 'tunnelsofprivacy/npcs/captives/prisoners (1).png',
                 'tunnelsofprivacy/npcs/captives/prisoners (2).png',
@@ -18922,6 +19657,9 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             
             // Preload particle effect atlases and JSON configs
             preloadParticleEffects();
+            
+            // Preload all hero and boss animation sprite sheets
+            preloadAllAnimations();
             
             updateLoadingProgress();
         }
@@ -20169,6 +20907,47 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             } else {
                 codeSpan.textContent = '******';
                 btn.textContent = '👁 SHOW';
+            }
+        }
+        
+        // Toggle shielded gold visibility in store
+        function toggleStoreGoldVisibility() {
+            const goldDisplay = document.getElementById('storeGoldDisplay');
+            const btn = document.getElementById('storeGoldToggleBtn');
+            if (!goldDisplay || !btn) return;
+            
+            const sharedSave = loadSharedSave();
+            const currentGold = sharedSave?.dungeonState?.gold || 0;
+            
+            if (goldDisplay.dataset.revealed === 'true') {
+                // Hide it
+                goldDisplay.textContent = '🛡️🛡️🛡️🛡️';
+                goldDisplay.dataset.revealed = 'false';
+                btn.innerHTML = '🛡️ REVEAL';
+                btn.style.background = 'linear-gradient(135deg, rgba(155, 89, 182, 0.4), rgba(155, 89, 182, 0.2))';
+                btn.style.borderColor = '#9B59B6';
+                btn.style.color = '#BB8FCE';
+            } else {
+                // Show it
+                goldDisplay.textContent = currentGold.toLocaleString();
+                goldDisplay.dataset.revealed = 'true';
+                btn.innerHTML = '👁 HIDE';
+                btn.style.background = 'linear-gradient(135deg, rgba(255, 215, 0, 0.4), rgba(255, 215, 0, 0.2))';
+                btn.style.borderColor = '#FFD700';
+                btn.style.color = '#FFD700';
+            }
+        }
+        
+        // Update store gold display (call after purchases)
+        function updateStoreGoldDisplay() {
+            const goldDisplay = document.getElementById('storeGoldDisplay');
+            if (!goldDisplay) return;
+            
+            // Only update if revealed
+            if (goldDisplay.dataset.revealed === 'true') {
+                const sharedSave = loadSharedSave();
+                const currentGold = sharedSave?.dungeonState?.gold || 0;
+                goldDisplay.textContent = currentGold.toLocaleString();
             }
         }
         

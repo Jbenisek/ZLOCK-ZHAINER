@@ -2,6 +2,99 @@
 
 # Changelog
 
+## v0.3.99 - Performance Optimizations (2025-12-03)
+- **Particle system tinted sprite caching:**
+  - Added `tintedSpriteCache` for pre-tinted particle sprites
+  - Cache key: `${atlasPath}_${srcX}_${srcY}_${size}_${r}_${g}_${b}_${blendMode}`
+  - LRU eviction with `MAX_TINT_CACHE` limit (100 entries)
+  - First render: 4 canvas operations, subsequent renders: 1 drawImage()
+  - Eliminates per-frame tinting overhead for repeated particle colors
+
+- **Particle system resource limits:**
+  - Added `MAX_EMITTERS: 30` to prevent runaway emitter creation
+  - Added `MAX_TOTAL_PARTICLES: 500` global particle count limit
+  - Emitter spawn blocked with console warning when limit reached
+  - Particle creation capped in update loop when global limit hit
+
+- **Animation sprite sheet preloading:**
+  - Added `preloadAllAnimations()` function
+  - Preloads ALL sprite sheets from `HERO_ANIM_PATHS` and `BOSS_ANIM_PATHS`
+  - Called during game startup alongside `preloadParticleEffects()`
+  - Eliminates network fetches during combat (attack/hit/knockout animations)
+  - Logs: `[Preload] All ${count} animation sheets cached`
+
+- **Audio cleanup improvement:**
+  - Changed music cleanup from `src = ''` to `removeAttribute('src')` + `load()`
+  - Forces browser to fully release buffered audio data
+  - Prevents memory accumulation during extended play sessions
+
+## v0.3.98 - Attack Particles & UI Polish (2025-12-03)
+- **Heavy attack rising particle system:**
+  - Added `spawnRising()` method for upward-moving particle effects
+  - Heavy attacks spawn particles that rise from target's feet upward
+  - Particles spawn at `target.y + 120` (bottom of hitbox)
+  - Each hero has unique heavy attack effect: `{heroName}_heavy_attack.json`
+  - All 4 heavy attack effects added to preload list
+
+- **Special attack dual-spawn particles:**
+  - Special attacks now spawn particles on BOTH hero AND target simultaneously
+  - Hero gets celebratory effect, target gets impact effect
+  - Each hero has unique special attack effect: `{heroName}_special_attack.json`
+  - All 4 special attack effects added to preload list
+
+- **Mob attack particle effects:**
+  - Added `MOB_LIGHT_ATTACK_EFFECTS` array (5 variants: mob_light_attack_a-e.json)
+  - Added `MOB_HEAVY_ATTACK_EFFECTS` array (5 variants: mob_heavy_attack_a-e.json)
+  - Enemy attacks now randomly choose light (projectile) or heavy (rising) effect
+  - Light mob attacks travel from mob to hero
+  - Heavy mob attacks rise from hero's feet upward
+  - All 10 mob effect files added to preload list
+
+- **Hero card UI improvements:**
+  - AC and Level badges now use `border.png` image from icons folder
+  - Replaced CSS clip-path hexagon shapes with proper border graphic
+  - Increased badge size from 26x30px to 32x32px for better visibility
+  - AC number in blue (#6495ED) with glow effect
+  - Level number in gold (#FFD700) with glow effect
+  - Numbers remain centered in the border frame
+
+## v0.3.97 - Balance & Store UX (2025-12-03)
+- **Hero-specific light attack effects:**
+  - Each hero now has unique light attack particle effect
+  - Zooko: `zooko_light_attack.json`
+  - Nate: `nate_light_attack.json`
+  - Zancas: `zancas_light_attack.json`
+  - CyberAxe: `cyberaxe_light_attack.json`
+  - All 4 effects added to preload list
+
+- **Potion transparency tooltip system:**
+  - Added humorous alchemical analysis tooltips for health potions
+  - Shows base ingredient, active compound, questionable additives
+  - Brewing method and alchemist backstory ("a wizard who failed chemistry but passed vibes")
+  - Side effects warnings ("May cause temporary optimism")
+  - Efficacy claims ("Works 60% of the time, every time")
+  - Purple/magical themed tooltip matching potion aesthetics
+  - Works in both inventory and store screens
+
+- **Early level difficulty scaling:**
+  - Added `getEarlyLevelScaling()` function for levels 1-9
+  - Level 1-2: 50% mob stats (learning phase)
+  - Level 3-4: 60% mob stats
+  - Level 5-6: 70% mob stats
+  - Level 7-8: 80% mob stats
+  - Level 9: 90% mob stats
+  - Level 10+: 100% full stats
+  - Reduces HP, damage, and AC (AC reduced by half the scaling factor)
+  - Makes early game more accessible without changing mob data
+
+- **Shielded gold display in store:**
+  - Added gold display to store screen (was missing)
+  - Gold is "shielded" by default showing 🛡️🛡️🛡️🛡️
+  - Click "🛡️ REVEAL" button to show actual amount
+  - Click "👁 HIDE" to shield again
+  - Auto-updates after purchases when revealed
+  - Ties into Zcash's "shielded transactions" theme
+
 ## v0.3.96 - Attack Projectiles & Food Tooltips (2025-12-03)
 - **Projectile particle system:**
   - Added `spawnProjectile()` method for attack particles traveling from hero to target
