@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.3.90</title>
+    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.3.95</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -3517,7 +3517,7 @@
     <!-- Zcash Video Overlay (NPC Encounter) -->
     <div id="zcashVideoOverlay" onclick="closeZcashVideo()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 400; justify-content: center; align-items: center; cursor: pointer;">
         <video id="zcashVideo" style="max-width: 90%; max-height: 90%; border-radius: 10px; box-shadow: 0 0 30px rgba(242, 201, 76, 0.5);">
-            <source src="tunnelsofprivacy/events/encoutners/nate_zashi.mp4" type="video/mp4">
+            <source src="tunnelsofprivacy/videos/nate_zashi.mp4" type="video/mp4">
         </video>
         <div style="position: absolute; bottom: 20px; color: #95A5A6; font-size: 14px;">Click anywhere to skip</div>
     </div>
@@ -3995,7 +3995,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.3.91';
+        const GAME_VERSION = 'v0.3.95';
         
         // ===== HACKATHON INFO TOOLTIP SYSTEM =====
         const TOOLTIP_DELAY = 800; // ms before tooltip appears
@@ -6311,6 +6311,500 @@
             }
         }
         // ===== END SFX AUDIO SYSTEM =====
+        
+        // ===== CANVAS2D PARTICLE SYSTEM =====
+        // Particle system that reads JSON effect files from effect/ folder
+        // Supports sprite-based particles with texture atlases
+        
+        const particleSystem = {
+            emitters: [],           // Active particle emitters
+            atlasCache: {},         // Cached atlas images
+            effectCache: {},        // Cached effect JSON configs
+            lastTime: 0,            // For delta time calculation
+            // Reusable offscreen canvas for color tinting (performance optimization)
+            _offscreen: null,
+            _offCtx: null,
+            
+            // Get or create reusable offscreen canvas
+            getOffscreenCanvas(size) {
+                const needed = Math.ceil(size);
+                if (!this._offscreen || this._offscreen.width < needed || this._offscreen.height < needed) {
+                    this._offscreen = document.createElement('canvas');
+                    this._offscreen.width = Math.max(needed, 128);
+                    this._offscreen.height = Math.max(needed, 128);
+                    this._offCtx = this._offscreen.getContext('2d');
+                }
+                return { canvas: this._offscreen, ctx: this._offCtx, size: needed };
+            },
+            
+            // Load an effect JSON file
+            async loadEffect(effectPath) {
+                if (this.effectCache[effectPath]) {
+                    return this.effectCache[effectPath];
+                }
+                
+                try {
+                    const response = await fetch(effectPath);
+                    if (!response.ok) throw new Error(`Failed to load ${effectPath}`);
+                    const effectData = await response.json();
+                    this.effectCache[effectPath] = effectData;
+                    
+                    // Preload atlas if sprite-based
+                    if (effectData.atlasPath && effectData.particleType === 'sprite') {
+                        await this.loadAtlas(effectData.atlasPath);
+                    }
+                    
+                    return effectData;
+                } catch (err) {
+                    console.error('Failed to load particle effect:', effectPath, err);
+                    return null;
+                }
+            },
+            
+            // Load atlas image
+            loadAtlas(atlasPath) {
+                return new Promise((resolve, reject) => {
+                    if (this.atlasCache[atlasPath]) {
+                        resolve(this.atlasCache[atlasPath]);
+                        return;
+                    }
+                    
+                    const img = new Image();
+                    img.onload = () => {
+                        this.atlasCache[atlasPath] = img;
+                        resolve(img);
+                    };
+                    img.onerror = () => {
+                        console.error('Failed to load particle atlas:', atlasPath);
+                        reject(new Error(`Failed to load ${atlasPath}`));
+                    };
+                    img.src = atlasPath;
+                });
+            },
+            
+            // Spawn a particle effect at a position
+            async spawn(effectPath, x, y, options = {}) {
+                const effectData = await this.loadEffect(effectPath);
+                if (!effectData) return null;
+                
+                const emitter = {
+                    id: Date.now() + Math.random(),
+                    effectData: effectData,
+                    x: x,
+                    y: y,
+                    scale: options.scale || 1,
+                    rotation: options.rotation || 0,
+                    particles: [],
+                    emitTimer: 0,
+                    emitDuration: effectData.emitDuration || 1,
+                    emitElapsed: 0,
+                    active: true,
+                    loop: options.loop || false, // NEW: Loop the emitter
+                    followTarget: options.followTarget || null, // NEW: Object with x,y to follow
+                    onComplete: options.onComplete || null
+                };
+                
+                this.emitters.push(emitter);
+                return emitter;
+            },
+            
+            // Spawn a looping particle effect that follows a target
+            async spawnLooping(effectPath, target, options = {}) {
+                return await this.spawn(effectPath, target.x || 0, target.y || 0, {
+                    ...options,
+                    loop: true,
+                    followTarget: target
+                });
+            },
+            
+            // Stop a specific emitter
+            stopEmitter(emitter) {
+                if (emitter) {
+                    emitter.active = false;
+                    emitter.loop = false;
+                }
+            },
+            
+            // Remove emitter by id
+            removeEmitter(emitterId) {
+                const index = this.emitters.findIndex(e => e.id === emitterId);
+                if (index !== -1) {
+                    this.emitters.splice(index, 1);
+                }
+            },
+            
+            // Create a single particle
+            createParticle(emitter) {
+                const ed = emitter.effectData;
+                const scale = emitter.scale;
+                
+                // Scale factor to convert 3D world units to pixels
+                const WORLD_TO_PIXEL = 20;
+                
+                // Calculate velocity (matching arcade particle editor)
+                const spreadRad = (ed.spread || 0) * Math.PI / 180;
+                const theta = (Math.random() - 0.5) * spreadRad;
+                
+                // Base direction with velocity magnitude
+                const baseVelX = (ed.velocityDirX || 0) * WORLD_TO_PIXEL;
+                const baseVelY = (ed.velocityDirY || 0) * WORLD_TO_PIXEL;
+                const velocity = (ed.velocity || 0) * WORLD_TO_PIXEL;
+                
+                // Add spread randomness (matching arcade)
+                const velX = baseVelX + Math.sin(theta) * velocity;
+                const velY = baseVelY + Math.cos(theta) * velocity;
+                
+                // Parse colors
+                const startColor = this.parseColor(ed.colorStart || '#ffffff');
+                const endColor = this.parseColor(ed.colorEnd || '#ffffff');
+                
+                // Calculate initial rotation (matching arcade)
+                const spawnRotationRad = ((ed.spawnRotation || 0) * Math.PI) / 180;
+                const initialRotation = ed.randomRotation ? Math.random() * Math.PI * 2 : spawnRotationRad;
+                const rotSpeed = ed.randomRotationSpeed ? (ed.rotationSpeed || 0) * (Math.random() - 0.5) : (ed.rotationSpeed || 0);
+                
+                // Turbulence per particle (matching arcade) - scaled to pixels
+                const turbulence = {
+                    x: (Math.random() - 0.5) * (ed.turbulence || 0) * WORLD_TO_PIXEL,
+                    y: (Math.random() - 0.5) * (ed.turbulence || 0) * WORLD_TO_PIXEL
+                };
+                
+                return {
+                    // Offset from emitter position
+                    offsetX: 0,
+                    offsetY: 0,
+                    // Velocity
+                    velX: velX,
+                    velY: velY,
+                    // Turbulence (added to velocity each frame)
+                    turbulence: turbulence,
+                    // Lifecycle
+                    life: 0,
+                    maxLife: ed.lifetime || 1,
+                    dead: false,
+                    // Size (in world units, scaled by emitter.scale when rendering)
+                    sizeStart: ed.sizeStart || 1,
+                    sizeEnd: ed.sizeEnd || 1,
+                    // Color
+                    startColor: startColor,
+                    endColor: endColor,
+                    // Opacity
+                    opacityStart: ed.opacityStart !== undefined ? ed.opacityStart : 1,
+                    opacityEnd: ed.opacityEnd !== undefined ? ed.opacityEnd : 0,
+                    // Rotation
+                    rotation: initialRotation,
+                    rotationSpeed: rotSpeed
+                };
+            },
+            
+            // Parse hex color to {r, g, b}
+            parseColor(hex) {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                if (result) {
+                    return {
+                        r: parseInt(result[1], 16),
+                        g: parseInt(result[2], 16),
+                        b: parseInt(result[3], 16)
+                    };
+                }
+                // Try short hex
+                const short = /^#?([a-f\d])([a-f\d])([a-f\d])$/i.exec(hex);
+                if (short) {
+                    return {
+                        r: parseInt(short[1] + short[1], 16),
+                        g: parseInt(short[2] + short[2], 16),
+                        b: parseInt(short[3] + short[3], 16)
+                    };
+                }
+                return { r: 255, g: 255, b: 255 };
+            },
+            
+            // Interpolate between two values
+            lerp(a, b, t) {
+                return a + (b - a) * t;
+            },
+            
+            // Update all emitters and particles
+            update(deltaTime) {
+                const dt = deltaTime / 1000; // Convert to seconds
+                
+                for (let i = this.emitters.length - 1; i >= 0; i--) {
+                    const emitter = this.emitters[i];
+                    if (!emitter.active) {
+                        // Remove inactive non-looping emitters with no particles
+                        if (!emitter.loop && emitter.particles.length === 0) {
+                            this.emitters.splice(i, 1);
+                        }
+                        continue;
+                    }
+                    
+                    const ed = emitter.effectData;
+                    
+                    // Update emitter position if following a target
+                    if (emitter.followTarget) {
+                        emitter.x = emitter.followTarget.x || emitter.x;
+                        emitter.y = emitter.followTarget.y || emitter.y;
+                        // Update scale based on target's depth
+                        if (emitter.followTarget.y !== undefined && battleState?.canvas?.height) {
+                            emitter.scale = 0.6 + (emitter.followTarget.y / battleState.canvas.height) * 0.4;
+                        }
+                    }
+                    
+                    // Emit new particles (matching arcade logic)
+                    if (emitter.emitElapsed < emitter.emitDuration) {
+                        // Accumulator pattern: emissionRate = particles per second
+                        emitter.particleAccumulator = (emitter.particleAccumulator || 0) + (ed.emissionRate || 1) * dt;
+                        
+                        // Emit particles while accumulator >= 1, capped at particleCount max
+                        while (emitter.particleAccumulator >= 1 && emitter.particles.length < (ed.particleCount || 10)) {
+                            emitter.particles.push(this.createParticle(emitter));
+                            emitter.particleAccumulator -= 1;
+                        }
+                        emitter.emitElapsed += dt;
+                    } else if (emitter.loop) {
+                        // Reset for looping
+                        emitter.emitElapsed = 0;
+                        emitter.particleAccumulator = 0;
+                    }
+                    
+                    // Update particles (matching arcade logic)
+                    // Scale factor to convert 3D world units to pixels
+                    const WORLD_TO_PIXEL = 20;
+                    
+                    for (let j = emitter.particles.length - 1; j >= 0; j--) {
+                        const p = emitter.particles[j];
+                        p.life += dt;
+                        
+                        // Remove dead particles
+                        if (p.life >= p.maxLife) {
+                            p.dead = true;
+                            emitter.particles.splice(j, 1);
+                            continue;
+                        }
+                        
+                        // Update velocity with turbulence (matching arcade)
+                        p.velX += p.turbulence.x * dt;
+                        p.velY += p.turbulence.y * dt;
+                        
+                        // Apply gravity to velocity (scaled to pixels)
+                        p.velY += (ed.gravity || 0) * WORLD_TO_PIXEL * dt;
+                        
+                        // Update offset from emitter position (matching arcade)
+                        p.offsetX += p.velX * dt;
+                        p.offsetY += p.velY * dt;
+                        
+                        // Update rotation
+                        p.rotation += p.rotationSpeed * dt;
+                    }
+                    
+                    // Remove completed non-looping emitters
+                    if (!emitter.loop && emitter.emitElapsed >= emitter.emitDuration && emitter.particles.length === 0) {
+                        if (emitter.onComplete) emitter.onComplete();
+                        this.emitters.splice(i, 1);
+                    }
+                }
+            },
+            
+            // Render all particles to a canvas context
+            render(ctx) {
+                ctx.save();
+                
+                for (const emitter of this.emitters) {
+                    const ed = emitter.effectData;
+                    const atlas = ed.atlasPath ? this.atlasCache[ed.atlasPath] : null;
+                    const isSprite = ed.particleType === 'sprite' && atlas;
+                    
+                    // Set blend mode
+                    if (ed.blendMode === 'additive') {
+                        ctx.globalCompositeOperation = 'lighter';
+                    } else {
+                        ctx.globalCompositeOperation = 'source-over';
+                    }
+                    
+                    for (const p of emitter.particles) {
+                        if (p.dead) continue;
+                        
+                        const t = p.life / p.maxLife; // 0 to 1 progress
+                        
+                        // Interpolate size (scaled by emitter scale)
+                        // Multiply by 20 to convert from 3D world units to reasonable pixel sizes
+                        const size = this.lerp(p.sizeStart, p.sizeEnd, t) * emitter.scale * 20;
+                        if (size <= 0) continue;
+                        
+                        // Interpolate opacity
+                        const opacity = this.lerp(p.opacityStart, p.opacityEnd, t);
+                        if (opacity <= 0) continue;
+                        
+                        // Interpolate color
+                        const r = Math.floor(this.lerp(p.startColor.r, p.endColor.r, t));
+                        const g = Math.floor(this.lerp(p.startColor.g, p.endColor.g, t));
+                        const b = Math.floor(this.lerp(p.startColor.b, p.endColor.b, t));
+                        
+                        // Calculate world position (emitter position + particle offset)
+                        const worldX = emitter.x + p.offsetX * emitter.scale;
+                        const worldY = emitter.y + p.offsetY * emitter.scale;
+                        
+                        ctx.save();
+                        ctx.translate(worldX, worldY);
+                        ctx.rotate(p.rotation);
+                        ctx.globalAlpha = opacity;
+                        
+                        if (isSprite) {
+                            // Draw sprite from atlas using UV coordinates
+                            // Flip Y coordinate to match arcade/editor orientation
+                            const uvX = ed.uvStartX || 0;
+                            const uvY = ed.uvStartY || 0;
+                            const uvW = (ed.uvEndX || 1) - uvX;
+                            const uvH = (ed.uvEndY || 1) - uvY;
+                            
+                            // Flip Y axis to match editor
+                            const flippedUvY = 1 - uvY - uvH;
+                            
+                            const srcX = uvX * atlas.width;
+                            const srcY = flippedUvY * atlas.height;
+                            const srcW = uvW * atlas.width;
+                            const srcH = uvH * atlas.height;
+                            
+                            // Use cached offscreen canvas for color tinting
+                            const { canvas: offscreen, ctx: offCtx, size: offSize } = this.getOffscreenCanvas(size);
+                            
+                            // Clear the area we'll use
+                            offCtx.clearRect(0, 0, offSize, offSize);
+                            
+                            // Draw sprite to offscreen canvas
+                            offCtx.globalCompositeOperation = 'source-over';
+                            offCtx.drawImage(
+                                atlas,
+                                srcX, srcY, srcW, srcH,
+                                0, 0, size, size
+                            );
+                            
+                            // Apply color tint - use lighter for additive, multiply for normal
+                            if (ed.blendMode === 'additive') {
+                                offCtx.globalCompositeOperation = 'lighter';
+                            } else {
+                                offCtx.globalCompositeOperation = 'multiply';
+                            }
+                            offCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+                            offCtx.fillRect(0, 0, size, size);
+                            
+                            // Restore alpha from original sprite
+                            offCtx.globalCompositeOperation = 'destination-in';
+                            offCtx.drawImage(
+                                atlas,
+                                srcX, srcY, srcW, srcH,
+                                0, 0, size, size
+                            );
+                            
+                            // Draw the tinted sprite to main canvas
+                            ctx.drawImage(offscreen, 0, 0, size, size, -size / 2, -size / 2, size, size);
+                        } else {
+                            // Draw colored circle fallback
+                            ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+                            ctx.beginPath();
+                            ctx.arc(0, 0, size / 2, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                        
+                        ctx.restore();
+                    }
+                }
+                
+                ctx.restore();
+            },
+            
+            // Clear all particles
+            clear() {
+                this.emitters = [];
+            },
+            
+            // Check if any particles are active
+            hasActiveParticles() {
+                return this.emitters.length > 0;
+            }
+        };
+        
+        // Helper function to spawn effect by name
+        async function spawnParticleEffect(effectName, x, y, scale = 1) {
+            const effectPath = `effect/${effectName}.json`;
+            return await particleSystem.spawn(effectPath, x, y, { scale: scale });
+        }
+        
+        // Preload common particle effects
+        async function preloadParticleEffects() {
+            const commonEffects = [
+                'effect/red_break_a.json',
+                'effect/blue_break_a.json',
+                'effect/green_break_a.json',
+                'effect/yellow_break_a.json',
+                'effect/combo_a.json',
+                'effect/zooko_special.json',
+                'effect/nate_special.json',
+                'effect/zancas_special.json',
+                'effect/cyberaxe_electric.json',
+                // Hero idle effects
+                'tunnelsofprivacy/effects/heros/zooko_idle.json',
+                'tunnelsofprivacy/effects/heros/nate_idle.json',
+                'tunnelsofprivacy/effects/heros/zancas_idle.json',
+                'tunnelsofprivacy/effects/heros/cyberaxe_idle.json'
+            ];
+            
+            for (const effectPath of commonEffects) {
+                try {
+                    await particleSystem.loadEffect(effectPath);
+                } catch (e) {
+                    // Effect may not exist, that's ok
+                }
+            }
+        }
+        
+        // Hero idle particle emitters (stored per hero)
+        const heroIdleEmitters = {};
+        
+        // Start looping particle effects on all heroes
+        async function startHeroIdleParticles() {
+            // Stop any existing emitters first
+            stopHeroIdleParticles();
+            
+            for (const hero of battleState.heroes) {
+                const heroName = hero.name.toLowerCase();
+                const effectPath = `tunnelsofprivacy/effects/heros/${heroName}_idle.json`;
+                
+                try {
+                    const emitter = await particleSystem.spawnLooping(effectPath, hero, {
+                        scale: 1.0 // Will auto-scale based on hero depth
+                    });
+                    if (emitter) {
+                        heroIdleEmitters[heroName] = emitter;
+                    }
+                } catch (e) {
+                    console.error(`Failed to start idle particles for ${heroName}:`, e);
+                }
+            }
+        }
+        
+        // Stop all hero idle particle effects
+        function stopHeroIdleParticles() {
+            for (const [heroName, emitter] of Object.entries(heroIdleEmitters)) {
+                if (emitter) {
+                    particleSystem.stopEmitter(emitter);
+                }
+            }
+            // Clear the references
+            for (const key of Object.keys(heroIdleEmitters)) {
+                delete heroIdleEmitters[key];
+            }
+        }
+        
+        // Stop idle particles for a specific hero (e.g., when they die or retreat)
+        function stopHeroIdleParticle(heroName) {
+            const key = heroName.toLowerCase();
+            if (heroIdleEmitters[key]) {
+                particleSystem.stopEmitter(heroIdleEmitters[key]);
+                delete heroIdleEmitters[key];
+            }
+        }
+        // ===== END CANVAS2D PARTICLE SYSTEM =====
         
         // Asset loading tracking
         let assetsToLoad = 0;
@@ -13691,6 +14185,9 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             battleState.pendingAction = null;
             battleState.allHeroes = []; // Reset for fresh battle - will be populated on retreat/death
             
+            // Start hero idle particle effects
+            startHeroIdleParticles();
+            
             // Check for heroes that entered battle already knocked out (0 HP)
             battleState.heroes.forEach(hero => {
                 if (hero.hp <= 0) {
@@ -14786,8 +15283,8 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                         spriteHeight = baseHeight;
                         spriteWidth = baseHeight * bossAspectRatio;
                         spriteX = enemy.x - spriteWidth / 2;
-                        // Position so BOTTOM of sprite is at enemy.y (feet on ground)
-                        spriteY = enemy.y - spriteHeight;
+                        // Center sprite on enemy.y (same as mobs)
+                        spriteY = enemy.y - spriteHeight / 2;
                     }
                     
                     ctx.save();
@@ -14820,12 +15317,13 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     // Sprite is centered on enemy.y, so top is at enemy.y - spriteHeight/2
                     barOffsetY = enemy.y - spriteHeight / 2 - (5 * depthScale);
                 } else {
-                    // For bosses, position above the sprite (which is now bottom-aligned)
+                    // For bosses: sprite is now centered on enemy.y (same as mobs)
                     // Level 100 boss is 2x larger
                     const isLevel100 = enemy.spritePath && enemy.spritePath.includes('lvl100');
                     const sizeMultiplier = isLevel100 ? 2.0 : 1.0;
                     const baseHeight = 250 * depthScale * sizeMultiplier;
-                    barOffsetY = enemy.y - baseHeight - (5 * depthScale);
+                    // Sprite top is at enemy.y - baseHeight/2
+                    barOffsetY = enemy.y - baseHeight / 2 - (5 * depthScale);
                 }
                 
                 // HP bar with text inside
@@ -15016,6 +15514,13 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     ctx.fillText(`💰 ${goldAmount}`, captive.x, goldY);
                 }
             }
+            
+            // Update and render particle system
+            const now = performance.now();
+            const deltaTime = particleSystem.lastTime ? now - particleSystem.lastTime : 16;
+            particleSystem.lastTime = now;
+            particleSystem.update(deltaTime);
+            particleSystem.render(ctx);
             
             // Draw hitboxes if enabled
             if (settings.showHitboxes) {
@@ -16045,6 +16550,31 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 
                 target.hp = Math.max(0, target.hp - finalDamage);
                 
+                // Spawn hit particle effect at target position
+                if (target.x && target.y) {
+                    const depthScale = 0.6 + (target.y / (battleState.canvas?.height || 720)) * 0.4;
+                    
+                    // Use hero-specific special effects for special attacks
+                    if (actionType === 'special' && battleState.heroes.includes(attacker)) {
+                        const heroName = attacker.name.toLowerCase();
+                        const specialEffects = {
+                            zooko: 'zooko_special',
+                            nate: 'nate_special',
+                            zancas: 'zancas_special',
+                            cyberaxe: 'cyberaxe_electric'
+                        };
+                        const effectName = specialEffects[heroName] || 'combo_a';
+                        spawnParticleEffect(effectName, target.x, target.y, depthScale * 1.5);
+                        // Add break effect too for extra impact
+                        spawnParticleEffect('red_break_a', target.x, target.y, depthScale);
+                    } else {
+                        // Regular attack - random break effect
+                        const breakEffects = ['red_break_a', 'red_break_b', 'red_break_c', 'blue_break_a', 'yellow_break_a'];
+                        const effectName = breakEffects[Math.floor(Math.random() * breakEffects.length)];
+                        spawnParticleEffect(effectName, target.x, target.y, depthScale);
+                    }
+                }
+                
                 // Update boss morale when they take damage
                 if (target.isBoss) {
                     updateBossMorale(target, 'took_damage');
@@ -16116,6 +16646,15 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 // Play enemy death sound if target is enemy
                 if (battleState.enemies.includes(target)) {
                     playEnemySfx(target, 'die');
+                }
+                
+                // Spawn death particle effect at target position
+                if (target.x && target.y) {
+                    const depthScale = 0.6 + (target.y / (battleState.canvas?.height || 720)) * 0.4;
+                    // Use multiple effects for a bigger death burst
+                    spawnParticleEffect('red_break_a', target.x, target.y, depthScale * 1.5);
+                    spawnParticleEffect('red_break_b', target.x - 20, target.y, depthScale * 1.2);
+                    spawnParticleEffect('red_break_c', target.x + 20, target.y, depthScale * 1.2);
                 }
                 
                 // Calculate XP multiplier based on dungeon level
@@ -16406,6 +16945,8 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     }
                     // Play hero knockout sound
                     playSfx(heroKey + 'Knockout');
+                    // Stop hero idle particles when knocked out
+                    stopHeroIdleParticle(target.name);
                 }
                 
                 const allHeroesDead = battleState.heroes.every(h => h.hp <= 0);
@@ -16566,6 +17107,8 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             battleState.active = false;
             currentScreen = 'dungeonMenu';
             stopBattleVideo(); // Stop and hide video background
+            stopHeroIdleParticles(); // Stop all hero particle effects
+            particleSystem.clear(); // Clear any remaining particles
             document.getElementById('battleScreen').style.display = 'none';
             document.getElementById('dungeonMenuScreen').style.display = 'block';
             
@@ -17617,6 +18160,16 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 'tunnelsofprivacy/items/meal_8.png',
                 'tunnelsofprivacy/items/meal_9.png',
                 'tunnelsofprivacy/items/meal_10.png',
+                // Particle effect atlases
+                'effect/atlas_a.png',
+                'effect/atlas_b.png',
+                'effect/atlas_c.png',
+                'effect/atlas_d.png',
+                'effect/atlas_e.png',
+                'effect/atlas_f.png',
+                'effect/atlas_g.png',
+                'effect/smoke_effects.png',
+                'effect/misc1_effects.png',
                 // Gear/backpack sprites
                 'tunnelsofprivacy/gear/zooko_backpack.png',
                 'tunnelsofprivacy/gear/nate_backpack.png',
@@ -17764,40 +18317,44 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 }
             }
             
-            // Preload SFX into pool
+            // Preload SFX - use simpler approach that doesn't hang
             const sfxKeys = Object.keys(SFX_PATHS);
             const sfxCount = sfxKeys.length;
             audioTotal += sfxCount;
             assetsToLoad += sfxCount;
             
+            // Track which SFX have been counted to prevent double-counting
+            const sfxCounted = new Set();
+            
             sfxKeys.forEach(key => {
                 const path = SFX_PATHS[key];
                 const audio = new Audio();
-                audio.preload = 'auto';
-                audio.src = path;
+                audio.preload = 'metadata'; // Use metadata instead of auto - faster and more reliable
                 
-                audio.addEventListener('canplaythrough', () => {
-                    audioLoaded++;
-                    assetsLoaded++;
-                    updateLoadingProgress();
-                }, { once: true });
-                
-                audio.addEventListener('error', (e) => {
-                    console.error(`Failed to preload SFX: ${key}`, e);
-                    audioLoaded++;
-                    assetsLoaded++;
-                    updateLoadingProgress();
-                }, { once: true });
-                
-                // Timeout fallback in case audio doesn't fire events
-                setTimeout(() => {
-                    if (!sfxPool[key]) {
+                const markLoaded = () => {
+                    if (!sfxCounted.has(key)) {
+                        sfxCounted.add(key);
                         audioLoaded++;
                         assetsLoaded++;
                         updateLoadingProgress();
                     }
-                }, 5000);
+                };
+                
+                audio.addEventListener('loadedmetadata', markLoaded, { once: true });
+                audio.addEventListener('canplaythrough', markLoaded, { once: true });
+                audio.addEventListener('error', (e) => {
+                    console.warn(`SFX preload failed (will load on demand): ${key}`);
+                    markLoaded();
+                }, { once: true });
+                
+                // Short timeout fallback - SFX will load on demand if needed
+                setTimeout(markLoaded, 5000);
+                
+                audio.src = path;
             });
+            
+            // Preload particle effect atlases and JSON configs
+            preloadParticleEffects();
             
             updateLoadingProgress();
         }

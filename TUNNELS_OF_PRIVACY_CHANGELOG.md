@@ -2,6 +2,99 @@
 
 # Changelog
 
+## v0.3.95 - Particle Visibility Fix (2025-12-03)
+- **Fixed invisible particles:**
+  - JSON effect files use 3D world units (size 1-5) which were too small for Canvas2D
+  - Added `WORLD_TO_PIXEL = 20` scale factor to convert to visible pixel sizes
+  - Size: 1-5 world units → 20-100 pixels
+  - Velocity, turbulence, and gravity all scaled consistently
+  - Particles now render at appropriate sizes for 2D canvas
+
+## v0.3.94 - Particle System & Preloader Fixes (2025-12-03)
+- **Particle system rendering fixes:**
+  - Fixed interpolation using correct `t` (life progress) variable
+  - Fixed particle world position: emitter position + offset * scale
+  - Emitter scale now properly applied to particle size
+  - Removed duplicate `const ed` declaration that caused lint error
+
+- **Particle physics aligned with arcade:**
+  - Emission uses accumulator pattern: `emissionRate` = particles/second
+  - `particleCount` is max alive particles (not burst count)
+  - Turbulence added to velocity each frame
+  - Gravity applied to Y velocity
+  - Position = emitter + (offset * scale)
+
+- **SFX preloader fix:**
+  - Fixed preloader hanging on random sound numbers
+  - Added `sfxCounted` Set to prevent double-counting from multiple events
+  - Changed to `preload: 'metadata'` for faster/more reliable loading
+  - Listen to both `loadedmetadata` and `canplaythrough` events
+  - 5-second timeout guarantees preloader completes
+  - Original bug: timeout checked `sfxPool[key]` which was never set during preload
+
+## v0.3.93 - Hero Idle Particle Effects (2025-12-03)
+- **Looping particle effects on hero sprites:**
+  - Each hero now has a unique idle particle effect that loops during battle
+  - Effects follow hero position and auto-scale with depth
+  - Zooko: `zooko_idle.json` - Red magic swirl
+  - Nate: `nate_idle.json`
+  - Zancas: `zancas_idle.json`
+  - CyberAxe: `cyberaxe_idle.json`
+
+- **Particle system enhancements:**
+  - Added `spawnLooping()` for continuous particle emitters
+  - Added `followTarget` option - emitters track moving objects
+  - Added `loop` option - emitters restart when emission completes
+  - Added `stopEmitter()` and `removeEmitter()` methods
+  - Looping emitters auto-scale based on target Y depth
+
+- **Hero idle particle lifecycle:**
+  - `startHeroIdleParticles()` - starts particles for all heroes at battle start
+  - `stopHeroIdleParticles()` - stops all hero particles at battle end
+  - `stopHeroIdleParticle(heroName)` - stops single hero (on knockout/retreat)
+  - Particles stop when hero is knocked out (HP <= 0)
+  - All particles cleared when battle ends
+
+- **Preloading:**
+  - Hero idle effect JSON files added to preload list
+
+## v0.3.92 - Canvas2D Particle System (2025-12-03)
+- **New particle system for battle effects:**
+  - Full Canvas2D particle system that reads arcade JSON effect files from `effect/` folder
+  - Supports sprite-based particles with texture atlases
+  - Sprite rendering with UV coordinates for atlas regions
+  - Color tinting via start/end color interpolation
+  - Opacity interpolation (fade in/out)
+  - Size interpolation (grow/shrink)
+  - Particle rotation and random rotation speed
+  - Gravity and turbulence physics
+  - Additive blend mode for glowy effects
+  - Emission rate control (particles per second)
+  - Emit duration (how long emitter spawns particles)
+  - Particle lifetime with automatic cleanup
+
+- **Particle effects on attacks:**
+  - Random break effects (red, blue, yellow) spawn on hit
+  - Hero-specific special effects for special attacks:
+    - Zooko: `zooko_special.json`
+    - Nate: `nate_special.json`
+    - Zancas: `zancas_special.json`
+    - CyberAxe: `cyberaxe_electric.json`
+  - Multiple death burst effects when enemies die
+  - Depth-scaled particles match sprite sizes
+
+- **Particle system API:**
+  - `particleSystem.spawn(effectPath, x, y, options)` - spawn effect
+  - `particleSystem.loadEffect(path)` - preload effect JSON
+  - `particleSystem.loadAtlas(path)` - preload atlas image
+  - `spawnParticleEffect(name, x, y, scale)` - helper function
+  - `preloadParticleEffects()` - preload common effects
+
+- **Asset preloading:**
+  - All particle atlases added to preload list (atlas_a through atlas_g, smoke_effects, misc1_effects)
+  - Effect JSON configs cached on first use
+  - Atlas images cached for reuse
+
 ## v0.3.91 - SFX Audio System (2025-12-03)
 - **New SFX audio system with pooled playback:**
   - Added `SFX_PATHS` object with all sound file paths
@@ -33,6 +126,12 @@
   - Changed `|| 25` to `?? 25` (nullish coalescing)
   - Volume 0 now correctly mutes videos instead of defaulting to 25
   - Affects: applyBgSoundVolume(), camp video, store video, client camp video
+
+- **Fixed boss sprite/hitbox alignment:**
+  - Boss sprites now centered on enemy.y (same as mobs)
+  - Changed from feet-aligned (`enemy.y - spriteHeight`) to centered (`enemy.y - spriteHeight / 2`)
+  - HP bar positioning updated to match centered sprite
+  - Yellow hitbox now properly aligns with boss body center
 
 ## v0.3.90 - Hero Selection Fix (2025-12-03)
 - **Fixed hero selection labels not showing in multiplayer:**
