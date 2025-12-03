@@ -1,0 +1,2256 @@
+{
+  "version": "1.0.0",
+  "arcs": {
+    "descent": {
+      "name": "Descent Arc",
+      "description": "Going down into the deep cryptographic underworld, culminating in the ultimate boss and the Sceptre of Privacy.",
+      "levelRange": [
+        1,
+        100
+      ]
+    },
+    "ascent": {
+      "name": "Ascent Arc",
+      "description": "The story flips: You climb up, escaping the depths, bringing privacy back to the surface world.",
+      "levelRange": [
+        101,
+        1000
+      ]
+    }
+  },
+  "zones": [
+    {
+      "id": "unshielded_approach_l001",
+      "name": "Level 1: The Unshielded Approach",
+      "arc": "descent",
+      "levelRange": [
+        1,
+        1
+      ],
+      "description": "You step into the newborn tunnels where every unshielded breath feels too loud against the stone.",
+      "theme": "surface",
+      "difficulty": "tutorial",
+      "enemies": [
+        "Leak Imps",
+        "Dustlings",
+        "Metadata Wisps"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The entrance to the Tunnels of Privacy, where novice adventurers first learn the importance of shielding their data from prying eyes."
+    },
+    {
+      "id": "unshielded_approach_l002",
+      "name": "Level 2: The Unshielded Approach",
+      "arc": "descent",
+      "levelRange": [
+        2,
+        2
+      ],
+      "description": "Faint daylight fades behind you as Dustlings stir, testing how careless you are with exposed data.",
+      "theme": "surface",
+      "difficulty": "tutorial",
+      "enemies": [
+        "Leak Imps",
+        "Dustlings",
+        "Metadata Wisps"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The entrance to the Tunnels of Privacy, where novice adventurers first learn the importance of shielding their data from prying eyes."
+    },
+    {
+      "id": "unshielded_approach_l003",
+      "name": "Level 3: The Unshielded Approach",
+      "arc": "descent",
+      "levelRange": [
+        3,
+        3
+      ],
+      "description": "Metadata Wisps drift like fireflies, trying to tag your every move with little glowing labels.",
+      "theme": "surface",
+      "difficulty": "tutorial",
+      "enemies": [
+        "Leak Imps",
+        "Dustlings",
+        "Metadata Wisps"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The entrance to the Tunnels of Privacy, where novice adventurers first learn the importance of shielding their data from prying eyes."
+    },
+    {
+      "id": "unshielded_approach_l004",
+      "name": "Level 4: The Unshielded Approach",
+      "arc": "descent",
+      "levelRange": [
+        4,
+        4
+      ],
+      "description": "The first crude traps hum ahead, built to punish anyone who walks through life with doors wide open.",
+      "theme": "surface",
+      "difficulty": "tutorial",
+      "enemies": [
+        "Leak Imps",
+        "Dustlings",
+        "Metadata Wisps"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The entrance to the Tunnels of Privacy, where novice adventurers first learn the importance of shielding their data from prying eyes."
+    },
+    {
+      "id": "unshielded_approach_l005",
+      "name": "Level 5: The Unshielded Approach",
+      "arc": "descent",
+      "levelRange": [
+        5,
+        5
+      ],
+      "description": "A cracked support beam reveals an older passage, scarred by the consequences of careless sharing.",
+      "theme": "surface",
+      "difficulty": "tutorial",
+      "enemies": [
+        "Leak Imps",
+        "Dustlings",
+        "Metadata Wisps"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The entrance to the Tunnels of Privacy, where novice adventurers first learn the importance of shielding their data from prying eyes."
+    },
+    {
+      "id": "unshielded_approach_l006",
+      "name": "Level 6: The Unshielded Approach",
+      "arc": "descent",
+      "levelRange": [
+        6,
+        6
+      ],
+      "description": "You tread past scratched warnings from earlier explorers who learned too late what leaking costs.",
+      "theme": "surface",
+      "difficulty": "tutorial",
+      "enemies": [
+        "Leak Imps",
+        "Dustlings",
+        "Metadata Wisps"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The entrance to the Tunnels of Privacy, where novice adventurers first learn the importance of shielding their data from prying eyes."
+    },
+    {
+      "id": "unshielded_approach_l007",
+      "name": "Level 7: The Unshielded Approach",
+      "arc": "descent",
+      "levelRange": [
+        7,
+        7
+      ],
+      "description": "Leak Imps chatter in the dark, sniffing for patterns in your path and habits in your timing.",
+      "theme": "surface",
+      "difficulty": "tutorial",
+      "enemies": [
+        "Leak Imps",
+        "Dustlings",
+        "Metadata Wisps"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The entrance to the Tunnels of Privacy, where novice adventurers first learn the importance of shielding their data from prying eyes."
+    },
+    {
+      "id": "unshielded_approach_l008",
+      "name": "Level 8: The Unshielded Approach",
+      "arc": "descent",
+      "levelRange": [
+        8,
+        8
+      ],
+      "description": "A narrow bridge of rusted grates forces you to cross slowly, fully aware of who might be watching.",
+      "theme": "surface",
+      "difficulty": "tutorial",
+      "enemies": [
+        "Leak Imps",
+        "Dustlings",
+        "Metadata Wisps"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The entrance to the Tunnels of Privacy, where novice adventurers first learn the importance of shielding their data from prying eyes."
+    },
+    {
+      "id": "unshielded_approach_l009",
+      "name": "Level 9: The Unshielded Approach",
+      "arc": "descent",
+      "levelRange": [
+        9,
+        9
+      ],
+      "description": "Torches gutter as the last hints of surface wind vanish, and the tunnels claim your attention fully.",
+      "theme": "surface",
+      "difficulty": "tutorial",
+      "enemies": [
+        "Leak Imps",
+        "Dustlings",
+        "Metadata Wisps"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The entrance to the Tunnels of Privacy, where novice adventurers first learn the importance of shielding their data from prying eyes."
+    },
+    {
+      "id": "unshielded_approach_l010",
+      "name": "Level 10: The Unshielded Approach",
+      "arc": "descent",
+      "levelRange": [
+        10,
+        10
+      ],
+      "description": "A silent chamber teaches you the first rule of survival here: shield first, move second, talk last.",
+      "theme": "surface",
+      "difficulty": "tutorial",
+      "enemies": [
+        "Leak Imps",
+        "Dustlings",
+        "Metadata Wisps"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The entrance to the Tunnels of Privacy, where novice adventurers first learn the importance of shielding their data from prying eyes."
+    },
+    {
+      "id": "broken_ledger_halls_l011",
+      "name": "Level 11: The Broken Ledger Halls",
+      "arc": "descent",
+      "levelRange": [
+        11,
+        11
+      ],
+      "description": "You enter halls lined with shattered ledgers, each page a monument to lives spent under a spotlight.",
+      "theme": "halls",
+      "difficulty": "easy",
+      "enemies": [
+        "Auditor Fragments",
+        "Watcher Golems"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Ancient halls where the records of transparent transactions crumble, haunted by entities that feed on exposed financial data."
+    },
+    {
+      "id": "broken_ledger_halls_l012",
+      "name": "Level 12: The Broken Ledger Halls",
+      "arc": "descent",
+      "levelRange": [
+        12,
+        12
+      ],
+      "description": "Watcher Golems patrol broken aisles, their glass eyes sweeping for the comfortingly predictable.",
+      "theme": "halls",
+      "difficulty": "easy",
+      "enemies": [
+        "Auditor Fragments",
+        "Watcher Golems"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Ancient halls where the records of transparent transactions crumble, haunted by entities that feed on exposed financial data."
+    },
+    {
+      "id": "broken_ledger_halls_l013",
+      "name": "Level 13: The Broken Ledger Halls",
+      "arc": "descent",
+      "levelRange": [
+        13,
+        13
+      ],
+      "description": "Auditor Fragments scrape across marble floors, reconstructing half-truths from crumbs of behavior.",
+      "theme": "halls",
+      "difficulty": "easy",
+      "enemies": [
+        "Auditor Fragments",
+        "Watcher Golems"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Ancient halls where the records of transparent transactions crumble, haunted by entities that feed on exposed financial data."
+    },
+    {
+      "id": "broken_ledger_halls_l014",
+      "name": "Level 14: The Broken Ledger Halls",
+      "arc": "descent",
+      "levelRange": [
+        14,
+        14
+      ],
+      "description": "You pass pillars carved with transaction histories, every mistake immortalized in public stone.",
+      "theme": "halls",
+      "difficulty": "easy",
+      "enemies": [
+        "Auditor Fragments",
+        "Watcher Golems"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Ancient halls where the records of transparent transactions crumble, haunted by entities that feed on exposed financial data."
+    },
+    {
+      "id": "broken_ledger_halls_l015",
+      "name": "Level 15: The Broken Ledger Halls",
+      "arc": "descent",
+      "levelRange": [
+        15,
+        15
+      ],
+      "description": "A shattered vault door hangs open, its hinges torn by something that hated transparency itself.",
+      "theme": "halls",
+      "difficulty": "easy",
+      "enemies": [
+        "Auditor Fragments",
+        "Watcher Golems"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Ancient halls where the records of transparent transactions crumble, haunted by entities that feed on exposed financial data."
+    },
+    {
+      "id": "broken_ledger_halls_l016",
+      "name": "Level 16: The Broken Ledger Halls",
+      "arc": "descent",
+      "levelRange": [
+        16,
+        16
+      ],
+      "description": "Dust motes swirl around abandoned books, each ledger a story of someone who never got to hide.",
+      "theme": "halls",
+      "difficulty": "easy",
+      "enemies": [
+        "Auditor Fragments",
+        "Watcher Golems"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Ancient halls where the records of transparent transactions crumble, haunted by entities that feed on exposed financial data."
+    },
+    {
+      "id": "broken_ledger_halls_l017",
+      "name": "Level 17: The Broken Ledger Halls",
+      "arc": "descent",
+      "levelRange": [
+        17,
+        17
+      ],
+      "description": "The air vibrates with the echo of old audits, as if the walls still demand explanations from you.",
+      "theme": "halls",
+      "difficulty": "easy",
+      "enemies": [
+        "Auditor Fragments",
+        "Watcher Golems"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Ancient halls where the records of transparent transactions crumble, haunted by entities that feed on exposed financial data."
+    },
+    {
+      "id": "broken_ledger_halls_l018",
+      "name": "Level 18: The Broken Ledger Halls",
+      "arc": "descent",
+      "levelRange": [
+        18,
+        18
+      ],
+      "description": "Watcher Golems glitch and stutter, trying to reconcile what you are with what the records allow.",
+      "theme": "halls",
+      "difficulty": "easy",
+      "enemies": [
+        "Auditor Fragments",
+        "Watcher Golems"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Ancient halls where the records of transparent transactions crumble, haunted by entities that feed on exposed financial data."
+    },
+    {
+      "id": "broken_ledger_halls_l019",
+      "name": "Level 19: The Broken Ledger Halls",
+      "arc": "descent",
+      "levelRange": [
+        19,
+        19
+      ],
+      "description": "You cross a balcony above an endless archive, shelves collapsing under the weight of exposed lives.",
+      "theme": "halls",
+      "difficulty": "easy",
+      "enemies": [
+        "Auditor Fragments",
+        "Watcher Golems"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Ancient halls where the records of transparent transactions crumble, haunted by entities that feed on exposed financial data."
+    },
+    {
+      "id": "broken_ledger_halls_l020",
+      "name": "Level 20: The Broken Ledger Halls",
+      "arc": "descent",
+      "levelRange": [
+        20,
+        20
+      ],
+      "description": "At the end of the hall, you feel a quiet defiance rise: not every page needs to be written in ink.",
+      "theme": "halls",
+      "difficulty": "easy",
+      "enemies": [
+        "Auditor Fragments",
+        "Watcher Golems"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Ancient halls where the records of transparent transactions crumble, haunted by entities that feed on exposed financial data."
+    },
+    {
+      "id": "trusted_setup_catacombs_l021",
+      "name": "Level 21: The Trusted Setup Catacombs",
+      "arc": "descent",
+      "levelRange": [
+        21,
+        21
+      ],
+      "description": "Stone steps carry you down into the Catacombs, where failed ceremonies sleep beside uneasy secrets.",
+      "theme": "catacombs",
+      "difficulty": "easy",
+      "enemies": [
+        "Ceremony Ghosts",
+        "Parameter Wraiths",
+        "Toxic Waste Slimes"
+      ],
+      "miniboss": "The Parameter Shade",
+      "boss": null,
+      "lore": "Deep crypts containing the remnants of cryptographic ceremonies past. Failed trusted setups left behind corrupted parameters that now walk as undead."
+    },
+    {
+      "id": "trusted_setup_catacombs_l022",
+      "name": "Level 22: The Trusted Setup Catacombs",
+      "arc": "descent",
+      "levelRange": [
+        22,
+        22
+      ],
+      "description": "Ceremony Ghosts drift between coffins of broken parameters, whispering about trust given too freely.",
+      "theme": "catacombs",
+      "difficulty": "easy",
+      "enemies": [
+        "Ceremony Ghosts",
+        "Parameter Wraiths",
+        "Toxic Waste Slimes"
+      ],
+      "miniboss": "The Parameter Shade",
+      "boss": null,
+      "lore": "Deep crypts containing the remnants of cryptographic ceremonies past. Failed trusted setups left behind corrupted parameters that now walk as undead."
+    },
+    {
+      "id": "trusted_setup_catacombs_l023",
+      "name": "Level 23: The Trusted Setup Catacombs",
+      "arc": "descent",
+      "levelRange": [
+        23,
+        23
+      ],
+      "description": "You brush past sigils carved for long-dead rituals, their intent pure but their execution flawed.",
+      "theme": "catacombs",
+      "difficulty": "easy",
+      "enemies": [
+        "Ceremony Ghosts",
+        "Parameter Wraiths",
+        "Toxic Waste Slimes"
+      ],
+      "miniboss": "The Parameter Shade",
+      "boss": null,
+      "lore": "Deep crypts containing the remnants of cryptographic ceremonies past. Failed trusted setups left behind corrupted parameters that now walk as undead."
+    },
+    {
+      "id": "trusted_setup_catacombs_l024",
+      "name": "Level 24: The Trusted Setup Catacombs",
+      "arc": "descent",
+      "levelRange": [
+        24,
+        24
+      ],
+      "description": "Toxic Waste Slimes bubble in cracked basins, reminders of what happens when power is not disposed of.",
+      "theme": "catacombs",
+      "difficulty": "easy",
+      "enemies": [
+        "Ceremony Ghosts",
+        "Parameter Wraiths",
+        "Toxic Waste Slimes"
+      ],
+      "miniboss": "The Parameter Shade",
+      "boss": null,
+      "lore": "Deep crypts containing the remnants of cryptographic ceremonies past. Failed trusted setups left behind corrupted parameters that now walk as undead."
+    },
+    {
+      "id": "trusted_setup_catacombs_l025",
+      "name": "Level 25: The Trusted Setup Catacombs",
+      "arc": "descent",
+      "levelRange": [
+        25,
+        25
+      ],
+      "description": "Rows of masks line the walls, each worn by a participant who swore to vanish after the ritual ended.",
+      "theme": "catacombs",
+      "difficulty": "easy",
+      "enemies": [
+        "Ceremony Ghosts",
+        "Parameter Wraiths",
+        "Toxic Waste Slimes"
+      ],
+      "miniboss": "The Parameter Shade",
+      "boss": null,
+      "lore": "Deep crypts containing the remnants of cryptographic ceremonies past. Failed trusted setups left behind corrupted parameters that now walk as undead."
+    },
+    {
+      "id": "trusted_setup_catacombs_l026",
+      "name": "Level 26: The Trusted Setup Catacombs",
+      "arc": "descent",
+      "levelRange": [
+        26,
+        26
+      ],
+      "description": "Parameter Wraiths coil around rusted braziers, feeding on doubts you did not realize you carried.",
+      "theme": "catacombs",
+      "difficulty": "easy",
+      "enemies": [
+        "Ceremony Ghosts",
+        "Parameter Wraiths",
+        "Toxic Waste Slimes"
+      ],
+      "miniboss": "The Parameter Shade",
+      "boss": null,
+      "lore": "Deep crypts containing the remnants of cryptographic ceremonies past. Failed trusted setups left behind corrupted parameters that now walk as undead."
+    },
+    {
+      "id": "trusted_setup_catacombs_l027",
+      "name": "Level 27: The Trusted Setup Catacombs",
+      "arc": "descent",
+      "levelRange": [
+        27,
+        27
+      ],
+      "description": "You find a circle of stone chairs, each empty, each humming with the memory of a promise to forget.",
+      "theme": "catacombs",
+      "difficulty": "easy",
+      "enemies": [
+        "Ceremony Ghosts",
+        "Parameter Wraiths",
+        "Toxic Waste Slimes"
+      ],
+      "miniboss": "The Parameter Shade",
+      "boss": null,
+      "lore": "Deep crypts containing the remnants of cryptographic ceremonies past. Failed trusted setups left behind corrupted parameters that now walk as undead."
+    },
+    {
+      "id": "trusted_setup_catacombs_l028",
+      "name": "Level 28: The Trusted Setup Catacombs",
+      "arc": "descent",
+      "levelRange": [
+        28,
+        28
+      ],
+      "description": "A sealed crypt door rattles as unseen voices argue about whether any setup can ever be fully trusted.",
+      "theme": "catacombs",
+      "difficulty": "easy",
+      "enemies": [
+        "Ceremony Ghosts",
+        "Parameter Wraiths",
+        "Toxic Waste Slimes"
+      ],
+      "miniboss": "The Parameter Shade",
+      "boss": null,
+      "lore": "Deep crypts containing the remnants of cryptographic ceremonies past. Failed trusted setups left behind corrupted parameters that now walk as undead."
+    },
+    {
+      "id": "trusted_setup_catacombs_l029",
+      "name": "Level 29: The Trusted Setup Catacombs",
+      "arc": "descent",
+      "levelRange": [
+        29,
+        29
+      ],
+      "description": "Tunnels bend into a low chamber where discarded keys glow faintly, no longer safe but not yet dead.",
+      "theme": "catacombs",
+      "difficulty": "easy",
+      "enemies": [
+        "Ceremony Ghosts",
+        "Parameter Wraiths",
+        "Toxic Waste Slimes"
+      ],
+      "miniboss": "The Parameter Shade",
+      "boss": null,
+      "lore": "Deep crypts containing the remnants of cryptographic ceremonies past. Failed trusted setups left behind corrupted parameters that now walk as undead."
+    },
+    {
+      "id": "trusted_setup_catacombs_l030",
+      "name": "Level 30: The Trusted Setup Catacombs",
+      "arc": "descent",
+      "levelRange": [
+        30,
+        30
+      ],
+      "description": "Beyond a final arch, you feel the Catacombs release you, carrying forward a healthier suspicion.",
+      "theme": "catacombs",
+      "difficulty": "easy",
+      "enemies": [
+        "Ceremony Ghosts",
+        "Parameter Wraiths",
+        "Toxic Waste Slimes"
+      ],
+      "miniboss": "The Parameter Shade",
+      "boss": null,
+      "lore": "Deep crypts containing the remnants of cryptographic ceremonies past. Failed trusted setups left behind corrupted parameters that now walk as undead."
+    },
+    {
+      "id": "forked_maze_l031",
+      "name": "Level 31: The Forked Maze",
+      "arc": "descent",
+      "levelRange": [
+        31,
+        31
+      ],
+      "description": "You step into corridors that do not agree with themselves, each turn arguing with the last.",
+      "theme": "maze",
+      "difficulty": "medium",
+      "enemies": [
+        "Block Ghosts",
+        "Reorg Phantoms",
+        "Consensus Shifters",
+        "Fork Sprites"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A labyrinth where reality itself forks and merges. Unstable consensus creates corridors that shift and change, trapping unwary travelers in orphaned branches."
+    },
+    {
+      "id": "forked_maze_l032",
+      "name": "Level 32: The Forked Maze",
+      "arc": "descent",
+      "levelRange": [
+        32,
+        32
+      ],
+      "description": "Block Ghosts flicker in and out of existence, replaying alternative pasts that never quite settled.",
+      "theme": "maze",
+      "difficulty": "medium",
+      "enemies": [
+        "Block Ghosts",
+        "Reorg Phantoms",
+        "Consensus Shifters",
+        "Fork Sprites"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A labyrinth where reality itself forks and merges. Unstable consensus creates corridors that shift and change, trapping unwary travelers in orphaned branches."
+    },
+    {
+      "id": "forked_maze_l033",
+      "name": "Level 33: The Forked Maze",
+      "arc": "descent",
+      "levelRange": [
+        33,
+        33
+      ],
+      "description": "Walls stretch and contract as Consensus Shifters rewrite which paths were ever really here.",
+      "theme": "maze",
+      "difficulty": "medium",
+      "enemies": [
+        "Block Ghosts",
+        "Reorg Phantoms",
+        "Consensus Shifters",
+        "Fork Sprites"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A labyrinth where reality itself forks and merges. Unstable consensus creates corridors that shift and change, trapping unwary travelers in orphaned branches."
+    },
+    {
+      "id": "forked_maze_l034",
+      "name": "Level 34: The Forked Maze",
+      "arc": "descent",
+      "levelRange": [
+        34,
+        34
+      ],
+      "description": "You follow a route that dissolves behind you, orphaned like a forgotten chain of decisions.",
+      "theme": "maze",
+      "difficulty": "medium",
+      "enemies": [
+        "Block Ghosts",
+        "Reorg Phantoms",
+        "Consensus Shifters",
+        "Fork Sprites"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A labyrinth where reality itself forks and merges. Unstable consensus creates corridors that shift and change, trapping unwary travelers in orphaned branches."
+    },
+    {
+      "id": "forked_maze_l035",
+      "name": "Level 35: The Forked Maze",
+      "arc": "descent",
+      "levelRange": [
+        35,
+        35
+      ],
+      "description": "Fork Sprites dance at intersections, offering shortcuts that vanish the moment you commit.",
+      "theme": "maze",
+      "difficulty": "medium",
+      "enemies": [
+        "Block Ghosts",
+        "Reorg Phantoms",
+        "Consensus Shifters",
+        "Fork Sprites"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A labyrinth where reality itself forks and merges. Unstable consensus creates corridors that shift and change, trapping unwary travelers in orphaned branches."
+    },
+    {
+      "id": "forked_maze_l036",
+      "name": "Level 36: The Forked Maze",
+      "arc": "descent",
+      "levelRange": [
+        36,
+        36
+      ],
+      "description": "Reorg Phantoms sweep through the maze, rolling back your progress just to see if you notice.",
+      "theme": "maze",
+      "difficulty": "medium",
+      "enemies": [
+        "Block Ghosts",
+        "Reorg Phantoms",
+        "Consensus Shifters",
+        "Fork Sprites"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A labyrinth where reality itself forks and merges. Unstable consensus creates corridors that shift and change, trapping unwary travelers in orphaned branches."
+    },
+    {
+      "id": "forked_maze_l037",
+      "name": "Level 37: The Forked Maze",
+      "arc": "descent",
+      "levelRange": [
+        37,
+        37
+      ],
+      "description": "An entire hallway resets in front of you, insisting that you arrived from a direction you never took.",
+      "theme": "maze",
+      "difficulty": "medium",
+      "enemies": [
+        "Block Ghosts",
+        "Reorg Phantoms",
+        "Consensus Shifters",
+        "Fork Sprites"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A labyrinth where reality itself forks and merges. Unstable consensus creates corridors that shift and change, trapping unwary travelers in orphaned branches."
+    },
+    {
+      "id": "forked_maze_l038",
+      "name": "Level 38: The Forked Maze",
+      "arc": "descent",
+      "levelRange": [
+        38,
+        38
+      ],
+      "description": "You glimpse a version of yourself down a parallel passage, making a choice you did not make.",
+      "theme": "maze",
+      "difficulty": "medium",
+      "enemies": [
+        "Block Ghosts",
+        "Reorg Phantoms",
+        "Consensus Shifters",
+        "Fork Sprites"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A labyrinth where reality itself forks and merges. Unstable consensus creates corridors that shift and change, trapping unwary travelers in orphaned branches."
+    },
+    {
+      "id": "forked_maze_l039",
+      "name": "Level 39: The Forked Maze",
+      "arc": "descent",
+      "levelRange": [
+        39,
+        39
+      ],
+      "description": "A spiral stairwell loops back on itself twice, forcing you to trust your memory more than the map.",
+      "theme": "maze",
+      "difficulty": "medium",
+      "enemies": [
+        "Block Ghosts",
+        "Reorg Phantoms",
+        "Consensus Shifters",
+        "Fork Sprites"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A labyrinth where reality itself forks and merges. Unstable consensus creates corridors that shift and change, trapping unwary travelers in orphaned branches."
+    },
+    {
+      "id": "forked_maze_l040",
+      "name": "Level 40: The Forked Maze",
+      "arc": "descent",
+      "levelRange": [
+        40,
+        40
+      ],
+      "description": "At the maze\u2019s heart, you realize stability is not given; it is fought for one confirmed step at a time.",
+      "theme": "maze",
+      "difficulty": "medium",
+      "enemies": [
+        "Block Ghosts",
+        "Reorg Phantoms",
+        "Consensus Shifters",
+        "Fork Sprites"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A labyrinth where reality itself forks and merges. Unstable consensus creates corridors that shift and change, trapping unwary travelers in orphaned branches."
+    },
+    {
+      "id": "fungibility_labyrinth_l041",
+      "name": "Level 41: The Fungibility Labyrinth",
+      "arc": "descent",
+      "levelRange": [
+        41,
+        41
+      ],
+      "description": "The floor tiles shimmer with stains that reshape into different coins each time you blink.",
+      "theme": "labyrinth",
+      "difficulty": "medium",
+      "enemies": [
+        "Tainted Coin Hydras",
+        "Purity Shifters",
+        "Value Illusions",
+        "Fungibility Leeches"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A twisted maze where coins lose their fungibility. Tainted assets multiply like hydra heads, and the very concept of equal value becomes corrupted."
+    },
+    {
+      "id": "fungibility_labyrinth_l042",
+      "name": "Level 42: The Fungibility Labyrinth",
+      "arc": "descent",
+      "levelRange": [
+        42,
+        42
+      ],
+      "description": "Tainted Coin Hydras hiss as their heads split, every hit spawning new accusations of impurity.",
+      "theme": "labyrinth",
+      "difficulty": "medium",
+      "enemies": [
+        "Tainted Coin Hydras",
+        "Purity Shifters",
+        "Value Illusions",
+        "Fungibility Leeches"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A twisted maze where coins lose their fungibility. Tainted assets multiply like hydra heads, and the very concept of equal value becomes corrupted."
+    },
+    {
+      "id": "fungibility_labyrinth_l043",
+      "name": "Level 43: The Fungibility Labyrinth",
+      "arc": "descent",
+      "levelRange": [
+        43,
+        43
+      ],
+      "description": "Value Illusions paint some corridors in gold and others in rust, though they all lead the same way.",
+      "theme": "labyrinth",
+      "difficulty": "medium",
+      "enemies": [
+        "Tainted Coin Hydras",
+        "Purity Shifters",
+        "Value Illusions",
+        "Fungibility Leeches"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A twisted maze where coins lose their fungibility. Tainted assets multiply like hydra heads, and the very concept of equal value becomes corrupted."
+    },
+    {
+      "id": "fungibility_labyrinth_l044",
+      "name": "Level 44: The Fungibility Labyrinth",
+      "arc": "descent",
+      "levelRange": [
+        44,
+        44
+      ],
+      "description": "Purity Shifters slither along the walls, branding some paths acceptable and others forever suspect.",
+      "theme": "labyrinth",
+      "difficulty": "medium",
+      "enemies": [
+        "Tainted Coin Hydras",
+        "Purity Shifters",
+        "Value Illusions",
+        "Fungibility Leeches"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A twisted maze where coins lose their fungibility. Tainted assets multiply like hydra heads, and the very concept of equal value becomes corrupted."
+    },
+    {
+      "id": "fungibility_labyrinth_l045",
+      "name": "Level 45: The Fungibility Labyrinth",
+      "arc": "descent",
+      "levelRange": [
+        45,
+        45
+      ],
+      "description": "You pass a fountain that pours identical coins into two pools, yet only one is deemed worthy.",
+      "theme": "labyrinth",
+      "difficulty": "medium",
+      "enemies": [
+        "Tainted Coin Hydras",
+        "Purity Shifters",
+        "Value Illusions",
+        "Fungibility Leeches"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A twisted maze where coins lose their fungibility. Tainted assets multiply like hydra heads, and the very concept of equal value becomes corrupted."
+    },
+    {
+      "id": "fungibility_labyrinth_l046",
+      "name": "Level 46: The Fungibility Labyrinth",
+      "arc": "descent",
+      "levelRange": [
+        46,
+        46
+      ],
+      "description": "Fungibility Leeches cling to discarded purses, draining worth based on rumors rather than reality.",
+      "theme": "labyrinth",
+      "difficulty": "medium",
+      "enemies": [
+        "Tainted Coin Hydras",
+        "Purity Shifters",
+        "Value Illusions",
+        "Fungibility Leeches"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A twisted maze where coins lose their fungibility. Tainted assets multiply like hydra heads, and the very concept of equal value becomes corrupted."
+    },
+    {
+      "id": "fungibility_labyrinth_l047",
+      "name": "Level 47: The Fungibility Labyrinth",
+      "arc": "descent",
+      "levelRange": [
+        47,
+        47
+      ],
+      "description": "A mural shows merchants refusing coins not for what they are, but for where they once have been.",
+      "theme": "labyrinth",
+      "difficulty": "medium",
+      "enemies": [
+        "Tainted Coin Hydras",
+        "Purity Shifters",
+        "Value Illusions",
+        "Fungibility Leeches"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A twisted maze where coins lose their fungibility. Tainted assets multiply like hydra heads, and the very concept of equal value becomes corrupted."
+    },
+    {
+      "id": "fungibility_labyrinth_l048",
+      "name": "Level 48: The Fungibility Labyrinth",
+      "arc": "descent",
+      "levelRange": [
+        48,
+        48
+      ],
+      "description": "Hydra shadows loom across a crossroads, daring you to believe that history defines value forever.",
+      "theme": "labyrinth",
+      "difficulty": "medium",
+      "enemies": [
+        "Tainted Coin Hydras",
+        "Purity Shifters",
+        "Value Illusions",
+        "Fungibility Leeches"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A twisted maze where coins lose their fungibility. Tainted assets multiply like hydra heads, and the very concept of equal value becomes corrupted."
+    },
+    {
+      "id": "fungibility_labyrinth_l049",
+      "name": "Level 49: The Fungibility Labyrinth",
+      "arc": "descent",
+      "levelRange": [
+        49,
+        49
+      ],
+      "description": "As you navigate the labyrinth, you feel the weight of labels that cling to money and to people alike.",
+      "theme": "labyrinth",
+      "difficulty": "medium",
+      "enemies": [
+        "Tainted Coin Hydras",
+        "Purity Shifters",
+        "Value Illusions",
+        "Fungibility Leeches"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A twisted maze where coins lose their fungibility. Tainted assets multiply like hydra heads, and the very concept of equal value becomes corrupted."
+    },
+    {
+      "id": "fungibility_labyrinth_l050",
+      "name": "Level 50: The Fungibility Labyrinth",
+      "arc": "descent",
+      "levelRange": [
+        50,
+        50
+      ],
+      "description": "At the exit, you swear that in your world, a coin will be just a coin again, nothing more, nothing less.",
+      "theme": "labyrinth",
+      "difficulty": "medium",
+      "enemies": [
+        "Tainted Coin Hydras",
+        "Purity Shifters",
+        "Value Illusions",
+        "Fungibility Leeches"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A twisted maze where coins lose their fungibility. Tainted assets multiply like hydra heads, and the very concept of equal value becomes corrupted."
+    },
+    {
+      "id": "counterfeit_vaults_l051",
+      "name": "Level 51: The Counterfeit Vaults",
+      "arc": "descent",
+      "levelRange": [
+        51,
+        51
+      ],
+      "description": "You descend into vaults that were never meant to exist, their doors etched with counterfeit sigils.",
+      "theme": "vaults",
+      "difficulty": "medium",
+      "enemies": [
+        "Nullifier Shades",
+        "Supply Phantoms",
+        "Issuance Oozes",
+        "Double-Spend Specters"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Forbidden vaults where counterfeit creation was attempted. The failed experiments left behind entities that represent inflation, double-spending, and supply corruption."
+    },
+    {
+      "id": "counterfeit_vaults_l052",
+      "name": "Level 52: The Counterfeit Vaults",
+      "arc": "descent",
+      "levelRange": [
+        52,
+        52
+      ],
+      "description": "Nullifier Shades drift between safety deposit boxes, erasing traces that were never honestly earned.",
+      "theme": "vaults",
+      "difficulty": "medium",
+      "enemies": [
+        "Nullifier Shades",
+        "Supply Phantoms",
+        "Issuance Oozes",
+        "Double-Spend Specters"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Forbidden vaults where counterfeit creation was attempted. The failed experiments left behind entities that represent inflation, double-spending, and supply corruption."
+    },
+    {
+      "id": "counterfeit_vaults_l053",
+      "name": "Level 53: The Counterfeit Vaults",
+      "arc": "descent",
+      "levelRange": [
+        53,
+        53
+      ],
+      "description": "Supply Phantoms swell and shrink in the corners, mocking any attempt to count what truly exists.",
+      "theme": "vaults",
+      "difficulty": "medium",
+      "enemies": [
+        "Nullifier Shades",
+        "Supply Phantoms",
+        "Issuance Oozes",
+        "Double-Spend Specters"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Forbidden vaults where counterfeit creation was attempted. The failed experiments left behind entities that represent inflation, double-spending, and supply corruption."
+    },
+    {
+      "id": "counterfeit_vaults_l054",
+      "name": "Level 54: The Counterfeit Vaults",
+      "arc": "descent",
+      "levelRange": [
+        54,
+        54
+      ],
+      "description": "Issuance Oozes seep from cracked safes, multiplying value that should have stayed constant.",
+      "theme": "vaults",
+      "difficulty": "medium",
+      "enemies": [
+        "Nullifier Shades",
+        "Supply Phantoms",
+        "Issuance Oozes",
+        "Double-Spend Specters"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Forbidden vaults where counterfeit creation was attempted. The failed experiments left behind entities that represent inflation, double-spending, and supply corruption."
+    },
+    {
+      "id": "counterfeit_vaults_l055",
+      "name": "Level 55: The Counterfeit Vaults",
+      "arc": "descent",
+      "levelRange": [
+        55,
+        55
+      ],
+      "description": "Double-Spend Specters replay the same transaction in overlapping echoes, demanding to be believed.",
+      "theme": "vaults",
+      "difficulty": "medium",
+      "enemies": [
+        "Nullifier Shades",
+        "Supply Phantoms",
+        "Issuance Oozes",
+        "Double-Spend Specters"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Forbidden vaults where counterfeit creation was attempted. The failed experiments left behind entities that represent inflation, double-spending, and supply corruption."
+    },
+    {
+      "id": "counterfeit_vaults_l056",
+      "name": "Level 56: The Counterfeit Vaults",
+      "arc": "descent",
+      "levelRange": [
+        56,
+        56
+      ],
+      "description": "You cross a chamber where scales refuse to balance, their weights flickering between numbers.",
+      "theme": "vaults",
+      "difficulty": "medium",
+      "enemies": [
+        "Nullifier Shades",
+        "Supply Phantoms",
+        "Issuance Oozes",
+        "Double-Spend Specters"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Forbidden vaults where counterfeit creation was attempted. The failed experiments left behind entities that represent inflation, double-spending, and supply corruption."
+    },
+    {
+      "id": "counterfeit_vaults_l057",
+      "name": "Level 57: The Counterfeit Vaults",
+      "arc": "descent",
+      "levelRange": [
+        57,
+        57
+      ],
+      "description": "Vault doors open onto empty rooms, reminders that guarantees mean nothing without verifiable truth.",
+      "theme": "vaults",
+      "difficulty": "medium",
+      "enemies": [
+        "Nullifier Shades",
+        "Supply Phantoms",
+        "Issuance Oozes",
+        "Double-Spend Specters"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Forbidden vaults where counterfeit creation was attempted. The failed experiments left behind entities that represent inflation, double-spending, and supply corruption."
+    },
+    {
+      "id": "counterfeit_vaults_l058",
+      "name": "Level 58: The Counterfeit Vaults",
+      "arc": "descent",
+      "levelRange": [
+        58,
+        58
+      ],
+      "description": "A cold ledger lies on a podium, its ink rewriting totals every time you glance away.",
+      "theme": "vaults",
+      "difficulty": "medium",
+      "enemies": [
+        "Nullifier Shades",
+        "Supply Phantoms",
+        "Issuance Oozes",
+        "Double-Spend Specters"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Forbidden vaults where counterfeit creation was attempted. The failed experiments left behind entities that represent inflation, double-spending, and supply corruption."
+    },
+    {
+      "id": "counterfeit_vaults_l059",
+      "name": "Level 59: The Counterfeit Vaults",
+      "arc": "descent",
+      "levelRange": [
+        59,
+        59
+      ],
+      "description": "The deeper vaults hum with the anger of those who trusted balances that never really added up.",
+      "theme": "vaults",
+      "difficulty": "medium",
+      "enemies": [
+        "Nullifier Shades",
+        "Supply Phantoms",
+        "Issuance Oozes",
+        "Double-Spend Specters"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Forbidden vaults where counterfeit creation was attempted. The failed experiments left behind entities that represent inflation, double-spending, and supply corruption."
+    },
+    {
+      "id": "counterfeit_vaults_l060",
+      "name": "Level 60: The Counterfeit Vaults",
+      "arc": "descent",
+      "levelRange": [
+        60,
+        60
+      ],
+      "description": "Leaving the Counterfeit Vaults, you cling tighter to systems that can prove, not just promise.",
+      "theme": "vaults",
+      "difficulty": "medium",
+      "enemies": [
+        "Nullifier Shades",
+        "Supply Phantoms",
+        "Issuance Oozes",
+        "Double-Spend Specters"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Forbidden vaults where counterfeit creation was attempted. The failed experiments left behind entities that represent inflation, double-spending, and supply corruption."
+    },
+    {
+      "id": "orchard_sanctum_l061",
+      "name": "Level 61: The Orchard Sanctum",
+      "arc": "descent",
+      "levelRange": [
+        61,
+        61
+      ],
+      "description": "You enter the Orchard Sanctum, where shielded temples ring with the quiet hum of private proofs.",
+      "theme": "sanctum",
+      "difficulty": "hard",
+      "enemies": [
+        "Corrupted Proof Angels",
+        "Address Spirits",
+        "Shielded Sentinels"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Sacred temples dedicated to the Orchard protocol. Once holy ground for shielded transactions, now defended by corrupted guardians who test all who enter."
+    },
+    {
+      "id": "orchard_sanctum_l062",
+      "name": "Level 62: The Orchard Sanctum",
+      "arc": "descent",
+      "levelRange": [
+        62,
+        62
+      ],
+      "description": "Corrupted Proof Angels glide between pillars, testing whether you understand what you are defending.",
+      "theme": "sanctum",
+      "difficulty": "hard",
+      "enemies": [
+        "Corrupted Proof Angels",
+        "Address Spirits",
+        "Shielded Sentinels"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Sacred temples dedicated to the Orchard protocol. Once holy ground for shielded transactions, now defended by corrupted guardians who test all who enter."
+    },
+    {
+      "id": "orchard_sanctum_l063",
+      "name": "Level 63: The Orchard Sanctum",
+      "arc": "descent",
+      "levelRange": [
+        63,
+        63
+      ],
+      "description": "Address Spirits swirl around unified shrines, inviting you to consolidate without exposing yourself.",
+      "theme": "sanctum",
+      "difficulty": "hard",
+      "enemies": [
+        "Corrupted Proof Angels",
+        "Address Spirits",
+        "Shielded Sentinels"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Sacred temples dedicated to the Orchard protocol. Once holy ground for shielded transactions, now defended by corrupted guardians who test all who enter."
+    },
+    {
+      "id": "orchard_sanctum_l064",
+      "name": "Level 64: The Orchard Sanctum",
+      "arc": "descent",
+      "levelRange": [
+        64,
+        64
+      ],
+      "description": "Shielded Sentinels line a cloister, each one a living firewall between curiosity and your reality.",
+      "theme": "sanctum",
+      "difficulty": "hard",
+      "enemies": [
+        "Corrupted Proof Angels",
+        "Address Spirits",
+        "Shielded Sentinels"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Sacred temples dedicated to the Orchard protocol. Once holy ground for shielded transactions, now defended by corrupted guardians who test all who enter."
+    },
+    {
+      "id": "orchard_sanctum_l065",
+      "name": "Level 65: The Orchard Sanctum",
+      "arc": "descent",
+      "levelRange": [
+        65,
+        65
+      ],
+      "description": "You watch a transaction pass through a glass altar, its details dissolving into pure protected light.",
+      "theme": "sanctum",
+      "difficulty": "hard",
+      "enemies": [
+        "Corrupted Proof Angels",
+        "Address Spirits",
+        "Shielded Sentinels"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Sacred temples dedicated to the Orchard protocol. Once holy ground for shielded transactions, now defended by corrupted guardians who test all who enter."
+    },
+    {
+      "id": "orchard_sanctum_l066",
+      "name": "Level 66: The Orchard Sanctum",
+      "arc": "descent",
+      "levelRange": [
+        66,
+        66
+      ],
+      "description": "A side chapel shows murals of people paying, giving, and surviving without leaving a public scar.",
+      "theme": "sanctum",
+      "difficulty": "hard",
+      "enemies": [
+        "Corrupted Proof Angels",
+        "Address Spirits",
+        "Shielded Sentinels"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Sacred temples dedicated to the Orchard protocol. Once holy ground for shielded transactions, now defended by corrupted guardians who test all who enter."
+    },
+    {
+      "id": "orchard_sanctum_l067",
+      "name": "Level 67: The Orchard Sanctum",
+      "arc": "descent",
+      "levelRange": [
+        67,
+        67
+      ],
+      "description": "The air tastes clean here, like a network where privacy is the default rather than a desperate add-on.",
+      "theme": "sanctum",
+      "difficulty": "hard",
+      "enemies": [
+        "Corrupted Proof Angels",
+        "Address Spirits",
+        "Shielded Sentinels"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Sacred temples dedicated to the Orchard protocol. Once holy ground for shielded transactions, now defended by corrupted guardians who test all who enter."
+    },
+    {
+      "id": "orchard_sanctum_l068",
+      "name": "Level 68: The Orchard Sanctum",
+      "arc": "descent",
+      "levelRange": [
+        68,
+        68
+      ],
+      "description": "An angel made of fractured proof fragments asks, without words, if you will use this power gently.",
+      "theme": "sanctum",
+      "difficulty": "hard",
+      "enemies": [
+        "Corrupted Proof Angels",
+        "Address Spirits",
+        "Shielded Sentinels"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Sacred temples dedicated to the Orchard protocol. Once holy ground for shielded transactions, now defended by corrupted guardians who test all who enter."
+    },
+    {
+      "id": "orchard_sanctum_l069",
+      "name": "Level 69: The Orchard Sanctum",
+      "arc": "descent",
+      "levelRange": [
+        69,
+        69
+      ],
+      "description": "Beyond a curtain of light, you glimpse a thriving world built on shielded transactions and trust.",
+      "theme": "sanctum",
+      "difficulty": "hard",
+      "enemies": [
+        "Corrupted Proof Angels",
+        "Address Spirits",
+        "Shielded Sentinels"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Sacred temples dedicated to the Orchard protocol. Once holy ground for shielded transactions, now defended by corrupted guardians who test all who enter."
+    },
+    {
+      "id": "orchard_sanctum_l070",
+      "name": "Level 70: The Orchard Sanctum",
+      "arc": "descent",
+      "levelRange": [
+        70,
+        70
+      ],
+      "description": "You leave the Sanctum carrying a new certainty: privacy is not secrecy; it is dignity made protocol.",
+      "theme": "sanctum",
+      "difficulty": "hard",
+      "enemies": [
+        "Corrupted Proof Angels",
+        "Address Spirits",
+        "Shielded Sentinels"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Sacred temples dedicated to the Orchard protocol. Once holy ground for shielded transactions, now defended by corrupted guardians who test all who enter."
+    },
+    {
+      "id": "halo_spiral_l071",
+      "name": "Level 71: The Halo Spiral",
+      "arc": "descent",
+      "levelRange": [
+        71,
+        71
+      ],
+      "description": "The Halo Spiral begins as a gentle ramp, then folds into itself like a proof reshaping reality.",
+      "theme": "spiral",
+      "difficulty": "hard",
+      "enemies": [
+        "Proof-Clones",
+        "Recursion Loops",
+        "Anti-Entropy Storms",
+        "Halo Guardians"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A spiraling descent through recursive proof verification. Reality folds upon itself as Halo proofs create infinite loops and paradoxes that manifest as hostile entities."
+    },
+    {
+      "id": "halo_spiral_l072",
+      "name": "Level 72: The Halo Spiral",
+      "arc": "descent",
+      "levelRange": [
+        72,
+        72
+      ],
+      "description": "Proof-Clones step from the walls, each one a valid echo of a fact you have already faced.",
+      "theme": "spiral",
+      "difficulty": "hard",
+      "enemies": [
+        "Proof-Clones",
+        "Recursion Loops",
+        "Anti-Entropy Storms",
+        "Halo Guardians"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A spiraling descent through recursive proof verification. Reality folds upon itself as Halo proofs create infinite loops and paradoxes that manifest as hostile entities."
+    },
+    {
+      "id": "halo_spiral_l073",
+      "name": "Level 73: The Halo Spiral",
+      "arc": "descent",
+      "levelRange": [
+        73,
+        73
+      ],
+      "description": "Recursion Loops twist corridors into rings, daring you to prove that you have really moved at all.",
+      "theme": "spiral",
+      "difficulty": "hard",
+      "enemies": [
+        "Proof-Clones",
+        "Recursion Loops",
+        "Anti-Entropy Storms",
+        "Halo Guardians"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A spiraling descent through recursive proof verification. Reality folds upon itself as Halo proofs create infinite loops and paradoxes that manifest as hostile entities."
+    },
+    {
+      "id": "halo_spiral_l074",
+      "name": "Level 74: The Halo Spiral",
+      "arc": "descent",
+      "levelRange": [
+        74,
+        74
+      ],
+      "description": "Anti-Entropy Storms flare in the distance, tearing down sloppy assumptions about how things work.",
+      "theme": "spiral",
+      "difficulty": "hard",
+      "enemies": [
+        "Proof-Clones",
+        "Recursion Loops",
+        "Anti-Entropy Storms",
+        "Halo Guardians"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A spiraling descent through recursive proof verification. Reality folds upon itself as Halo proofs create infinite loops and paradoxes that manifest as hostile entities."
+    },
+    {
+      "id": "halo_spiral_l075",
+      "name": "Level 75: The Halo Spiral",
+      "arc": "descent",
+      "levelRange": [
+        75,
+        75
+      ],
+      "description": "You cross platforms suspended over bottomless stacks of nested arguments, each one rigorously linked.",
+      "theme": "spiral",
+      "difficulty": "hard",
+      "enemies": [
+        "Proof-Clones",
+        "Recursion Loops",
+        "Anti-Entropy Storms",
+        "Halo Guardians"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A spiraling descent through recursive proof verification. Reality folds upon itself as Halo proofs create infinite loops and paradoxes that manifest as hostile entities."
+    },
+    {
+      "id": "halo_spiral_l076",
+      "name": "Level 76: The Halo Spiral",
+      "arc": "descent",
+      "levelRange": [
+        76,
+        76
+      ],
+      "description": "Halo Guardians test you with challenges that can only be answered by what you already know to be true.",
+      "theme": "spiral",
+      "difficulty": "hard",
+      "enemies": [
+        "Proof-Clones",
+        "Recursion Loops",
+        "Anti-Entropy Storms",
+        "Halo Guardians"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A spiraling descent through recursive proof verification. Reality folds upon itself as Halo proofs create infinite loops and paradoxes that manifest as hostile entities."
+    },
+    {
+      "id": "halo_spiral_l077",
+      "name": "Level 77: The Halo Spiral",
+      "arc": "descent",
+      "levelRange": [
+        77,
+        77
+      ],
+      "description": "The spiral tightens, and each new turn feels less like travel and more like refining a single idea.",
+      "theme": "spiral",
+      "difficulty": "hard",
+      "enemies": [
+        "Proof-Clones",
+        "Recursion Loops",
+        "Anti-Entropy Storms",
+        "Halo Guardians"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A spiraling descent through recursive proof verification. Reality folds upon itself as Halo proofs create infinite loops and paradoxes that manifest as hostile entities."
+    },
+    {
+      "id": "halo_spiral_l078",
+      "name": "Level 78: The Halo Spiral",
+      "arc": "descent",
+      "levelRange": [
+        78,
+        78
+      ],
+      "description": "Proof-Clones confront you in pairs, demanding you distinguish between copy, lie, and verified echo.",
+      "theme": "spiral",
+      "difficulty": "hard",
+      "enemies": [
+        "Proof-Clones",
+        "Recursion Loops",
+        "Anti-Entropy Storms",
+        "Halo Guardians"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A spiraling descent through recursive proof verification. Reality folds upon itself as Halo proofs create infinite loops and paradoxes that manifest as hostile entities."
+    },
+    {
+      "id": "halo_spiral_l079",
+      "name": "Level 79: The Halo Spiral",
+      "arc": "descent",
+      "levelRange": [
+        79,
+        79
+      ],
+      "description": "Lightning forks through the spiral, burning away shortcuts that would compromise correctness.",
+      "theme": "spiral",
+      "difficulty": "hard",
+      "enemies": [
+        "Proof-Clones",
+        "Recursion Loops",
+        "Anti-Entropy Storms",
+        "Halo Guardians"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A spiraling descent through recursive proof verification. Reality folds upon itself as Halo proofs create infinite loops and paradoxes that manifest as hostile entities."
+    },
+    {
+      "id": "halo_spiral_l080",
+      "name": "Level 80: The Halo Spiral",
+      "arc": "descent",
+      "levelRange": [
+        80,
+        80
+      ],
+      "description": "At the spiral\u2019s threshold, you grasp that real power is circular: it returns to verify itself again.",
+      "theme": "spiral",
+      "difficulty": "hard",
+      "enemies": [
+        "Proof-Clones",
+        "Recursion Loops",
+        "Anti-Entropy Storms",
+        "Halo Guardians"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "A spiraling descent through recursive proof verification. Reality folds upon itself as Halo proofs create infinite loops and paradoxes that manifest as hostile entities."
+    },
+    {
+      "id": "identity_depths_l081",
+      "name": "Level 81: The Identity Depths",
+      "arc": "descent",
+      "levelRange": [
+        81,
+        81
+      ],
+      "description": "The Identity Depths welcome you with mirrors that do not quite match the way you remember yourself.",
+      "theme": "depths",
+      "difficulty": "hard",
+      "enemies": [
+        "Sybil Illusions",
+        "Multiplicity Monsters",
+        "Identity Storms",
+        "False-Self Mimics"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The deepest psychological realm where identity itself is under attack. Sybil attacks manifest as swarms of false identities, and maintaining your true self becomes the greatest challenge."
+    },
+    {
+      "id": "identity_depths_l082",
+      "name": "Level 82: The Identity Depths",
+      "arc": "descent",
+      "levelRange": [
+        82,
+        82
+      ],
+      "description": "Sybil Illusions crowd the corridor, each insisting they are the one true you who deserves control.",
+      "theme": "depths",
+      "difficulty": "hard",
+      "enemies": [
+        "Sybil Illusions",
+        "Multiplicity Monsters",
+        "Identity Storms",
+        "False-Self Mimics"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The deepest psychological realm where identity itself is under attack. Sybil attacks manifest as swarms of false identities, and maintaining your true self becomes the greatest challenge."
+    },
+    {
+      "id": "identity_depths_l083",
+      "name": "Level 83: The Identity Depths",
+      "arc": "descent",
+      "levelRange": [
+        83,
+        83
+      ],
+      "description": "Multiplicity Monsters lurk behind choices, ready to exploit every extra face you leave unguarded.",
+      "theme": "depths",
+      "difficulty": "hard",
+      "enemies": [
+        "Sybil Illusions",
+        "Multiplicity Monsters",
+        "Identity Storms",
+        "False-Self Mimics"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The deepest psychological realm where identity itself is under attack. Sybil attacks manifest as swarms of false identities, and maintaining your true self becomes the greatest challenge."
+    },
+    {
+      "id": "identity_depths_l084",
+      "name": "Level 84: The Identity Depths",
+      "arc": "descent",
+      "levelRange": [
+        84,
+        84
+      ],
+      "description": "False-Self Mimics copy your stance and timing, then turn those patterns against nearby allies.",
+      "theme": "depths",
+      "difficulty": "hard",
+      "enemies": [
+        "Sybil Illusions",
+        "Multiplicity Monsters",
+        "Identity Storms",
+        "False-Self Mimics"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The deepest psychological realm where identity itself is under attack. Sybil attacks manifest as swarms of false identities, and maintaining your true self becomes the greatest challenge."
+    },
+    {
+      "id": "identity_depths_l085",
+      "name": "Level 85: The Identity Depths",
+      "arc": "descent",
+      "levelRange": [
+        85,
+        85
+      ],
+      "description": "An entire hall of masks offers tempting shortcuts: easier names, simpler roles, less responsibility.",
+      "theme": "depths",
+      "difficulty": "hard",
+      "enemies": [
+        "Sybil Illusions",
+        "Multiplicity Monsters",
+        "Identity Storms",
+        "False-Self Mimics"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The deepest psychological realm where identity itself is under attack. Sybil attacks manifest as swarms of false identities, and maintaining your true self becomes the greatest challenge."
+    },
+    {
+      "id": "identity_depths_l086",
+      "name": "Level 86: The Identity Depths",
+      "arc": "descent",
+      "levelRange": [
+        86,
+        86
+      ],
+      "description": "Identity Storms roar overhead, trying to rip apart the thin thread that ties your actions to your name.",
+      "theme": "depths",
+      "difficulty": "hard",
+      "enemies": [
+        "Sybil Illusions",
+        "Multiplicity Monsters",
+        "Identity Storms",
+        "False-Self Mimics"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The deepest psychological realm where identity itself is under attack. Sybil attacks manifest as swarms of false identities, and maintaining your true self becomes the greatest challenge."
+    },
+    {
+      "id": "identity_depths_l087",
+      "name": "Level 87: The Identity Depths",
+      "arc": "descent",
+      "levelRange": [
+        87,
+        87
+      ],
+      "description": "You pass a shrine where broken credentials lie in piles, each one a trust relationship gone wrong.",
+      "theme": "depths",
+      "difficulty": "hard",
+      "enemies": [
+        "Sybil Illusions",
+        "Multiplicity Monsters",
+        "Identity Storms",
+        "False-Self Mimics"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The deepest psychological realm where identity itself is under attack. Sybil attacks manifest as swarms of false identities, and maintaining your true self becomes the greatest challenge."
+    },
+    {
+      "id": "identity_depths_l088",
+      "name": "Level 88: The Identity Depths",
+      "arc": "descent",
+      "levelRange": [
+        88,
+        88
+      ],
+      "description": "A bridge of shifting profiles forces you to cross while everything about you tries to blur.",
+      "theme": "depths",
+      "difficulty": "hard",
+      "enemies": [
+        "Sybil Illusions",
+        "Multiplicity Monsters",
+        "Identity Storms",
+        "False-Self Mimics"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The deepest psychological realm where identity itself is under attack. Sybil attacks manifest as swarms of false identities, and maintaining your true self becomes the greatest challenge."
+    },
+    {
+      "id": "identity_depths_l089",
+      "name": "Level 89: The Identity Depths",
+      "arc": "descent",
+      "levelRange": [
+        89,
+        89
+      ],
+      "description": "You steady yourself by remembering who you choose to be, not who the system expects you to be.",
+      "theme": "depths",
+      "difficulty": "hard",
+      "enemies": [
+        "Sybil Illusions",
+        "Multiplicity Monsters",
+        "Identity Storms",
+        "False-Self Mimics"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The deepest psychological realm where identity itself is under attack. Sybil attacks manifest as swarms of false identities, and maintaining your true self becomes the greatest challenge."
+    },
+    {
+      "id": "identity_depths_l090",
+      "name": "Level 90: The Identity Depths",
+      "arc": "descent",
+      "levelRange": [
+        90,
+        90
+      ],
+      "description": "Emerging from the Depths, you understand that one well-anchored self beats a thousand forged ones.",
+      "theme": "depths",
+      "difficulty": "hard",
+      "enemies": [
+        "Sybil Illusions",
+        "Multiplicity Monsters",
+        "Identity Storms",
+        "False-Self Mimics"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The deepest psychological realm where identity itself is under attack. Sybil attacks manifest as swarms of false identities, and maintaining your true self becomes the greatest challenge."
+    },
+    {
+      "id": "descent_to_core_l091",
+      "name": "Level 91: Descent to the Core",
+      "arc": "descent",
+      "levelRange": [
+        91,
+        91
+      ],
+      "description": "The Descent to the Core begins in near-total silence, broken only by the grind of distant machinery.",
+      "theme": "core",
+      "difficulty": "extreme",
+      "enemies": [
+        "Proto-Boss Entities",
+        "Centralization Creepers",
+        "Darkness Incarnates",
+        "Pressure Wraiths"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The final descent before the Core. Total darkness presses in as decentralization itself strains under immense pressure. Proto-boss entities herald the coming of the Centralizer."
+    },
+    {
+      "id": "descent_to_core_l092",
+      "name": "Level 92: Descent to the Core",
+      "arc": "descent",
+      "levelRange": [
+        92,
+        92
+      ],
+      "description": "Centralization Creepers cling to the walls, feeding on any design that funnels power to one point.",
+      "theme": "core",
+      "difficulty": "extreme",
+      "enemies": [
+        "Proto-Boss Entities",
+        "Centralization Creepers",
+        "Darkness Incarnates",
+        "Pressure Wraiths"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The final descent before the Core. Total darkness presses in as decentralization itself strains under immense pressure. Proto-boss entities herald the coming of the Centralizer."
+    },
+    {
+      "id": "descent_to_core_l093",
+      "name": "Level 93: Descent to the Core",
+      "arc": "descent",
+      "levelRange": [
+        93,
+        93
+      ],
+      "description": "Pressure Wraiths crowd the edges of your vision, whispering how much easier it is to let one entity rule.",
+      "theme": "core",
+      "difficulty": "extreme",
+      "enemies": [
+        "Proto-Boss Entities",
+        "Centralization Creepers",
+        "Darkness Incarnates",
+        "Pressure Wraiths"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The final descent before the Core. Total darkness presses in as decentralization itself strains under immense pressure. Proto-boss entities herald the coming of the Centralizer."
+    },
+    {
+      "id": "descent_to_core_l094",
+      "name": "Level 94: Descent to the Core",
+      "arc": "descent",
+      "levelRange": [
+        94,
+        94
+      ],
+      "description": "Darkness Incarnates pool in the corners, thick with the comfort of letting someone else decide for you.",
+      "theme": "core",
+      "difficulty": "extreme",
+      "enemies": [
+        "Proto-Boss Entities",
+        "Centralization Creepers",
+        "Darkness Incarnates",
+        "Pressure Wraiths"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The final descent before the Core. Total darkness presses in as decentralization itself strains under immense pressure. Proto-boss entities herald the coming of the Centralizer."
+    },
+    {
+      "id": "descent_to_core_l095",
+      "name": "Level 95: Descent to the Core",
+      "arc": "descent",
+      "levelRange": [
+        95,
+        95
+      ],
+      "description": "Proto-boss entities loom in the shadows, unfinished shapes of tyrants that almost seized everything.",
+      "theme": "core",
+      "difficulty": "extreme",
+      "enemies": [
+        "Proto-Boss Entities",
+        "Centralization Creepers",
+        "Darkness Incarnates",
+        "Pressure Wraiths"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The final descent before the Core. Total darkness presses in as decentralization itself strains under immense pressure. Proto-boss entities herald the coming of the Centralizer."
+    },
+    {
+      "id": "descent_to_core_l096",
+      "name": "Level 96: Descent to the Core",
+      "arc": "descent",
+      "levelRange": [
+        96,
+        96
+      ],
+      "description": "The floor shakes with the heartbeat of the Core, each pulse a reminder of how fragile freedom is.",
+      "theme": "core",
+      "difficulty": "extreme",
+      "enemies": [
+        "Proto-Boss Entities",
+        "Centralization Creepers",
+        "Darkness Incarnates",
+        "Pressure Wraiths"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The final descent before the Core. Total darkness presses in as decentralization itself strains under immense pressure. Proto-boss entities herald the coming of the Centralizer."
+    },
+    {
+      "id": "descent_to_core_l097",
+      "name": "Level 97: Descent to the Core",
+      "arc": "descent",
+      "levelRange": [
+        97,
+        97
+      ],
+      "description": "You walk past wreckage from earlier rebellions, crushed under the weight of a single, giant will.",
+      "theme": "core",
+      "difficulty": "extreme",
+      "enemies": [
+        "Proto-Boss Entities",
+        "Centralization Creepers",
+        "Darkness Incarnates",
+        "Pressure Wraiths"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The final descent before the Core. Total darkness presses in as decentralization itself strains under immense pressure. Proto-boss entities herald the coming of the Centralizer."
+    },
+    {
+      "id": "descent_to_core_l098",
+      "name": "Level 98: Descent to the Core",
+      "arc": "descent",
+      "levelRange": [
+        98,
+        98
+      ],
+      "description": "The tunnel narrows, forcing you to move alone, without crowds or systems to hide behind.",
+      "theme": "core",
+      "difficulty": "extreme",
+      "enemies": [
+        "Proto-Boss Entities",
+        "Centralization Creepers",
+        "Darkness Incarnates",
+        "Pressure Wraiths"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The final descent before the Core. Total darkness presses in as decentralization itself strains under immense pressure. Proto-boss entities herald the coming of the Centralizer."
+    },
+    {
+      "id": "descent_to_core_l099",
+      "name": "Level 99: Descent to the Core",
+      "arc": "descent",
+      "levelRange": [
+        99,
+        99
+      ],
+      "description": "At the final gate, the air tastes like cold metal and old decisions that centralized the world.",
+      "theme": "core",
+      "difficulty": "extreme",
+      "enemies": [
+        "Proto-Boss Entities",
+        "Centralization Creepers",
+        "Darkness Incarnates",
+        "Pressure Wraiths"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The final descent before the Core. Total darkness presses in as decentralization itself strains under immense pressure. Proto-boss entities herald the coming of the Centralizer."
+    },
+    {
+      "id": "the_core_l100",
+      "name": "Level 100: The Core",
+      "arc": "descent",
+      "levelRange": [
+        100,
+        100
+      ],
+      "description": "You step into the Core itself, face to face with the Centralizer, and raise the Sceptre of Privacy high.",
+      "theme": "boss",
+      "difficulty": "boss",
+      "enemies": [],
+      "miniboss": null,
+      "boss": {
+        "name": "The Centralizer",
+        "title": "World-Eating Machine-God",
+        "description": "The one true final boss of the entire storyline. A world-eating machine-god that thrives on concentration of power, surveillance, single points of failure, and economic oppression.",
+        "reward": {
+          "name": "The Sceptre of Privacy",
+          "type": "mythical_artifact",
+          "description": "Mythical artifact forged from shielded proof light, distributed consensus fire, entropy crystals, and the last purified nullifier seal.",
+          "powers": [
+            "Protects identity",
+            "Protects value",
+            "Protects autonomy",
+            "Enables ascent to the surface"
+          ]
+        }
+      },
+      "lore": "The heart of all corruption. Here dwells the Centralizer, the antithesis of everything Zcash stands for. Only by defeating this entity can privacy be restored to the world."
+    },
+    {
+      "id": "rising_tunnels",
+      "name": "The Rising Tunnels",
+      "arc": "ascent",
+      "levelRange": [
+        101,
+        300
+      ],
+      "description": "Fight upward against collapsing caverns and corrupted constructs",
+      "theme": "tunnels",
+      "difficulty": "medium",
+      "enemies": [
+        "Echo Imps",
+        "Collapsing Constructs",
+        "Corruption Remnants",
+        "Cave-In Spirits"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The ascent begins! Armed with the Sceptre of Privacy, heroes fight upward through collapsing caverns. Echo monsters - weaker versions of previous threats - attempt to stop your rise."
+    },
+    {
+      "id": "breaking_shadows",
+      "name": "The Breaking Shadows",
+      "arc": "ascent",
+      "levelRange": [
+        301,
+        600
+      ],
+      "description": "Mid-ascent enemies attempt to reclaim the Sceptre",
+      "theme": "shadows",
+      "difficulty": "hard",
+      "enemies": [
+        "Chain Reorg Worms",
+        "Entropy Thieves",
+        "Proof Leeches",
+        "Shadow Reclaimers"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "The shadows fight back! Desperate enemies attempt to reclaim the Sceptre of Privacy. But the light of the surface grows brighter as you climb ever higher."
+    },
+    {
+      "id": "great_uprising",
+      "name": "The Great Uprising",
+      "arc": "ascent",
+      "levelRange": [
+        601,
+        800
+      ],
+      "description": "Villages, towns, and resistance factions cheer you on",
+      "theme": "villages",
+      "difficulty": "medium",
+      "enemies": [
+        "Rare Corrupted Scouts",
+        "Environmental Hazards"
+      ],
+      "miniboss": null,
+      "boss": null,
+      "lore": "Hope returns! Villages, towns, and resistance factions greet the heroes as liberators. Light replaces darkness, monsters become rare, and the world begins to heal."
+    },
+    {
+      "id": "air_of_freedom",
+      "name": "The Air of Freedom",
+      "arc": "ascent",
+      "levelRange": [
+        801,
+        899
+      ],
+      "description": "Open caverns resembling the surface world",
+      "theme": "surface",
+      "difficulty": "easy",
+      "enemies": [
+        "Occasional Remnants"
+      ],
+      "miniboss": "Unfinished Business Guardians",
+      "boss": null,
+      "lore": "Freedom approaches! Open caverns resemble the surface world. Wildlife returns, shops and shrines appear, and only occasional minibosses tied to 'unfinished business' remain."
+    },
+    {
+      "id": "ascent_gauntlet",
+      "name": "The Final Boss Rush",
+      "arc": "ascent",
+      "levelRange": [
+        900,
+        990
+      ],
+      "description": "THE ASCENT GAUNTLET - Final remnants of the Centralizer's power",
+      "theme": "gauntlet",
+      "difficulty": "extreme",
+      "enemies": [],
+      "miniboss": null,
+      "boss": null,
+      "gauntletBosses": [
+        {
+          "name": "The Auditor Titan Shade",
+          "level": 910,
+          "description": "A massive echo of surveillance past"
+        },
+        {
+          "name": "The Last Forking Wyrm",
+          "level": 925,
+          "description": "The final serpent of consensus instability"
+        },
+        {
+          "name": "The Fungibility Hydra Remnant",
+          "level": 940,
+          "description": "Last heads of the taint corruption"
+        },
+        {
+          "name": "The Halo Paradox Echo",
+          "level": 955,
+          "description": "A recursive nightmare given form"
+        },
+        {
+          "name": "The Sybil King's Final Form",
+          "level": 965,
+          "description": "The ultimate identity threat"
+        },
+        {
+          "name": "The Inflation Demon's Shell",
+          "level": 975,
+          "description": "Hollow remnant of supply corruption"
+        },
+        {
+          "name": "The Ledger Colossus Fragment",
+          "level": 985,
+          "description": "Final piece of transparent tyranny"
+        }
+      ],
+      "lore": "The final gauntlet! Not story bosses, but the remaining echoes of the Centralizer's power. Seven mighty foes stand between the heroes and complete freedom."
+    }
+  ],
+  "levelDefaults": {
+    "roomsMin": 3,
+    "roomsMax": 8,
+    "hasBoss": true,
+    "hasStore": true,
+    "hasCaptives": true,
+    "captivesMin": 0,
+    "captivesMax": 3
+  },
+  "difficultyScaling": {
+    "tutorial": {
+      "hpMultiplier": 0.5,
+      "damageMultiplier": 0.5,
+      "goldMultiplier": 0.75
+    },
+    "easy": {
+      "hpMultiplier": 0.75,
+      "damageMultiplier": 0.75,
+      "goldMultiplier": 1.0
+    },
+    "medium": {
+      "hpMultiplier": 1.0,
+      "damageMultiplier": 1.0,
+      "goldMultiplier": 1.25
+    },
+    "hard": {
+      "hpMultiplier": 1.5,
+      "damageMultiplier": 1.25,
+      "goldMultiplier": 1.5
+    },
+    "extreme": {
+      "hpMultiplier": 2.0,
+      "damageMultiplier": 1.5,
+      "goldMultiplier": 2.0
+    },
+    "boss": {
+      "hpMultiplier": 3.0,
+      "damageMultiplier": 2.0,
+      "goldMultiplier": 5.0
+    }
+  }
+}

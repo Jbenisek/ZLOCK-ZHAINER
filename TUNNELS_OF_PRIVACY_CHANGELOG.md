@@ -2,6 +2,121 @@
 
 # Changelog
 
+## v0.4.08 - Event Videos & Dynamic Panel Widths (2025-12-03)
+- **NPC Help choice now plays video:**
+  - "Help Them" option plays `zooko_cup.mp4` before awarding rewards
+  - Video overlay with green glow matching button color
+  - Can be skipped by clicking anywhere
+  - Rewards (gold cost + XP) applied after video ends or skip
+
+- **Exploration choices now play videos:**
+  - "Send One Hero" plays `cyberaxe_intro_a.mp4`
+  - "Send Entire Party" plays `nate_intro_a.mp4`
+  - New `explorationVideoOverlay` with purple glow
+  - `closeExplorationVideo()` detects which choice to process on skip
+  - Results (success/fail, XP/damage) applied after video
+
+- **Dynamic event panel container widths:**
+  - Store: Full width (`max-width: 1400px`) for 3-column layout
+  - NPC/Secret/Exploration: Compact (`max-width: 500px`) to show background
+  - `nonCombatRoomContent` width set dynamically in `enterNonCombatRoom()`
+
+## v0.4.07 - UI Improvements & Hero Videos (2025-12-03)
+- **Hero intro video toggle:**
+  - Each hero button now alternates between two intro videos on click
+  - Zooko: `zooko_intro.mp4` ↔ `zooko_intro_a.mp4`
+  - Nate: `nate_zashi.mp4` ↔ `nate_intro_a.mp4`
+  - Zancas: `zancas_intro.mp4` ↔ `zancas_intro_a.mp4`
+  - CyberAxe: `cyberaxe_intro.mp4` ↔ `cyberaxe_intro_a.mp4`
+  - Toggle state tracked per-hero via `heroIntroVideoToggle` object
+
+- **Fixed event panel widths:**
+  - NPC content: Added `max-width: 400px` to match button width
+  - Exploration content: Added `max-width: 450px` to match button width
+  - Difficulty box: Added `max-width: 450px` constraint
+  - Both panels now centered with `margin: 0 auto`
+  - Added HTML comments for easy location of these elements
+
+## v0.4.06 - Camp Sync & Narrator RP Mode (2025-12-03)
+- **Camp events now sync to clients:**
+  - Initial "You set up camp..." event sent with `camp_started` message
+  - Client adds `initialEvent` to camp log after setting up UI
+  - Random camp events already synced via `camp_event` message
+
+- **Narrator respects Roleplay Mode setting:**
+  - RP Mode ON: Dramatic, atmospheric narration with rich fantasy language
+  - RP Mode OFF: Simple, plain English descriptions - easy to understand
+  - Prompt dynamically changes based on `settings.rpMode`
+
+## v0.4.05 - Animation System & UI Fixes (2025-12-03)
+- **Zancas taunt animation support:**
+  - Added `HERO_ANIM_CONFIG` system for custom hero animation grid sizes
+  - Zancas taunt: 5x19 grid, 95 frames, 768px frame size
+  - `setAnimationState()` now applies per-animation configs and resets to defaults
+  - Added `zancas_taunt.png` path to `HERO_ANIM_PATHS`
+
+- **Fixed co-op level display on load:**
+  - Added level display update to `continueGameMultiplayer()`
+  - Added level display update to client `game_start` handler
+  - Dungeon menu now shows correct level when loading co-op games
+
+- **Narrator system improvements:**
+  - Removed stale data caching - always fetches fresh `level_data_perlevel.json`
+  - Removed repetitive `zone.lore` from LLM prompt
+  - Renamed prompt field to "THIS LEVEL'S UNIQUE SCENE" for better LLM focus
+  - Each level now generates truly unique narration based on its description
+
+## v0.4.04 - Multiplayer Sync & Narrator Fixes (2025-12-03)
+- **Improved resync button functionality:**
+  - Resync now sends `game_start` message with full state (existing message type)
+  - Includes saveData, levelLayout, levelProgress for complete client refresh
+  - Also sends `inventory_update` and `broadcastGameState()` if in battle
+  - Client shows "✅ Resynced with host!" notification on success
+
+- **Fixed camp break early desync:**
+  - `cancelCamping()` now broadcasts `camp_completed` message to clients
+  - Clients receive hero HP updates and return to dungeon menu
+  - Added `cancelled: true` flag for different notification message
+
+- **Fixed co-op gold display on load/continue:**
+  - Added `updateGoldDisplay()` to `continueGame()` and `loadSaveGame()`
+  - Host now shows correct gold when loading saved co-op games
+
+- **Moved captive NPC position:**
+  - Changed from 90% to 70% x-position to avoid chat window overlap
+
+- **Fixed narrator level detection:**
+  - Now reads level from `sharedSave.dungeonState.currentLevel` instead of DOM
+  - Switched to `level_data_perlevel.json` for per-level zone data
+  - Each level now has unique narration instead of same text every 10 levels
+
+## v0.4.03 - Co-op Gold Display Fix (2025-12-03)
+- **Fixed host not showing starting gold in co-op:**
+  - Added `updateGoldDisplay()` call in `launchNewGame()` after `updateDungeonMenuHeroes()`
+  - Added `updateGoldDisplay()` call in `startNewAdventure()` after `updateDungeonMenuHeroes()`
+  - Host now correctly displays 42 starting gold on dungeon menu at game start
+  - Client already worked via `game_start` message handler
+
+## v0.4.02 - Co-op Gold Display Fix Attempt (2025-12-03)
+- Reverted - fix was in wrong location
+
+## v0.4.01 - Food Tooltip Fix (2025-12-03)
+- **Fixed food tooltip staying on screen after eating:**
+  - Added `hideFoodTooltip()` call at start of `usePartyMeal()` function
+  - Tooltip now closes immediately when EAT button is clicked
+  - Prevents orphaned tooltip from lingering after food item is consumed
+
+## v0.4.00 - Turn Indicator (2025-12-03)
+- **Battle turn indicator system:**
+  - Added `drawTurnIndicator()` function for visual turn tracking
+  - Bouncing chevron/arrow appears above the active combatant
+  - Green indicator for heroes, red indicator for enemies
+  - Animated bounce (oscillates up/down) using `Math.sin(time / 200)`
+  - Pulsing glow effect for visibility
+  - Depth-scaled to match sprite perspective
+  - Position calculated from sprite top for both heroes and enemies
+  - Helps players track whose turn it is during hectic battles
+
 ## v0.3.99 - Performance Optimizations (2025-12-03)
 - **Particle system tinted sprite caching:**
   - Added `tintedSpriteCache` for pre-tinted particle sprites

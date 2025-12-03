@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.3.98</title>
+    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.4.08</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -3322,7 +3322,7 @@
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.3.99 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.4.02 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div id="aboutDonateBtn" style="
@@ -3720,7 +3720,8 @@
                     </div>
                 </div>
                 
-                <div id="npcContent" style="display: none;">
+                <!-- NPC Event Content (max-width: 400px to match button width) -->
+                <div id="npcContent" style="display: none; max-width: 400px; margin: 0 auto;">
                     <div id="npcName" style="color: #3498DB; font-size: 24px; font-weight: bold; text-align: center; margin-bottom: 10px;">NPC Name</div>
                     <div id="npcDialogue" style="color: #E0E0E0; font-size: 16px; text-align: center; margin-bottom: 20px; line-height: 1.6;">"Hello there!"</div>
                     <div id="npcChoices" style="display: flex; flex-direction: column; gap: 15px; align-items: center; max-width: 400px; margin: 0 auto;">
@@ -3761,9 +3762,10 @@
                     </div>
                 </div>
                 
-                <div id="explorationContent" style="display: none;">
+                <!-- Exploration Event Content (max-width: 450px to match button width) -->
+                <div id="explorationContent" style="display: none; max-width: 450px; margin: 0 auto;">
                     <div id="explorationDescription" style="color: #9B59B6; font-size: 18px; text-align: center; margin-bottom: 15px;">An interesting discovery...</div>
-                    <div id="explorationChallenge" style="text-align: center; padding: 15px; background: rgba(155, 89, 182, 0.2); border-radius: 10px; border: 2px solid #9B59B6; margin-bottom: 20px;">
+                    <div id="explorationChallenge" style="text-align: center; padding: 15px; background: rgba(155, 89, 182, 0.2); border-radius: 10px; border: 2px solid #9B59B6; margin-bottom: 20px; max-width: 450px;">
                         <div id="explorationChallengeText" style="color: #E0E0E0; font-size: 16px;">Difficulty: 1</div>
                         <div id="explorationSuccessChance" style="color: #2ECC71; font-size: 14px; margin-top: 5px;">Success Chance: 75%</div>
                     </div>
@@ -3808,6 +3810,22 @@
     <div id="zcashVideoOverlay" onclick="closeZcashVideo()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 400; justify-content: center; align-items: center; cursor: pointer;">
         <video id="zcashVideo" style="max-width: 90%; max-height: 90%; border-radius: 10px; box-shadow: 0 0 30px rgba(242, 201, 76, 0.5);">
             <source src="tunnelsofprivacy/videos/nate_zashi.mp4" type="video/mp4">
+        </video>
+        <div style="position: absolute; bottom: 20px; color: #95A5A6; font-size: 14px;">Click anywhere to skip</div>
+    </div>
+    
+    <!-- Help Video Overlay (NPC Encounter - Good Choice) -->
+    <div id="helpVideoOverlay" onclick="closeHelpVideo()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 400; justify-content: center; align-items: center; cursor: pointer;">
+        <video id="helpVideo" style="max-width: 90%; max-height: 90%; border-radius: 10px; box-shadow: 0 0 30px rgba(46, 204, 113, 0.5);">
+            <source src="tunnelsofprivacy/videos/zooko_cup.mp4" type="video/mp4">
+        </video>
+        <div style="position: absolute; bottom: 20px; color: #95A5A6; font-size: 14px;">Click anywhere to skip</div>
+    </div>
+    
+    <!-- Exploration Video Overlay (Send One Hero / Send Party) -->
+    <div id="explorationVideoOverlay" onclick="closeExplorationVideo()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 400; justify-content: center; align-items: center; cursor: pointer;">
+        <video id="explorationVideo" style="max-width: 90%; max-height: 90%; border-radius: 10px; box-shadow: 0 0 30px rgba(155, 89, 182, 0.5);">
+            <source id="explorationVideoSource" src="" type="video/mp4">
         </video>
         <div style="position: absolute; bottom: 20px; color: #95A5A6; font-size: 14px;">Click anywhere to skip</div>
     </div>
@@ -4293,7 +4311,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.3.99';
+        const GAME_VERSION = 'v0.4.08';
         
         // ===== HACKATHON INFO TOOLTIP SYSTEM =====
         const TOOLTIP_DELAY = 800; // ms before tooltip appears
@@ -7840,6 +7858,14 @@
             'lvl100': { cols: 5, rows: 19, totalFrames: 95, frameSize: 768 }
         };
         
+        // Hero animation configurations for non-standard sprite sheets
+        // Format: { heroName: { animState: { cols, rows, totalFrames, frameSize } } }
+        const HERO_ANIM_CONFIG = {
+            zancas: {
+                taunt: { cols: 5, rows: 19, totalFrames: 95, frameSize: 768 }
+            }
+        };
+        
         // Boss animation state paths
         const BOSS_ANIM_PATHS = {
             'lvl100': {
@@ -7897,7 +7923,8 @@
                 knockout: 'tunnelsofprivacy/heros/zancas_knockout.png',
                 hit: 'tunnelsofprivacy/heros/zancas_hit.png',
                 defend: 'tunnelsofprivacy/heros/zancas_def.png',
-                heal: 'tunnelsofprivacy/heros/zancas_heal.png'
+                heal: 'tunnelsofprivacy/heros/zancas_heal.png',
+                taunt: 'tunnelsofprivacy/heros/zancas_taunt.png'
             },
             cyberaxe: { 
                 idle: [
@@ -8198,6 +8225,22 @@
             anim.playing = true;
             anim.onComplete = onComplete;
             anim.lastTime = 0;
+            
+            // Check for custom hero animation config (non-standard grid sizes)
+            const heroKey = combatant.name.toLowerCase();
+            const heroConfig = HERO_ANIM_CONFIG[heroKey]?.[newState];
+            if (heroConfig) {
+                anim.gridCols = heroConfig.cols;
+                anim.gridRows = heroConfig.rows;
+                anim.totalFrames = heroConfig.totalFrames;
+                anim.frameSize = heroConfig.frameSize;
+            } else if (!combatant.isBoss) {
+                // Reset to default hero grid for standard animations
+                anim.gridCols = ANIM_GRID_SIZE;
+                anim.gridRows = ANIM_GRID_SIZE;
+                anim.totalFrames = ANIM_TOTAL_FRAMES;
+                anim.frameSize = 0; // Will be recalculated from sheet
+            }
             
             // Load new sprite sheet
             loadSpriteSheet(newPath).then(sheet => {
@@ -9536,19 +9579,6 @@
                 heroWeapons = sharedSave.heroWeapons;
             }
         }
-        
-        // Update gold display in store
-        function updateGoldDisplay() {
-            const sharedSave = loadSharedSave();
-            const gold = sharedSave?.dungeonState?.gold || 0;
-            
-            // Update any gold display elements
-            const goldEls = document.querySelectorAll('.goldDisplay');
-            goldEls.forEach(el => el.textContent = gold);
-            
-            // Update shielded store gold display (if revealed)
-            updateStoreGoldDisplay();
-        }
 
         function showSettings() {
             document.getElementById('overlay').style.display = 'block';
@@ -10580,6 +10610,9 @@
         
         // Use a party meal to heal all heroes
         function usePartyMeal(mealIndex) {
+            // Hide any open food tooltip immediately
+            hideFoodTooltip();
+            
             // Host-only check
             if (multiplayerState.enabled && multiplayerState.role === 'client') {
                 showNotification('Only the party leader can use meals', 'warning');
@@ -10750,7 +10783,8 @@
                 sendWebSocketMessage({
                     type: 'camp_started',
                     hours: campState.selectedHours,
-                    videoSrc: videoSrc
+                    videoSrc: videoSrc,
+                    initialEvent: 'You set up camp and rest by the fire...'
                 });
             }
             
@@ -10868,6 +10902,22 @@
                     });
                     sharedSave.lastPlayed = Date.now();
                     saveSharedSave(sharedSave);
+                }
+                
+                // Broadcast camp cancelled to clients
+                if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                    sendWebSocketMessage({
+                        type: 'camp_completed',
+                        hoursRested: 0,
+                        healedAmount: campState.totalHealed || 0,
+                        cancelled: true,
+                        heroes: sharedSave ? [
+                            { name: 'Zooko', hp: sharedSave.heroes.zooko?.hp, maxHp: sharedSave.heroes.zooko?.maxHp },
+                            { name: 'Nate', hp: sharedSave.heroes.nate?.hp, maxHp: sharedSave.heroes.nate?.maxHp },
+                            { name: 'Zancas', hp: sharedSave.heroes.zancas?.hp, maxHp: sharedSave.heroes.zancas?.maxHp },
+                            { name: 'CyberAxe', hp: sharedSave.heroes.cyberaxe?.hp, maxHp: sharedSave.heroes.cyberaxe?.maxHp }
+                        ] : []
+                    });
                 }
             }
             
@@ -12012,21 +12062,36 @@
             document.getElementById('secretContent').style.display = 'none';
             document.getElementById('explorationContent').style.display = 'none';
             
-            // Show appropriate content
+            // Get the content container to adjust width based on room type
+            const contentContainer = document.getElementById('nonCombatRoomContent');
+            
+            // Show appropriate content and set container width
             switch (roomType) {
                 case 'store':
+                    // Store needs full width for 3-column layout
+                    contentContainer.style.maxWidth = '1400px';
+                    contentContainer.style.width = '95%';
                     populateStoreContent();
                     document.getElementById('storeContent').style.display = 'block';
                     break;
                 case 'npc':
+                    // NPC only needs width for buttons (~450px)
+                    contentContainer.style.maxWidth = '500px';
+                    contentContainer.style.width = 'auto';
                     populateNPCContent();
                     document.getElementById('npcContent').style.display = 'block';
                     break;
                 case 'secret':
+                    // Secret room is compact
+                    contentContainer.style.maxWidth = '500px';
+                    contentContainer.style.width = 'auto';
                     populateSecretContent();
                     document.getElementById('secretContent').style.display = 'block';
                     break;
                 case 'exploration':
+                    // Exploration only needs width for buttons (~500px)
+                    contentContainer.style.maxWidth = '500px';
+                    contentContainer.style.width = 'auto';
                     populateExplorationContent();
                     document.getElementById('explorationContent').style.display = 'block';
                     break;
@@ -12319,7 +12384,7 @@
             showNotification(`Bought ${item.name}!`, 'success');
         }
         
-        // NPC Choice: Help (Good) - Lose gold, gain XP
+        // NPC Choice: Help (Good) - Lose gold, gain XP, play video
         function npcChoiceHelp() {
             const npcData = preGeneratedEncounter.npcData;
             if (!npcData || npcData.choiceMade) return;
@@ -12340,24 +12405,41 @@
                 return;
             }
             
-            // Deduct gold
-            sharedSave.dungeonState.gold = currentGold - npcData.helpCost;
-            
-            // Award XP to all heroes
-            const xpPerHero = Math.floor(npcData.helpXpReward / 4);
-            ['zooko', 'nate', 'zancas', 'cyberaxe'].forEach(heroKey => {
-                if (sharedSave.heroes[heroKey]) {
-                    sharedSave.heroes[heroKey].xp += xpPerHero;
-                }
-            });
-            
-            saveSharedSave(sharedSave);
             npcData.choiceMade = true;
             
-            // Show result
-            showNPCChoiceResult('help', npcData.helpCost, npcData.helpXpReward);
-            updateGoldDisplay();
-            showNotification(`You helped ${npcData.name}! -${npcData.helpCost} Gold, +${npcData.helpXpReward} XP`, 'success');
+            // Show video overlay
+            const overlay = document.getElementById('helpVideoOverlay');
+            const video = document.getElementById('helpVideo');
+            
+            overlay.style.display = 'flex';
+            video.currentTime = 0;
+            video.volume = (settings.musicVolume || 50) / 150; // Use music volume setting
+            
+            // Play video
+            video.play().catch(e => console.log('[Help Video] Autoplay blocked:', e));
+            
+            // When video ends, close overlay and award rewards
+            video.onended = function() {
+                overlay.style.display = 'none';
+                
+                // Deduct gold
+                sharedSave.dungeonState.gold = currentGold - npcData.helpCost;
+                
+                // Award XP to all heroes
+                const xpPerHero = Math.floor(npcData.helpXpReward / 4);
+                ['zooko', 'nate', 'zancas', 'cyberaxe'].forEach(heroKey => {
+                    if (sharedSave.heroes[heroKey]) {
+                        sharedSave.heroes[heroKey].xp += xpPerHero;
+                    }
+                });
+                
+                saveSharedSave(sharedSave);
+                
+                // Show result
+                showNPCChoiceResult('help', npcData.helpCost, npcData.helpXpReward);
+                updateGoldDisplay();
+                showNotification(`You helped ${npcData.name}! -${npcData.helpCost} Gold, +${npcData.helpXpReward} XP`, 'success');
+            };
             
             // Broadcast to clients in multiplayer
             if (multiplayerState.enabled && multiplayerState.role === 'host') {
@@ -12519,26 +12601,111 @@
             }
         }
         
-        // Hero intro video paths
+        // Close Help video overlay (skip video)
+        function closeHelpVideo() {
+            const overlay = document.getElementById('helpVideoOverlay');
+            const video = document.getElementById('helpVideo');
+            
+            // Stop and reset video
+            video.pause();
+            video.currentTime = 0;
+            video.onended = null; // Remove the onended handler
+            
+            // Hide overlay
+            overlay.style.display = 'none';
+            
+            // Award rewards if not already done (check if result is already shown)
+            const resultDiv = document.getElementById('npcChoiceMade');
+            if (resultDiv.style.display === 'none') {
+                const npcData = preGeneratedEncounter.npcData;
+                const sharedSave = loadSharedSave();
+                if (!sharedSave.dungeonState) sharedSave.dungeonState = {};
+                const currentGold = sharedSave.dungeonState.gold || 0;
+                
+                // Deduct gold
+                sharedSave.dungeonState.gold = currentGold - (npcData?.helpCost || 0);
+                
+                // Award XP to all heroes
+                const helpXp = npcData?.helpXpReward || 100;
+                const xpPerHero = Math.floor(helpXp / 4);
+                ['zooko', 'nate', 'zancas', 'cyberaxe'].forEach(heroKey => {
+                    if (sharedSave.heroes[heroKey]) {
+                        sharedSave.heroes[heroKey].xp += xpPerHero;
+                    }
+                });
+                saveSharedSave(sharedSave);
+                
+                showNPCChoiceResult('help', npcData?.helpCost || 0, helpXp);
+                updateGoldDisplay();
+                showNotification(`You helped ${npcData?.name || 'the NPC'}! -${npcData?.helpCost || 0} Gold, +${helpXp} XP`, 'success');
+            }
+        }
+        
+        // Close Exploration video overlay (skip video)
+        // Track which exploration choice was made so we process the right one on skip
+        let explorationVideoChoice = null; // 'one' or 'party'
+        
+        function closeExplorationVideo() {
+            const overlay = document.getElementById('explorationVideoOverlay');
+            const video = document.getElementById('explorationVideo');
+            
+            // Stop and reset video
+            video.pause();
+            video.currentTime = 0;
+            video.onended = null;
+            
+            // Hide overlay
+            overlay.style.display = 'none';
+            
+            // Process the result if not already done
+            const resultDiv = document.getElementById('explorationChoiceMade');
+            if (resultDiv.style.display === 'none') {
+                // Check which video was playing based on source
+                const source = document.getElementById('explorationVideoSource');
+                if (source.src.includes('cyberaxe_intro_a')) {
+                    processExplorationSendOne();
+                } else if (source.src.includes('nate_intro_a')) {
+                    processExplorationSendParty();
+                }
+            }
+        }
+        
+        // Hero intro video paths - each hero has two variants that alternate on click
         const heroIntroVideos = {
-            zooko: 'tunnelsofprivacy/videos/zooko_intro.mp4',
-            nate: 'tunnelsofprivacy/videos/nate_zashi.mp4',
-            zancas: 'tunnelsofprivacy/videos/zancas_intro.mp4',
-            cyberaxe: 'tunnelsofprivacy/videos/cyberaxe_intro.mp4'
+            zooko: ['tunnelsofprivacy/videos/zooko_intro.mp4', 'tunnelsofprivacy/videos/zooko_intro_a.mp4'],
+            nate: ['tunnelsofprivacy/videos/nate_zashi.mp4', 'tunnelsofprivacy/videos/nate_intro_a.mp4'],
+            zancas: ['tunnelsofprivacy/videos/zancas_intro.mp4', 'tunnelsofprivacy/videos/zancas_intro_a.mp4'],
+            cyberaxe: ['tunnelsofprivacy/videos/cyberaxe_intro.mp4', 'tunnelsofprivacy/videos/cyberaxe_intro_a.mp4']
         };
         
-        // Play hero intro video
+        // Track which video variant to play next for each hero (0 = first, 1 = second)
+        const heroIntroVideoToggle = {
+            zooko: 0,
+            nate: 0,
+            zancas: 0,
+            cyberaxe: 0
+        };
+        
+        // Play hero intro video - alternates between two variants on each click
         function playHeroIntroVideo(heroName) {
             const overlay = document.getElementById('heroIntroVideoOverlay');
             const video = document.getElementById('heroIntroVideo');
             const source = document.getElementById('heroIntroVideoSource');
             
-            // Set video source
-            const videoPath = heroIntroVideos[heroName.toLowerCase()];
-            if (!videoPath) {
+            // Get the video paths array for this hero
+            const heroKey = heroName.toLowerCase();
+            const videoPaths = heroIntroVideos[heroKey];
+            if (!videoPaths || videoPaths.length === 0) {
                 console.error('No intro video for hero:', heroName);
                 return;
             }
+            
+            // Get current toggle state and select video
+            const currentIndex = heroIntroVideoToggle[heroKey] || 0;
+            const videoPath = videoPaths[currentIndex];
+            
+            // Toggle to the other variant for next click
+            heroIntroVideoToggle[heroKey] = (currentIndex + 1) % videoPaths.length;
             
             source.src = videoPath;
             video.load();
@@ -12640,7 +12807,7 @@
             });
         }
         
-        // Exploration Choice: Send One Hero
+        // Exploration Choice: Send One Hero - plays cyberaxe_intro_a video
         function explorationSendOne() {
             const explorationData = preGeneratedEncounter.explorationData;
             if (!explorationData || explorationData.choiceMade) return;
@@ -12651,6 +12818,36 @@
                 return;
             }
             
+            explorationData.choiceMade = true;
+            
+            // Show video overlay
+            const overlay = document.getElementById('explorationVideoOverlay');
+            const video = document.getElementById('explorationVideo');
+            const source = document.getElementById('explorationVideoSource');
+            
+            source.src = 'tunnelsofprivacy/videos/cyberaxe_intro_a.mp4';
+            video.load();
+            overlay.style.display = 'flex';
+            video.currentTime = 0;
+            video.volume = (settings.musicVolume || 50) / 150;
+            
+            video.play().catch(e => console.log('[Exploration Video] Autoplay blocked:', e));
+            
+            // When video ends, process the exploration result
+            video.onended = function() {
+                overlay.style.display = 'none';
+                processExplorationSendOne();
+            };
+            
+            // Broadcast to clients in multiplayer (they see result after host's video)
+            if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                // Will send result after video ends in processExplorationSendOne
+            }
+        }
+        
+        // Process Send One Hero result (called after video)
+        function processExplorationSendOne() {
+            const explorationData = preGeneratedEncounter.explorationData;
             const sharedSave = loadSharedSave();
             
             // Pick a random living hero
@@ -12671,12 +12868,10 @@
             const success = roll < explorationData.successChance;
             
             if (success) {
-                // Award XP to chosen hero only
                 sharedSave.heroes[chosenHero].xp += explorationData.oneHeroXp;
                 showExplorationChoiceResult('one_success', chosenHero, explorationData.oneHeroXp, 0);
                 showNotification(`${heroDisplayName} succeeded! +${explorationData.oneHeroXp} XP`, 'success');
             } else {
-                // Damage chosen hero only
                 const damage = explorationData.oneHeroFailDamage;
                 sharedSave.heroes[chosenHero].hp = Math.max(0, sharedSave.heroes[chosenHero].hp - damage);
                 showExplorationChoiceResult('one_fail', chosenHero, 0, damage);
@@ -12684,7 +12879,6 @@
             }
             
             saveSharedSave(sharedSave);
-            explorationData.choiceMade = true;
             
             // Broadcast to clients in multiplayer
             if (multiplayerState.enabled && multiplayerState.role === 'host') {
@@ -12699,7 +12893,7 @@
             }
         }
         
-        // Exploration Choice: Send Entire Party
+        // Exploration Choice: Send Entire Party - plays nate_intro_a video
         function explorationSendParty() {
             const explorationData = preGeneratedEncounter.explorationData;
             if (!explorationData || explorationData.choiceMade) return;
@@ -12710,6 +12904,31 @@
                 return;
             }
             
+            explorationData.choiceMade = true;
+            
+            // Show video overlay
+            const overlay = document.getElementById('explorationVideoOverlay');
+            const video = document.getElementById('explorationVideo');
+            const source = document.getElementById('explorationVideoSource');
+            
+            source.src = 'tunnelsofprivacy/videos/nate_intro_a.mp4';
+            video.load();
+            overlay.style.display = 'flex';
+            video.currentTime = 0;
+            video.volume = (settings.musicVolume || 50) / 150;
+            
+            video.play().catch(e => console.log('[Exploration Video] Autoplay blocked:', e));
+            
+            // When video ends, process the exploration result
+            video.onended = function() {
+                overlay.style.display = 'none';
+                processExplorationSendParty();
+            };
+        }
+        
+        // Process Send Party result (called after video)
+        function processExplorationSendParty() {
+            const explorationData = preGeneratedEncounter.explorationData;
             const sharedSave = loadSharedSave();
             
             // Roll for success
@@ -12717,7 +12936,6 @@
             const success = roll < explorationData.successChance;
             
             if (success) {
-                // Award XP to all heroes (split)
                 const xpPerHero = Math.floor(explorationData.partyXp / 4);
                 ['zooko', 'nate', 'zancas', 'cyberaxe'].forEach(heroKey => {
                     if (sharedSave.heroes[heroKey]) {
@@ -12727,7 +12945,6 @@
                 showExplorationChoiceResult('party_success', null, explorationData.partyXp, 0);
                 showNotification(`Party succeeded! +${explorationData.partyXp} XP`, 'success');
             } else {
-                // Damage all heroes
                 const damage = explorationData.partyFailDamage;
                 ['zooko', 'nate', 'zancas', 'cyberaxe'].forEach(heroKey => {
                     if (sharedSave.heroes[heroKey]) {
@@ -12739,7 +12956,6 @@
             }
             
             saveSharedSave(sharedSave);
-            explorationData.choiceMade = true;
             
             // Broadcast to clients in multiplayer
             if (multiplayerState.enabled && multiplayerState.role === 'host') {
@@ -13597,14 +13813,12 @@
             cachedNarrations: {} // Cache narrations per level
         };
         
-        // Load level data JSON
+        // Load level data JSON (per-level version with unique zone for each level)
         async function loadLevelData() {
-            if (narratorState.levelData) return narratorState.levelData;
-            
+            // Always fetch fresh to ensure we have per-level data
             try {
-                const response = await fetch('tunnelsofprivacy/levels/level_data.json');
+                const response = await fetch('tunnelsofprivacy/levels/level_data_perlevel.json?v=' + Date.now());
                 narratorState.levelData = await response.json();
-                console.log('[Narrator] Level data loaded:', narratorState.levelData.zones.length, 'zones');
                 return narratorState.levelData;
             } catch (e) {
                 console.error('[Narrator] Failed to load level data:', e);
@@ -13638,18 +13852,22 @@
             const miniboss = zone.miniboss ? `The miniboss ${zone.miniboss} lurks here.` : '';
             const boss = zone.boss ? `The boss ${zone.boss.name} - ${zone.boss.title} awaits.` : '';
             
-            const prompt = `You are the narrator for "Tunnels of Privacy", a dungeon crawler RPG about protecting financial privacy in a world where personal data has become currency. The heroes fight to defend Zcash values: privacy, freedom, and the right to transact without surveillance.
+            // Different prompt style based on RP mode setting
+            const rpModeEnabled = settings.rpMode !== false;
+            const styleInstructions = rpModeEnabled 
+                ? 'Write a dramatic 2-3 sentence narration. Be atmospheric, evocative, and use rich fantasy language. Speak as an omniscient narrator with a dramatic flair.'
+                : 'Write a simple 2-3 sentence description in plain, easy-to-understand English. No fancy words or dramatic language. Just describe what the heroes see in normal speech.';
+            
+            const prompt = `You are the narrator for "Tunnels of Privacy", a dungeon crawler RPG about protecting financial privacy.
 
 CURRENT LEVEL: ${level}
 ZONE: ${zone.name}
-ARC: ${arcInfo.name} - ${arcInfo.description}
-ZONE DESCRIPTION: ${zone.description}
-ZONE LORE: ${zone.lore}
+THIS LEVEL'S SCENE: ${zone.description}
 ENEMIES: ${enemyList}
 ${miniboss}
 ${boss}
 
-Write a dramatic 2-3 sentence narration describing this level as the heroes enter. Be atmospheric and evocative. Reference the zone's theme and dangers. Keep it under 50 words. Do not use quotation marks. Speak as an omniscient narrator.`;
+${styleInstructions} Use the scene description as your PRIMARY inspiration. Keep it under 50 words. Do not use quotation marks.`;
 
             try {
                 const response = await fetch('/api/chat', {
@@ -13709,8 +13927,9 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     throw new Error('Failed to load level data');
                 }
                 
-                // Get current level from DOM (same pattern used elsewhere in codebase)
-                const currentLevel = parseInt(document.getElementById('dungeonMenuLevel')?.textContent || document.getElementById('dungeonLevel')?.textContent) || 1;
+                // Get current level from save data
+                const sharedSave = loadSharedSave();
+                const currentLevel = sharedSave?.dungeonState?.currentLevel || 1;
                 const zone = getZoneForLevel(currentLevel);
                 
                 if (!zone) {
@@ -15942,9 +16161,9 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 enemy.facing = 'center';
             }
             
-            // Position captive NPC if present (far right, below enemies)
+            // Position captive NPC if present (right side, below enemies)
             if (battleState.captiveNpc && !battleState.captiveNpc.rescued) {
-                battleState.captiveNpc.x = canvas.width * 0.90;
+                battleState.captiveNpc.x = canvas.width * 0.70;
                 battleState.captiveNpc.y = canvas.height * 0.80;
                 battleState.captiveNpc.facing = 'center';
             }
@@ -16017,9 +16236,9 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 battleState.enemies[i].facing = 'center';
             }
             
-            // Position captive NPC if present (far right, below enemies - like a prisoner)
+            // Position captive NPC if present (right side, below enemies - like a prisoner)
             if (battleState.captiveNpc && !battleState.captiveNpc.rescued) {
-                const captiveX = canvas.width * 0.90;  // Far right
+                const captiveX = canvas.width * 0.70;  // Right side, clear of chat window
                 const captiveY = canvas.height * 0.80;  // Lower area (front of room)
                 battleState.captiveNpc.x = captiveX;
                 battleState.captiveNpc.y = captiveY;
@@ -16166,6 +16385,47 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             }
         }
         
+        // Draw turn indicator (bouncing chevron/arrow) above active combatant
+        function drawTurnIndicator(ctx, x, y, depthScale, isEnemy = false) {
+            const time = performance.now();
+            // Bouncing animation: oscillate up and down
+            const bounce = Math.sin(time / 200) * 8 * depthScale;
+            // Pulsing glow
+            const pulse = 0.5 + Math.sin(time / 300) * 0.3;
+            
+            const indicatorY = y - bounce;
+            const size = 20 * depthScale;
+            
+            ctx.save();
+            
+            // Glow effect
+            ctx.shadowColor = isEnemy ? '#FF4444' : '#00FF88';
+            ctx.shadowBlur = 15 * pulse * depthScale;
+            
+            // Draw downward-pointing chevron/arrow
+            ctx.beginPath();
+            ctx.moveTo(x - size, indicatorY - size);  // Top left
+            ctx.lineTo(x, indicatorY);                 // Bottom center (point)
+            ctx.lineTo(x + size, indicatorY - size);  // Top right
+            
+            ctx.strokeStyle = isEnemy ? '#FF6666' : '#00FF88';
+            ctx.lineWidth = 4 * depthScale;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.stroke();
+            
+            // Inner lighter stroke
+            ctx.beginPath();
+            ctx.moveTo(x - size * 0.6, indicatorY - size * 0.6);
+            ctx.lineTo(x, indicatorY - size * 0.1);
+            ctx.lineTo(x + size * 0.6, indicatorY - size * 0.6);
+            ctx.strokeStyle = isEnemy ? '#FFAAAA' : '#AAFFCC';
+            ctx.lineWidth = 2 * depthScale;
+            ctx.stroke();
+            
+            ctx.restore();
+        }
+        
         // Render battle scene
         function renderBattle() {
             const ctx = battleState.ctx;
@@ -16293,6 +16553,14 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 
                 const flipX = hero.facing === 'left';
                 drawAnimatedSprite(ctx, hero, spriteX, spriteY, spriteWidth, spriteHeight, flipX);
+                
+                // Draw turn indicator above active hero
+                const currentCombatant = battleState.turnOrder[battleState.currentTurn];
+                if (currentCombatant && currentCombatant === hero) {
+                    // Position above hero's head
+                    const indicatorY = spriteY - 10 * depthScale;
+                    drawTurnIndicator(ctx, hero.x, indicatorY, depthScale, false);
+                }
                 
                 // Draw backpack at hero's feet (in front of the hero)
                 if (hero.backpackSprite && hero.backpackSprite.complete && hero.backpackSprite.naturalHeight > 0) {
@@ -16504,6 +16772,24 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
                     ctx.lineWidth = 3;
                     ctx.stroke();
+                }
+                
+                // Draw turn indicator above active enemy
+                const currentCombatant = battleState.turnOrder[battleState.currentTurn];
+                if (currentCombatant && currentCombatant === enemy) {
+                    // Calculate top of sprite for indicator position
+                    let indicatorTopY;
+                    if (enemy.isMob) {
+                        const sizeScale = enemy.sizeScale || 1.0;
+                        const baseHeight = 75 * sizeScale;
+                        indicatorTopY = enemy.y - (baseHeight * depthScale) / 2 - 15 * depthScale;
+                    } else {
+                        const isLevel100 = enemy.spritePath && enemy.spritePath.includes('lvl100');
+                        const sizeMultiplier = isLevel100 ? 2.5 : 1.0;
+                        const baseHeight = 250 * depthScale * sizeMultiplier;
+                        indicatorTopY = enemy.y - baseHeight / 2 - 15 * depthScale;
+                    }
+                    drawTurnIndicator(ctx, enemy.x, indicatorTopY, depthScale, true);
                 }
                 
                 // Calculate HP bar position first, then build labels above it
@@ -18791,6 +19077,10 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             // Load hero stats from save to dungeon menu
             updateDungeonMenuHeroes();
             
+            // Update gold display directly (we know it's 42 from fresh save)
+            const dungeonMenuGold = document.getElementById('dungeonMenuGold');
+            if (dungeonMenuGold) dungeonMenuGold.textContent = sharedSave.dungeonState.gold;
+            
             // Apply client UI restrictions
             applyClientUIRestrictions();
             
@@ -19942,10 +20232,22 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     // Client is requesting a full state resync
                     if (multiplayerState.role === 'host') {
                         console.log('[HOST] Client requested resync');
-                        // Always sync inventory/meals/equipment
+                        const sharedSave = loadSharedSave();
+                        
+                        // Send game_start with current screen and full state (existing message type)
+                        sendWebSocketMessage({
+                            type: 'game_start',
+                            screen: currentScreen,
+                            saveData: sharedSave,
+                            levelLayout: currentLevelLayout,
+                            levelProgress: levelProgress
+                        });
+                        
+                        // Also sync inventory/equipment (existing message type)
                         sendInventoryUpdate();
+                        
+                        // If in battle, also send battle state (existing message type)
                         if (battleState.active) {
-                            // Send full battle state
                             broadcastGameState();
                         }
                     }
@@ -20213,6 +20515,11 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                         document.getElementById('campHealedSoFar').textContent = '0';
                         document.getElementById('campEventLog').innerHTML = '<div style="color: #89A0B4; font-size: 12px; text-align: center;">The campfire crackles softly...</div>';
                         
+                        // Add initial camp event from host
+                        if (data.initialEvent) {
+                            addCampEvent(data.initialEvent);
+                        }
+                        
                         showNotification(`Party leader is setting up camp for ${data.hours} hours`, 'info');
                     }
                     break;
@@ -20248,7 +20555,11 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                         document.getElementById('dungeonMenuScreen').style.display = 'block';
                         updateDungeonMenuHeroes();
                         
-                        showNotification(`Party rested for ${data.hoursRested} hours! +${data.healedAmount} HP healed.`, 'success');
+                        if (data.cancelled) {
+                            showNotification('Host broke camp early', 'info');
+                        } else {
+                            showNotification(`Party rested for ${data.hoursRested} hours! +${data.healedAmount} HP healed.`, 'success');
+                        }
                     }
                     break;
                 
@@ -20541,6 +20852,13 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                             updateDungeonMenuHeroes();
                             updateGoldDisplay();
                             
+                            // Update level display from save data
+                            const currentLevel = data.saveData?.dungeonState?.currentLevel || 1;
+                            const dungeonMenuLevel = document.getElementById('dungeonMenuLevel');
+                            if (dungeonMenuLevel) {
+                                dungeonMenuLevel.textContent = currentLevel;
+                            }
+                            
                             // Use level layout from HOST - never generate locally
                             if (data.levelLayout) {
                                 currentLevelLayout = data.levelLayout;
@@ -20604,7 +20922,14 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                             
                             applyClientUIRestrictions();
                         }
-                        showNotification('Host started the game!', 'success');
+                        
+                        // Check if this was a resync response
+                        if (multiplayerState.awaitingResync) {
+                            multiplayerState.awaitingResync = false;
+                            showNotification('✅ Resynced with host!', 'success');
+                        } else {
+                            showNotification('Host started the game!', 'success');
+                        }
                     }
                     break;
                 
@@ -21610,9 +21935,16 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             
             // Update dungeon menu with save data (after currentScreen is set)
             updateDungeonMenuHeroes();
+            updateGoldDisplay();
             
             // Get current level from save
             const currentLevel = sharedSave?.dungeonState?.currentLevel || sharedSave?.arcadeState?.level || 1;
+            
+            // Update level display
+            const dungeonMenuLevel = document.getElementById('dungeonMenuLevel');
+            if (dungeonMenuLevel) {
+                dungeonMenuLevel.textContent = currentLevel;
+            }
             
             // Initialize level layout for current level (BEFORE broadcasting to clients)
             initializeLevelLayout(currentLevel);
@@ -21660,6 +21992,7 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             
             // Update dungeon menu with save data
             updateDungeonMenuHeroes();
+            updateGoldDisplay();
             
             // Notify all clients to start WITH save data
             sendWebSocketMessage({ 
@@ -21853,6 +22186,7 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             
             // Update dungeon menu with new save data (after currentScreen is set)
             updateDungeonMenuHeroes();
+            updateGoldDisplay();
             
             // Center music controls
             document.getElementById('musicControls').classList.remove('heroSelectionActive');
@@ -21908,6 +22242,7 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     
                     // Update dungeon menu with new save data (after currentScreen is set)
                     updateDungeonMenuHeroes();
+                    updateGoldDisplay();
                     
                     // Center music controls
                     document.getElementById('musicControls').classList.remove('heroSelectionActive');
