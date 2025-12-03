@@ -2,6 +2,41 @@
 
 # Changelog
 
+## v0.3.96 - Attack Projectiles & Food Tooltips (2025-12-03)
+- **Projectile particle system:**
+  - Added `spawnProjectile()` method for attack particles traveling from hero to target
+  - Particles calculate velocity from duration and distance for consistent travel time
+  - Light attacks now spawn electric projectile from hero to enemy
+  - `duration` parameter controls projectile speed (currently 1.5 seconds)
+
+- **Per-hero projectile offsets:**
+  - Added `heroProjectileOffsets` object for per-hero attack particle start positions
+  - Zooko: No offset (origin point works well)
+  - Nate: Down 60px (fires from lower on sprite)
+  - Zancas: Down 60px, right 40px (offset for staff position)
+  - CyberAxe: Down 40px, left 40px (offset for axe position)
+
+- **Per-hero idle particle offsets:**
+  - Added `heroIdleParticleOffsets` object for per-hero Y adjustments
+  - Zancas idle particles now render 30px lower to match sprite
+
+- **Food transparency tooltips expanded:**
+  - Food tooltips now appear in inventory screen (main inventory)
+  - Food tooltips now appear in store inventory screen
+  - Added `setupFoodTooltips(container)` function for reusable tooltip attachment
+  - Hover over party meal items to see humorous bug content, dungeon additives, freshness, and backstories
+
+- **Hero intro video system:**
+  - Added 4 hero intro video buttons (2x2 grid) on start menu
+  - Zooko (gold), Nate (red), Zancas (green), CyberAxe (blue) buttons
+  - Videos play in fullscreen overlay with click-to-close
+  - Videos stop 0.5 seconds early to avoid bad end frame
+  - `heroIntroVideos` object maps hero names to video paths
+
+- **Hero knockout particle cleanup:**
+  - Idle particles now properly stop when hero is knocked out
+  - Added `stopHeroIdleParticle()` call to rage attack secondary target death check
+
 ## v0.3.95 - Particle Visibility Fix (2025-12-03)
 - **Fixed invisible particles:**
   - JSON effect files use 3D world units (size 1-5) which were too small for Canvas2D

@@ -426,6 +426,105 @@
             letter-spacing: 1px;
         }
         
+        /* ===== FOOD TRANSPARENCY TOOLTIP ===== */
+        #foodTooltip {
+            position: fixed;
+            min-width: 280px;
+            max-width: 340px;
+            background: linear-gradient(135deg, rgba(5, 20, 5, 0.98), rgba(10, 40, 10, 0.98));
+            border: 2px solid #27AE60;
+            border-radius: 12px;
+            padding: 15px 18px;
+            z-index: 100000;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 8px 32px rgba(39, 174, 96, 0.4), 0 0 60px rgba(139, 69, 255, 0.2);
+            backdrop-filter: blur(10px);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        #foodTooltip.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        #foodTooltip .food-header {
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(39, 174, 96, 0.5);
+        }
+        
+        #foodTooltip .food-label {
+            color: #27AE60;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        #foodTooltip .food-title {
+            color: #2ECC71;
+            font-size: 16px;
+            font-weight: 800;
+            margin-top: 2px;
+        }
+        
+        #foodTooltip .food-section-title {
+            color: #27AE60;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 8px 0 5px 0;
+        }
+        
+        #foodTooltip .food-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 2px 0;
+            font-size: 11px;
+        }
+        
+        #foodTooltip .food-row-label {
+            color: #89A0B4;
+        }
+        
+        #foodTooltip .food-row-value {
+            color: #F1C40F;
+            font-weight: 600;
+            max-width: 180px;
+            text-align: right;
+        }
+        
+        #foodTooltip .food-row-value.warning {
+            color: #E74C3C;
+        }
+        
+        #foodTooltip .food-backstory {
+            color: #BFD1E0;
+            font-size: 10px;
+            line-height: 1.4;
+            font-style: italic;
+            padding: 6px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            border-left: 3px solid #27AE60;
+            margin-top: 8px;
+        }
+        
+        #foodTooltip .food-footer {
+            margin-top: 10px;
+            padding-top: 6px;
+            border-top: 1px solid rgba(39, 174, 96, 0.3);
+            text-align: center;
+            color: #27AE60;
+            font-size: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
         /* ===== ACHIEVEMENTS & BESTIARY PANELS ===== */
         #achievementsPanel, #bestiaryPanel {
             display: none;
@@ -2498,6 +2597,9 @@
     <!-- Enemy Privacy Breach Tooltip - They have no privacy! -->
     <div id="enemyPrivacyTooltip"></div>
     
+    <!-- Food Transparency Tooltip - Know what you're eating! -->
+    <div id="foodTooltip"></div>
+    
     <!-- Weapon Tooltip (for equipment slots) -->
     <div id="weaponTooltip" style="position: fixed; z-index: 10001; pointer-events: none; opacity: 0; transition: opacity 0.2s ease;"></div>
     
@@ -3106,7 +3208,7 @@
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.3.91 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.3.96 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div id="aboutDonateBtn" style="
@@ -3261,6 +3363,70 @@
                 " onmouseover="this.style.background='linear-gradient(135deg, rgba(242, 201, 76, 0.6), rgba(242, 201, 76, 0.4))'; this.style.boxShadow='0 0 20px rgba(242, 201, 76, 0.4)';" onmouseout="this.style.background='linear-gradient(135deg, rgba(242, 201, 76, 0.4), rgba(242, 201, 76, 0.2))'; this.style.boxShadow='none';">
                     <span id="kingVoiceIcon">👑</span> Hear from the King
                 </button>
+                
+                <!-- Hero Intro Video Buttons - 2x2 Grid -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; margin-top: 5px;">
+                    <!-- Zooko -->
+                    <button onclick="playHeroIntroVideo('zooko')" style="
+                        padding: 10px 15px;
+                        background: linear-gradient(135deg, rgba(242, 201, 76, 0.4), rgba(242, 201, 76, 0.2));
+                        border: 2px solid #F2C94C;
+                        border-radius: 8px;
+                        color: #F2C94C;
+                        font-family: 'JetBrains Mono', monospace;
+                        font-size: 12px;
+                        font-weight: 700;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                    " onmouseover="this.style.background='linear-gradient(135deg, rgba(242, 201, 76, 0.6), rgba(242, 201, 76, 0.4))'; this.style.boxShadow='0 0 15px rgba(242, 201, 76, 0.4)';" onmouseout="this.style.background='linear-gradient(135deg, rgba(242, 201, 76, 0.4), rgba(242, 201, 76, 0.2))'; this.style.boxShadow='none';">
+                        Zooko
+                    </button>
+                    <!-- Nate -->
+                    <button onclick="playHeroIntroVideo('nate')" style="
+                        padding: 10px 15px;
+                        background: linear-gradient(135deg, rgba(231, 76, 60, 0.4), rgba(231, 76, 60, 0.2));
+                        border: 2px solid #E74C3C;
+                        border-radius: 8px;
+                        color: #E74C3C;
+                        font-family: 'JetBrains Mono', monospace;
+                        font-size: 12px;
+                        font-weight: 700;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                    " onmouseover="this.style.background='linear-gradient(135deg, rgba(231, 76, 60, 0.6), rgba(231, 76, 60, 0.4))'; this.style.boxShadow='0 0 15px rgba(231, 76, 60, 0.4)';" onmouseout="this.style.background='linear-gradient(135deg, rgba(231, 76, 60, 0.4), rgba(231, 76, 60, 0.2))'; this.style.boxShadow='none';">
+                        Nate
+                    </button>
+                    <!-- Zancas -->
+                    <button onclick="playHeroIntroVideo('zancas')" style="
+                        padding: 10px 15px;
+                        background: linear-gradient(135deg, rgba(39, 174, 96, 0.4), rgba(39, 174, 96, 0.2));
+                        border: 2px solid #27AE60;
+                        border-radius: 8px;
+                        color: #27AE60;
+                        font-family: 'JetBrains Mono', monospace;
+                        font-size: 12px;
+                        font-weight: 700;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                    " onmouseover="this.style.background='linear-gradient(135deg, rgba(39, 174, 96, 0.6), rgba(39, 174, 96, 0.4))'; this.style.boxShadow='0 0 15px rgba(39, 174, 96, 0.4)';" onmouseout="this.style.background='linear-gradient(135deg, rgba(39, 174, 96, 0.4), rgba(39, 174, 96, 0.2))'; this.style.boxShadow='none';">
+                        Zancas
+                    </button>
+                    <!-- CyberAxe -->
+                    <button onclick="playHeroIntroVideo('cyberaxe')" style="
+                        padding: 10px 15px;
+                        background: linear-gradient(135deg, rgba(46, 134, 222, 0.4), rgba(46, 134, 222, 0.2));
+                        border: 2px solid #2E86DE;
+                        border-radius: 8px;
+                        color: #2E86DE;
+                        font-family: 'JetBrains Mono', monospace;
+                        font-size: 12px;
+                        font-weight: 700;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                    " onmouseover="this.style.background='linear-gradient(135deg, rgba(46, 134, 222, 0.6), rgba(46, 134, 222, 0.4))'; this.style.boxShadow='0 0 15px rgba(46, 134, 222, 0.4)';" onmouseout="this.style.background='linear-gradient(135deg, rgba(46, 134, 222, 0.4), rgba(46, 134, 222, 0.2))'; this.style.boxShadow='none';">
+                        CyberAxe
+                    </button>
+                </div>
             </div>
             
             <!-- Multiplayer Controls (Top Left) -->
@@ -3520,6 +3686,14 @@
             <source src="tunnelsofprivacy/videos/nate_zashi.mp4" type="video/mp4">
         </video>
         <div style="position: absolute; bottom: 20px; color: #95A5A6; font-size: 14px;">Click anywhere to skip</div>
+    </div>
+    
+    <!-- Hero Intro Video Overlay -->
+    <div id="heroIntroVideoOverlay" onclick="closeHeroIntroVideo()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 400; justify-content: center; align-items: center; cursor: pointer;">
+        <video id="heroIntroVideo" style="max-width: 90%; max-height: 90%; border-radius: 10px; box-shadow: 0 0 30px rgba(139, 69, 255, 0.5);">
+            <source id="heroIntroVideoSource" src="" type="video/mp4">
+        </video>
+        <div style="position: absolute; bottom: 20px; color: #95A5A6; font-size: 14px;">Click anywhere to close</div>
     </div>
     
     <!-- Hero Selection Modal (Multiplayer) -->
@@ -3995,7 +4169,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.3.95';
+        const GAME_VERSION = 'v0.3.96';
         
         // ===== HACKATHON INFO TOOLTIP SYSTEM =====
         const TOOLTIP_DELAY = 800; // ms before tooltip appears
@@ -4904,6 +5078,218 @@
             tooltip.style.top = `${y}px`;
         }
         // ===== END ENEMY PRIVACY BREACH SYSTEM =====
+        
+        // ===== FOOD TRANSPARENCY SYSTEM =====
+        // Because you deserve to know what's in your dungeon food!
+        
+        const FOOD_DATA = {
+            // Bug parts found in grain-based foods
+            bugParts: [
+                '3 cricket legs', '1 weevil thorax', '2 moth antennae', 'trace amounts of beetle',
+                '0.5 cockroach wings', '4 grain mite fragments', 'flour beetle residue',
+                'a suspicious crunch', 'FDA-approved insect parts', '1 whole aphid (bonus protein)'
+            ],
+            // Plant backstories
+            plantBackstories: [
+                'Grew up in a field dreaming of becoming a flower. Became bread instead.',
+                'Was the runt of the crop. The other vegetables never let it forget.',
+                'Spent 6 months in soil contemplating existence. Still no answers.',
+                'Had a beautiful view of the sunset every day. Then harvest came.',
+                'Made friends with a ladybug. That ladybug is also in this bread.',
+                'Voted "Most Likely to Photosynthesize" by its peers.',
+                'Its seeds came from a long line of organic produce. Very proud of this.'
+            ],
+            // Animal backstories for meat
+            animalBackstories: [
+                'Lived a simple life. Enjoyed grass. Had no idea what a "dungeon" was.',
+                'Name was Bessie. Had dreams. Those dreams are now your stew.',
+                'Was employee of the month at the farm. Three times.',
+                'Left behind 2 calves and a disappointed farmer.',
+                'Spent its final days looking at clouds. It was peaceful.',
+                'Once escaped the farm for 3 hours. Best day of its life.',
+                'Its mother always said it would amount to something. She was right.',
+                'Had a favorite spot by the fence. The new cow uses it now.'
+            ],
+            // Fish backstories
+            fishBackstories: [
+                'Swam upstream for years. Was going somewhere. Never arrived.',
+                'Had a school of friends. They\'re also on the menu.',
+                'Saw a shiny thing. That was the last thing it saw.',
+                'Believed it was the chosen one. Technically correct.',
+                'Spent its whole life avoiding hooks. One bad day.',
+                'Its tank-mate Gary still wonders what happened.'
+            ],
+            // Chicken backstories
+            chickenBackstories: [
+                'Crossed the road once. Nobody knows why. Now it\'s dinner.',
+                'Laid 847 eggs. That wasn\'t enough apparently.',
+                'Had opinions about corn. Strong opinions.',
+                'Was the alpha of the coop. Pecking order meant nothing in the end.',
+                'Dreamed of flying. Achieved it briefly. Into the pot.'
+            ],
+            // Mysterious ingredients
+            mysteryIngredients: [
+                'unidentified protein', 'essence of dungeon', 'adventurer seasoning',
+                'ground mystery', 'compressed nutrients', 'edible matter',
+                'certified organic something', 'definitely not poison', 'chef\'s secret'
+            ],
+            // Dungeon-specific additives
+            dungeonAdditives: [
+                'torch soot for color', 'cave moss for fiber', 'mineral water (from puddles)',
+                'ambient despair', 'trace cobwebs', 'dungeon atmosphere',
+                'the souls of defeated enemies', 'ground gemstones (for sparkle)',
+                'hope (trace amounts)'
+            ],
+            // Expiry status
+            expiryStatus: [
+                'Best by: Who knows?', 'Expired 3 weeks ago', 'Technically still edible',
+                'Questionable but aromatic', 'Fresh-ish', 'Aged to perfection (hopefully)',
+                'Best not to ask', 'The mold adds flavor', 'Preserved by magic (probably)'
+            ]
+        };
+        
+        // Generate food transparency data based on item
+        function generateFoodData(item) {
+            const seed = item.name.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+            const rand = (arr) => arr[(seed) % arr.length];
+            const randOffset = (arr, offset) => arr[(seed + offset) % arr.length];
+            
+            const data = {
+                bugParts: rand(FOOD_DATA.bugParts),
+                dungeonAdditive: rand(FOOD_DATA.dungeonAdditives),
+                expiry: rand(FOOD_DATA.expiryStatus),
+                mysteryIngredient: rand(FOOD_DATA.mysteryIngredients)
+            };
+            
+            // Pick backstory based on food type
+            const name = item.name.toLowerCase();
+            if (name.includes('fish')) {
+                data.backstory = rand(FOOD_DATA.fishBackstories);
+                data.sourceType = '🐟 Fish';
+            } else if (name.includes('chicken') || name.includes('roast')) {
+                data.backstory = rand(FOOD_DATA.chickenBackstories);
+                data.sourceType = '🐔 Poultry';
+            } else if (name.includes('steak') || name.includes('dragon') || name.includes('meat')) {
+                data.backstory = rand(FOOD_DATA.animalBackstories);
+                data.sourceType = '🥩 Meat';
+            } else if (name.includes('bread') || name.includes('craps') || name.includes('scraps')) {
+                data.backstory = rand(FOOD_DATA.plantBackstories);
+                data.bugParts = randOffset(FOOD_DATA.bugParts, 3); // Extra bugs in bread
+                data.sourceType = '🌾 Grain';
+            } else if (name.includes('veggi') || name.includes('fresh')) {
+                data.backstory = rand(FOOD_DATA.plantBackstories);
+                data.sourceType = '🥬 Vegetable';
+            } else if (name.includes('feast') || name.includes('banquet') || name.includes('divine')) {
+                data.backstory = 'A legendary meal. Multiple creatures contributed. None of them volunteered.';
+                data.sourceType = '👑 Premium';
+            } else if (name.includes('potion')) {
+                data.backstory = 'Brewed by someone who definitely washed their hands. Probably.';
+                data.sourceType = '⚗️ Alchemical';
+                data.bugParts = 'None (we think)';
+            } else {
+                data.backstory = rand(FOOD_DATA.plantBackstories);
+                data.sourceType = '🍽️ Mixed';
+            }
+            
+            return data;
+        }
+        
+        function showFoodTooltip(event, item) {
+            const tooltip = document.getElementById('foodTooltip');
+            if (!tooltip || !item) return;
+            
+            const data = generateFoodData(item);
+            
+            tooltip.innerHTML = `
+                <div class="food-header">
+                    <div class="food-label">🔍 FOOD TRANSPARENCY REPORT</div>
+                    <div class="food-title">${item.name}</div>
+                </div>
+                
+                <div class="food-section-title">📋 Ingredient Analysis</div>
+                <div class="food-row">
+                    <span class="food-row-label">Source:</span>
+                    <span class="food-row-value">${data.sourceType}</span>
+                </div>
+                <div class="food-row">
+                    <span class="food-row-label">Bug Content:</span>
+                    <span class="food-row-value warning">${data.bugParts}</span>
+                </div>
+                <div class="food-row">
+                    <span class="food-row-label">Dungeon Additive:</span>
+                    <span class="food-row-value">${data.dungeonAdditive}</span>
+                </div>
+                <div class="food-row">
+                    <span class="food-row-label">Mystery Ingredient:</span>
+                    <span class="food-row-value">${data.mysteryIngredient}</span>
+                </div>
+                <div class="food-row">
+                    <span class="food-row-label">Freshness:</span>
+                    <span class="food-row-value warning">${data.expiry}</span>
+                </div>
+                
+                <div class="food-section-title">📖 Origin Story</div>
+                <div class="food-backstory">${data.backstory}</div>
+                
+                <div class="food-footer">🌿 Transparency is a Right • Know Your Food 🌿</div>
+            `;
+            
+            tooltip.classList.add('visible');
+            updateFoodTooltipPosition(event);
+        }
+        
+        function hideFoodTooltip() {
+            const tooltip = document.getElementById('foodTooltip');
+            if (tooltip) {
+                tooltip.classList.remove('visible');
+            }
+        }
+        
+        function updateFoodTooltipPosition(event) {
+            const tooltip = document.getElementById('foodTooltip');
+            if (!tooltip || !tooltip.classList.contains('visible')) return;
+            
+            const padding = 15;
+            let x = event.clientX + padding;
+            let y = event.clientY + padding;
+            
+            const rect = tooltip.getBoundingClientRect();
+            if (x + rect.width > window.innerWidth - padding) {
+                x = event.clientX - rect.width - padding;
+            }
+            if (y + rect.height > window.innerHeight - padding) {
+                y = Math.max(padding, event.clientY - rect.height - padding);
+            }
+            
+            tooltip.style.left = `${x}px`;
+            tooltip.style.top = `${y}px`;
+        }
+        
+        // Set up food tooltip hover events for inventory cells with food items
+        function setupFoodTooltips(container) {
+            if (!container) return;
+            
+            container.querySelectorAll('[data-slot]').forEach(cell => {
+                const slotIndex = parseInt(cell.dataset.slot);
+                const item = partyInventory.items[slotIndex];
+                
+                // Only attach to cells with party_meal items
+                if (!item || item.type !== 'party_meal') return;
+                
+                cell.addEventListener('mouseenter', (e) => {
+                    showFoodTooltip(e, item);
+                });
+                
+                cell.addEventListener('mousemove', (e) => {
+                    updateFoodTooltipPosition(e);
+                });
+                
+                cell.addEventListener('mouseleave', () => {
+                    hideFoodTooltip();
+                });
+            });
+        }
+        // ===== END FOOD TRANSPARENCY SYSTEM =====
         
         // ===== ACHIEVEMENTS & BESTIARY SYSTEM =====
         const STORAGE_KEY_ACHIEVEMENTS = 'top_achievements';
@@ -6417,6 +6803,58 @@
                 });
             },
             
+            // Spawn a projectile particle effect that travels from start to end
+            async spawnProjectile(effectPath, startX, startY, endX, endY, options = {}) {
+                const effectData = await this.loadEffect(effectPath);
+                if (!effectData) return null;
+                
+                // Calculate direction and distance
+                const dx = endX - startX;
+                const dy = endY - startY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const duration = options.duration || 0.5; // Time to travel in seconds
+                
+                // Calculate velocity needed to reach target in duration
+                const speed = distance / duration;
+                const dirX = dx / distance;
+                const dirY = dy / distance;
+                
+                // Create a modified effect data with overridden velocity
+                const projectileEffectData = {
+                    ...effectData,
+                    // Override velocity direction to point at target
+                    velocityDirX: dirX * speed / 20, // Divide by WORLD_TO_PIXEL since createParticle multiplies
+                    velocityDirY: dirY * speed / 20,
+                    velocity: 0, // Use velocityDir directly, no random spread velocity
+                    spread: options.spread !== undefined ? options.spread : 15, // Small spread for variation
+                    emitDuration: duration * 0.8, // Emit for 80% of travel time
+                    lifetime: duration * 1.2 // Particles live slightly longer than travel
+                };
+                
+                const emitter = {
+                    id: Date.now() + Math.random(),
+                    effectData: projectileEffectData,
+                    x: startX,
+                    y: startY,
+                    scale: options.scale || 1,
+                    rotation: options.rotation || 0,
+                    particles: [],
+                    emitTimer: 0,
+                    emitDuration: projectileEffectData.emitDuration,
+                    emitElapsed: 0,
+                    active: true,
+                    loop: false,
+                    followTarget: null,
+                    isProjectile: true,
+                    targetX: endX,
+                    targetY: endY,
+                    onComplete: options.onComplete || null
+                };
+                
+                this.emitters.push(emitter);
+                return emitter;
+            },
+            
             // Stop a specific emitter
             stopEmitter(emitter) {
                 if (emitter) {
@@ -6761,6 +7199,22 @@
         // Hero idle particle emitters (stored per hero)
         const heroIdleEmitters = {};
         
+        // Per-hero Y offset for idle particles (adjust position relative to hero sprite)
+        const heroIdleParticleOffsets = {
+            zooko: 0,
+            nate: 0,
+            zancas: 30, // Lower on Zancas
+            cyberaxe: 0
+        };
+        
+        // Per-hero offset for projectile attack start position (x, y offsets from hero position)
+        const heroProjectileOffsets = {
+            zooko: { x: 0, y: 0 },
+            nate: { x: 0, y: 60 },        // Down 60px
+            zancas: { x: 40, y: 60 },     // Down 60px, right 40px
+            cyberaxe: { x: -40, y: 40 }   // Down 40px, left 40px
+        };
+        
         // Start looping particle effects on all heroes
         async function startHeroIdleParticles() {
             // Stop any existing emitters first
@@ -6769,9 +7223,16 @@
             for (const hero of battleState.heroes) {
                 const heroName = hero.name.toLowerCase();
                 const effectPath = `tunnelsofprivacy/effects/heros/${heroName}_idle.json`;
+                const yOffset = heroIdleParticleOffsets[heroName] || 0;
+                
+                // Create a target object with offset
+                const particleTarget = {
+                    get x() { return hero.x; },
+                    get y() { return hero.y + yOffset; }
+                };
                 
                 try {
-                    const emitter = await particleSystem.spawnLooping(effectPath, hero, {
+                    const emitter = await particleSystem.spawnLooping(effectPath, particleTarget, {
                         scale: 1.0 // Will auto-scale based on hero depth
                     });
                     if (emitter) {
@@ -7956,6 +8417,9 @@
             // Add weapon tooltip event listeners
             setupWeaponTooltips(grid);
             
+            // Add food tooltip event listeners for party meals
+            setupFoodTooltips(grid);
+            
             // Update level progress display
             const progressEl = document.getElementById('inventoryLevelProgress');
             if (progressEl) {
@@ -8067,6 +8531,9 @@
             
             // Add weapon tooltip event listeners
             setupWeaponTooltips(grid);
+            
+            // Add food tooltip event listeners for party meals
+            setupFoodTooltips(grid);
         }
         
         // Setup weapon tooltip hover events for equipment slots
@@ -9474,8 +9941,10 @@
             
             let html = '';
             Object.values(mealCounts).forEach(meal => {
+                // Store meal data as JSON for tooltip (escape quotes)
+                const mealDataAttr = JSON.stringify({ name: meal.name, id: meal.id, value: meal.value, type: 'party_meal' }).replace(/"/g, '&quot;');
                 html += `
-                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 6px 8px; background: rgba(255, 159, 67, 0.15); border: 1px solid rgba(255, 159, 67, 0.3); border-radius: 6px; margin-bottom: 4px;">
+                    <div class="meal-item" data-meal='${mealDataAttr}' style="display: flex; align-items: center; justify-content: space-between; padding: 6px 8px; background: rgba(255, 159, 67, 0.15); border: 1px solid rgba(255, 159, 67, 0.3); border-radius: 6px; margin-bottom: 4px; cursor: pointer;">
                         <div style="display: flex; align-items: center; gap: 8px;">
                             <span style="font-size: 16px;">🍖</span>
                             <div>
@@ -9492,6 +9961,16 @@
             
             html += `<div style="text-align: center; margin-top: 6px; font-size: 10px; color: #89A0B4;">${meals.length}/10 meal slots used</div>`;
             listEl.innerHTML = html;
+            
+            // Add hover events for food tooltips
+            listEl.querySelectorAll('.meal-item').forEach(el => {
+                el.addEventListener('mouseenter', (e) => {
+                    const mealData = JSON.parse(el.dataset.meal);
+                    showFoodTooltip(e, mealData);
+                });
+                el.addEventListener('mousemove', (e) => updateFoodTooltipPosition(e));
+                el.addEventListener('mouseleave', () => hideFoodTooltip());
+            });
         }
         
         // Use a party meal to heal all heroes
@@ -11011,7 +11490,15 @@
                     align-items: center;
                     gap: 15px;
                     opacity: ${isDisabled ? '0.6' : '1'};
+                    cursor: pointer;
                 `;
+                
+                // Add food tooltip on hover for consumables/meals
+                if (item.type === 'consumable' || item.type === 'party_meal') {
+                    itemEl.addEventListener('mouseenter', (e) => showFoodTooltip(e, item));
+                    itemEl.addEventListener('mousemove', (e) => updateFoodTooltipPosition(e));
+                    itemEl.addEventListener('mouseleave', () => hideFoodTooltip());
+                }
                 
                 // Use actual item icon image at 128x128
                 const iconSrc = item.icon || 'tunnelsofprivacy/items/healing_potions_a_cropped.png';
@@ -11425,6 +11912,66 @@
                 showNPCChoiceResult('zcash', 0, zcashXp);
                 showNotification(`You told ${npcData?.name || 'the NPC'} about Zcash! +${zcashXp} XP`, 'success');
             }
+        }
+        
+        // Hero intro video paths
+        const heroIntroVideos = {
+            zooko: 'tunnelsofprivacy/videos/zooko_intro.mp4',
+            nate: 'tunnelsofprivacy/videos/nate_zashi.mp4',
+            zancas: 'tunnelsofprivacy/videos/zancas_intro.mp4',
+            cyberaxe: 'tunnelsofprivacy/videos/cyberaxe_intro.mp4'
+        };
+        
+        // Play hero intro video
+        function playHeroIntroVideo(heroName) {
+            const overlay = document.getElementById('heroIntroVideoOverlay');
+            const video = document.getElementById('heroIntroVideo');
+            const source = document.getElementById('heroIntroVideoSource');
+            
+            // Set video source
+            const videoPath = heroIntroVideos[heroName.toLowerCase()];
+            if (!videoPath) {
+                console.error('No intro video for hero:', heroName);
+                return;
+            }
+            
+            source.src = videoPath;
+            video.load();
+            
+            // Show overlay with flex
+            overlay.style.display = 'flex';
+            
+            // Play video
+            video.play().catch(err => {
+                console.error('Failed to play hero intro video:', err);
+            });
+            
+            // Auto-close 0.5 seconds before video ends (to avoid bad frame)
+            video.onended = () => {
+                closeHeroIntroVideo();
+            };
+            
+            // Monitor time to close early
+            video.ontimeupdate = () => {
+                if (video.duration && video.currentTime >= video.duration - 0.5) {
+                    closeHeroIntroVideo();
+                }
+            };
+        }
+        
+        // Close hero intro video overlay
+        function closeHeroIntroVideo() {
+            const overlay = document.getElementById('heroIntroVideoOverlay');
+            const video = document.getElementById('heroIntroVideo');
+            
+            // Stop and reset video
+            video.pause();
+            video.currentTime = 0;
+            video.onended = null;
+            video.ontimeupdate = null;
+            
+            // Hide overlay
+            overlay.style.display = 'none';
         }
         
         // Show the result of NPC choice and disable buttons
@@ -16450,6 +16997,23 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 });
             }
             
+            // Spawn projectile particle effect for light attacks (test with cyberaxe_electric)
+            if (isHero && actionType === 'light') {
+                // Get per-hero projectile offset
+                const heroName = attacker.name.toLowerCase();
+                const projOffset = heroProjectileOffsets[heroName] || { x: 0, y: 0 };
+                
+                // Spawn projectile from hero to target
+                particleSystem.spawnProjectile(
+                    'effect/cyberaxe_electric.json',
+                    attacker.x + projOffset.x,
+                    attacker.y - 50 + projOffset.y, // Base offset + per-hero offset
+                    target.x,
+                    target.y - 30, // Offset up from target feet
+                    { scale: 1.0, duration: 1.5 }
+                );
+            }
+            
             // Delay attack logic to sync with animation (2 seconds)
             const delay = hasAnimation ? 2000 : 0;
             
@@ -16999,6 +17563,9 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                             
                             // Check for hero death
                             if (secondTarget.hp <= 0) {
+                                // Stop hero idle particles when knocked out
+                                stopHeroIdleParticle(secondTarget.name);
+                                
                                 const allDead = battleState.heroes.every(h => h.hp <= 0);
                                 if (allDead) {
                                     showBattleNotification('DEFEAT!');
