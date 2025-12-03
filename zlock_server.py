@@ -972,12 +972,12 @@ Don't mention being an AI."""
                 ('groq', 'mixtral-8x7b-32768'),        # Backup
             ]
             
-            # Paid models (OpenRouter) - better quality
+            # Paid models (OpenRouter) - better quality, ordered by speed/quality
             PAID_MODELS = [
-                ('openrouter', 'mistralai/mistral-nemo'),           # Free tier on OR
-                ('openrouter', 'meta-llama/llama-3.1-8b-instruct'), # Cheap
-                ('openrouter', 'google/gemma-2-9b-it'),             # Cheap
-                ('openrouter', 'qwen/qwen2.5-coder-7b-instruct'),   # Cheap
+                ('openrouter', 'anthropic/claude-3-haiku'),          # Fast Claude - best balance
+                ('openrouter', 'meta-llama/llama-3.1-70b-instruct'), # Smart & reasonably fast
+                ('openrouter', 'google/gemma-2-9b-it'),              # Cheap backup
+                ('openrouter', 'mistralai/mistral-nemo'),            # Free tier on OR (slow)
             ]
             
             # Build model list based on preference with failover
@@ -1792,6 +1792,25 @@ async def handle_websocket(websocket, path):
                     action = data.get('action', 'unknown')
                     room_type = data.get('roomType', 'unknown')
                     print(f"[WS] Host sent non_combat_room to room {client_room}: {action} {room_type}")
+            
+            # NPC CHOICE (host only - help/rob/ignore decision)
+            elif msg_type == 'npc_choice':
+                if client_room and client_room in rooms and client_role == 'host':
+                    # Broadcast NPC choice to all clients
+                    for client in rooms[client_room]['clients']:
+                        await client.send(message)
+                    choice = data.get('choice', 'unknown')
+                    print(f"[WS] Host made NPC choice in room {client_room}: {choice}")
+            
+            # EXPLORATION CHOICE (host only - send one/send party/retreat)
+            elif msg_type == 'exploration_choice':
+                if client_room and client_room in rooms and client_role == 'host':
+                    # Broadcast exploration choice to all clients
+                    for client in rooms[client_room]['clients']:
+                        await client.send(message)
+                    choice = data.get('choice', 'unknown')
+                    success = data.get('success', False)
+                    print(f"[WS] Host made exploration choice in room {client_room}: {choice} (success: {success})")
             
             # LEVEL CHANGE (host only - stairs/fast travel)
             elif msg_type == 'level_change':

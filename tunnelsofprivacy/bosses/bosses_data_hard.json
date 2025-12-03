@@ -660,5 +660,51 @@
       "description": "Commits to attacking one hero, dealing double damage but taking +50% from others",
       "cooldown": 4
     }
+  },
+  {
+    "id": "auric_hoard_dragon",
+    "name": "Auric Hoard Dragon",
+    "spritePath": "tunnelsofprivacy/bosses/lvl100/boss_lvl100.png",
+    "mainLevel": 100,
+    "stats": {
+      "hp": 900,
+      "maxHp": 900,
+      "attackDamage": 320,
+      "ac": 30,
+      "speed": 7,
+      "experience": 10000,
+      "initiative": 7
+    },
+    "behavior": {
+      "hostile": true,
+      "canChat": true,
+      "fleeThreshold": 0.05
+    },
+    "backstory": "The legendary Auric Hoard Dragon, guardian of stolen wealth from a thousand surveillance empires. It sits atop mountains of gold extracted from data breaches and privacy violations. Its scales shimmer with the reflections of countless transactions it has intercepted. It speaks in riddles about the true cost of convenience.",
+    "loot": {
+      "dropChance": 1.0,
+      "items": [
+        {
+          "name": "Dragon Scale",
+          "chance": 0.5,
+          "goldValue": 500
+        },
+        {
+          "name": "Hoard Fragment",
+          "chance": 0.3,
+          "goldValue": 1000
+        },
+        {
+          "name": "Golden Privacy Seal",
+          "chance": 0.2,
+          "goldValue": 2500
+        }
+      ]
+    },
+    "special": {
+      "ability": "Golden Inferno",
+      "description": "Breathes molten gold, dealing massive damage and reducing armor",
+      "cooldown": 4
+    }
   }
 ]

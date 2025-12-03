@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.3.58</title>
+    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.3.88</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -13,6 +13,40 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+        }
+        
+        /* Custom Scrollbar Styling - Fantasy RPG Theme */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(20, 10, 40, 0.6);
+            border-radius: 5px;
+            border: 1px solid rgba(139, 69, 255, 0.2);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #8B45FF 0%, #6B35CC 50%, #4B2599 100%);
+            border-radius: 5px;
+            border: 1px solid rgba(139, 69, 255, 0.4);
+            box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.1);
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #9B55FF 0%, #7B45DC 50%, #5B35A9 100%);
+            box-shadow: 0 0 8px rgba(139, 69, 255, 0.5);
+        }
+        
+        ::-webkit-scrollbar-corner {
+            background: rgba(20, 10, 40, 0.6);
+        }
+        
+        /* Firefox scrollbar styling */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #8B45FF rgba(20, 10, 40, 0.6);
         }
         
         body {
@@ -620,8 +654,8 @@
             width: 50px;
             height: 50px;
             border-radius: 6px;
-            background-size: 300%;
-            background-position: center 15%;
+            background-size: cover;
+            background-position: center center;
             border: 2px solid #444;
         }
         
@@ -2705,6 +2739,18 @@
                     </div>
                 </div>
                 
+                <!-- Party Meals Section -->
+                <div id="partyMealsSection" style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 12px; margin-bottom: 15px;">
+                    <div style="color: #FF9F43; font-size: 14px; font-weight: 700; text-align: center; margin-bottom: 8px;">🍖 PARTY MEALS</div>
+                    <div id="partyMealsList" style="max-height: 120px; overflow-y: auto; margin-bottom: 8px;">
+                        <!-- Meals will be populated here -->
+                        <div style="color: #89A0B4; font-size: 11px; text-align: center;">No meals in inventory</div>
+                    </div>
+                    <div style="text-align: center; font-size: 10px; color: #89A0B4;">
+                        Buy meals at stores • Use at camp to heal party
+                    </div>
+                </div>
+                
                 <!-- Camp Button + Achievements Row -->
                 <div style="display: flex; gap: 8px;">
                     <button id="startCampBtn" onclick="startCamping()" style="flex: 1; padding: 10px; font-size: 14px; background: linear-gradient(135deg, rgba(39, 174, 96, 0.5), rgba(39, 174, 96, 0.3)); border: 2px solid #27AE60; border-radius: 8px; color: #27AE60; font-weight: 700; cursor: pointer;">
@@ -3059,7 +3105,7 @@
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.3.67 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.3.89 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div id="aboutDonateBtn" style="
@@ -3160,6 +3206,61 @@
                     ">▶ WATCH ON YOUTUBE</div>
                 </div>
             </a>
+            
+            <!-- Story Audio Buttons (Below YouTube Panel) -->
+            <div style="
+                position: absolute;
+                right: 60px;
+                top: calc(50% + 180px);
+                width: 320px;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                pointer-events: all;
+                z-index: 100;
+            ">
+                <!-- Read me the Story Button -->
+                <button id="storyVoiceBtn" onclick="toggleStoryVoice()" style="
+                    width: 100%;
+                    padding: 14px 20px;
+                    background: linear-gradient(135deg, rgba(139, 69, 255, 0.4), rgba(139, 69, 255, 0.2));
+                    border: 2px solid #8B45FF;
+                    border-radius: 10px;
+                    color: #8B45FF;
+                    font-family: 'JetBrains Mono', monospace;
+                    font-size: 14px;
+                    font-weight: 700;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 10px;
+                " onmouseover="this.style.background='linear-gradient(135deg, rgba(139, 69, 255, 0.6), rgba(139, 69, 255, 0.4))'; this.style.boxShadow='0 0 20px rgba(139, 69, 255, 0.4)';" onmouseout="this.style.background='linear-gradient(135deg, rgba(139, 69, 255, 0.4), rgba(139, 69, 255, 0.2))'; this.style.boxShadow='none';">
+                    <span id="storyVoiceIcon">📖</span> Read Me the Story
+                </button>
+                
+                <!-- Hear from the King Button -->
+                <button id="kingVoiceBtn" onclick="toggleKingVoice()" style="
+                    width: 100%;
+                    padding: 14px 20px;
+                    background: linear-gradient(135deg, rgba(242, 201, 76, 0.4), rgba(242, 201, 76, 0.2));
+                    border: 2px solid #F2C94C;
+                    border-radius: 10px;
+                    color: #F2C94C;
+                    font-family: 'JetBrains Mono', monospace;
+                    font-size: 14px;
+                    font-weight: 700;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 10px;
+                " onmouseover="this.style.background='linear-gradient(135deg, rgba(242, 201, 76, 0.6), rgba(242, 201, 76, 0.4))'; this.style.boxShadow='0 0 20px rgba(242, 201, 76, 0.4)';" onmouseout="this.style.background='linear-gradient(135deg, rgba(242, 201, 76, 0.4), rgba(242, 201, 76, 0.2))'; this.style.boxShadow='none';">
+                    <span id="kingVoiceIcon">👑</span> Hear from the King
+                </button>
+            </div>
             
             <!-- Multiplayer Controls (Top Left) -->
             <div style="position: absolute; top: 20px; left: 20px; display: flex; flex-direction: column; gap: 10px; align-items: flex-start; pointer-events: all; z-index: 100;">
@@ -3270,7 +3371,7 @@
                         <!-- LEFT: Merchant's Shop (Items) -->
                         <div id="merchantShop" style="background: rgba(39, 174, 96, 0.15); border: 2px solid #27AE60; border-radius: 12px; padding: 15px;">
                             <div style="color: #27AE60; font-size: 16px; font-weight: 900; text-align: center; margin-bottom: 12px; text-shadow: 0 0 10px rgba(39, 174, 96, 0.5);">🛒 MERCHANT'S WARES</div>
-                            <div id="storeItems" style="display: flex; flex-direction: column; gap: 10px; max-height: 400px; overflow-y: auto;">
+                            <div id="storeItems" style="display: flex; flex-direction: column; gap: 12px; max-height: 500px; overflow-y: auto; padding-right: 5px;">
                                 <!-- Store items populated dynamically -->
                             </div>
                         </div>
@@ -3331,8 +3432,33 @@
                 <div id="npcContent" style="display: none;">
                     <div id="npcName" style="color: #3498DB; font-size: 24px; font-weight: bold; text-align: center; margin-bottom: 10px;">NPC Name</div>
                     <div id="npcDialogue" style="color: #E0E0E0; font-size: 16px; text-align: center; margin-bottom: 20px; line-height: 1.6;">"Hello there!"</div>
-                    <div id="npcService" style="text-align: center;">
-                        <button class="menuButton" id="npcServiceBtn" onclick="useNPCService()" style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.4), rgba(52, 152, 219, 0.3)); border-color: #3498DB;">Accept Service</button>
+                    <div id="npcChoices" style="display: flex; flex-direction: column; gap: 15px; align-items: center; max-width: 400px; margin: 0 auto;">
+                        <!-- Good Choice: Help -->
+                        <button class="menuButton" id="npcHelpBtn" onclick="npcChoiceHelp()" style="width: 100%; background: linear-gradient(135deg, rgba(46, 204, 113, 0.4), rgba(46, 204, 113, 0.3)); border-color: #2ECC71; padding: 15px;">
+                            <div style="font-size: 18px; font-weight: bold;">🤝 HELP THEM</div>
+                            <div id="npcHelpCost" style="font-size: 14px; color: #E74C3C; margin-top: 5px;">Cost: 50 Gold</div>
+                            <div id="npcHelpReward" style="font-size: 14px; color: #2ECC71; margin-top: 3px;">Reward: +100 XP</div>
+                        </button>
+                        <!-- Bad Choice: Rob -->
+                        <button class="menuButton" id="npcRobBtn" onclick="npcChoiceRob()" style="width: 100%; background: linear-gradient(135deg, rgba(231, 76, 60, 0.4), rgba(231, 76, 60, 0.3)); border-color: #E74C3C; padding: 15px;">
+                            <div style="font-size: 18px; font-weight: bold;">💰 ROB THEM</div>
+                            <div id="npcRobReward" style="font-size: 14px; color: #F1C40F; margin-top: 5px;">Steal: 75 Gold</div>
+                            <div style="font-size: 14px; color: #95A5A6; margin-top: 3px;">No XP gained</div>
+                        </button>
+                        <!-- Zcash Choice: Tell about Zcash -->
+                        <button class="menuButton" id="npcZcashBtn" onclick="npcChoiceZcash()" style="width: 100%; background: linear-gradient(135deg, rgba(242, 201, 76, 0.4), rgba(242, 201, 76, 0.3)); border-color: #F2C94C; padding: 15px;">
+                            <div style="font-size: 18px; font-weight: bold;">💳 TELL THEM ABOUT ZCASH</div>
+                            <div style="font-size: 14px; color: #F2C94C; margin-top: 5px;">Spread the word!</div>
+                            <div id="npcZcashReward" style="font-size: 14px; color: #2ECC71; margin-top: 3px;">Reward: +100 XP</div>
+                        </button>
+                        <!-- Neutral Choice: Ignore -->
+                        <button class="menuButton" id="npcIgnoreBtn" onclick="npcChoiceIgnore()" style="width: 100%; background: linear-gradient(135deg, rgba(149, 165, 166, 0.4), rgba(149, 165, 166, 0.3)); border-color: #95A5A6; padding: 15px;">
+                            <div style="font-size: 18px; font-weight: bold;">🚶 IGNORE</div>
+                            <div style="font-size: 14px; color: #95A5A6; margin-top: 5px;">Walk away without interacting</div>
+                        </button>
+                    </div>
+                    <div id="npcChoiceMade" style="display: none; text-align: center; padding: 20px; margin-top: 15px; border-radius: 10px;">
+                        <div id="npcChoiceResult" style="font-size: 18px; font-weight: bold;"></div>
                     </div>
                 </div>
                 
@@ -3345,10 +3471,32 @@
                 </div>
                 
                 <div id="explorationContent" style="display: none;">
-                    <div id="explorationDescription" style="color: #9B59B6; font-size: 18px; text-align: center; margin-bottom: 20px;">An interesting discovery...</div>
-                    <div id="explorationChallenge" style="text-align: center; padding: 20px; background: rgba(155, 89, 182, 0.2); border-radius: 10px; border: 2px solid #9B59B6;">
-                        <div id="explorationChallengeText" style="color: #E0E0E0; font-size: 16px;">Complete the challenge!</div>
-                        <button class="menuButton" id="explorationActionBtn" onclick="completeExploration()" style="margin-top: 15px; background: linear-gradient(135deg, rgba(155, 89, 182, 0.4), rgba(155, 89, 182, 0.3)); border-color: #9B59B6;">Attempt</button>
+                    <div id="explorationDescription" style="color: #9B59B6; font-size: 18px; text-align: center; margin-bottom: 15px;">An interesting discovery...</div>
+                    <div id="explorationChallenge" style="text-align: center; padding: 15px; background: rgba(155, 89, 182, 0.2); border-radius: 10px; border: 2px solid #9B59B6; margin-bottom: 20px;">
+                        <div id="explorationChallengeText" style="color: #E0E0E0; font-size: 16px;">Difficulty: 1</div>
+                        <div id="explorationSuccessChance" style="color: #2ECC71; font-size: 14px; margin-top: 5px;">Success Chance: 75%</div>
+                    </div>
+                    <div id="explorationChoices" style="display: flex; flex-direction: column; gap: 15px; align-items: center; max-width: 450px; margin: 0 auto;">
+                        <!-- Send One Hero -->
+                        <button class="menuButton" id="explorationSendOneBtn" onclick="explorationSendOne()" style="width: 100%; background: linear-gradient(135deg, rgba(52, 152, 219, 0.4), rgba(52, 152, 219, 0.3)); border-color: #3498DB; padding: 15px;">
+                            <div style="font-size: 18px; font-weight: bold;">🧑 SEND ONE HERO</div>
+                            <div id="explorationOneXp" style="font-size: 14px; color: #2ECC71; margin-top: 5px;">Success: +100 XP (one hero)</div>
+                            <div id="explorationOneFail" style="font-size: 14px; color: #E74C3C; margin-top: 3px;">Fail: -25 HP (one hero)</div>
+                        </button>
+                        <!-- Send Entire Party -->
+                        <button class="menuButton" id="explorationSendPartyBtn" onclick="explorationSendParty()" style="width: 100%; background: linear-gradient(135deg, rgba(46, 204, 113, 0.4), rgba(46, 204, 113, 0.3)); border-color: #2ECC71; padding: 15px;">
+                            <div style="font-size: 18px; font-weight: bold;">👥 SEND ENTIRE PARTY</div>
+                            <div id="explorationPartyXp" style="font-size: 14px; color: #2ECC71; margin-top: 5px;">Success: +200 XP (split)</div>
+                            <div id="explorationPartyFail" style="font-size: 14px; color: #E74C3C; margin-top: 3px;">Fail: -15 HP (all heroes)</div>
+                        </button>
+                        <!-- Retreat -->
+                        <button class="menuButton" id="explorationRetreatBtn" onclick="explorationRetreat()" style="width: 100%; background: linear-gradient(135deg, rgba(149, 165, 166, 0.4), rgba(149, 165, 166, 0.3)); border-color: #95A5A6; padding: 15px;">
+                            <div style="font-size: 18px; font-weight: bold;">🚶 RETREAT</div>
+                            <div style="font-size: 14px; color: #95A5A6; margin-top: 5px;">Leave without attempting</div>
+                        </button>
+                    </div>
+                    <div id="explorationChoiceMade" style="display: none; text-align: center; padding: 20px; margin-top: 15px; border-radius: 10px;">
+                        <div id="explorationChoiceResult" style="font-size: 18px; font-weight: bold;"></div>
                     </div>
                 </div>
             </div>
@@ -3363,6 +3511,14 @@
                 </div>
             </div>
         </div>
+    </div>
+    
+    <!-- Zcash Video Overlay (NPC Encounter) -->
+    <div id="zcashVideoOverlay" onclick="closeZcashVideo()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 400; justify-content: center; align-items: center; cursor: pointer;">
+        <video id="zcashVideo" style="max-width: 90%; max-height: 90%; border-radius: 10px; box-shadow: 0 0 30px rgba(242, 201, 76, 0.5);">
+            <source src="tunnelsofprivacy/events/encoutners/nate_zashi.mp4" type="video/mp4">
+        </video>
+        <div style="position: absolute; bottom: 20px; color: #95A5A6; font-size: 14px;">Click anywhere to skip</div>
     </div>
     
     <!-- Hero Selection Modal (Multiplayer) -->
@@ -3664,8 +3820,8 @@
                 <div class="settingsRow">
                     <span class="settingsLabel">Voice Volume</span>
                     <div class="settingsSliderGroup">
-                        <input type="range" id="voiceVolume" class="settingsSlider" min="0" max="100" value="30" oninput="updateSettings()">
-                        <span id="voiceVolumeValue" class="settingsSliderValue" style="color: #9B59B6;">30</span>
+                        <input type="range" id="voiceVolume" class="settingsSlider" min="0" max="100" value="90" oninput="updateSettings()">
+                        <span id="voiceVolumeValue" class="settingsSliderValue" style="color: #9B59B6;">90</span>
                     </div>
                 </div>
             </div>
@@ -3736,7 +3892,7 @@
         </div>
         
         <div style="display: block; width: 100%; margin-top: 12px; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #5A7A8F;">
-            Tunnels of Privacy v0.3.75
+            Tunnels of Privacy v0.3.89
         </div>
     </div>
     
@@ -3830,7 +3986,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.3.75';
+        const GAME_VERSION = 'v0.3.89';
         
         // ===== HACKATHON INFO TOOLTIP SYSTEM =====
         const TOOLTIP_DELAY = 800; // ms before tooltip appears
@@ -4798,7 +4954,8 @@
                 17: 'Rootkit Revenant', 18: 'Trojan Tyrant', 19: 'Worm Warden',
                 20: 'Virus Vanguard', 21: 'Adware Aberration', 22: 'Scareware Shade',
                 23: 'Cryptojacker', 24: 'Man-in-Middle Monster', 25: 'SQL Injector',
-                26: 'XSS Executor'
+                26: 'XSS Executor',
+                100: 'Auric Hoard Dragon'
             };
             
             // Get boss name - known names for 2-26, generated for rest
@@ -4811,8 +4968,8 @@
                 bossName = `${prefix} ${type} ${level}`;
             }
             
-            // Determine if we have art (levels 2-26)
-            const hasArt = level <= 26;
+            // Determine if we have art (levels 2-100 - complete!)
+            const hasArt = (level >= 2 && level <= 100);
             const spritePath = hasArt 
                 ? `tunnelsofprivacy/bosses/lvl${level}/boss_lvl${level}.png`
                 : null;
@@ -5946,6 +6103,8 @@
             },
             // Client-only: Cache of gold from host
             goldCache: 0,
+            // Client-only: Cache of party meals from host
+            partyMealsCache: [],
             // Rolled hero stats from dice rolling (new game only)
             rolledHeroStats: {}
         };
@@ -6493,49 +6652,52 @@
             newMusic.loop = false;
             newMusic.volume = 0; // Start silent
             
+            // Add ended listener BEFORE play to avoid race condition
+            newMusic.addEventListener('ended', () => {
+                // Don't auto-play next track if user manually paused
+                if (userPausedMusic || !musicEnabled) return;
+                // Only trigger if this is still the current track (not replaced by another)
+                if (currentMusic !== newMusic) return;
+                
+                mainThemePlayed = true;
+                const shouldPlayTheme = Math.random() < 0.5; // 50% chance
+                
+                if (shouldPlayTheme && themeMusicEnabled) {
+                    // Pick random theme
+                    const randomTheme = themeTracks[Math.floor(Math.random() * themeTracks.length)];
+                    loadMusic(randomTheme);
+                } else if (zoneMusicEnabled) {
+                    // Play zone track
+                    const currentLevel = parseInt(document.getElementById('dungeonLevel')?.textContent) || 1;
+                    const zoneTrack = getMusicForZone(currentLevel);
+                    loadMusic(zoneTrack);
+                } else if (themeMusicEnabled) {
+                    // Fall back to theme if zone disabled
+                    const randomTheme = themeTracks[Math.floor(Math.random() * themeTracks.length)];
+                    loadMusic(randomTheme);
+                }
+            });
+            
+            // Set currentMusic BEFORE starting playback so ended handler has correct reference
+            const oldMusic = currentMusic;
+            currentMusic = newMusic;
+            
             // Fade in new track
             newMusic.play().then(() => {
                 fadeMusic(newMusic, 0, volumeScale, 1000);
                 musicStarted = true;
                 updateMusicButton();
-                
-                // When song ends, maybe play a theme, then resume zone track
-                newMusic.addEventListener('ended', () => {
-                    // Don't auto-play next track if user manually paused
-                    if (userPausedMusic || !musicEnabled) return;
-                    
-                    mainThemePlayed = true;
-                    const shouldPlayTheme = Math.random() < 0.5; // 50% chance
-                    
-                    if (shouldPlayTheme && themeMusicEnabled) {
-                        // Pick random theme
-                        const randomTheme = themeTracks[Math.floor(Math.random() * themeTracks.length)];
-                        loadMusic(randomTheme);
-                    } else if (zoneMusicEnabled) {
-                        // Loop the zone track again
-                        const currentLevel = parseInt(document.getElementById('dungeonLevel')?.textContent) || 1;
-                        const zoneTrack = getMusicForZone(currentLevel);
-                        loadMusic(zoneTrack);
-                    } else if (themeMusicEnabled) {
-                        // Fall back to theme if zone disabled
-                        const randomTheme = themeTracks[Math.floor(Math.random() * themeTracks.length)];
-                        loadMusic(randomTheme);
-                    }
-                });
             }).catch(err => {
                 console.log('Music autoplay blocked:', err);
             });
             
-            // Fade out old track
-            if (currentMusic) {
-                const oldMusic = currentMusic;
+            // Crossfade: fade out old track while new one fades in
+            if (oldMusic) {
                 fadeMusic(oldMusic, oldMusic.volume, 0, 1000, () => {
                     oldMusic.pause();
                     oldMusic.src = '';
                 });
             }
-            
-            currentMusic = newMusic;
         }
         
         function fadeMusic(audioElement, startVol, endVol, duration, callback) {
@@ -6729,7 +6891,6 @@
             if (currentMusic) {
                 const actualVol = Math.min(1.0, musicVolume / 500);
                 currentMusic.volume = actualVol;
-                console.log(`[Volume] Music changed: slider=${musicVolume}, actual=${actualVol}`);
             }
             
             // Save to localStorage
@@ -6741,7 +6902,7 @@
             musicEnabled: true,
             musicVolume: 40,
             bgSoundVolume: 25,        // Background video sound volume (0-100, default 25 -> 5%)
-            voiceVolume: 30,          // TTS and narrator volume (0-100, default 30 -> 6%)
+            voiceVolume: 90,          // TTS and narrator volume (0-100, default 90 -> 36%)
             themeMusicEnabled: true,  // Theme songs toggle
             zoneMusicEnabled: true,   // Zone music toggle
             showHitboxes: false,
@@ -6928,6 +7089,7 @@
         // Send inventory update to clients
         function sendInventoryUpdate() {
             if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                const sharedSave = loadSharedSave();
                 sendWebSocketMessage({
                     type: 'inventory_update',
                     inventory: {
@@ -6935,7 +7097,9 @@
                         maxSlots: partyInventory.maxSlots,
                         partyLevel: partyInventory.partyLevel
                     },
-                    equipment: heroEquipment
+                    equipment: heroEquipment,
+                    partyMeals: sharedSave?.dungeonState?.partyMeals || [],
+                    gold: sharedSave?.dungeonState?.gold || 0
                 });
             }
         }
@@ -6951,11 +7115,32 @@
                 heroEquipment = data.equipment;
             }
             
+            // Sync party meals cache
+            if (data.partyMeals !== undefined) {
+                multiplayerState.partyMealsCache = data.partyMeals;
+            }
+            
+            // Sync gold cache
+            if (data.gold !== undefined) {
+                multiplayerState.goldCache = data.gold;
+                updateGoldDisplay();
+            }
+            
             console.log('[Inventory] Received update from host');
             
             // Update UI if inventory panel is open
             if (document.getElementById('inventoryPanel')?.style.display === 'block') {
                 renderInventoryGrid();
+            }
+            
+            // Update camp panel meals list if open
+            if (document.getElementById('campPanel')?.style.display === 'block') {
+                populatePartyMealsList();
+            }
+            
+            // Update store display if in store
+            if (currentScreen === 'nonCombatRoom' && nonCombatRoomState.roomType === 'store') {
+                populateStoreContent();
             }
         }
         
@@ -7690,6 +7875,82 @@
             if (battleVideo && !battleVideo.muted) battleVideo.volume = vol;
         }
         
+        // Story voice audio players (for title screen)
+        let storyVoiceAudio = null;
+        let kingVoiceAudio = null;
+        
+        // Toggle Story Voice playback
+        function toggleStoryVoice() {
+            const btn = document.getElementById('storyVoiceBtn');
+            const icon = document.getElementById('storyVoiceIcon');
+            
+            // Stop king voice if playing
+            if (kingVoiceAudio && !kingVoiceAudio.paused) {
+                kingVoiceAudio.pause();
+                kingVoiceAudio.currentTime = 0;
+                document.getElementById('kingVoiceIcon').textContent = '👑';
+                document.getElementById('kingVoiceBtn').style.borderColor = '#F2C94C';
+            }
+            
+            if (storyVoiceAudio && !storyVoiceAudio.paused) {
+                // Stop playing
+                storyVoiceAudio.pause();
+                storyVoiceAudio.currentTime = 0;
+                icon.textContent = '📖';
+                btn.style.borderColor = '#8B45FF';
+            } else {
+                // Start playing
+                if (!storyVoiceAudio) {
+                    storyVoiceAudio = new Audio('tunnelsofprivacy/voiced/intro_voiced.mp3');
+                    storyVoiceAudio.addEventListener('ended', () => {
+                        icon.textContent = '📖';
+                        btn.style.borderColor = '#8B45FF';
+                    });
+                }
+                storyVoiceAudio.volume = Math.min((settings.voiceVolume || 90) / 100, 1.0);
+                storyVoiceAudio.currentTime = 0;
+                storyVoiceAudio.play().catch(e => console.log('[StoryVoice] Playback failed:', e));
+                icon.textContent = '⏹️';
+                btn.style.borderColor = '#27AE60';
+            }
+        }
+        
+        // Toggle King Voice playback
+        function toggleKingVoice() {
+            const btn = document.getElementById('kingVoiceBtn');
+            const icon = document.getElementById('kingVoiceIcon');
+            
+            // Stop story voice if playing
+            if (storyVoiceAudio && !storyVoiceAudio.paused) {
+                storyVoiceAudio.pause();
+                storyVoiceAudio.currentTime = 0;
+                document.getElementById('storyVoiceIcon').textContent = '📖';
+                document.getElementById('storyVoiceBtn').style.borderColor = '#8B45FF';
+            }
+            
+            if (kingVoiceAudio && !kingVoiceAudio.paused) {
+                // Stop playing
+                kingVoiceAudio.pause();
+                kingVoiceAudio.currentTime = 0;
+                icon.textContent = '👑';
+                btn.style.borderColor = '#F2C94C';
+            } else {
+                // Start playing
+                if (!kingVoiceAudio) {
+                    kingVoiceAudio = new Audio('tunnelsofprivacy/voiced/intro_king_voiced.mp3');
+                    kingVoiceAudio.addEventListener('ended', () => {
+                        icon.textContent = '👑';
+                        btn.style.borderColor = '#F2C94C';
+                    });
+                }
+                kingVoiceAudio.volume = Math.min((settings.voiceVolume || 90) / 100, 1.0);
+                kingVoiceAudio.currentTime = 0;
+                kingVoiceAudio.play().catch(e => console.log('[KingVoice] Playback failed:', e));
+                icon.textContent = '⏹️';
+                btn.style.borderColor = '#27AE60';
+            }
+        }
+        
         function showAbout() {
             document.getElementById('overlay').style.display = 'block';
             document.getElementById('aboutPanel').style.display = 'block';
@@ -7744,20 +8005,15 @@
                 renderBattle();
             }
             
-            // Handle music enable/disable
-            if (currentMusic) {
-                if (musicEnabled) {
-                    // Enable: Resume if paused
-                    if (currentMusic.paused) {
-                        currentMusic.play().catch(err => console.log('Play error:', err));
-                    }
-                    const actualVol = Math.min(1.0, musicVolume / 500);
-                    currentMusic.volume = actualVol;
-                    console.log(`[Volume] Music set from settings: slider=${musicVolume}, actual=${actualVol}`);
-                } else {
-                    // Disable: Pause music
-                    currentMusic.pause();
-                }
+            // Handle music volume change (don't change play/pause state)
+            if (currentMusic && musicEnabled) {
+                const actualVol = Math.min(1.0, musicVolume / 500);
+                currentMusic.volume = actualVol;
+            }
+            
+            // Only pause music if explicitly disabled via checkbox
+            if (currentMusic && !musicEnabled) {
+                currentMusic.pause();
             }
             
             // Update volume slider in main controls
@@ -7974,7 +8230,7 @@
                 dungeonState: {
                     currentLevel: 1,
                     inventory: [],
-                    gold: 5000,
+                    gold: 42,
                     questProgress: {
                         hasScepter: false,
                         hasReturned: false,
@@ -8228,6 +8484,28 @@
             return roomVideos[Math.floor(Math.random() * roomVideos.length)];
         }
         
+        // Exploration background images (11 images)
+        const exploreBackgrounds = [];
+        for (let i = 1; i <= 11; i++) {
+            exploreBackgrounds.push(`tunnelsofprivacy/events/explore/explore (${i}).png`);
+        }
+        
+        // Get random exploration background
+        function getRandomExploreBackground() {
+            return exploreBackgrounds[Math.floor(Math.random() * exploreBackgrounds.length)];
+        }
+        
+        // NPC Encounter background images (10 images)
+        const encounterBackgrounds = [];
+        for (let i = 1; i <= 10; i++) {
+            encounterBackgrounds.push(`tunnelsofprivacy/events/encoutners/encoutners (${i}).png`);
+        }
+        
+        // Get random encounter background
+        function getRandomEncounterBackground() {
+            return encounterBackgrounds[Math.floor(Math.random() * encounterBackgrounds.length)];
+        }
+        
         // Trader/Store video backgrounds (12 videos)
         const traderVideos = [
             'tunnelsofprivacy/levels/traders/traders_armory_lane_var1.mp4',
@@ -8388,6 +8666,18 @@
             const dungeonMastersPanel = document.getElementById('dungeonMastersPanel');
             if (dungeonMastersPanel) dungeonMastersPanel.style.display = 'none';
             
+            // Sync battleState.heroes with saved data (in case exploration damaged them)
+            const sharedSave = loadSharedSave();
+            if (sharedSave && sharedSave.heroes) {
+                battleState.heroes.forEach(hero => {
+                    const heroKey = hero.name.toLowerCase();
+                    if (sharedSave.heroes[heroKey]) {
+                        hero.hp = sharedSave.heroes[heroKey].hp;
+                        hero.maxHp = sharedSave.heroes[heroKey].maxHp;
+                    }
+                });
+            }
+            
             // Show camp panel
             const campPanel = document.getElementById('campPanel');
             if (campPanel) {
@@ -8395,6 +8685,9 @@
                 
                 // Update heal preview based on selected hours
                 updateCampHealPreview();
+                
+                // Populate party meals list
+                populatePartyMealsList();
                 
                 // Highlight camp button
                 const campBtn = document.getElementById('campBtn');
@@ -8461,6 +8754,132 @@
                     el.style.color = actualHeal > 0 ? '#E74C3C' : '#27AE60';
                 }
             });
+        }
+        
+        // Populate the party meals list in camp panel
+        function populatePartyMealsList() {
+            const listEl = document.getElementById('partyMealsList');
+            if (!listEl) return;
+            
+            // Clients use cached meals from host
+            let meals;
+            if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                meals = multiplayerState.partyMealsCache || [];
+            } else {
+                const sharedSave = loadSharedSave();
+                meals = sharedSave?.dungeonState?.partyMeals || [];
+            }
+            
+            if (meals.length === 0) {
+                listEl.innerHTML = '<div style="color: #89A0B4; font-size: 11px; text-align: center;">No meals in inventory</div>';
+                return;
+            }
+            
+            // Group meals by type for cleaner display
+            const mealCounts = {};
+            meals.forEach((meal, index) => {
+                if (!mealCounts[meal.id]) {
+                    mealCounts[meal.id] = { ...meal, count: 0, indices: [] };
+                }
+                mealCounts[meal.id].count++;
+                mealCounts[meal.id].indices.push(index);
+            });
+            
+            let html = '';
+            Object.values(mealCounts).forEach(meal => {
+                html += `
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 6px 8px; background: rgba(255, 159, 67, 0.15); border: 1px solid rgba(255, 159, 67, 0.3); border-radius: 6px; margin-bottom: 4px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 16px;">🍖</span>
+                            <div>
+                                <div style="color: #FF9F43; font-size: 12px; font-weight: bold;">${meal.name} x${meal.count}</div>
+                                <div style="color: #89A0B4; font-size: 10px;">+${meal.value} HP each hero</div>
+                            </div>
+                        </div>
+                        <button onclick="usePartyMeal(${meal.indices[0]})" style="padding: 4px 10px; background: linear-gradient(135deg, #FF9F43, #F39C12); border: none; border-radius: 4px; color: white; font-size: 11px; font-weight: bold; cursor: pointer;">
+                            EAT
+                        </button>
+                    </div>
+                `;
+            });
+            
+            html += `<div style="text-align: center; margin-top: 6px; font-size: 10px; color: #89A0B4;">${meals.length}/10 meal slots used</div>`;
+            listEl.innerHTML = html;
+        }
+        
+        // Use a party meal to heal all heroes
+        function usePartyMeal(mealIndex) {
+            // Host-only check
+            if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                showNotification('Only the party leader can use meals', 'warning');
+                return;
+            }
+            
+            const sharedSave = loadSharedSave();
+            if (!sharedSave?.dungeonState?.partyMeals || !sharedSave.dungeonState.partyMeals[mealIndex]) {
+                showNotification('Meal not found!', 'error');
+                return;
+            }
+            
+            const meal = sharedSave.dungeonState.partyMeals[mealIndex];
+            const healAmount = meal.value;
+            
+            // Heal all heroes
+            let healedAny = false;
+            ['zooko', 'nate', 'zancas', 'cyberaxe'].forEach(heroKey => {
+                const hero = sharedSave.heroes[heroKey];
+                if (hero && hero.hp < hero.maxHp) {
+                    const oldHp = hero.hp;
+                    hero.hp = Math.min(hero.hp + healAmount, hero.maxHp);
+                    if (hero.hp > oldHp) healedAny = true;
+                }
+            });
+            
+            // Also update battleState heroes for immediate UI update
+            battleState.heroes.forEach(hero => {
+                const heroKey = hero.name.toLowerCase();
+                if (sharedSave.heroes[heroKey]) {
+                    hero.hp = sharedSave.heroes[heroKey].hp;
+                    hero.maxHp = sharedSave.heroes[heroKey].maxHp;
+                }
+            });
+            
+            // Clear the inventory slot if this meal had one assigned
+            if (meal.inventorySlot !== undefined && partyInventory.items[meal.inventorySlot]) {
+                partyInventory.items[meal.inventorySlot] = null;
+            }
+            
+            // Remove the used meal from partyMeals array
+            sharedSave.dungeonState.partyMeals.splice(mealIndex, 1);
+            
+            // Save and update UI
+            saveSharedSave(sharedSave);
+            updateDungeonMenuHeroes();
+            updateCampHealPreview();
+            populatePartyMealsList();
+            
+            // Sync inventory to clients
+            if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                sendInventoryUpdate();
+            }
+            
+            // Show notification
+            if (healedAny) {
+                showNotification(`The party enjoyed ${meal.name}! +${healAmount} HP each`, 'success');
+            } else {
+                showNotification(`The party enjoyed ${meal.name} (already at full health)`, 'success');
+            }
+            
+            // Broadcast to clients in multiplayer
+            if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                sendWebSocketMessage({
+                    type: 'party_meal_used',
+                    mealName: meal.name,
+                    healAmount: healAmount
+                });
+            }
+            
+            console.log(`[Camp] Used party meal: ${meal.name} (+${healAmount} HP each)`);
         }
         
         // Start camping
@@ -9425,17 +9844,27 @@
             preGeneratedEncounter.captive = null;
             
             // NPC encounter - friendly character
-            const npcTypes = ['adventurer', 'scholar', 'healer', 'guide'];
+            const npcTypes = ['adventurer', 'scholar', 'healer', 'guide', 'refugee', 'wounded', 'lost'];
             const npcType = npcTypes[Math.floor(Math.random() * npcTypes.length)];
+            
+            // Calculate costs/rewards based on room level
+            const baseHelpCost = 25 + (roomLevel * 10); // Gold cost to help
+            const baseXpReward = 50 + (roomLevel * 25); // XP for helping
+            const baseRobReward = 40 + (roomLevel * 15); // Gold from robbing
+            const baseZcashXp = 50 + (roomLevel * 25); // XP for telling about Zcash
             
             preGeneratedEncounter.npcData = {
                 type: npcType,
                 name: getRandomNPCName(npcType),
                 dialogue: getNPCDialogue(npcType, roomLevel),
-                service: getNPCService(npcType, roomLevel)
+                helpCost: baseHelpCost,
+                helpXpReward: baseXpReward,
+                robGoldReward: baseRobReward,
+                zcashXpReward: baseZcashXp,
+                choiceMade: false
             };
             
-            console.log('[PreGen] Generated NPC room:', npcType);
+            console.log('[PreGen] Generated NPC room:', npcType, 'Help cost:', baseHelpCost, 'XP:', baseXpReward, 'Rob:', baseRobReward);
             updateExploreLoadingBar(90);
         }
         
@@ -9449,13 +9878,27 @@
             const eventTypes = ['puzzle', 'trap', 'discovery', 'environmental'];
             const eventType = eventTypes[Math.floor(Math.random() * eventTypes.length)];
             
+            // Calculate values based on room level
+            const difficulty = roomLevel;
+            const baseSuccessChance = Math.max(40, 90 - (roomLevel * 3)); // 90% at level 1, down to 40% min
+            const oneHeroXp = 50 + (roomLevel * 30); // XP for single hero success
+            const partyXp = 100 + (roomLevel * 50); // XP for party success (split)
+            const oneHeroFailDamage = 15 + (roomLevel * 5); // Damage on single hero fail
+            const partyFailDamage = 10 + (roomLevel * 3); // Damage to each hero on party fail
+            
             preGeneratedEncounter.explorationData = {
                 type: eventType,
                 challenge: generateExplorationChallenge(eventType, roomLevel),
-                reward: generateExplorationReward(eventType, roomLevel)
+                difficulty: difficulty,
+                successChance: baseSuccessChance,
+                oneHeroXp: oneHeroXp,
+                partyXp: partyXp,
+                oneHeroFailDamage: oneHeroFailDamage,
+                partyFailDamage: partyFailDamage,
+                choiceMade: false
             };
             
-            console.log('[PreGen] Generated exploration event:', eventType);
+            console.log('[PreGen] Generated exploration event:', eventType, 'Difficulty:', difficulty, 'Success:', baseSuccessChance + '%');
             updateExploreLoadingBar(90);
         }
         
@@ -9488,21 +9931,129 @@
                     basePrice: 50,
                     icon: 'tunnelsofprivacy/items/healing_potions_a_cropped.png',
                     description: 'Restores 25 HP to one hero'
+                },
+                // Party Meal Foods - Heal entire party, usable only at camp
+                { 
+                    id: 'meal_craps',
+                    name: 'Craps', 
+                    type: 'party_meal', 
+                    effect: 'party_heal', 
+                    value: 10, 
+                    basePrice: 10,
+                    icon: 'tunnelsofprivacy/items/meal_1.png',
+                    description: 'Simple scraps. Heals party for 10 HP each at camp.'
+                },
+                { 
+                    id: 'meal_veggies',
+                    name: 'Fresh Veggies', 
+                    type: 'party_meal', 
+                    effect: 'party_heal', 
+                    value: 50, 
+                    basePrice: 50,
+                    icon: 'tunnelsofprivacy/items/meal_2.png',
+                    description: 'Crisp vegetables. Heals party for 50 HP each at camp.'
+                },
+                { 
+                    id: 'meal_bread',
+                    name: 'Hearty Bread', 
+                    type: 'party_meal', 
+                    effect: 'party_heal', 
+                    value: 100, 
+                    basePrice: 100,
+                    icon: 'tunnelsofprivacy/items/meal_3.png',
+                    description: 'Warm loaf of bread. Heals party for 100 HP each at camp.'
+                },
+                { 
+                    id: 'meal_fish',
+                    name: 'Grilled Fish', 
+                    type: 'party_meal', 
+                    effect: 'party_heal', 
+                    value: 200, 
+                    basePrice: 200,
+                    icon: 'tunnelsofprivacy/items/meal_4.png',
+                    description: 'Freshly caught fish. Heals party for 200 HP each at camp.'
+                },
+                { 
+                    id: 'meal_chicken',
+                    name: 'Roast Chicken', 
+                    type: 'party_meal', 
+                    effect: 'party_heal', 
+                    value: 350, 
+                    basePrice: 350,
+                    icon: 'tunnelsofprivacy/items/meal_5.png',
+                    description: 'Juicy roasted chicken. Heals party for 350 HP each at camp.'
+                },
+                { 
+                    id: 'meal_steak',
+                    name: 'Steak & Potatoes', 
+                    type: 'party_meal', 
+                    effect: 'party_heal', 
+                    value: 500, 
+                    basePrice: 500,
+                    icon: 'tunnelsofprivacy/items/meal_6.png',
+                    description: 'Hearty steak dinner. Heals party for 500 HP each at camp.'
+                },
+                { 
+                    id: 'meal_feast',
+                    name: 'Feast Platter', 
+                    type: 'party_meal', 
+                    effect: 'party_heal', 
+                    value: 1000, 
+                    basePrice: 1000,
+                    icon: 'tunnelsofprivacy/items/meal_7.png',
+                    description: 'Bountiful platter. Heals party for 1000 HP each at camp.'
+                },
+                { 
+                    id: 'meal_banquet',
+                    name: 'Royal Banquet', 
+                    type: 'party_meal', 
+                    effect: 'party_heal', 
+                    value: 2500, 
+                    basePrice: 2500,
+                    icon: 'tunnelsofprivacy/items/meal_8.png',
+                    description: 'Fit for royalty. Heals party for 2500 HP each at camp.'
+                },
+                { 
+                    id: 'meal_dragon',
+                    name: 'Dragon Steak', 
+                    type: 'party_meal', 
+                    effect: 'party_heal', 
+                    value: 5000, 
+                    basePrice: 5000,
+                    icon: 'tunnelsofprivacy/items/meal_9.png',
+                    description: 'Legendary dragon meat. Heals party for 5000 HP each at camp.'
+                },
+                { 
+                    id: 'meal_divine',
+                    name: 'Divine Feast', 
+                    type: 'party_meal', 
+                    effect: 'party_heal', 
+                    value: 10000, 
+                    basePrice: 10000,
+                    icon: 'tunnelsofprivacy/items/meal_10.png',
+                    description: 'Food of the gods. Heals party for 10000 HP each at camp.'
                 }
-                // Future items will be added here as they are implemented
             ];
             
             const items = [];
-            const itemCount = Math.min(3 + Math.floor(roomLevel / 10), 6); // 3-6 items
             
-            // For now, just stock health potions with varying quantities
-            for (let i = 0; i < itemCount; i++) {
-                const baseItem = APPROVED_ITEMS[Math.floor(Math.random() * APPROVED_ITEMS.length)];
-                items.push({
-                    ...baseItem,
-                    price: Math.floor(baseItem.basePrice * (1 + roomLevel * 0.05)), // Slight price scaling
-                    quantity: 2 + Math.floor(Math.random() * 4) // 2-5 in stock
-                });
+            // Always add health potions (random quantity 2-5, with price scaling)
+            items.push({
+                ...APPROVED_ITEMS[0], // Health Potion
+                price: Math.floor(APPROVED_ITEMS[0].basePrice * (1 + roomLevel * 0.05)),
+                quantity: 99 // Unlimited
+            });
+            
+            // Always add ALL party meals (1-10) with unlimited stock
+            for (let i = 1; i <= 10; i++) {
+                const mealItem = APPROVED_ITEMS[i];
+                if (mealItem && mealItem.type === 'party_meal') {
+                    items.push({
+                        ...mealItem,
+                        price: mealItem.basePrice, // No price scaling for meals
+                        quantity: 99 // Unlimited - casual game
+                    });
+                }
             }
             
             return items;
@@ -9543,7 +10094,10 @@
                 'adventurer': ['Marcus the Bold', 'Elena Swift', 'Gruff Ironfoot', 'Lily Shadowstep'],
                 'scholar': ['Professor Zook', 'Sage Whisperwind', 'Archivist Dusty', 'Lorekeeper Nyx'],
                 'healer': ['Sister Mercy', 'Brother Calm', 'Herbalist Fern', 'Medic Kane'],
-                'guide': ['Old Map Murphy', 'Scout Keen-Eye', 'Pathfinder Rosa', 'Tunnel Tom']
+                'guide': ['Old Map Murphy', 'Scout Keen-Eye', 'Pathfinder Rosa', 'Tunnel Tom'],
+                'refugee': ['Fleeing Farmer', 'Scared Merchant', 'Lost Child', 'Escaped Prisoner'],
+                'wounded': ['Injured Scout', 'Limping Soldier', 'Hurt Miner', 'Bleeding Traveler'],
+                'lost': ['Confused Wanderer', 'Disoriented Explorer', 'Stranded Pilgrim', 'Bewildered Novice']
             };
             const typeNames = names[npcType] || names['adventurer'];
             return typeNames[Math.floor(Math.random() * typeNames.length)];
@@ -9554,19 +10108,12 @@
                 'adventurer': `I've been exploring these tunnels for days. Level ${roomLevel} is treacherous - stay alert!`,
                 'scholar': `Fascinating! The cryptographic inscriptions here suggest ancient Zcash knowledge...`,
                 'healer': `You look weary, travelers. Let me tend to your wounds.`,
-                'guide': `I know these passages well. The boss room is nearby - I can feel it.`
+                'guide': `I know these passages well. The boss room is nearby - I can feel it.`,
+                'refugee': `Please, you must help me! The monsters drove me from my home. I have nothing left...`,
+                'wounded': `*cough* I barely escaped with my life. Could you spare some gold for medicine?`,
+                'lost': `Thank the stars, other people! I've been wandering these tunnels for what feels like forever...`
             };
             return dialogues[npcType] || 'Hello there, traveler.';
-        }
-        
-        function getNPCService(npcType, roomLevel) {
-            const services = {
-                'adventurer': { type: 'hint', description: 'Share combat tips' },
-                'scholar': { type: 'lore', description: 'Reveal level secrets' },
-                'healer': { type: 'heal', description: 'Restore HP', value: 25 + roomLevel * 5 },
-                'guide': { type: 'reveal', description: 'Show remaining rooms' }
-            };
-            return services[npcType] || { type: 'chat', description: 'Friendly conversation' };
         }
         
         // ===== EXPLORATION HELPERS =====
@@ -9642,10 +10189,28 @@
                 // Use static background for other room types
                 document.getElementById('storeBackgroundVideo').style.display = 'none';
                 document.getElementById('nonCombatBackground').style.display = 'block';
-                if (preGeneratedEncounter.background) {
-                    document.getElementById('nonCombatBackground').style.backgroundImage = 
-                        `url('tunnelsofprivacy/backgrounds/${preGeneratedEncounter.background}')`;
+                
+                // Select appropriate background based on room type
+                let backgroundUrl;
+                if (roomType === 'exploration') {
+                    // Use explore backgrounds for exploration rooms
+                    backgroundUrl = preGeneratedEncounter.exploreBackground || getRandomExploreBackground();
+                    preGeneratedEncounter.exploreBackground = backgroundUrl; // Save for multiplayer sync
+                } else if (roomType === 'npc') {
+                    // Use encounter backgrounds for NPC rooms
+                    backgroundUrl = preGeneratedEncounter.encounterBackground || getRandomEncounterBackground();
+                    preGeneratedEncounter.encounterBackground = backgroundUrl; // Save for multiplayer sync
+                } else {
+                    // Secret rooms use general dungeon backgrounds
+                    backgroundUrl = preGeneratedEncounter.background 
+                        ? `tunnelsofprivacy/backgrounds/${preGeneratedEncounter.background}`
+                        : getRandomExploreBackground(); // Fallback to explore
+                    if (!preGeneratedEncounter.background) {
+                        preGeneratedEncounter.exploreBackground = backgroundUrl;
+                    }
                 }
+                
+                document.getElementById('nonCombatBackground').style.backgroundImage = `url('${backgroundUrl}')`;
             }
             
             // Configure room display based on type
@@ -9722,18 +10287,62 @@
             const itemsContainer = document.getElementById('storeItems');
             itemsContainer.innerHTML = '';
             
+            // Check if client (can't buy)
+            const isClient = multiplayerState.enabled && multiplayerState.role === 'client';
+            
+            // Get current gold for affordability check (clients use cache)
+            let currentGold, currentMeals;
+            if (isClient) {
+                currentGold = multiplayerState.goldCache || 0;
+                currentMeals = multiplayerState.partyMealsCache?.length || 0;
+            } else {
+                const sharedSave = loadSharedSave();
+                currentGold = sharedSave?.dungeonState?.gold || 0;
+                currentMeals = sharedSave?.dungeonState?.partyMeals?.length || 0;
+            }
+            
             storeData.items.forEach((item, index) => {
+                const canAfford = currentGold >= item.price;
+                const mealsFull = item.type === 'party_meal' && currentMeals >= 10;
+                const isDisabled = !canAfford || mealsFull;
+                
                 const itemEl = document.createElement('div');
-                itemEl.style.cssText = 'background: rgba(39, 174, 96, 0.2); border: 2px solid #27AE60; border-radius: 8px; padding: 10px; display: flex; align-items: center; gap: 10px;';
+                itemEl.style.cssText = `
+                    background: ${isDisabled ? 'rgba(100, 100, 100, 0.2)' : 'rgba(39, 174, 96, 0.2)'};
+                    border: 2px solid ${isDisabled ? '#666' : '#27AE60'};
+                    border-radius: 12px;
+                    padding: 12px;
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+                    opacity: ${isDisabled ? '0.6' : '1'};
+                `;
+                
+                // Use actual item icon image at 128x128
+                const iconSrc = item.icon || 'tunnelsofprivacy/items/healing_potions_a_cropped.png';
+                
                 itemEl.innerHTML = `
-                    <div style="font-size: 28px;">🧪</div>
-                    <div style="flex: 1;">
-                        <div style="color: #27AE60; font-weight: bold; font-size: 13px;">${item.name}</div>
-                        <div style="color: #89A0B4; font-size: 11px;">Qty: ${item.quantity}</div>
+                    <div style="flex-shrink: 0;">
+                        <img src="${iconSrc}" style="width: 96px; height: 96px; object-fit: contain; border-radius: 8px; background: rgba(0,0,0,0.3); padding: 4px;" onerror="this.src='tunnelsofprivacy/items/healing_potions_a_cropped.png'">
                     </div>
-                    <div style="text-align: right;">
-                        <div style="color: #FFD700; font-size: 14px; font-weight: bold;">💰 ${item.price}</div>
-                        <button onclick="buyItem(${index})" style="margin-top: 4px; padding: 4px 12px; background: #27AE60; border: none; border-radius: 4px; color: white; cursor: pointer; font-weight: bold; font-size: 11px;">BUY</button>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="color: ${isDisabled ? '#888' : '#27AE60'}; font-weight: bold; font-size: 15px; margin-bottom: 4px;">${item.name}</div>
+                        <div style="color: #89A0B4; font-size: 11px; line-height: 1.4;">${item.description || ''}</div>
+                        ${item.type === 'party_meal' ? `<div style="color: #FF9F43; font-size: 10px; margin-top: 4px;">🍖 Party Meal - Use at camp</div>` : ''}
+                    </div>
+                    <div style="text-align: center; flex-shrink: 0;">
+                        <div style="color: ${canAfford ? '#FFD700' : '#E74C3C'}; font-size: 18px; font-weight: bold; margin-bottom: 6px;">💰 ${item.price}</div>
+                        <button onclick="buyItem(${index})" ${isDisabled || isClient ? 'disabled' : ''} style="
+                            padding: 8px 20px;
+                            background: ${isDisabled || isClient ? '#555' : 'linear-gradient(135deg, #27AE60, #219A52)'};
+                            border: none;
+                            border-radius: 6px;
+                            color: white;
+                            cursor: ${isDisabled || isClient ? 'not-allowed' : 'pointer'};
+                            font-weight: bold;
+                            font-size: 13px;
+                            box-shadow: ${isDisabled || isClient ? 'none' : '0 2px 8px rgba(39, 174, 96, 0.4)'};
+                        ">${isClient ? 'HOST ONLY' : (mealsFull ? 'FULL' : (canAfford ? 'BUY' : 'NEED GOLD'))}</button>
                     </div>
                 `;
                 itemsContainer.appendChild(itemEl);
@@ -9753,8 +10362,33 @@
             document.getElementById('npcName').textContent = npcData.name;
             document.getElementById('npcDialogue').textContent = `"${npcData.dialogue}"`;
             
-            const serviceBtn = document.getElementById('npcServiceBtn');
-            serviceBtn.textContent = npcData.service?.description || 'Talk';
+            // Update cost/reward displays
+            document.getElementById('npcHelpCost').textContent = `Cost: ${npcData.helpCost} Gold`;
+            document.getElementById('npcHelpReward').textContent = `Reward: +${npcData.helpXpReward} XP`;
+            document.getElementById('npcRobReward').textContent = `Steal: ${npcData.robGoldReward} Gold`;
+            document.getElementById('npcZcashReward').textContent = `Reward: +${npcData.zcashXpReward} XP`;
+            
+            // Check if player can afford to help
+            const sharedSave = loadSharedSave();
+            const currentGold = sharedSave.dungeonState?.gold || 0;
+            const helpBtn = document.getElementById('npcHelpBtn');
+            if (currentGold < npcData.helpCost) {
+                helpBtn.style.opacity = '0.5';
+                document.getElementById('npcHelpCost').textContent = `Cost: ${npcData.helpCost} Gold (Not enough!)`;
+            } else {
+                helpBtn.style.opacity = '1';
+            }
+            
+            // Reset choice UI
+            document.getElementById('npcChoices').style.display = 'flex';
+            document.getElementById('npcChoiceMade').style.display = 'none';
+            
+            // If choice already made (multiplayer sync), show result, otherwise enable buttons
+            if (npcData.choiceMade) {
+                disableNPCChoices();
+            } else {
+                enableNPCChoices();
+            }
         }
         
         // Populate secret room content
@@ -9779,8 +10413,25 @@
             if (!explorationData) return;
             
             document.getElementById('explorationDescription').textContent = explorationData.challenge?.description || 'An interesting discovery...';
-            document.getElementById('explorationChallengeText').textContent = 
-                `Difficulty: ${explorationData.challenge?.difficulty || 1}`;
+            document.getElementById('explorationChallengeText').textContent = `Difficulty: ${explorationData.difficulty || 1}`;
+            document.getElementById('explorationSuccessChance').textContent = `Success Chance: ${explorationData.successChance || 75}%`;
+            
+            // Update XP and damage displays
+            document.getElementById('explorationOneXp').textContent = `Success: +${explorationData.oneHeroXp} XP (one hero)`;
+            document.getElementById('explorationOneFail').textContent = `Fail: -${explorationData.oneHeroFailDamage} HP (one hero)`;
+            document.getElementById('explorationPartyXp').textContent = `Success: +${explorationData.partyXp} XP (split)`;
+            document.getElementById('explorationPartyFail').textContent = `Fail: -${explorationData.partyFailDamage} HP (all heroes)`;
+            
+            // Reset choice UI
+            document.getElementById('explorationChoices').style.display = 'flex';
+            document.getElementById('explorationChoiceMade').style.display = 'none';
+            
+            // If choice already made (multiplayer sync), show result, otherwise enable buttons
+            if (explorationData.choiceMade) {
+                disableExplorationChoices();
+            } else {
+                enableExplorationChoices();
+            }
         }
         
         // Buy an item from the store
@@ -9799,6 +10450,72 @@
                 return;
             }
             
+            // Check if party meal - goes to partyMeals array AND an inventory slot
+            if (item.type === 'party_meal') {
+                if (!sharedSave.dungeonState.partyMeals) sharedSave.dungeonState.partyMeals = [];
+                
+                // Max 10 meal slots
+                if (sharedSave.dungeonState.partyMeals.length >= 10) {
+                    showNotification('Party meal inventory full! (10 max)', 'error');
+                    return;
+                }
+                
+                // Find an empty unlocked inventory slot
+                let emptySlotIndex = -1;
+                for (let i = 0; i < UNLOCK_ORDER.length && i < partyInventory.maxSlots; i++) {
+                    const gridPos = UNLOCK_ORDER[i];
+                    // Skip hero potion slots (they auto-refresh)
+                    if (isHeroPotionSlot(gridPos)) continue;
+                    if (partyInventory.items[gridPos] === null) {
+                        emptySlotIndex = gridPos;
+                        break;
+                    }
+                }
+                
+                if (emptySlotIndex === -1) {
+                    showNotification('No empty inventory slots!', 'error');
+                    return;
+                }
+                
+                // Deduct gold
+                sharedSave.dungeonState.gold = currentGold - item.price;
+                
+                // Add to partyMeals tracking array
+                const mealData = {
+                    id: item.id,
+                    name: item.name,
+                    icon: item.icon,
+                    value: item.value,
+                    description: item.description,
+                    inventorySlot: emptySlotIndex // Track which slot it's in
+                };
+                sharedSave.dungeonState.partyMeals.push(mealData);
+                
+                // Also add to inventory grid for visual display
+                partyInventory.items[emptySlotIndex] = {
+                    id: item.id,
+                    name: item.name,
+                    icon: item.icon,
+                    type: 'party_meal',
+                    value: item.value,
+                    description: item.description
+                };
+                
+                saveSharedSave(sharedSave);
+                updateGoldDisplay();
+                
+                // Sync inventory to clients
+                if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                    sendInventoryUpdate();
+                }
+                
+                // Don't reduce quantity for party meals - unlimited stock (casual game)
+                // Just refresh displays
+                populateStoreContent();
+                showNotification(`Bought ${item.name}! (${sharedSave.dungeonState.partyMeals.length}/10 meals)`, 'success');
+                return;
+            }
+            
             // Deduct gold
             sharedSave.dungeonState.gold = currentGold - item.price;
             
@@ -9809,84 +10526,478 @@
             saveSharedSave(sharedSave);
             updateGoldDisplay();
             
-            // Reduce item quantity
-            item.quantity--;
-            if (item.quantity <= 0) {
-                storeData.items.splice(itemIndex, 1);
-            }
-            
-            // Refresh display
+            // Don't reduce quantity - unlimited stock (casual game)
+            // Just refresh display
             populateStoreContent();
             showNotification(`Bought ${item.name}!`, 'success');
         }
         
-        // Use NPC service
-        function useNPCService() {
+        // NPC Choice: Help (Good) - Lose gold, gain XP
+        function npcChoiceHelp() {
             const npcData = preGeneratedEncounter.npcData;
-            if (!npcData || !npcData.service) return;
+            if (!npcData || npcData.choiceMade) return;
             
-            const sharedSave = loadSharedSave();
-            
-            switch (npcData.service.type) {
-                case 'heal':
-                    // Heal all heroes
-                    const healAmount = npcData.service.value || 25;
-                    ['zooko', 'nate', 'zancas', 'cyberaxe'].forEach(heroKey => {
-                        if (sharedSave.heroes[heroKey]) {
-                            sharedSave.heroes[heroKey].hp = Math.min(
-                                sharedSave.heroes[heroKey].maxHp,
-                                sharedSave.heroes[heroKey].hp + healAmount
-                            );
-                        }
-                    });
-                    showNotification(`Healed all heroes for ${healAmount} HP!`, 'success');
-                    break;
-                case 'hint':
-                    showNotification('The NPC shares valuable combat tips!', 'info');
-                    break;
-                case 'lore':
-                    showNotification('The NPC reveals ancient secrets...', 'info');
-                    break;
-                case 'reveal':
-                    showNotification('The NPC shows you the way forward!', 'info');
-                    break;
-                default:
-                    showNotification('Thanks for chatting!', 'info');
+            // Only host can make choices in multiplayer
+            if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                showNotification('Only the host can make this choice', 'error');
+                return;
             }
             
-            saveSharedSave(sharedSave);
-            
-            // Disable button after use
-            document.getElementById('npcServiceBtn').disabled = true;
-            document.getElementById('npcServiceBtn').style.opacity = '0.5';
-        }
-        
-        // Complete exploration challenge
-        function completeExploration() {
-            const explorationData = preGeneratedEncounter.explorationData;
-            if (!explorationData) return;
-            
             const sharedSave = loadSharedSave();
+            if (!sharedSave.dungeonState) sharedSave.dungeonState = {};
+            const currentGold = sharedSave.dungeonState.gold || 0;
             
-            // Calculate XP multiplier based on dungeon level
-            const dungeonLevel = sharedSave.dungeonState?.currentLevel || 1;
-            const xpMultiplier = 1 + (dungeonLevel - 1) * 0.25; // +25% per level
+            // Check if player can afford
+            if (currentGold < npcData.helpCost) {
+                showNotification(`Not enough gold! Need ${npcData.helpCost}`, 'error');
+                return;
+            }
             
-            // Award XP - scaled by dungeon level
-            const baseXpReward = explorationData.reward?.xp || 50;
-            const xpReward = Math.floor(baseXpReward * xpMultiplier);
+            // Deduct gold
+            sharedSave.dungeonState.gold = currentGold - npcData.helpCost;
+            
+            // Award XP to all heroes
+            const xpPerHero = Math.floor(npcData.helpXpReward / 4);
             ['zooko', 'nate', 'zancas', 'cyberaxe'].forEach(heroKey => {
                 if (sharedSave.heroes[heroKey]) {
-                    sharedSave.heroes[heroKey].xp += Math.floor(xpReward / 4);
+                    sharedSave.heroes[heroKey].xp += xpPerHero;
                 }
             });
             
             saveSharedSave(sharedSave);
-            showNotification(`Exploration complete! Gained ${xpReward} XP!`, 'success');
+            npcData.choiceMade = true;
             
-            // Disable button after completion
-            document.getElementById('explorationActionBtn').disabled = true;
-            document.getElementById('explorationActionBtn').style.opacity = '0.5';
+            // Show result
+            showNPCChoiceResult('help', npcData.helpCost, npcData.helpXpReward);
+            updateGoldDisplay();
+            showNotification(`You helped ${npcData.name}! -${npcData.helpCost} Gold, +${npcData.helpXpReward} XP`, 'success');
+            
+            // Broadcast to clients in multiplayer
+            if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                sendWebSocketMessage({
+                    type: 'npc_choice',
+                    choice: 'help',
+                    cost: npcData.helpCost,
+                    reward: npcData.helpXpReward
+                });
+            }
+        }
+        
+        // NPC Choice: Rob (Bad) - Gain gold, no XP
+        function npcChoiceRob() {
+            const npcData = preGeneratedEncounter.npcData;
+            if (!npcData || npcData.choiceMade) return;
+            
+            // Only host can make choices in multiplayer
+            if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                showNotification('Only the host can make this choice', 'error');
+                return;
+            }
+            
+            const sharedSave = loadSharedSave();
+            if (!sharedSave.dungeonState) sharedSave.dungeonState = {};
+            
+            // Add stolen gold
+            sharedSave.dungeonState.gold = (sharedSave.dungeonState.gold || 0) + npcData.robGoldReward;
+            
+            saveSharedSave(sharedSave);
+            npcData.choiceMade = true;
+            
+            // Show result
+            showNPCChoiceResult('rob', 0, npcData.robGoldReward);
+            updateGoldDisplay();
+            showNotification(`You robbed ${npcData.name}! +${npcData.robGoldReward} Gold`, 'warning');
+            
+            // Broadcast to clients in multiplayer
+            if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                sendWebSocketMessage({
+                    type: 'npc_choice',
+                    choice: 'rob',
+                    reward: npcData.robGoldReward
+                });
+            }
+        }
+        
+        // NPC Choice: Ignore (Neutral) - Just leave
+        function npcChoiceIgnore() {
+            const npcData = preGeneratedEncounter.npcData;
+            if (!npcData || npcData.choiceMade) return;
+            
+            // Only host can make choices in multiplayer
+            if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                showNotification('Only the host can make this choice', 'error');
+                return;
+            }
+            
+            npcData.choiceMade = true;
+            
+            // Show result
+            showNPCChoiceResult('ignore', 0, 0);
+            showNotification(`You walked away from ${npcData.name}`, 'info');
+            
+            // Broadcast to clients in multiplayer
+            if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                sendWebSocketMessage({
+                    type: 'npc_choice',
+                    choice: 'ignore'
+                });
+            }
+        }
+        
+        // NPC Choice: Tell about Zcash - Play video and award XP
+        function npcChoiceZcash() {
+            const npcData = preGeneratedEncounter.npcData;
+            if (!npcData || npcData.choiceMade) return;
+            
+            // Only host can make choices in multiplayer
+            if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                showNotification('Only the host can make this choice', 'error');
+                return;
+            }
+            
+            npcData.choiceMade = true;
+            
+            // Get scaled XP reward
+            const zcashXp = npcData.zcashXpReward || 100;
+            
+            // Show video overlay
+            const overlay = document.getElementById('zcashVideoOverlay');
+            const video = document.getElementById('zcashVideo');
+            
+            overlay.style.display = 'flex';
+            video.currentTime = 0;
+            video.volume = (settings.musicVolume || 50) / 150; // Use music volume setting
+            
+            // Play video
+            video.play().catch(e => console.log('[Zcash Video] Autoplay blocked:', e));
+            
+            // When video ends, close overlay and award XP
+            video.onended = function() {
+                overlay.style.display = 'none';
+                
+                // Award scaled XP to party
+                const sharedSave = loadSharedSave();
+                const xpPerHero = Math.floor(zcashXp / 4);
+                ['zooko', 'nate', 'zancas', 'cyberaxe'].forEach(heroKey => {
+                    if (sharedSave.heroes[heroKey]) {
+                        sharedSave.heroes[heroKey].xp += xpPerHero;
+                    }
+                });
+                saveSharedSave(sharedSave);
+                
+                // Show result
+                showNPCChoiceResult('zcash', 0, zcashXp);
+                showNotification(`You told ${npcData.name} about Zcash! +${zcashXp} XP`, 'success');
+            };
+            
+            // Broadcast to clients in multiplayer
+            if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                sendWebSocketMessage({
+                    type: 'npc_choice',
+                    choice: 'zcash',
+                    reward: zcashXp
+                });
+            }
+        }
+        
+        // Close Zcash video overlay (skip video)
+        function closeZcashVideo() {
+            const overlay = document.getElementById('zcashVideoOverlay');
+            const video = document.getElementById('zcashVideo');
+            
+            // Stop and reset video
+            video.pause();
+            video.currentTime = 0;
+            video.onended = null; // Remove the onended handler
+            
+            // Hide overlay
+            overlay.style.display = 'none';
+            
+            // Award XP if not already done (check if result is already shown)
+            const resultDiv = document.getElementById('npcChoiceMade');
+            if (resultDiv.style.display === 'none') {
+                const npcData = preGeneratedEncounter.npcData;
+                const zcashXp = npcData?.zcashXpReward || 100;
+                const sharedSave = loadSharedSave();
+                const xpPerHero = Math.floor(zcashXp / 4);
+                ['zooko', 'nate', 'zancas', 'cyberaxe'].forEach(heroKey => {
+                    if (sharedSave.heroes[heroKey]) {
+                        sharedSave.heroes[heroKey].xp += xpPerHero;
+                    }
+                });
+                saveSharedSave(sharedSave);
+                
+                showNPCChoiceResult('zcash', 0, zcashXp);
+                showNotification(`You told ${npcData?.name || 'the NPC'} about Zcash! +${zcashXp} XP`, 'success');
+            }
+        }
+        
+        // Show the result of NPC choice and disable buttons
+        function showNPCChoiceResult(choice, cost, reward) {
+            disableNPCChoices();
+            
+            const resultDiv = document.getElementById('npcChoiceMade');
+            const resultText = document.getElementById('npcChoiceResult');
+            
+            resultDiv.style.display = 'block';
+            
+            switch (choice) {
+                case 'help':
+                    resultDiv.style.background = 'rgba(46, 204, 113, 0.2)';
+                    resultDiv.style.border = '2px solid #2ECC71';
+                    resultText.style.color = '#2ECC71';
+                    resultText.textContent = `✨ You showed kindness! (-${cost} Gold, +${reward} XP)`;
+                    break;
+                case 'rob':
+                    resultDiv.style.background = 'rgba(231, 76, 60, 0.2)';
+                    resultDiv.style.border = '2px solid #E74C3C';
+                    resultText.style.color = '#E74C3C';
+                    resultText.textContent = `💀 You took what you wanted! (+${reward} Gold)`;
+                    break;
+                case 'zcash':
+                    resultDiv.style.background = 'rgba(242, 201, 76, 0.2)';
+                    resultDiv.style.border = '2px solid #F2C94C';
+                    resultText.style.color = '#F2C94C';
+                    resultText.textContent = `💳 You spread the word about Zcash! (+${reward} XP)`;
+                    break;
+                case 'ignore':
+                    resultDiv.style.background = 'rgba(149, 165, 166, 0.2)';
+                    resultDiv.style.border = '2px solid #95A5A6';
+                    resultText.style.color = '#95A5A6';
+                    resultText.textContent = `🚶 You walked away without a word.`;
+                    break;
+            }
+        }
+        
+        // Disable all NPC choice buttons
+        function disableNPCChoices() {
+            ['npcHelpBtn', 'npcRobBtn', 'npcZcashBtn', 'npcIgnoreBtn'].forEach(btnId => {
+                const btn = document.getElementById(btnId);
+                if (btn) {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.5';
+                    btn.style.pointerEvents = 'none';
+                }
+            });
+        }
+        
+        // Enable all NPC choice buttons (reset for new encounter)
+        function enableNPCChoices() {
+            ['npcHelpBtn', 'npcRobBtn', 'npcZcashBtn', 'npcIgnoreBtn'].forEach(btnId => {
+                const btn = document.getElementById(btnId);
+                if (btn) {
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    btn.style.pointerEvents = 'auto';
+                }
+            });
+        }
+        
+        // Exploration Choice: Send One Hero
+        function explorationSendOne() {
+            const explorationData = preGeneratedEncounter.explorationData;
+            if (!explorationData || explorationData.choiceMade) return;
+            
+            // Only host can make choices in multiplayer
+            if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                showNotification('Only the host can make this choice', 'error');
+                return;
+            }
+            
+            const sharedSave = loadSharedSave();
+            
+            // Pick a random living hero
+            const livingHeroes = ['zooko', 'nate', 'zancas', 'cyberaxe'].filter(h => 
+                sharedSave.heroes[h] && sharedSave.heroes[h].hp > 0
+            );
+            
+            if (livingHeroes.length === 0) {
+                showNotification('No heroes available!', 'error');
+                return;
+            }
+            
+            const chosenHero = livingHeroes[Math.floor(Math.random() * livingHeroes.length)];
+            const heroDisplayName = chosenHero.charAt(0).toUpperCase() + chosenHero.slice(1);
+            
+            // Roll for success
+            const roll = Math.random() * 100;
+            const success = roll < explorationData.successChance;
+            
+            if (success) {
+                // Award XP to chosen hero only
+                sharedSave.heroes[chosenHero].xp += explorationData.oneHeroXp;
+                showExplorationChoiceResult('one_success', chosenHero, explorationData.oneHeroXp, 0);
+                showNotification(`${heroDisplayName} succeeded! +${explorationData.oneHeroXp} XP`, 'success');
+            } else {
+                // Damage chosen hero only
+                const damage = explorationData.oneHeroFailDamage;
+                sharedSave.heroes[chosenHero].hp = Math.max(0, sharedSave.heroes[chosenHero].hp - damage);
+                showExplorationChoiceResult('one_fail', chosenHero, 0, damage);
+                showNotification(`${heroDisplayName} failed! -${damage} HP`, 'error');
+            }
+            
+            saveSharedSave(sharedSave);
+            explorationData.choiceMade = true;
+            
+            // Broadcast to clients in multiplayer
+            if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                sendWebSocketMessage({
+                    type: 'exploration_choice',
+                    choice: 'one',
+                    success: success,
+                    hero: chosenHero,
+                    xp: success ? explorationData.oneHeroXp : 0,
+                    damage: success ? 0 : explorationData.oneHeroFailDamage
+                });
+            }
+        }
+        
+        // Exploration Choice: Send Entire Party
+        function explorationSendParty() {
+            const explorationData = preGeneratedEncounter.explorationData;
+            if (!explorationData || explorationData.choiceMade) return;
+            
+            // Only host can make choices in multiplayer
+            if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                showNotification('Only the host can make this choice', 'error');
+                return;
+            }
+            
+            const sharedSave = loadSharedSave();
+            
+            // Roll for success
+            const roll = Math.random() * 100;
+            const success = roll < explorationData.successChance;
+            
+            if (success) {
+                // Award XP to all heroes (split)
+                const xpPerHero = Math.floor(explorationData.partyXp / 4);
+                ['zooko', 'nate', 'zancas', 'cyberaxe'].forEach(heroKey => {
+                    if (sharedSave.heroes[heroKey]) {
+                        sharedSave.heroes[heroKey].xp += xpPerHero;
+                    }
+                });
+                showExplorationChoiceResult('party_success', null, explorationData.partyXp, 0);
+                showNotification(`Party succeeded! +${explorationData.partyXp} XP`, 'success');
+            } else {
+                // Damage all heroes
+                const damage = explorationData.partyFailDamage;
+                ['zooko', 'nate', 'zancas', 'cyberaxe'].forEach(heroKey => {
+                    if (sharedSave.heroes[heroKey]) {
+                        sharedSave.heroes[heroKey].hp = Math.max(0, sharedSave.heroes[heroKey].hp - damage);
+                    }
+                });
+                showExplorationChoiceResult('party_fail', null, 0, damage);
+                showNotification(`Party failed! Everyone takes -${damage} HP`, 'error');
+            }
+            
+            saveSharedSave(sharedSave);
+            explorationData.choiceMade = true;
+            
+            // Broadcast to clients in multiplayer
+            if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                sendWebSocketMessage({
+                    type: 'exploration_choice',
+                    choice: 'party',
+                    success: success,
+                    xp: success ? explorationData.partyXp : 0,
+                    damage: success ? 0 : explorationData.partyFailDamage
+                });
+            }
+        }
+        
+        // Exploration Choice: Retreat
+        function explorationRetreat() {
+            const explorationData = preGeneratedEncounter.explorationData;
+            if (!explorationData || explorationData.choiceMade) return;
+            
+            // Only host can make choices in multiplayer
+            if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                showNotification('Only the host can make this choice', 'error');
+                return;
+            }
+            
+            explorationData.choiceMade = true;
+            
+            showExplorationChoiceResult('retreat', null, 0, 0);
+            showNotification('Party retreated safely', 'info');
+            
+            // Broadcast to clients in multiplayer
+            if (multiplayerState.enabled && multiplayerState.role === 'host') {
+                sendWebSocketMessage({
+                    type: 'exploration_choice',
+                    choice: 'retreat'
+                });
+            }
+        }
+        
+        // Show the result of exploration choice and disable buttons
+        function showExplorationChoiceResult(resultType, hero, xp, damage) {
+            disableExplorationChoices();
+            
+            const resultDiv = document.getElementById('explorationChoiceMade');
+            const resultText = document.getElementById('explorationChoiceResult');
+            
+            resultDiv.style.display = 'block';
+            
+            const heroName = hero ? hero.charAt(0).toUpperCase() + hero.slice(1) : '';
+            
+            switch (resultType) {
+                case 'one_success':
+                    resultDiv.style.background = 'rgba(46, 204, 113, 0.2)';
+                    resultDiv.style.border = '2px solid #2ECC71';
+                    resultText.style.color = '#2ECC71';
+                    resultText.textContent = `✨ ${heroName} completed the challenge! (+${xp} XP)`;
+                    break;
+                case 'one_fail':
+                    resultDiv.style.background = 'rgba(231, 76, 60, 0.2)';
+                    resultDiv.style.border = '2px solid #E74C3C';
+                    resultText.style.color = '#E74C3C';
+                    resultText.textContent = `💥 ${heroName} failed! (-${damage} HP)`;
+                    break;
+                case 'party_success':
+                    resultDiv.style.background = 'rgba(46, 204, 113, 0.2)';
+                    resultDiv.style.border = '2px solid #2ECC71';
+                    resultText.style.color = '#2ECC71';
+                    resultText.textContent = `✨ Party succeeded together! (+${xp} XP split)`;
+                    break;
+                case 'party_fail':
+                    resultDiv.style.background = 'rgba(231, 76, 60, 0.2)';
+                    resultDiv.style.border = '2px solid #E74C3C';
+                    resultText.style.color = '#E74C3C';
+                    resultText.textContent = `💥 Party failed! Everyone takes -${damage} HP`;
+                    break;
+                case 'retreat':
+                    resultDiv.style.background = 'rgba(149, 165, 166, 0.2)';
+                    resultDiv.style.border = '2px solid #95A5A6';
+                    resultText.style.color = '#95A5A6';
+                    resultText.textContent = `🚶 Party retreated without attempting.`;
+                    break;
+            }
+        }
+        
+        // Disable all exploration choice buttons
+        function disableExplorationChoices() {
+            ['explorationSendOneBtn', 'explorationSendPartyBtn', 'explorationRetreatBtn'].forEach(btnId => {
+                const btn = document.getElementById(btnId);
+                if (btn) {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.5';
+                    btn.style.pointerEvents = 'none';
+                }
+            });
+        }
+        
+        // Enable all exploration choice buttons (reset for new encounter)
+        function enableExplorationChoices() {
+            ['explorationSendOneBtn', 'explorationSendPartyBtn', 'explorationRetreatBtn'].forEach(btnId => {
+                const btn = document.getElementById(btnId);
+                if (btn) {
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    btn.style.pointerEvents = 'auto';
+                }
+            });
         }
         
         // Leave non-combat room
@@ -10608,9 +11719,8 @@
             console.log(`[TTS] Playing: "${text}..."`);
             
             ttsCurrentAudio = new Audio(url);
-            const ttsVol = (settings.voiceVolume || 30) / 250;
+            const ttsVol = (settings.voiceVolume || 90) / 250;
             ttsCurrentAudio.volume = ttsVol;
-            console.log(`[Volume] TTS: setting=${settings.voiceVolume}, actual=${ttsVol}`);
             
             ttsCurrentAudio.onended = () => {
                 URL.revokeObjectURL(url);
@@ -10810,9 +11920,8 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 const audioUrl = URL.createObjectURL(audioBlob);
                 
                 narratorState.currentAudio = new Audio(audioUrl);
-                const narrVol = (settings.voiceVolume || 30) / 250;
+                const narrVol = (settings.voiceVolume || 90) / 250;
                 narratorState.currentAudio.volume = narrVol;
-                console.log(`[Volume] Narrator: setting=${settings.voiceVolume}, actual=${narrVol}`);
                 
                 narratorState.currentAudio.onended = () => {
                     URL.revokeObjectURL(audioUrl);
@@ -12091,7 +13200,14 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 console.log('[Battle] Using pre-generated boss:', bossEnemy.name);
             } else {
                 // Generate boss on-the-fly (fallback)
-                const boss = bossesData.find(b => b.mainLevel === roomLevel);
+                let boss = bossesData.find(b => b.mainLevel === roomLevel);
+                
+                // If no exact match, pick a random boss
+                if (!boss && bossesData.length > 0) {
+                    console.warn(`[Battle] No boss found for level ${roomLevel}, picking random boss`);
+                    boss = bossesData[Math.floor(Math.random() * bossesData.length)];
+                }
+                
                 if (boss) {
                     // Use standardized sprite path based on boss level
                     const bossLevel = boss.mainLevel || roomLevel;
@@ -12981,17 +14097,18 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 // Extended enemy positions - spread across battle area, avoiding chat window zone
                 // Chat window is bottom-right (roughly x > 0.70, y > 0.50), so keep enemies left of that
                 // Positions ordered for visual variety: corners first, then fill in
+                // Y values at 0.60+ to keep enemies on ground (40% from bottom)
                 enemies: [
-                    // First 4 - spread to corners and edges (avoid bottom-right)
-                    { x: 0.55, y: 0.35 }, { x: 0.68, y: 0.42 }, { x: 0.72, y: 0.28 }, { x: 0.60, y: 0.48 },
-                    // Next 4 - fill opposite areas  
-                    { x: 0.50, y: 0.55 }, { x: 0.65, y: 0.32 }, { x: 0.58, y: 0.45 }, { x: 0.70, y: 0.38 },
-                    // Next 4 - continue spreading (left-center area)
-                    { x: 0.52, y: 0.40 }, { x: 0.62, y: 0.50 }, { x: 0.56, y: 0.28 }, { x: 0.68, y: 0.35 },
+                    // First 4 - spread horizontally, grounded
+                    { x: 0.55, y: 0.60 }, { x: 0.68, y: 0.62 }, { x: 0.50, y: 0.65 }, { x: 0.62, y: 0.68 },
+                    // Next 4 - fill in gaps  
+                    { x: 0.58, y: 0.63 }, { x: 0.65, y: 0.60 }, { x: 0.52, y: 0.67 }, { x: 0.70, y: 0.64 },
+                    // Next 4 - continue spreading
+                    { x: 0.54, y: 0.66 }, { x: 0.60, y: 0.61 }, { x: 0.66, y: 0.65 }, { x: 0.56, y: 0.62 },
                     // Next 4 - fill remaining gaps
-                    { x: 0.54, y: 0.32 }, { x: 0.66, y: 0.45 }, { x: 0.60, y: 0.38 }, { x: 0.58, y: 0.52 },
+                    { x: 0.63, y: 0.67 }, { x: 0.51, y: 0.63 }, { x: 0.68, y: 0.66 }, { x: 0.57, y: 0.64 },
                     // Final 4 - last gaps
-                    { x: 0.64, y: 0.28 }, { x: 0.52, y: 0.48 }, { x: 0.70, y: 0.32 }, { x: 0.56, y: 0.42 }
+                    { x: 0.64, y: 0.62 }, { x: 0.53, y: 0.68 }, { x: 0.59, y: 0.65 }, { x: 0.67, y: 0.61 }
                 ]
             };
             
@@ -13439,9 +14556,9 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                         // Mobs are 1344x768, render with random size variation
                         const mobAspectRatio = 1344 / 768; // 1.75
                         
-                        // Random size scale (0.7 to 3.0) - stored on enemy for consistency
+                        // Random size scale (1.5 to 5.0) - stored on enemy for consistency
                         if (enemy.sizeScale === undefined) {
-                            enemy.sizeScale = 0.7 + Math.random() * 2.3;
+                            enemy.sizeScale = 1.5 + Math.random() * 3.5;
                         }
                         
                         const baseHeight = 75 * enemy.sizeScale;
@@ -13451,11 +14568,22 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                         // Position so BOTTOM of sprite is at enemy.y (feet on ground)
                         spriteY = enemy.y - spriteHeight;
                     } else {
-                        // Bosses are 300x300, centered
-                        spriteWidth = 300 * depthScale;
-                        spriteHeight = 300 * depthScale;
+                        // Bosses: use actual image dimensions for proper aspect ratio
+                        // Original bosses: 300x300 (square), New bosses: 917x512 (wide)
+                        const imgWidth = enemy.sprite.naturalWidth || 300;
+                        const imgHeight = enemy.sprite.naturalHeight || 300;
+                        const bossAspectRatio = imgWidth / imgHeight;
+                        
+                        // Base height that looks good, scaled by depth
+                        // Level 100 boss (Auric Hoard Dragon) is 2x larger
+                        const isLevel100 = enemy.spritePath && enemy.spritePath.includes('lvl100');
+                        const sizeMultiplier = isLevel100 ? 2.0 : 1.0;
+                        const baseHeight = 250 * depthScale * sizeMultiplier;
+                        spriteHeight = baseHeight;
+                        spriteWidth = baseHeight * bossAspectRatio;
                         spriteX = enemy.x - spriteWidth / 2;
-                        spriteY = enemy.y - spriteHeight / 2 + (10 * depthScale); // Offset down, scaled
+                        // Position so BOTTOM of sprite is at enemy.y (feet on ground)
+                        spriteY = enemy.y - spriteHeight;
                     }
                     
                     ctx.save();
@@ -13487,8 +14615,12 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     const spriteHeight = baseHeight * depthScale;
                     barOffsetY = enemy.y - spriteHeight - (5 * depthScale);
                 } else {
-                    // For bosses, position above centered sprite
-                    barOffsetY = enemy.y - 165 * depthScale;
+                    // For bosses, position above the sprite (which is now bottom-aligned)
+                    // Level 100 boss is 2x larger
+                    const isLevel100 = enemy.spritePath && enemy.spritePath.includes('lvl100');
+                    const sizeMultiplier = isLevel100 ? 2.0 : 1.0;
+                    const baseHeight = 250 * depthScale * sizeMultiplier;
+                    barOffsetY = enemy.y - baseHeight - (5 * depthScale);
                 }
                 
                 // HP bar with text inside
@@ -16126,7 +17258,7 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 'tunnelsofprivacy/backgrounds/lvl1-10/backgrounds_lvl1 (14).png',
                 'tunnelsofprivacy/backgrounds/lvl1-10/backgrounds_lvl1 (15).png',
                 'tunnelsofprivacy/backgrounds/lvl1-10/backgrounds_lvl1 (16).png',
-                // Boss sprites (first 10 levels for initial preload)
+                // Boss sprites (levels 1-26 and 51-99)
                 'tunnelsofprivacy/bosses/lvl1/boss_lvl1.png',
                 'tunnelsofprivacy/bosses/lvl2/boss_lvl2.png',
                 'tunnelsofprivacy/bosses/lvl3/boss_lvl3.png',
@@ -16137,6 +17269,98 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 'tunnelsofprivacy/bosses/lvl8/boss_lvl8.png',
                 'tunnelsofprivacy/bosses/lvl9/boss_lvl9.png',
                 'tunnelsofprivacy/bosses/lvl10/boss_lvl10.png',
+                'tunnelsofprivacy/bosses/lvl11/boss_lvl11.png',
+                'tunnelsofprivacy/bosses/lvl12/boss_lvl12.png',
+                'tunnelsofprivacy/bosses/lvl13/boss_lvl13.png',
+                'tunnelsofprivacy/bosses/lvl14/boss_lvl14.png',
+                'tunnelsofprivacy/bosses/lvl15/boss_lvl15.png',
+                'tunnelsofprivacy/bosses/lvl16/boss_lvl16.png',
+                'tunnelsofprivacy/bosses/lvl17/boss_lvl17.png',
+                'tunnelsofprivacy/bosses/lvl18/boss_lvl18.png',
+                'tunnelsofprivacy/bosses/lvl19/boss_lvl19.png',
+                'tunnelsofprivacy/bosses/lvl20/boss_lvl20.png',
+                'tunnelsofprivacy/bosses/lvl21/boss_lvl21.png',
+                'tunnelsofprivacy/bosses/lvl22/boss_lvl22.png',
+                'tunnelsofprivacy/bosses/lvl23/boss_lvl23.png',
+                'tunnelsofprivacy/bosses/lvl24/boss_lvl24.png',
+                'tunnelsofprivacy/bosses/lvl25/boss_lvl25.png',
+                'tunnelsofprivacy/bosses/lvl26/boss_lvl26.png',
+                // Levels 27-50
+                'tunnelsofprivacy/bosses/lvl27/boss_lvl27.png',
+                'tunnelsofprivacy/bosses/lvl28/boss_lvl28.png',
+                'tunnelsofprivacy/bosses/lvl29/boss_lvl29.png',
+                'tunnelsofprivacy/bosses/lvl30/boss_lvl30.png',
+                'tunnelsofprivacy/bosses/lvl31/boss_lvl31.png',
+                'tunnelsofprivacy/bosses/lvl32/boss_lvl32.png',
+                'tunnelsofprivacy/bosses/lvl33/boss_lvl33.png',
+                'tunnelsofprivacy/bosses/lvl34/boss_lvl34.png',
+                'tunnelsofprivacy/bosses/lvl35/boss_lvl35.png',
+                'tunnelsofprivacy/bosses/lvl36/boss_lvl36.png',
+                'tunnelsofprivacy/bosses/lvl37/boss_lvl37.png',
+                'tunnelsofprivacy/bosses/lvl38/boss_lvl38.png',
+                'tunnelsofprivacy/bosses/lvl39/boss_lvl39.png',
+                'tunnelsofprivacy/bosses/lvl40/boss_lvl40.png',
+                'tunnelsofprivacy/bosses/lvl41/boss_lvl41.png',
+                'tunnelsofprivacy/bosses/lvl42/boss_lvl42.png',
+                'tunnelsofprivacy/bosses/lvl43/boss_lvl43.png',
+                'tunnelsofprivacy/bosses/lvl44/boss_lvl44.png',
+                'tunnelsofprivacy/bosses/lvl45/boss_lvl45.png',
+                'tunnelsofprivacy/bosses/lvl46/boss_lvl46.png',
+                'tunnelsofprivacy/bosses/lvl47/boss_lvl47.png',
+                'tunnelsofprivacy/bosses/lvl48/boss_lvl48.png',
+                'tunnelsofprivacy/bosses/lvl49/boss_lvl49.png',
+                'tunnelsofprivacy/bosses/lvl50/boss_lvl50.png',
+                // New wide bosses (917x512) levels 51-99
+                'tunnelsofprivacy/bosses/lvl51/boss_lvl51.png',
+                'tunnelsofprivacy/bosses/lvl52/boss_lvl52.png',
+                'tunnelsofprivacy/bosses/lvl53/boss_lvl53.png',
+                'tunnelsofprivacy/bosses/lvl54/boss_lvl54.png',
+                'tunnelsofprivacy/bosses/lvl55/boss_lvl55.png',
+                'tunnelsofprivacy/bosses/lvl56/boss_lvl56.png',
+                'tunnelsofprivacy/bosses/lvl57/boss_lvl57.png',
+                'tunnelsofprivacy/bosses/lvl58/boss_lvl58.png',
+                'tunnelsofprivacy/bosses/lvl59/boss_lvl59.png',
+                'tunnelsofprivacy/bosses/lvl60/boss_lvl60.png',
+                'tunnelsofprivacy/bosses/lvl61/boss_lvl61.png',
+                'tunnelsofprivacy/bosses/lvl62/boss_lvl62.png',
+                'tunnelsofprivacy/bosses/lvl63/boss_lvl63.png',
+                'tunnelsofprivacy/bosses/lvl64/boss_lvl64.png',
+                'tunnelsofprivacy/bosses/lvl65/boss_lvl65.png',
+                'tunnelsofprivacy/bosses/lvl66/boss_lvl66.png',
+                'tunnelsofprivacy/bosses/lvl67/boss_lvl67.png',
+                'tunnelsofprivacy/bosses/lvl68/boss_lvl68.png',
+                'tunnelsofprivacy/bosses/lvl69/boss_lvl69.png',
+                'tunnelsofprivacy/bosses/lvl70/boss_lvl70.png',
+                'tunnelsofprivacy/bosses/lvl71/boss_lvl71.png',
+                'tunnelsofprivacy/bosses/lvl72/boss_lvl72.png',
+                'tunnelsofprivacy/bosses/lvl73/boss_lvl73.png',
+                'tunnelsofprivacy/bosses/lvl74/boss_lvl74.png',
+                'tunnelsofprivacy/bosses/lvl75/boss_lvl75.png',
+                'tunnelsofprivacy/bosses/lvl76/boss_lvl76.png',
+                'tunnelsofprivacy/bosses/lvl77/boss_lvl77.png',
+                'tunnelsofprivacy/bosses/lvl78/boss_lvl78.png',
+                'tunnelsofprivacy/bosses/lvl79/boss_lvl79.png',
+                'tunnelsofprivacy/bosses/lvl80/boss_lvl80.png',
+                'tunnelsofprivacy/bosses/lvl81/boss_lvl81.png',
+                'tunnelsofprivacy/bosses/lvl82/boss_lvl82.png',
+                'tunnelsofprivacy/bosses/lvl83/boss_lvl83.png',
+                'tunnelsofprivacy/bosses/lvl84/boss_lvl84.png',
+                'tunnelsofprivacy/bosses/lvl85/boss_lvl85.png',
+                'tunnelsofprivacy/bosses/lvl86/boss_lvl86.png',
+                'tunnelsofprivacy/bosses/lvl87/boss_lvl87.png',
+                'tunnelsofprivacy/bosses/lvl88/boss_lvl88.png',
+                'tunnelsofprivacy/bosses/lvl89/boss_lvl89.png',
+                'tunnelsofprivacy/bosses/lvl90/boss_lvl90.png',
+                'tunnelsofprivacy/bosses/lvl91/boss_lvl91.png',
+                'tunnelsofprivacy/bosses/lvl92/boss_lvl92.png',
+                'tunnelsofprivacy/bosses/lvl93/boss_lvl93.png',
+                'tunnelsofprivacy/bosses/lvl94/boss_lvl94.png',
+                'tunnelsofprivacy/bosses/lvl95/boss_lvl95.png',
+                'tunnelsofprivacy/bosses/lvl96/boss_lvl96.png',
+                'tunnelsofprivacy/bosses/lvl97/boss_lvl97.png',
+                'tunnelsofprivacy/bosses/lvl98/boss_lvl98.png',
+                'tunnelsofprivacy/bosses/lvl99/boss_lvl99.png',
+                'tunnelsofprivacy/bosses/lvl100/boss_lvl100.png',
                 // Captive/prisoner sprites
                 'tunnelsofprivacy/npcs/captives/prisoners (1).png',
                 'tunnelsofprivacy/npcs/captives/prisoners (2).png',
@@ -16153,6 +17377,17 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 // Item sprites
                 'tunnelsofprivacy/items/healing_potions_a_cropped.png',
                 'tunnelsofprivacy/items/healing_potions_a_empty.png',
+                // Party meal sprites
+                'tunnelsofprivacy/items/meal_1.png',
+                'tunnelsofprivacy/items/meal_2.png',
+                'tunnelsofprivacy/items/meal_3.png',
+                'tunnelsofprivacy/items/meal_4.png',
+                'tunnelsofprivacy/items/meal_5.png',
+                'tunnelsofprivacy/items/meal_6.png',
+                'tunnelsofprivacy/items/meal_7.png',
+                'tunnelsofprivacy/items/meal_8.png',
+                'tunnelsofprivacy/items/meal_9.png',
+                'tunnelsofprivacy/items/meal_10.png',
                 // Gear/backpack sprites
                 'tunnelsofprivacy/gear/zooko_backpack.png',
                 'tunnelsofprivacy/gear/nate_backpack.png',
@@ -16209,7 +17444,30 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 'tunnelsofprivacy/icons/stairs_up.png',
                 'tunnelsofprivacy/icons/store.png',
                 'tunnelsofprivacy/icons/volume.png',
-                'tunnelsofprivacy/icons/zcashbag.png'
+                'tunnelsofprivacy/icons/zcashbag.png',
+                // Event backgrounds - Exploration (11 images)
+                'tunnelsofprivacy/events/explore/explore (1).png',
+                'tunnelsofprivacy/events/explore/explore (2).png',
+                'tunnelsofprivacy/events/explore/explore (3).png',
+                'tunnelsofprivacy/events/explore/explore (4).png',
+                'tunnelsofprivacy/events/explore/explore (5).png',
+                'tunnelsofprivacy/events/explore/explore (6).png',
+                'tunnelsofprivacy/events/explore/explore (7).png',
+                'tunnelsofprivacy/events/explore/explore (8).png',
+                'tunnelsofprivacy/events/explore/explore (9).png',
+                'tunnelsofprivacy/events/explore/explore (10).png',
+                'tunnelsofprivacy/events/explore/explore (11).png',
+                // Event backgrounds - NPC Encounters (10 images)
+                'tunnelsofprivacy/events/encoutners/encoutners (1).png',
+                'tunnelsofprivacy/events/encoutners/encoutners (2).png',
+                'tunnelsofprivacy/events/encoutners/encoutners (3).png',
+                'tunnelsofprivacy/events/encoutners/encoutners (4).png',
+                'tunnelsofprivacy/events/encoutners/encoutners (5).png',
+                'tunnelsofprivacy/events/encoutners/encoutners (6).png',
+                'tunnelsofprivacy/events/encoutners/encoutners (7).png',
+                'tunnelsofprivacy/events/encoutners/encoutners (8).png',
+                'tunnelsofprivacy/events/encoutners/encoutners (9).png',
+                'tunnelsofprivacy/events/encoutners/encoutners (10).png'
             ];
             
             artTotal = imageList.length;
@@ -16643,6 +17901,80 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                             console.log('[MP] Host left non-combat room, following...');
                             executeLeaveNonCombatRoom();
                             showNotification('Party left the room', 'info');
+                        }
+                    }
+                    break;
+                
+                case 'npc_choice':
+                    // Host made NPC choice (help/rob/ignore) - sync to clients
+                    if (multiplayerState.role === 'client') {
+                        const choice = data.choice;
+                        console.log('[MP] Received NPC choice from host:', choice);
+                        
+                        // Mark choice as made
+                        if (preGeneratedEncounter.npcData) {
+                            preGeneratedEncounter.npcData.choiceMade = true;
+                        }
+                        
+                        // Show the result
+                        showNPCChoiceResult(choice, data.cost || 0, data.reward || 0);
+                        
+                        // Show notification based on choice
+                        const npcName = preGeneratedEncounter.npcData?.name || 'the NPC';
+                        if (choice === 'help') {
+                            showNotification(`Host helped ${npcName}! -${data.cost} Gold, +${data.reward} XP`, 'success');
+                        } else if (choice === 'rob') {
+                            showNotification(`Host robbed ${npcName}! +${data.reward} Gold`, 'warning');
+                        } else if (choice === 'zcash') {
+                            // Play video for clients too
+                            const overlay = document.getElementById('zcashVideoOverlay');
+                            const video = document.getElementById('zcashVideo');
+                            overlay.style.display = 'flex';
+                            video.currentTime = 0;
+                            video.volume = (settings.musicVolume || 50) / 150;
+                            video.play().catch(e => console.log('[Zcash Video] Autoplay blocked:', e));
+                            video.onended = function() {
+                                overlay.style.display = 'none';
+                            };
+                            showNotification(`Host told ${npcName} about Zcash! +${data.reward} XP`, 'success');
+                        } else {
+                            showNotification(`Host ignored ${npcName}`, 'info');
+                        }
+                    }
+                    break;
+                
+                case 'exploration_choice':
+                    // Host made exploration choice (one/party/retreat) - sync to clients
+                    if (multiplayerState.role === 'client') {
+                        const expChoice = data.choice;
+                        console.log('[MP] Received exploration choice from host:', expChoice);
+                        
+                        // Mark choice as made
+                        if (preGeneratedEncounter.explorationData) {
+                            preGeneratedEncounter.explorationData.choiceMade = true;
+                        }
+                        
+                        // Show the result based on choice and success
+                        if (expChoice === 'one') {
+                            const heroName = data.hero ? data.hero.charAt(0).toUpperCase() + data.hero.slice(1) : 'Hero';
+                            if (data.success) {
+                                showExplorationChoiceResult('one_success', data.hero, data.xp, 0);
+                                showNotification(`${heroName} succeeded! +${data.xp} XP`, 'success');
+                            } else {
+                                showExplorationChoiceResult('one_fail', data.hero, 0, data.damage);
+                                showNotification(`${heroName} failed! -${data.damage} HP`, 'error');
+                            }
+                        } else if (expChoice === 'party') {
+                            if (data.success) {
+                                showExplorationChoiceResult('party_success', null, data.xp, 0);
+                                showNotification(`Party succeeded! +${data.xp} XP`, 'success');
+                            } else {
+                                showExplorationChoiceResult('party_fail', null, 0, data.damage);
+                                showNotification(`Party failed! Everyone takes -${data.damage} HP`, 'error');
+                            }
+                        } else {
+                            showExplorationChoiceResult('retreat', null, 0, 0);
+                            showNotification('Party retreated safely', 'info');
                         }
                     }
                     break;

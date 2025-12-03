@@ -2,6 +2,258 @@
 
 # Changelog
 
+## v0.3.89 - Multiplayer Store Sync (2025-12-02)
+- **Store now host-only for purchasing:**
+  - Clients see "HOST ONLY" on buy buttons (greyed out, disabled)
+  - Keeps party inventory synchronized via single source of truth
+
+- **Party meals sync to clients:**
+  - Added `partyMealsCache` to `multiplayerState` for client display
+  - `sendInventoryUpdate()` now includes `partyMeals` and `gold`
+  - `handleInventoryUpdate()` caches meals/gold and refreshes UI
+  - Camp panel meals list updates when host buys food
+  - Store display updates when host makes purchases
+
+- **Client UI reads from cache:**
+  - `populatePartyMealsList()` uses `partyMealsCache` for clients
+  - `populateStoreContent()` uses `goldCache` and `partyMealsCache` for clients
+  - Proper gold display in store for clients
+
+## v0.3.88 - Party Meals System (2025-12-02)
+- **New Party Meal food items (10 tiers):**
+  - Craps ($10, 10 HP) - Simple scraps
+  - Fresh Veggies ($50, 50 HP) - Crisp vegetables
+  - Hearty Bread ($100, 100 HP) - Warm loaf
+  - Grilled Fish ($200, 200 HP) - Freshly caught
+  - Roast Chicken ($350, 350 HP) - Juicy roasted
+  - Steak & Potatoes ($500, 500 HP) - Hearty dinner
+  - Feast Platter ($1,000, 1,000 HP) - Bountiful spread
+  - Royal Banquet ($2,500, 2,500 HP) - Fit for royalty
+  - Dragon Steak ($5,000, 5,000 HP) - Legendary meat
+  - Divine Feast ($10,000, 10,000 HP) - Food of the gods
+
+- **Party Meals mechanics:**
+  - Heals ALL heroes by meal value when used
+  - Can only be used at camp (via Camp panel)
+  - Stored in dedicated partyMeals inventory (max 10 slots)
+  - Takes up inventory slot when purchased
+  - Slot freed when meal is consumed
+
+- **Store improvements:**
+  - All stores now stock all 11 items (health potion + 10 meals)
+  - Unlimited stock - items never run out (casual game friendly)
+  - Visual menu with 96x96 food icons
+  - Description text for each item
+  - Affordability indicators (grayed out if can't afford)
+  - "FULL" button when meal inventory at max
+  - "NEED GOLD" button when insufficient funds
+  - Orange "Party Meal - Use at camp" label
+
+- **Camp panel updates:**
+  - New "🍖 PARTY MEALS" section added
+  - Shows grouped meal counts (e.g., "Steak & Potatoes x3")
+  - "EAT" button next to each meal type
+  - Displays slot usage (X/10 meals)
+
+- **Asset precache:**
+  - Added meal_1.png through meal_10.png to preload list
+
+- **Multiplayer sync:**
+  - `sendInventoryUpdate()` called on meal purchase
+  - `party_meal_used` WebSocket message for meal consumption
+  - Host-only control for meal usage
+
+## v0.3.86 - Narrator Restored (2025-12-02)
+- **Narrator button reverted to TTS:**
+  - Restored original TTS-based narration system
+  - Generates level/zone narration via LLM then plays via TTS API
+
+## v0.3.85 - Boss & Audio Updates (2025-12-02)
+- **Auric Hoard Dragon (Level 100 Boss):**
+  - Added to all difficulty JSON files (easy/normal/hard)
+  - Easy: 400 HP, 240 ATK | Normal: 650 HP, 280 ATK | Hard: 900 HP, 320 ATK
+  - Special ability: Golden Inferno (breathes molten gold)
+  - Guaranteed loot: Dragon Scale, Hoard Fragment, Golden Privacy Seal
+  - Renders at 2x size compared to other bosses
+  - Added to BOSS_DATA for bestiary display
+
+- **Default voice volume increased:**
+  - Changed from 30 to 90 (affects narrator and TTS)
+
+- **Enemy spawn position fix:**
+  - Fallback enemy positions moved to Y 0.60-0.68 (40% from bottom)
+  - Enemies now spawn on ground instead of floating in sky
+
+## v0.3.84 - Random Boss Fallback (2025-12-02)
+- **Boss fallback for missing levels:**
+  - If no boss exists for current level, picks a random boss instead
+  - Applies to on-the-fly boss generation (fallback path)
+  - Prevents empty boss rooms on levels without defined bosses
+  - Logs warning to console when fallback is used
+
+## v0.3.83 - Music & Volume Fixes (2025-12-02)
+- **Music crossfade fix:**
+  - Moved `ended` event listener registration BEFORE play() call
+  - Set `currentMusic = newMusic` before starting playback
+  - Prevents race condition where ended event wasn't triggering next track
+  - Proper crossfade: old track fades out while new track fades in
+  
+- **Volume controls no longer affect playback state:**
+  - Changing voice volume no longer starts music playing
+  - Changing background sound volume no longer starts music
+  - Volume sliders only adjust volume, not play/pause state
+  - Music only pauses when explicitly disabled via checkbox
+  
+- **Removed debug console.log statements:**
+  - Removed music volume change logs
+  - Removed TTS volume logs
+  - Removed narrator volume logs
+  
+- **Mob size increase:**
+  - Random size scale changed from 0.7-3.0 to 1.5-5.0
+  - Mobs now appear larger and more varied in battle
+  
+- **Boss level 100 added:**
+  - Complete boss art for all 99 levels (2-100)
+  - Added to precache and bestiary
+
+## v0.3.82 - Complete Boss Art System (2025-12-02)
+- **Boss sprites for all 99 levels:**
+  - Levels 2-26: Original 300x300 square bosses
+  - Levels 27-50: New 917x512 wide format bosses
+  - Levels 51-99: New 917x512 wide format bosses
+  - Only level 100 remains without art
+  
+- **Dynamic boss rendering:**
+  - Boss sprites now detect actual image dimensions
+  - Calculates correct aspect ratio automatically
+  - Works with both square (1:1) and wide (917:512 ~1.79:1) images
+  - Bottom-aligned positioning (feet on ground)
+  - HP bar positioned correctly above sprite
+  
+- **Bestiary portrait improvements:**
+  - Changed from `background-size: 300%` to `background-size: cover`
+  - Center-aligned cropping works for any aspect ratio
+  - All 98 boss portraits now display correctly
+  
+- **Precache system updated:**
+  - All boss sprites (lvl1-99) added to preload list
+  - Organized by level ranges with comments
+  - Ensures smooth loading in bestiary
+
+## v0.3.81 - Event Choice Reset Fix (2025-12-02)
+- **Fixed NPC/Exploration choices not resetting:**
+  - Buttons were staying disabled after first encounter
+  - Added `enableNPCChoices()` function to re-enable NPC buttons
+  - Added `enableExplorationChoices()` function to re-enable exploration buttons
+  - `populateNPCContent()` now enables buttons when `choiceMade` is false
+  - `populateExplorationContent()` now enables buttons when `choiceMade` is false
+  - Each new encounter properly resets button states
+
+## v0.3.80 - Zcash Video Skip & Scaling (2025-12-02)
+- **Zcash XP now scales with level:**
+  - Formula: `50 + (roomLevel × 25)` XP
+  - Same scaling as the Help option
+  - Level 1: 75 XP → Level 10: 300 XP → Level 20: 550 XP
+  - Button displays scaled reward amount
+  
+- **Skip video feature:**
+  - Click anywhere on screen to skip the Zcash video
+  - Video stops and closes immediately
+  - XP still awarded even if skipped
+  - "Click anywhere to skip" hint shown at bottom
+
+## v0.3.79 - Tell NPCs About Zcash (2025-12-02)
+- **New NPC choice: Tell about Zcash**
+  - 4th option added to NPC encounters (golden button)
+  - Plays `nate_zashi.mp4` video with audio
+  - Awards 100 XP to party after video completes
+  - Video auto-closes when finished
+  
+- **Video overlay system:**
+  - Full-screen overlay with centered video player
+  - Uses music volume setting for audio level
+  - Golden glow effect around video border
+  
+- **Multiplayer support:**
+  - Host triggers video, clients also see and hear it
+  - XP awarded to all party members
+  - `zcash` choice type added to npc_choice handler
+
+## v0.3.78 - Exploration Event Choices (2025-12-02)
+- **Three-choice exploration system:**
+  - **SEND ONE HERO:** Random hero attempts challenge alone
+    - Success: That hero gets all XP (50 + level×30)
+    - Fail: That hero takes damage (15 + level×5 HP)
+  - **SEND ENTIRE PARTY:** All heroes attempt together
+    - Success: Large XP reward split among party (100 + level×50)
+    - Fail: All heroes take damage (10 + level×3 HP each)
+  - **RETREAT:** Leave without attempting (no risk, no reward)
+  
+- **Success chance scaling:**
+  - Base 90% at level 1
+  - Decreases by 3% per level
+  - Minimum 40% at high levels
+  
+- **Visual feedback:**
+  - Blue button for Send One with XP/damage preview
+  - Green button for Send Party with XP/damage preview
+  - Gray button for Retreat
+  - Success chance displayed in challenge info
+  - Result panel shows outcome with hero name (if applicable)
+  
+- **Multiplayer sync:**
+  - Server handler added for `exploration_choice` message type
+  - Only host can make choices, clients see results
+  - Choice includes success/fail state, hero, XP, and damage
+
+## v0.3.77 - NPC Encounter Choices (2025-12-02)
+- **Three-choice NPC interaction system:**
+  - **HELP (Good):** Spend gold to help the NPC, gain XP for the party
+  - **ROB (Bad):** Steal gold from the NPC, gain money but no XP
+  - **IGNORE (Neutral):** Walk away without interacting
+  
+- **Dynamic scaling:**
+  - Help cost: 25 + (roomLevel × 10) gold
+  - Help XP reward: 50 + (roomLevel × 25) XP (split among party)
+  - Rob gold reward: 40 + (roomLevel × 15) gold
+  
+- **New NPC types added:**
+  - refugee, wounded, lost (in addition to adventurer, scholar, healer, guide)
+  - Each type has unique name pool and dialogue
+  
+- **Visual feedback:**
+  - Green button for Help with cost/reward display
+  - Red button for Rob with gold amount
+  - Gray button for Ignore
+  - Result panel shows outcome after choice
+  - Help button shows "Not enough!" if gold insufficient
+  
+- **Multiplayer sync:**
+  - Server handler added for `npc_choice` message type
+  - Only host can make choices, clients see results
+  - Choice state synced via `preGeneratedEncounter.npcData.choiceMade`
+
+## v0.3.76 - Event Room Backgrounds (2025-12-02)
+- **Exploration room backgrounds:**
+  - Added 11 exploration background images for exploration rooms
+  - Located at `tunnelsofprivacy/events/explore/`
+  - Randomly selected when entering exploration room type
+  
+- **NPC encounter backgrounds:**
+  - Added 10 encounter background images for NPC rooms
+  - Located at `tunnelsofprivacy/events/encoutners/`
+  - Randomly selected when encountering friendly NPCs
+  
+- **Multiplayer sync support:**
+  - Background selection stored in preGeneratedEncounter
+  - `exploreBackground` and `encounterBackground` fields sync across players
+  - Secret rooms fall back to explore backgrounds
+  
+- **Asset preloading:**
+  - All 21 event backgrounds added to preloadAssets() for faster loading
+  - Images cached at startup alongside other game assets
+
 ## v0.3.75 - Mob Size Variation & Background Cleanup (2025-12-02)
 - **Random mob size variation:**
   - Mobs now spawn with random sizes between 0.7x and 3.0x
