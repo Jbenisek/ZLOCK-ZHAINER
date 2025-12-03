@@ -2,6 +2,45 @@
 
 # Changelog
 
+## v0.3.91 - SFX Audio System (2025-12-03)
+- **New SFX audio system with pooled playback:**
+  - Added `SFX_PATHS` object with all sound file paths
+  - Audio pool system (3 instances per sound) prevents creating new Audio objects
+  - `playSfx()` function with automatic recycling of audio instances
+  - `playHeroAttackSfx()` for hero light/heavy/special attacks
+  - `playEnemySfx()` for mob/boss attack/hit/die sounds
+
+- **Hero sounds (per hero: Zooko, Nate, Zancas, CyberAxe):**
+  - Light attack, Heavy attack, Special attack
+  - Heal, Hit reaction, Knockout
+  - Swap location, Taunt
+
+- **Enemy sounds:**
+  - Mob: attack, hit, die, magic, group hit
+  - Boss: attack, hit, die, magic blast, projectile, slashing
+
+- **Other sounds:**
+  - Camp eating sound when healing during rest
+  - UI click sound on all buttons
+  - UI confirm, cancel, hover, slider sounds defined
+
+- **SFX Volume control:**
+  - New slider in Settings (0-100, default 50%)
+  - Orange color (#E67E22) to distinguish from other sliders
+  - Persists to localStorage with other settings
+
+- **Fixed background sound volume slider:**
+  - Changed `|| 25` to `?? 25` (nullish coalescing)
+  - Volume 0 now correctly mutes videos instead of defaulting to 25
+  - Affects: applyBgSoundVolume(), camp video, store video, client camp video
+
+## v0.3.90 - Hero Selection Fix (2025-12-03)
+- **Fixed hero selection labels not showing in multiplayer:**
+  - TAKEN label and player name were not displaying on hero cards
+  - Root cause: `querySelector('[data-hero="..."]')` was matching equipment slots instead of hero cards
+  - Fix: Changed selectors to `.heroSelectCard[data-hero="..."]` for specificity
+  - Both host and client now correctly see TAKEN and player names on selected heroes
+
 ## v0.3.89 - Multiplayer Store Sync (2025-12-02)
 - **Store now host-only for purchasing:**
   - Clients see "HOST ONLY" on buy buttons (greyed out, disabled)

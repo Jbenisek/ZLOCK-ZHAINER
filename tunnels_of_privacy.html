@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.3.88</title>
+    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.3.90</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -1592,6 +1592,7 @@
         
         .heroSelectCard {
             position: relative;
+            overflow: visible;
         }
         
         .heroSelectCard .heroTakenLabel {
@@ -3105,7 +3106,7 @@
                 </button>
             </div>
             
-            <div id="versionDisplay">Tunnels of Privacy v0.3.89 • Portal System Active</div>
+            <div id="versionDisplay">Tunnels of Privacy v0.3.91 • Portal System Active</div>
             
             <!-- About/Donate Button (Bottom Right) -->
             <div id="aboutDonateBtn" style="
@@ -3824,6 +3825,14 @@
                         <span id="voiceVolumeValue" class="settingsSliderValue" style="color: #9B59B6;">90</span>
                     </div>
                 </div>
+                
+                <div class="settingsRow">
+                    <span class="settingsLabel">SFX Volume</span>
+                    <div class="settingsSliderGroup">
+                        <input type="range" id="sfxVolume" class="settingsSlider" min="0" max="100" value="50" oninput="updateSettings()">
+                        <span id="sfxVolumeValue" class="settingsSliderValue" style="color: #E67E22;">50</span>
+                    </div>
+                </div>
             </div>
             
             <!-- Music Types Section -->
@@ -3892,7 +3901,7 @@
         </div>
         
         <div style="display: block; width: 100%; margin-top: 12px; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #5A7A8F;">
-            Tunnels of Privacy v0.3.89
+            Tunnels of Privacy v0.3.90
         </div>
     </div>
     
@@ -3986,7 +3995,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.3.89';
+        const GAME_VERSION = 'v0.3.91';
         
         // ===== HACKATHON INFO TOOLTIP SYSTEM =====
         const TOOLTIP_DELAY = 800; // ms before tooltip appears
@@ -6150,6 +6159,7 @@
         let currentMusic = null;
         let musicEnabled = true;
         let musicVolume = 40; // Music volume (1-150)
+        let sfxVolume = 50; // SFX volume (0-100, default 50%)
         let musicStarted = false;
         let currentTrackIndex = 0;
         let mainThemePlayed = false; // Track if main theme has played
@@ -6158,6 +6168,149 @@
         let musicAnimationFrameId = null;
         let currentMusicZone = -1; // Track current zone for music switching
         let userPausedMusic = false; // Track if user manually paused
+        
+        // ===== SFX AUDIO SYSTEM =====
+        // Sound effect paths
+        const SFX_PATHS = {
+            // Boss sounds
+            bossAttack: 'tunnelsofprivacy/sounds/bosses/Generic_boss_slashing_attack__fast_whoosh_of_a_lar.mp3',
+            bossHit: 'tunnelsofprivacy/sounds/bosses/Generic_boss_melee_impact_for_a_fantasy_pixel-art_.mp3',
+            bossDie: 'tunnelsofprivacy/sounds/bosses/Generic_boss_roar-into-attack__short_monstrous_roa.mp3',
+            bossMagic: 'tunnelsofprivacy/sounds/bosses/Generic_boss_magical_blast_hit__rising_arcane_char.mp3',
+            bossProjectile: 'tunnelsofprivacy/sounds/bosses/Generic_boss_projectile_impact__quick_air_whip__sh.mp3',
+            // Mob sounds
+            mobAttack: 'tunnelsofprivacy/sounds/mobs/Generic_small_mob_claw_slash_attack__fast__thin_wh.mp3',
+            mobHit: 'tunnelsofprivacy/sounds/mobs/Generic_small_mob_melee_hit_for_a_fantasy_pixel-ar.mp3',
+            mobDie: 'tunnelsofprivacy/sounds/mobs/Generic_small_mob_death_or_defeat_sound__brief_cre.mp3',
+            mobMagic: 'tunnelsofprivacy/sounds/mobs/Generic_small_mob_magic_or_spit_projectile_impact_.mp3',
+            mobGroup: 'tunnelsofprivacy/sounds/mobs/Generic_small_mob_group_hit__several_tiny_impacts_.mp3',
+            // Hero sounds - Zooko
+            zookoLight: 'tunnelsofprivacy/sounds/heros/Four-second_light_attack_sound_for_Zooko_in_retro_.mp3',
+            zookoHeavy: 'tunnelsofprivacy/sounds/heros/Four-second_heavy_attack_sound_for_Zooko_in_retro_.mp3',
+            zookoSpecial: 'tunnelsofprivacy/sounds/heros/Four-second_special_attack_sound_for_Zooko_in_retr.mp3',
+            zookoHeal: 'tunnelsofprivacy/sounds/heros/Four-second_heal_sound_for_Zooko_in_a_retro_16-bit.mp3',
+            zookoHit: 'tunnelsofprivacy/sounds/heros/Four-second_hit_reaction_for_Zooko_in_a_retro_16-b.mp3',
+            zookoKnockout: 'tunnelsofprivacy/sounds/heros/Four-second_knockout_sound_for_Zooko__stronger_arc.mp3',
+            zookoSwap: 'tunnelsofprivacy/sounds/heros/Four-second_swap-location_sound_for_Zooko__elegant.mp3',
+            zookoTaunt: 'tunnelsofprivacy/sounds/heros/Four-second_taunt_sound_for_Zooko__short_confident.mp3',
+            // Hero sounds - Nate
+            nateLight: 'tunnelsofprivacy/sounds/heros/Four-second_light_attack_sound_for_Nate_in_retro_1.mp3',
+            nateHeavy: 'tunnelsofprivacy/sounds/heros/Four-second_heavy_attack_sound_for_Nate_in_retro_1.mp3',
+            nateSpecial: 'tunnelsofprivacy/sounds/heros/Four-second_special_attack_sound_for_Nate_in_retro.mp3',
+            nateHeal: 'tunnelsofprivacy/sounds/heros/Four-second_heal_sound_for_Nate_in_a_retro_16-bit_.mp3',
+            nateHit: 'tunnelsofprivacy/sounds/heros/Four-second_hit_reaction_for_Nate_in_a_retro_16-bi.mp3',
+            nateKnockout: 'tunnelsofprivacy/sounds/heros/Four-second_knockout_sound_for_Nate__heavier_impac.mp3',
+            nateSwap: 'tunnelsofprivacy/sounds/heros/Four-second_swap-location_sound_for_Nate__data-war.mp3',
+            nateTaunt: 'tunnelsofprivacy/sounds/heros/Four-second_taunt_sound_for_Nate__smug_teen_hacker.mp3',
+            // Hero sounds - Zancas
+            zancasLight: 'tunnelsofprivacy/sounds/heros/Four-second_light_attack_sound_for_Zancas_in_retro.mp3',
+            zancasHeavy: 'tunnelsofprivacy/sounds/heros/Four-second_heavy_attack_sound_for_Zancas_in_retro.mp3',
+            zancasSpecial: 'tunnelsofprivacy/sounds/heros/Four-second_special_attack_sound_for_Zancas_in_ret.mp3',
+            zancasHeal: 'tunnelsofprivacy/sounds/heros/Four-second_heal_sound_for_Zancas_in_a_retro_16-bi.mp3',
+            zancasHit: 'tunnelsofprivacy/sounds/heros/Four-second_hit_reaction_for_Zancas_in_a_retro_16-.mp3',
+            zancasKnockout: 'tunnelsofprivacy/sounds/heros/Four-second_knockout_sound_for_Zancas__heavier_bod.mp3',
+            zancasSwap: 'tunnelsofprivacy/sounds/heros/Four-second_swap-location_sound_for_Zancas__spirit.mp3',
+            zancasTaunt: 'tunnelsofprivacy/sounds/heros/Four-second_taunt_sound_for_Zancas__calm_but_chall.mp3',
+            // Hero sounds - CyberAxe
+            cyberaxeLight: 'tunnelsofprivacy/sounds/heros/Four-second_light_attack_sound_for_CyberAxe_in_ret.mp3',
+            cyberaxeHeavy: 'tunnelsofprivacy/sounds/heros/Four-second_heavy_attack_sound_for_CyberAxe_in_ret.mp3',
+            cyberaxeSpecial: 'tunnelsofprivacy/sounds/heros/Four-second_special_attack_sound_for_CyberAxe_in_r.mp3',
+            cyberaxeHeal: 'tunnelsofprivacy/sounds/heros/Four-second_heal_sound_for_CyberAxe_in_a_retro_16-.mp3',
+            cyberaxeHit: 'tunnelsofprivacy/sounds/heros/Four-second_hit_reaction_for_CyberAxe_in_a_retro_1.mp3',
+            cyberaxeKnockout: 'tunnelsofprivacy/sounds/heros/Four-second_knockout_sound_for_CyberAxe__massive_a.mp3',
+            cyberaxeSwap: 'tunnelsofprivacy/sounds/heros/Four-second_swap-location_sound_for_CyberAxe__heav.mp3',
+            cyberaxeTaunt: 'tunnelsofprivacy/sounds/heros/Four-second_taunt_sound_for_CyberAxe__bold_warrior.mp3',
+            // Camp sounds
+            campEat: 'tunnelsofprivacy/sounds/camp/Four-second_fantasy_RPG_party_eating_SFX__UI_click.mp3',
+            // Mob sounds
+            mobAttack: 'tunnelsofprivacy/sounds/mobs/Generic_small_mob_claw_slash_attack__fast__thin_wh.mp3',
+            mobHit: 'tunnelsofprivacy/sounds/mobs/Generic_small_mob_melee_hit_for_a_fantasy_pixel-ar.mp3',
+            mobDie: 'tunnelsofprivacy/sounds/mobs/Generic_small_mob_death_or_defeat_sound__brief_cre.mp3',
+            // Boss sounds
+            bossAttack: 'tunnelsofprivacy/sounds/bosses/Generic_boss_roar-into-attack__short_monstrous_roa.mp3',
+            bossHit: 'tunnelsofprivacy/sounds/bosses/Generic_boss_melee_impact_for_a_fantasy_pixel-art_.mp3',
+            bossDie: 'tunnelsofprivacy/sounds/bosses/Generic_boss_magical_blast_hit__rising_arcane_char.mp3',
+            // UI sounds
+            uiClick: 'tunnelsofprivacy/sounds/ui/Soft__smooth_UI_button_click_for_a_fantasy_RPG_men.mp3',
+            uiConfirm: 'tunnelsofprivacy/sounds/ui/Smooth_UI_confirm_accept_sound_for_a_fantasy_RPG__.mp3',
+            uiCancel: 'tunnelsofprivacy/sounds/ui/Smooth_UI_back_cancel_sound_for_a_fantasy_RPG__sof.mp3',
+            uiHover: 'tunnelsofprivacy/sounds/ui/Smooth_UI_hover_focus_sound_for_a_fantasy_RPG__ver.mp3',
+            uiSlider: 'tunnelsofprivacy/sounds/ui/Smooth_UI_slider_or_value_change_sound_for_a_fanta.mp3'
+        };
+        
+        // Audio pool for SFX (prevents creating new Audio objects constantly)
+        const sfxPool = {};
+        const SFX_POOL_SIZE = 3; // Number of audio instances per sound
+        
+        // Initialize SFX pool
+        function initSfxPool() {
+            for (const [key, path] of Object.entries(SFX_PATHS)) {
+                sfxPool[key] = [];
+                for (let i = 0; i < SFX_POOL_SIZE; i++) {
+                    const audio = new Audio(path);
+                    audio.preload = 'auto';
+                    sfxPool[key].push(audio);
+                }
+            }
+        }
+        
+        // Play a sound effect
+        function playSfx(sfxKey) {
+            if (!sfxPool[sfxKey] || sfxVolume === 0) return;
+            
+            // Find an available audio instance (not currently playing)
+            const pool = sfxPool[sfxKey];
+            let audio = pool.find(a => a.paused || a.ended);
+            
+            // If all are playing, use the first one (interrupt oldest)
+            if (!audio) {
+                audio = pool[0];
+            }
+            
+            // Reset and play
+            audio.currentTime = 0;
+            audio.volume = Math.min(1.0, sfxVolume / 100);
+            audio.play().catch(e => {
+                // Ignore autoplay errors
+            });
+        }
+        
+        // Play hero attack sound based on hero name and attack type
+        function playHeroAttackSfx(heroName, attackType) {
+            const name = heroName.toLowerCase();
+            let sfxKey;
+            
+            if (attackType === 'light') {
+                sfxKey = name + 'Light';
+            } else if (attackType === 'heavy') {
+                sfxKey = name + 'Heavy';
+            } else if (attackType === 'special') {
+                sfxKey = name + 'Special';
+            }
+            
+            if (sfxKey && sfxPool[sfxKey]) {
+                playSfx(sfxKey);
+            }
+        }
+        
+        // Play enemy sound based on enemy type and action
+        function playEnemySfx(enemy, action) {
+            const isBoss = !enemy.isMob;
+            let sfxKey;
+            
+            if (action === 'attack') {
+                sfxKey = isBoss ? 'bossAttack' : 'mobAttack';
+            } else if (action === 'hit') {
+                sfxKey = isBoss ? 'bossHit' : 'mobHit';
+            } else if (action === 'die') {
+                sfxKey = isBoss ? 'bossDie' : 'mobDie';
+            }
+            
+            if (sfxKey) {
+                playSfx(sfxKey);
+            }
+        }
+        // ===== END SFX AUDIO SYSTEM =====
         
         // Asset loading tracking
         let assetsToLoad = 0;
@@ -6901,6 +7054,7 @@
         let settings = {
             musicEnabled: true,
             musicVolume: 40,
+            sfxVolume: 50,            // SFX volume (0-100, default 50%)
             bgSoundVolume: 25,        // Background video sound volume (0-100, default 25 -> 5%)
             voiceVolume: 90,          // TTS and narrator volume (0-100, default 90 -> 36%)
             themeMusicEnabled: true,  // Theme songs toggle
@@ -7062,6 +7216,24 @@
                 };
             }
             
+            // Restore party meals from save file
+            const sharedSave = loadSharedSave();
+            if (sharedSave?.dungeonState?.partyMeals) {
+                sharedSave.dungeonState.partyMeals.forEach(meal => {
+                    if (meal.inventorySlot !== undefined && meal.inventorySlot >= 0 && meal.inventorySlot < 36) {
+                        partyInventory.items[meal.inventorySlot] = {
+                            id: meal.id,
+                            name: meal.name,
+                            icon: meal.icon,
+                            type: 'party_meal',
+                            value: meal.value,
+                            description: meal.description
+                        };
+                    }
+                });
+                console.log(`[Inventory] Restored ${sharedSave.dungeonState.partyMeals.length} party meals from save`);
+            }
+            
             console.log(`[Inventory] Initialized with ${partyInventory.maxSlots} slots at party level ${partyLevel}`);
         }
         
@@ -7170,6 +7342,11 @@
             document.getElementById('overlay').style.display = 'block';
             document.getElementById('inventoryPanel').style.display = 'block';
             renderInventoryGrid();
+            
+            // Client requests inventory sync from host
+            if (multiplayerState.enabled && multiplayerState.role === 'client') {
+                sendWebSocketMessage({ type: 'request_resync' });
+            }
         }
         
         // Close inventory panel
@@ -7849,6 +8026,8 @@
             document.getElementById('bgSoundVolumeValue').textContent = settings.bgSoundVolume;
             document.getElementById('voiceVolume').value = settings.voiceVolume;
             document.getElementById('voiceVolumeValue').textContent = settings.voiceVolume;
+            document.getElementById('sfxVolume').value = settings.sfxVolume !== undefined ? settings.sfxVolume : 50;
+            document.getElementById('sfxVolumeValue').textContent = settings.sfxVolume !== undefined ? settings.sfxVolume : 50;
             document.getElementById('themeMusicEnabled').checked = settings.themeMusicEnabled !== false;
             document.getElementById('zoneMusicEnabled').checked = settings.zoneMusicEnabled !== false;
             document.getElementById('showHitboxes').checked = settings.showHitboxes;
@@ -7860,19 +8039,29 @@
         
         // Apply background sound volume to all active video backgrounds
         function applyBgSoundVolume() {
-            const vol = (settings.bgSoundVolume || 25) / 500;
+            const vol = (settings.bgSoundVolume ?? 25) / 500;
+            console.log('[applyBgSoundVolume] Setting volume to:', vol, 'from bgSoundVolume:', settings.bgSoundVolume);
             
             // Camp video
             const campVideo = document.getElementById('campVideo');
-            if (campVideo) campVideo.volume = vol;
+            if (campVideo) {
+                campVideo.volume = vol;
+                console.log('[applyBgSoundVolume] Camp video volume set');
+            }
             
             // Store/trader video
             const storeVideo = document.getElementById('storeBackgroundVideo');
-            if (storeVideo) storeVideo.volume = vol;
+            if (storeVideo) {
+                storeVideo.volume = vol;
+                console.log('[applyBgSoundVolume] Store video volume set');
+            }
             
             // Battle background video (if not muted)
             const battleVideo = document.getElementById('battleBackgroundVideo');
-            if (battleVideo && !battleVideo.muted) battleVideo.volume = vol;
+            if (battleVideo && !battleVideo.muted) {
+                battleVideo.volume = vol;
+                console.log('[applyBgSoundVolume] Battle video volume set');
+            }
         }
         
         // Story voice audio players (for title screen)
@@ -7962,6 +8151,7 @@
             settings.musicVolume = parseInt(document.getElementById('musicVolume').value);
             settings.bgSoundVolume = parseInt(document.getElementById('bgSoundVolume').value);
             settings.voiceVolume = parseInt(document.getElementById('voiceVolume').value);
+            settings.sfxVolume = parseInt(document.getElementById('sfxVolume').value);
             settings.showHitboxes = document.getElementById('showHitboxes').checked;
             settings.llmFreeWill = document.getElementById('llmFreeWill').checked;
             settings.llmUsePaid = document.getElementById('llmUsePaid').checked;
@@ -7972,6 +8162,8 @@
             document.getElementById('musicVolumeValue').textContent = settings.musicVolume;
             document.getElementById('bgSoundVolumeValue').textContent = settings.bgSoundVolume;
             document.getElementById('voiceVolumeValue').textContent = settings.voiceVolume;
+            document.getElementById('sfxVolumeValue').textContent = settings.sfxVolume;
+            sfxVolume = settings.sfxVolume;
             
             // Apply background sound volume to active videos
             applyBgSoundVolume();
@@ -8128,6 +8320,7 @@
                     // Apply to game state
                     musicEnabled = settings.musicEnabled;
                     musicVolume = settings.musicVolume;
+                    sfxVolume = settings.sfxVolume !== undefined ? settings.sfxVolume : 50;
                     themeMusicEnabled = settings.themeMusicEnabled !== false;
                     zoneMusicEnabled = settings.zoneMusicEnabled !== false;
                     
@@ -8912,7 +9105,7 @@
             if (videoEl) {
                 videoEl.querySelector('source').src = videoSrc;
                 videoEl.load();
-                videoEl.volume = (settings.bgSoundVolume || 25) / 500; // Use settings
+                videoEl.volume = (settings.bgSoundVolume ?? 25) / 500; // Use settings
                 videoEl.play().catch(e => console.log('[Camp] Video autoplay blocked:', e));
                 campState.videoPlaying = true;
             }
@@ -8952,6 +9145,9 @@
                 if (hoursElapsed > healedSoFar / campState.healPerHour) {
                     healedSoFar += campState.healPerHour;
                     document.getElementById('campHealedSoFar').textContent = healedSoFar;
+                    
+                    // Play eating sound
+                    playSfx('campEat');
                     
                     // Actually heal heroes
                     applyHealToHeroes(campState.healPerHour);
@@ -10150,6 +10346,11 @@
         function enterNonCombatRoom(roomType) {
             console.log('[NonCombat] Entering room type:', roomType);
             
+            // Client requests inventory sync when entering store
+            if (roomType === 'store' && multiplayerState.enabled && multiplayerState.role === 'client') {
+                sendWebSocketMessage({ type: 'request_resync' });
+            }
+            
             nonCombatRoomState.active = true;
             nonCombatRoomState.roomType = roomType;
             nonCombatRoomState.data = preGeneratedEncounter;
@@ -10179,7 +10380,7 @@
                 if (videoEl) {
                     videoEl.querySelector('source').src = selectedVideo;
                     videoEl.load();
-                    videoEl.volume = (settings.bgSoundVolume || 25) / 500; // Use settings
+                    videoEl.volume = (settings.bgSoundVolume ?? 25) / 500; // Use settings
                     videoEl.style.display = 'block';
                     videoEl.play().catch(e => console.log('[Store] Video autoplay blocked:', e));
                 }
@@ -14210,6 +14411,9 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                         hero.y = tempY;
                         hero.platform = tempPlatform;
                         
+                        // Play swap sound for initiator
+                        playSfx(initiator.name.toLowerCase() + 'Swap');
+                        
                         showDiceRoll(`${initiator.name} swapped positions with ${hero.name}!`);
                         
                         // Exit swap mode
@@ -14249,7 +14453,7 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     hitWidth = spriteWidth;
                     hitHeight = spriteHeight;
                     hitX = enemy.x - hitWidth / 2;
-                    hitY = enemy.y - spriteHeight;
+                    hitY = enemy.y - hitHeight / 2;
                 } else {
                     hitWidth = 200 * depthScale;
                     hitHeight = 200 * depthScale;
@@ -14565,8 +14769,8 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                         spriteHeight = baseHeight * depthScale;
                         spriteWidth = spriteHeight * mobAspectRatio;
                         spriteX = enemy.x - spriteWidth / 2;
-                        // Position so BOTTOM of sprite is at enemy.y (feet on ground)
-                        spriteY = enemy.y - spriteHeight;
+                        // Center sprite on enemy.y
+                        spriteY = enemy.y - spriteHeight / 2;
                     } else {
                         // Bosses: use actual image dimensions for proper aspect ratio
                         // Original bosses: 300x300 (square), New bosses: 917x512 (wide)
@@ -14613,7 +14817,8 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     const sizeScale = enemy.sizeScale || 1.0;
                     const baseHeight = 75 * sizeScale;
                     const spriteHeight = baseHeight * depthScale;
-                    barOffsetY = enemy.y - spriteHeight - (5 * depthScale);
+                    // Sprite is centered on enemy.y, so top is at enemy.y - spriteHeight/2
+                    barOffsetY = enemy.y - spriteHeight / 2 - (5 * depthScale);
                 } else {
                     // For bosses, position above the sprite (which is now bottom-aligned)
                     // Level 100 boss is 2x larger
@@ -14689,7 +14894,7 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                         highlightWidth = spriteWidth + 20;
                         highlightHeight = spriteHeight + 20;
                         highlightX = enemy.x - highlightWidth / 2;
-                        highlightY = enemy.y - spriteHeight - 10;
+                        highlightY = enemy.y - highlightHeight / 2;
                     } else {
                         highlightWidth = 220 * depthScale;
                         highlightHeight = 220 * depthScale;
@@ -14859,10 +15064,31 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                         const baseHeight = 75 * sizeScale;
                         const spriteHeight = baseHeight * depthScale;
                         const spriteWidth = spriteHeight * mobAspectRatio;
-                        // Hitbox from feet (enemy.y) upward
+                        // Hitbox centered on enemy.y
                         ctx.strokeStyle = '#FF0000';
                         ctx.lineWidth = 2;
-                        ctx.strokeRect(enemy.x - spriteWidth / 2, enemy.y - spriteHeight, spriteWidth, spriteHeight);
+                        ctx.strokeRect(enemy.x - spriteWidth / 2, enemy.y - spriteHeight / 2, spriteWidth, spriteHeight);
+                        
+                        // Draw center point at enemy.y
+                        ctx.fillStyle = '#FF00FF';
+                        ctx.beginPath();
+                        ctx.arc(enemy.x, enemy.y, 8, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.strokeStyle = '#FFFFFF';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                        
+                        // Top of hitbox for coordinates
+                        topY = enemy.y - spriteHeight / 2 - 5;
+                    } else {
+                        // Bosses: hitbox from feet (enemy.y) upward to match sprite
+                        const isLevel100 = enemy.spritePath && enemy.spritePath.includes('lvl100');
+                        const sizeMultiplier = isLevel100 ? 2.0 : 1.0;
+                        const boxHeight = 250 * depthScale * sizeMultiplier;
+                        const boxWidth = boxHeight * ((enemy.sprite?.naturalWidth || 300) / (enemy.sprite?.naturalHeight || 300));
+                        ctx.strokeStyle = '#FF0000';
+                        ctx.lineWidth = 2;
+                        ctx.strokeRect(enemy.x - boxWidth / 2, enemy.y - boxHeight, boxWidth, boxHeight);
                         
                         // Draw floor contact point at enemy.y (feet)
                         ctx.fillStyle = '#FF00FF';
@@ -14874,32 +15100,7 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                         ctx.stroke();
                         
                         // Top of hitbox for coordinates
-                        topY = enemy.y - spriteHeight - 5;
-                    } else {
-                        // Bosses: 300x300 scaled box centered
-                        const boxSize = 300 * depthScale;
-                        ctx.strokeStyle = '#FF0000';
-                        ctx.lineWidth = 2;
-                        ctx.strokeRect(enemy.x - boxSize / 2, enemy.y - boxSize / 2, boxSize, boxSize);
-                        
-                        // Draw center point
-                        ctx.fillStyle = '#FF0000';
-                        ctx.beginPath();
-                        ctx.arc(enemy.x, enemy.y, 5, 0, Math.PI * 2);
-                        ctx.fill();
-                        
-                        // Draw floor contact point
-                        const floorY = enemy.y + boxSize / 2;
-                        ctx.fillStyle = '#FF00FF';
-                        ctx.beginPath();
-                        ctx.arc(enemy.x, floorY, 8, 0, Math.PI * 2);
-                        ctx.fill();
-                        ctx.strokeStyle = '#FFFFFF';
-                        ctx.lineWidth = 2;
-                        ctx.stroke();
-                        
-                        // Top of hitbox for coordinates
-                        topY = enemy.y - boxSize / 2 - 5;
+                        topY = enemy.y - boxHeight - 5;
                     }
                     
                     // Draw x/y coordinates at top of hitbox
@@ -15631,6 +15832,8 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                         setAnimationState(currentCombatant, 'idle', 'pingpong');
                     });
                 }
+                // Play hero heal sound
+                playSfx(heroKey + 'Heal');
                 
                 showDiceRoll(`${currentCombatant.name} heals for ${healAmount} HP! (1 action used)`);
                 updateBattleHeroCards();
@@ -15684,6 +15887,8 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                         setAnimationState(currentCombatant, 'idle', 'pingpong');
                     });
                 }
+                // Play hero taunt sound
+                playSfx(heroKey + 'Taunt');
                 
                 if (tauntRoll >= tauntDC) {
                     currentCombatant.taunting = true;
@@ -15784,7 +15989,14 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 attackRoll += calculateModifier(str);
                 damageRoll = rollD6(1) + modifier + weaponDamage;
                 attackName = 'Light Attack';
-            } else if (actionType === 'heavy') {
+            }
+            
+            // Play hero attack sound (if attacker is a hero)
+            if (battleState.heroes.includes(attacker)) {
+                playHeroAttackSfx(attacker.name, actionType);
+            }
+            
+            if (actionType === 'heavy') {
                 modifier = calculateModifier(str);
                 attackRoll += modifier;
                 damageRoll = rollD6(2) + modifier + weaponDamage;
@@ -15836,6 +16048,11 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 // Update boss morale when they take damage
                 if (target.isBoss) {
                     updateBossMorale(target, 'took_damage');
+                }
+                
+                // Play enemy hit sound if target is enemy
+                if (battleState.enemies.includes(target)) {
+                    playEnemySfx(target, 'hit');
                 }
                 
                 // Trigger free will chat for damaged enemy
@@ -15896,6 +16113,11 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             
             // Check if target is dead
             if (target.hp <= 0) {
+                // Play enemy death sound if target is enemy
+                if (battleState.enemies.includes(target)) {
+                    playEnemySfx(target, 'die');
+                }
+                
                 // Calculate XP multiplier based on dungeon level
                 const dungeonLevel = battleState.currentLevel || 1;
                 const xpMultiplier = 1 + (dungeonLevel - 1) * 0.25; // +25% per level
@@ -16117,6 +16339,9 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             const attackRoll = rollD20();
             const damage = combatant.attackDamage || rollD6(1);
             
+            // Play enemy attack sound
+            playEnemySfx(combatant, 'attack');
+            
             // Don't damage heroes already at 0 HP
             if (target.hp <= 0) {
                 showDiceRoll(`${combatant.name} ignores disabled ${target.name}`);
@@ -16143,6 +16368,8 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                             setAnimationState(target, 'idle', 'pingpong');
                         });
                     }
+                    // Play hero hit sound
+                    playSfx(heroKey + 'Hit');
                 }
                 
                 showDiceRoll(`${combatant.name} attacks ${target.name}: HIT for ${finalDamage} damage!`);
@@ -16177,6 +16404,8 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     if (paths && paths.knockout) {
                         setAnimationState(target, 'knockout', 'once');
                     }
+                    // Play hero knockout sound
+                    playSfx(heroKey + 'Knockout');
                 }
                 
                 const allHeroesDead = battleState.heroes.every(h => h.hp <= 0);
@@ -17816,10 +18045,11 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                     // Client is requesting a full state resync
                     if (multiplayerState.role === 'host') {
                         console.log('[HOST] Client requested resync');
+                        // Always sync inventory/meals/equipment
+                        sendInventoryUpdate();
                         if (battleState.active) {
                             // Send full battle state
                             broadcastGameState();
-                            showNotification('Resync sent to clients', 'info');
                         }
                     }
                     break;
@@ -18076,7 +18306,7 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                         if (videoEl && data.videoSrc) {
                             videoEl.querySelector('source').src = data.videoSrc;
                             videoEl.load();
-                            videoEl.volume = (settings.bgSoundVolume || 25) / 500; // Use settings
+                            videoEl.volume = (settings.bgSoundVolume ?? 25) / 500; // Use settings
                             videoEl.play().catch(e => console.log('[Camp] Video autoplay blocked:', e));
                         }
                         
@@ -19204,7 +19434,7 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 return;
             }
             
-            const card = document.querySelector(`[data-hero="${heroName}"]`);
+            const card = document.querySelector(`.heroSelectCard[data-hero="${heroName}"]`);
             
             // If clicking own hero, deselect it
             if (multiplayerState.myHeroes.includes(heroName)) {
@@ -19257,30 +19487,50 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             // Reset all cards first
             document.querySelectorAll('.heroSelectCard').forEach(card => {
                 card.classList.remove('taken');
+                card.classList.remove('selected');
                 card.style.opacity = '1';
                 card.style.cursor = 'pointer';
+                card.style.borderWidth = '3px';
                 const takenLabel = card.querySelector('.heroTakenLabel');
                 const playerLabel = card.querySelector('.heroPlayerLabel');
                 if (takenLabel) takenLabel.style.display = 'none';
                 if (playerLabel) playerLabel.style.display = 'none';
             });
             
+            // Re-apply selected state for my heroes
+            multiplayerState.myHeroes.forEach(heroName => {
+                const card = document.querySelector(`.heroSelectCard[data-hero="${heroName}"]`);
+                if (card) {
+                    card.classList.add('selected');
+                    card.style.borderWidth = '5px';
+                }
+            });
+            
             // Update hero selection UI with player names
             Object.keys(data.heroes).forEach(hero => {
                 const heroData = data.heroes[hero];
-                const card = document.querySelector(`[data-hero="${hero}"]`);
+                const card = document.querySelector(`.heroSelectCard[data-hero="${hero}"]`);
                 if (card && heroData) {
-                    card.classList.add('taken');
-                    card.style.opacity = '0.7';
-                    
+                    // Always show player name for ALL selected heroes
                     const playerLabel = card.querySelector('.heroPlayerLabel');
                     if (playerLabel) {
                         playerLabel.textContent = heroData.playerName || 'Player';
                         playerLabel.style.display = 'block';
                     }
                     
-                    // Don't disable if it's my hero
-                    if (!multiplayerState.myHeroes.includes(hero)) {
+                    // Check if this is my hero or someone else's
+                    const isMyHero = multiplayerState.myHeroes.includes(hero);
+                    
+                    if (isMyHero) {
+                        // My hero - highlight it, don't dim
+                        card.classList.add('selected');
+                        card.style.borderWidth = '5px';
+                        card.style.opacity = '1';
+                        card.style.cursor = 'pointer';
+                    } else {
+                        // Someone else's hero - show TAKEN and dim
+                        card.classList.add('taken');
+                        card.style.opacity = '0.7';
                         card.style.cursor = 'not-allowed';
                         const takenLabel = card.querySelector('.heroTakenLabel');
                         if (takenLabel) {
@@ -20640,6 +20890,17 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
             // Load settings
             loadSettings();
             console.log('Settings loaded:', settings);
+            
+            // Initialize SFX audio pool
+            initSfxPool();
+            
+            // Add global click handler for UI button sounds
+            document.addEventListener('click', (e) => {
+                const target = e.target.closest('button, .menuButton, .heroSelectCard');
+                if (target && sfxVolume > 0) {
+                    playSfx('uiClick');
+                }
+            });
             
             // Initialize party inventory
             const savedLevel = parseInt(document.getElementById('dungeonLevel')?.textContent) || 1;

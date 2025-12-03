@@ -1884,6 +1884,15 @@ async def handle_websocket(websocket, path):
                         await client.send(message)
                     print(f"[WS] Host set party level to {data.get('targetLevel', '?')} in room {client_room}")
             
+            # REQUEST RESYNC (client requests sync from host)
+            elif msg_type == 'request_resync':
+                if client_room and client_room in rooms and client_role == 'client':
+                    # Relay to host
+                    host_ws = rooms[client_room]['host']
+                    if host_ws:
+                        await host_ws.send(message)
+                    print(f"[WS] Client requested resync in room {client_room}")
+            
             # INVENTORY UPDATE (host only - sync party inventory to clients)
             elif msg_type == 'inventory_update':
                 if client_room and client_room in rooms and client_role == 'host':
