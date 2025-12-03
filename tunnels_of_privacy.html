@@ -17764,6 +17764,41 @@ Write a dramatic 2-3 sentence narration describing this level as the heroes ente
                 }
             }
             
+            // Preload SFX into pool
+            const sfxKeys = Object.keys(SFX_PATHS);
+            const sfxCount = sfxKeys.length;
+            audioTotal += sfxCount;
+            assetsToLoad += sfxCount;
+            
+            sfxKeys.forEach(key => {
+                const path = SFX_PATHS[key];
+                const audio = new Audio();
+                audio.preload = 'auto';
+                audio.src = path;
+                
+                audio.addEventListener('canplaythrough', () => {
+                    audioLoaded++;
+                    assetsLoaded++;
+                    updateLoadingProgress();
+                }, { once: true });
+                
+                audio.addEventListener('error', (e) => {
+                    console.error(`Failed to preload SFX: ${key}`, e);
+                    audioLoaded++;
+                    assetsLoaded++;
+                    updateLoadingProgress();
+                }, { once: true });
+                
+                // Timeout fallback in case audio doesn't fire events
+                setTimeout(() => {
+                    if (!sfxPool[key]) {
+                        audioLoaded++;
+                        assetsLoaded++;
+                        updateLoadingProgress();
+                    }
+                }, 5000);
+            });
+            
             updateLoadingProgress();
         }
         
