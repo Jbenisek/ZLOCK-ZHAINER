@@ -2,6 +2,18 @@
 
 # Changelog
 
+## v0.4.13 - Server & Multiplayer Fixes (2025-12-03)
+- **Fixed piper-tts installation on Linux (Debian/Ubuntu):**
+  - Server now handles PEP 668 "externally-managed-environment" error
+  - First attempts normal pip install, then retries with `--break-system-packages` flag
+  - Provides helpful manual install command if both attempts fail
+  - Works seamlessly on Windows (flag never needed)
+
+- **Fixed co-op client not seeing store screen:**
+  - Added `nonCombatRoom` case to `game_start` message handler
+  - Clients joining while host is in store/NPC/exploration now see correct screen
+  - Added `nonCombatData` to resync message when host is in non-combat room
+
 ## v0.4.12 - Inventory & Store Fixes (2025-12-03)
 - **Fixed party meal inventory limit bug:**
   - Store "FULL" check now uses `partyInventory.maxSlots` instead of hardcoded 10

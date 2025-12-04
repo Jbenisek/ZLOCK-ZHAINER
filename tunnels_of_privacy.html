@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.4.12</title>
+    <title>TUNNELS OF PRIVACY - Dungeon Crawler v0.4.13</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
@@ -4386,7 +4386,7 @@
             SHARED_SAVE: 'top_shared_save'
         };
         
-        const GAME_VERSION = 'v0.4.12';
+        const GAME_VERSION = 'v0.4.13';
         
         // ===== HACKATHON INFO TOOLTIP SYSTEM =====
         const TOOLTIP_DELAY = 800; // ms before tooltip appears
@@ -21177,14 +21177,30 @@ ${styleInstructions} Use the scene description as your PRIMARY inspiration. Keep
                         console.log('[HOST] Client requested resync');
                         const sharedSave = loadSharedSave();
                         
-                        // Send game_start with current screen and full state (existing message type)
-                        sendWebSocketMessage({
+                        // Build game_start message
+                        const gameStartMsg = {
                             type: 'game_start',
                             screen: currentScreen,
                             saveData: sharedSave,
                             levelLayout: currentLevelLayout,
                             levelProgress: levelProgress
-                        });
+                        };
+                        
+                        // If in non-combat room, include that data
+                        if (currentScreen === 'nonCombatRoom') {
+                            gameStartMsg.nonCombatData = {
+                                roomType: nonCombatRoomState.roomType,
+                                storeData: preGeneratedEncounter.storeData,
+                                storeVideo: preGeneratedEncounter.storeVideo,
+                                npcData: preGeneratedEncounter.npcData,
+                                secretData: preGeneratedEncounter.secretData,
+                                explorationData: preGeneratedEncounter.explorationData,
+                                background: preGeneratedEncounter.background
+                            };
+                        }
+                        
+                        // Send game_start with current screen and full state
+                        sendWebSocketMessage(gameStartMsg);
                         
                         // Also sync inventory/equipment (existing message type)
                         sendInventoryUpdate();
@@ -21870,6 +21886,24 @@ ${styleInstructions} Use the scene description as your PRIMARY inspiration. Keep
                             
                             showNotification('Waiting for host to initialize battle...', 'info');
                             return; // Wait for battle_init
+                        } else if (data.screen === 'nonCombatRoom') {
+                            // Host is in store/NPC/exploration room - client joins
+                            document.getElementById('dungeonMenuScreen').style.display = 'none';
+                            document.getElementById('battleScreen').style.display = 'none';
+                            
+                            // Set up encounter data from host
+                            if (data.nonCombatData) {
+                                preGeneratedEncounter.roomType = data.nonCombatData.roomType;
+                                preGeneratedEncounter.storeData = data.nonCombatData.storeData;
+                                preGeneratedEncounter.storeVideo = data.nonCombatData.storeVideo;
+                                preGeneratedEncounter.npcData = data.nonCombatData.npcData;
+                                preGeneratedEncounter.secretData = data.nonCombatData.secretData;
+                                preGeneratedEncounter.explorationData = data.nonCombatData.explorationData;
+                                preGeneratedEncounter.background = data.nonCombatData.background;
+                            }
+                            
+                            // Enter the non-combat room
+                            enterNonCombatRoom(data.nonCombatData?.roomType || 'store');
                         } else {
                             // Fallback to dungeon menu for any other screen value
                             stopBattleVideo(); // Stop and hide video background

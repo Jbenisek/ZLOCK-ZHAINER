@@ -261,14 +261,24 @@ def ensure_piper_installed():
         print("\n📦 Installing piper-tts (first-time setup)...")
         import subprocess
         try:
+            # Try normal install first
             subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'piper-tts', '-q'])
             print("✓ piper-tts installed successfully")
             TTS_ENABLED = True
             return True
         except subprocess.CalledProcessError as e:
-            print(f"⚠️ Failed to install piper-tts: {e}")
-            print("  TTS features will be disabled.")
-            return False
+            # On Debian/Ubuntu with externally-managed Python, try with --break-system-packages
+            try:
+                print("  Retrying with --break-system-packages flag...")
+                subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'piper-tts', '-q', '--break-system-packages'])
+                print("✓ piper-tts installed successfully")
+                TTS_ENABLED = True
+                return True
+            except subprocess.CalledProcessError as e2:
+                print(f"⚠️ Failed to install piper-tts: {e2}")
+                print("  TTS features will be disabled.")
+                print("  You can manually install with: pip install piper-tts --break-system-packages")
+                return False
 
 def get_voice_model_path(language, speaker, quality):
     """Get path to voice model files (.onnx and .onnx.json)"""
