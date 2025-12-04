@@ -18,13 +18,6 @@ A fast-paced 3D puzzle game where you drop falling chains into a grid and match 
 ### **TUNNELS OF PRIVACY (Dungeon Crawler)** - `tunnels_of_privacy.html`
 A classic dungeon crawler RPG inspired by TI-99's "Tunnels of Doom". Take the same four heroes from the arcade game into a 10-level dungeon quest to find the king's scepter. Features D&D-style stats, turn-based combat, AI-powered NPC conversations, and multiplayer co-op!
 
-### **Portal System - Seamless Game Integration**
-Both games share a unified save file system with **bidirectional hero progression**:
-- Play arcade, power up heroes, enter portal → continue in dungeon with same heroes
-- Explore dungeon, level up heroes, exit portal → return to arcade with upgraded stats
-- Single save file (`top_shared_save`) stores progress for both games
-- Download/upload save files for backups and cross-browser play
-
 ---
 
 ## 🚀 Quick Start

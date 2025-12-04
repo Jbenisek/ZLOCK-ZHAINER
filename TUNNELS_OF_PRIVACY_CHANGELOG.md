@@ -2,6 +2,40 @@
 
 # Changelog
 
+## v0.4.16 - Hackathon Landing Page (2025-12-04)
+- **Created index.html landing page for Zypherpunk Hackathon:**
+  - Full landing page showcasing both games for hackathon judges
+  - Animated background using same system as game menus (intro_a.png atlas)
+  - Hackathon badges linking to zypherpunk.xyz and devfolio
+
+- **Page structure:**
+  - Header: "Tunnels of Privacy featuring ZLOCK ZHAINER Arcade"
+  - Problem statement section with Zooko taunt animation
+  - Two games section with YouTube trailers for both games
+  - Core features section with 9 custom icon cards (256px icons)
+  - Screenshots gallery split by game (17 Tunnels + 9 ZLOCK screenshots)
+  - Meet the Heroes section with clickable video intros
+  - Bestiary section displaying all 99 bosses with difficulty tabs
+  - About & Support section with Full Story video and donation QR
+  - Resources section with GitHub and documentation links
+
+- **Custom icons throughout:**
+  - Replaced all emoji icons with custom game icons from tunnelsofprivacy/icons/
+  - Section titles use 48px title-icon class
+  - Feature cards use 256px custom-icon class
+
+- **Interactive features:**
+  - Boss portraits scale 2x on hover
+  - Screenshots scale 3x on hover
+  - Hero sprites play intro videos on click (2 variants per hero)
+  - Bestiary tabs filter by difficulty (Easy 2-34, Normal 35-67, Hard 68-100)
+
+- **Videos integrated:**
+  - Hackathon Entry Video (HG5E0tVdof8)
+  - ZLOCK ZHAINER Trailer (QYCb-e5aX4E)
+  - Tunnels of Privacy Intro (R967tFtDSME)
+  - Full Story Video (GukOAeaMuyw)
+
 ## v0.4.15 - CyberAxe Taunt Animation (2025-12-03)
 - **Added cyberaxe_taunt animation:**
   - New taunt animation for CyberAxe hero (5x19 sprite sheet, 95 frames)
