@@ -69,46 +69,50 @@ case "$1" in
         ;;
         
     stop)
-        if [ ! -f $PID_FILE ]; then
-            echo "No PID file found. Checking for running Python servers on port $PORT..."
-            # Find and kill any Python process using the port
-            PYTHON_PID=$(lsof -ti:$PORT 2>/dev/null)
-            if [ ! -z "$PYTHON_PID" ]; then
-                echo "Found Python server on port $PORT (PID: $PYTHON_PID)"
-                kill -9 $PYTHON_PID
-                echo "✅ Server forcefully stopped."
-            else
-                echo "No server found running on port $PORT"
-            fi
-            exit 0
-        fi
+        echo "Stopping ZLOCK servers..."
         
-        PID=$(cat $PID_FILE)
-        echo "Stopping ZLOCK web server (PID: $PID)..."
-        
-        # Try graceful shutdown first
-        if ps -p $PID > /dev/null 2>&1; then
-            kill $PID 2>/dev/null
-            sleep 1
-            
-            # Check if still running, force kill if needed
-            if ps -p $PID > /dev/null 2>&1; then
-                echo "Process still running, forcing shutdown..."
-                kill -9 $PID 2>/dev/null
-                sleep 1
-            fi
-        fi
-        
-        # Also check if port is still in use and clean it up
-        PORT_PID=$(lsof -ti:$PORT 2>/dev/null)
+        # Kill any process on HTTP port 4243
+        PORT_PID=$(sudo lsof -ti:$PORT 2>/dev/null)
         if [ ! -z "$PORT_PID" ]; then
-            echo "Cleaning up process still using port $PORT (PID: $PORT_PID)..."
-            kill -9 $PORT_PID 2>/dev/null
-            sleep 1
+            echo "Killing HTTP server on port $PORT (PID: $PORT_PID)..."
+            sudo kill -9 $PORT_PID 2>/dev/null
         fi
         
-        rm -f $PID_FILE
-        echo "✅ Server stopped."
+        # Kill any process on WebSocket port 8765
+        WS_PID=$(sudo lsof -ti:8765 2>/dev/null)
+        if [ ! -z "$WS_PID" ]; then
+            echo "Killing WebSocket server on port 8765 (PID: $WS_PID)..."
+            sudo kill -9 $WS_PID 2>/dev/null
+        fi
+        
+        # Also kill by PID file if it exists
+        if [ -f $PID_FILE ]; then
+            PID=$(cat $PID_FILE)
+            if ps -p $PID > /dev/null 2>&1; then
+                echo "Killing process from PID file (PID: $PID)..."
+                sudo kill -9 $PID 2>/dev/null
+            fi
+            rm -f $PID_FILE
+        fi
+        
+        # Wait and verify
+        sleep 1
+        
+        # Double-check both ports are free
+        STILL_RUNNING=""
+        if sudo lsof -ti:$PORT &>/dev/null; then
+            STILL_RUNNING="$STILL_RUNNING port $PORT"
+        fi
+        if sudo lsof -ti:8765 &>/dev/null; then
+            STILL_RUNNING="$STILL_RUNNING port 8765"
+        fi
+        
+        if [ -z "$STILL_RUNNING" ]; then
+            echo "✅ All servers stopped."
+        else
+            echo "⚠️  Warning: Still have processes on$STILL_RUNNING"
+            echo "Try: sudo lsof -ti:4243,8765 | xargs sudo kill -9"
+        fi
         ;;
         
     restart)

@@ -1,0 +1,1787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <title>Tunnels of Privacy - Privacy-First Gaming Universe</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-track { background: rgba(20, 10, 40, 0.6); border-radius: 5px; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #8B45FF 0%, #6B35CC 50%, #4B2599 100%); border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #9B55FF 0%, #7B45DC 50%, #5B35A9 100%); }
+        * { scrollbar-width: thin; scrollbar-color: #8B45FF rgba(20, 10, 40, 0.6); }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a1a;
+            color: #D4E3F0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Animated Background */
+        #animatedBackground {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.4;
+            background-image: url('story/intro/intro_a.png');
+            background-size: 800% 1600%;
+            background-position: 0% 0%;
+        }
+        
+        /* Dark overlay for readability */
+        #backgroundOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, rgba(10, 10, 26, 0.85) 0%, rgba(26, 26, 46, 0.8) 50%, rgba(22, 33, 62, 0.85) 100%);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        header {
+            text-align: center;
+            padding: 60px 20px 40px;
+            position: relative;
+        }
+        
+        .hackathon-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, rgba(139, 69, 255, 0.3), rgba(242, 201, 76, 0.2));
+            border: 2px solid #F2C94C;
+            border-radius: 30px;
+            padding: 8px 20px;
+            margin-bottom: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #F2C94C;
+        }
+        
+        .hackathon-badge a {
+            color: #F2C94C;
+            text-decoration: none;
+        }
+        
+        .hackathon-badge a:hover {
+            text-decoration: underline;
+        }
+        
+        .logo {
+            font-size: 72px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #8B45FF 0%, #F2C94C 50%, #27AE60 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 60px rgba(139, 69, 255, 0.5);
+            margin-bottom: 15px;
+            letter-spacing: -2px;
+        }
+        
+        .tagline {
+            font-size: 24px;
+            color: #BFD1E0;
+            font-weight: 300;
+            margin-bottom: 20px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            color: #7A8B9A;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        /* Section Styling */
+        section {
+            padding: 60px 0;
+        }
+        
+        .section-title {
+            font-size: 36px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 15px;
+            color: #FFFFFF;
+        }
+        
+        .section-subtitle {
+            text-align: center;
+            color: #7A8B9A;
+            font-size: 16px;
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+        
+        /* Problem Section */
+        .problem-section {
+            background: linear-gradient(135deg, rgba(235, 87, 87, 0.1), rgba(242, 201, 76, 0.05));
+            border-top: 1px solid rgba(235, 87, 87, 0.3);
+            border-bottom: 1px solid rgba(235, 87, 87, 0.3);
+        }
+        
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .problem-card {
+            background: rgba(20, 20, 40, 0.6);
+            border: 2px solid rgba(139, 69, 255, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .problem-card .icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .problem-card h3 {
+            font-size: 20px;
+            color: #F2C94C;
+            margin-bottom: 10px;
+        }
+        
+        .problem-card p {
+            color: #BFD1E0;
+            line-height: 1.6;
+        }
+        
+        /* Games Section */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 40px;
+        }
+        
+        @media (max-width: 600px) {
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .game-card {
+            background: linear-gradient(135deg, rgba(20, 20, 40, 0.8), rgba(30, 30, 50, 0.6));
+            border: 2px solid rgba(139, 69, 255, 0.4);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(139, 69, 255, 0.3);
+        }
+        
+        .game-card.arcade { border-color: rgba(235, 87, 87, 0.5); }
+        .game-card.arcade:hover { box-shadow: 0 20px 60px rgba(235, 87, 87, 0.3); }
+        
+        .game-card.dungeon { border-color: rgba(39, 174, 96, 0.5); }
+        .game-card.dungeon:hover { box-shadow: 0 20px 60px rgba(39, 174, 96, 0.3); }
+        
+        .game-video {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 */
+            background: #000;
+        }
+        
+        .game-video iframe,
+        .game-video .video-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .video-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a1a2e, #0a0a1a);
+            color: #7A8B9A;
+        }
+        
+        .video-placeholder .coming-soon {
+            font-size: 14px;
+            color: #F2C94C;
+            margin-top: 10px;
+        }
+        
+        .game-info {
+            padding: 25px;
+        }
+        
+        .game-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .game-card.arcade .game-title { color: #EB5757; }
+        .game-card.dungeon .game-title { color: #27AE60; }
+        
+        .game-type {
+            font-size: 14px;
+            color: #7A8B9A;
+            margin-bottom: 15px;
+        }
+        
+        .game-description {
+            color: #BFD1E0;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .game-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .feature-tag {
+            background: rgba(139, 69, 255, 0.2);
+            border: 1px solid rgba(139, 69, 255, 0.4);
+            color: #D4BBFF;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .play-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .game-card.arcade .play-btn {
+            background: linear-gradient(135deg, #EB5757, #C0392B);
+            color: white;
+        }
+        
+        .game-card.arcade .play-btn:hover {
+            box-shadow: 0 10px 30px rgba(235, 87, 87, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .game-card.dungeon .play-btn {
+            background: linear-gradient(135deg, #27AE60, #1E8449);
+            color: white;
+        }
+        
+        .game-card.dungeon .play-btn:hover {
+            box-shadow: 0 10px 30px rgba(39, 174, 96, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        /* Features Section */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        
+        .feature-card {
+            background: rgba(20, 20, 40, 0.6);
+            border: 1px solid rgba(139, 69, 255, 0.2);
+            border-radius: 16px;
+            padding: 25px;
+            transition: all 0.3s;
+        }
+        
+        .feature-card:hover {
+            border-color: rgba(139, 69, 255, 0.5);
+            transform: translateY(-3px);
+        }
+        
+        .feature-card .icon {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+        
+        .feature-card h3 {
+            font-size: 18px;
+            color: #FFFFFF;
+            margin-bottom: 10px;
+        }
+        
+        .feature-card p {
+            color: #BFD1E0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .feature-card .tag {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .tag-zcash { background: rgba(242, 201, 76, 0.3); color: #F2C94C; border: 1px solid rgba(242, 201, 76, 0.5); }
+        .tag-ai { background: rgba(139, 69, 255, 0.3); color: #D4BBFF; border: 1px solid rgba(139, 69, 255, 0.5); }
+        .tag-multiplayer { background: rgba(46, 204, 113, 0.3); color: #A8F0C8; border: 1px solid rgba(46, 204, 113, 0.5); }
+        .tag-local { background: rgba(52, 152, 219, 0.3); color: #A8D4F0; border: 1px solid rgba(52, 152, 219, 0.5); }
+        
+        /* Custom Icon Images */
+        .custom-icon {
+            width: 256px;
+            height: 256px;
+            display: block;
+            margin: 0 auto 15px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+        }
+        
+        .custom-icon-sm {
+            width: 256px;
+            height: 256px;
+            display: inline-block;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+        
+        .title-icon {
+            width: 48px;
+            height: 48px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 10px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+        
+        .icon-zcash { background-image: url('tunnelsofprivacy/icons/zcashbag.png'); }
+        .icon-quest { background-image: url('tunnelsofprivacy/icons/questlog.png'); }
+        .icon-narrate { background-image: url('tunnelsofprivacy/icons/narrate.png'); }
+        .icon-dm { background-image: url('tunnelsofprivacy/icons/dungeon_master.png'); }
+        .icon-inventory { background-image: url('tunnelsofprivacy/icons/inventory.png'); }
+        .icon-arcade { background-image: url('tunnelsofprivacy/icons/arcade.png'); }
+        .icon-settings { background-image: url('tunnelsofprivacy/icons/settings.png'); }
+        .icon-combat { background-image: url('tunnelsofprivacy/icons/combat.png'); }
+        .icon-explore { background-image: url('tunnelsofprivacy/icons/explore.png'); }
+        .icon-store { background-image: url('tunnelsofprivacy/icons/store.png'); }
+        .icon-donate { background-image: url('tunnelsofprivacy/icons/donate.png'); }
+        .icon-help { background-image: url('tunnelsofprivacy/icons/help.png'); }
+        .icon-loot { background-image: url('tunnelsofprivacy/icons/lootcrate.png'); }
+        .icon-camping { background-image: url('tunnelsofprivacy/icons/camping.png'); }
+        
+        /* Gallery Section */
+        .gallery-section {
+            background: linear-gradient(135deg, rgba(139, 69, 255, 0.05), rgba(39, 174, 96, 0.05));
+        }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .gallery-item {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid rgba(139, 69, 255, 0.3);
+            background: rgba(20, 20, 40, 0.6);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .gallery-item:hover {
+            transform: scale(3);
+            border-color: #8B45FF;
+            z-index: 10;
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .gallery-item .placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            color: #7A8B9A;
+            font-size: 14px;
+        }
+        
+        .gallery-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+            padding: 30px 10px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #BFD1E0;
+            text-align: center;
+        }
+        
+        /* Asset Gallery - Hero Sprites */
+        .asset-gallery {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        
+        .hero-sprite {
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .hero-sprite:hover {
+            transform: scale(1.1);
+        }
+        
+        .hero-sprite:hover img {
+            border-color: #F2C94C;
+            box-shadow: 0 0 30px rgba(242, 201, 76, 0.5);
+        }
+        
+        .hero-sprite img {
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
+            object-position: top left;
+            border-radius: 16px;
+            border: 3px solid rgba(139, 69, 255, 0.4);
+            background: rgba(20, 20, 40, 0.8);
+            transition: all 0.3s;
+        }
+        
+        .hero-sprite .name {
+            margin-top: 12px;
+            font-weight: 700;
+            font-size: 18px;
+            color: #F2C94C;
+        }
+        
+        .hero-sprite .play-hint {
+            font-size: 12px;
+            color: #7A8B9A;
+            margin-top: 5px;
+        }
+        
+        /* Hero Video Overlay */
+        #heroVideoOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        #heroVideoOverlay video {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 12px;
+            box-shadow: 0 0 40px rgba(139, 69, 255, 0.6);
+        }
+        
+        /* Bestiary Section */
+        .bestiary-section {
+            background: linear-gradient(135deg, rgba(235, 87, 87, 0.05), rgba(139, 69, 255, 0.05));
+        }
+        
+        .bestiary-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .bestiary-tab {
+            padding: 12px 30px;
+            background: rgba(20, 20, 40, 0.6);
+            border: 2px solid rgba(139, 69, 255, 0.3);
+            border-radius: 8px;
+            color: #BFD1E0;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .bestiary-tab:hover {
+            border-color: rgba(139, 69, 255, 0.6);
+            background: rgba(139, 69, 255, 0.2);
+        }
+        
+        .bestiary-tab.active {
+            background: rgba(139, 69, 255, 0.4);
+            border-color: #8B45FF;
+            color: white;
+        }
+        
+        .bestiary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .boss-entry {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid rgba(139, 69, 255, 0.3);
+            background: rgba(20, 20, 40, 0.6);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .boss-entry:hover {
+            transform: scale(2);
+            border-color: #EB5757;
+            z-index: 10;
+            box-shadow: 0 0 20px rgba(235, 87, 87, 0.4);
+        }
+        
+        .boss-entry:hover .boss-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .boss-portrait {
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center top;
+        }
+        
+        .boss-level {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+            padding: 15px 5px 5px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #EB5757;
+            text-align: center;
+        }
+        
+        .boss-tooltip {
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 10, 26, 0.98);
+            border: 2px solid #EB5757;
+            border-radius: 8px;
+            padding: 12px;
+            min-width: 180px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+            z-index: 100;
+            pointer-events: none;
+        }
+        
+        .boss-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent;
+            border-top-color: #EB5757;
+        }
+        
+        .boss-tooltip-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #EB5757;
+            margin-bottom: 5px;
+        }
+        
+        .boss-tooltip-stats {
+            font-size: 12px;
+            color: #BFD1E0;
+        }
+        
+        /* Technical Section */
+        .tech-section {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(155, 89, 182, 0.05));
+            border-top: 1px solid rgba(52, 152, 219, 0.3);
+            border-bottom: 1px solid rgba(52, 152, 219, 0.3);
+        }
+        
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .tech-card {
+            background: rgba(20, 20, 40, 0.6);
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            border-radius: 16px;
+            padding: 25px;
+        }
+        
+        .tech-card h3 {
+            color: #3498DB;
+            font-size: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tech-card ul {
+            list-style: none;
+            color: #BFD1E0;
+        }
+        
+        .tech-card li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(52, 152, 219, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tech-card li:last-child {
+            border-bottom: none;
+        }
+        
+        .tech-card li::before {
+            content: "▸";
+            color: #3498DB;
+        }
+        
+        /* Quick Start Section */
+        .quickstart-section {
+            text-align: center;
+        }
+        
+        .quickstart-box {
+            background: rgba(20, 20, 40, 0.8);
+            border: 2px solid rgba(39, 174, 96, 0.4);
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .quickstart-box h3 {
+            color: #27AE60;
+            margin-bottom: 20px;
+        }
+        
+        .code-block {
+            background: #0a0a1a;
+            border: 1px solid rgba(139, 69, 255, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: left;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: #A8F0C8;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        
+        .code-comment {
+            color: #7A8B9A;
+        }
+        
+        .quickstart-note {
+            color: #7A8B9A;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+        
+        .quickstart-note a {
+            color: #3498DB;
+            text-decoration: none;
+        }
+        
+        .quickstart-note a:hover {
+            text-decoration: underline;
+        }
+        
+        /* About Section */
+        .about-section {
+            background: linear-gradient(135deg, rgba(242, 201, 76, 0.05), rgba(235, 87, 87, 0.05));
+        }
+        
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: start;
+        }
+        
+        @media (max-width: 900px) {
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .about-creator {
+            background: rgba(20, 20, 40, 0.6);
+            border: 2px solid rgba(242, 201, 76, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .creator-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid #F2C94C;
+            margin-bottom: 20px;
+            object-fit: cover;
+        }
+        
+        .creator-name {
+            font-size: 28px;
+            font-weight: 700;
+            color: #F2C94C;
+            margin-bottom: 10px;
+        }
+        
+        .creator-title {
+            color: #7A8B9A;
+            margin-bottom: 20px;
+        }
+        
+        .creator-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .creator-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: rgba(139, 69, 255, 0.2);
+            border: 1px solid rgba(139, 69, 255, 0.4);
+            border-radius: 8px;
+            color: #D4BBFF;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .creator-link:hover {
+            background: rgba(139, 69, 255, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        /* Donate Section */
+        .donate-card {
+            background: rgba(20, 20, 40, 0.6);
+            border: 2px solid rgba(39, 174, 96, 0.4);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .donate-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #27AE60;
+            margin-bottom: 15px;
+        }
+        
+        .donate-description {
+            color: #BFD1E0;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .qr-code {
+            width: 180px;
+            height: 180px;
+            background: white;
+            padding: 10px;
+            border-radius: 12px;
+            margin: 20px auto;
+        }
+        
+        .qr-code img {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .wallet-address {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(242, 201, 76, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: #F2C94C;
+            word-break: break-all;
+            margin-top: 15px;
+        }
+        
+        .zcash-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(242, 201, 76, 0.2);
+            border: 1px solid rgba(242, 201, 76, 0.4);
+            color: #F2C94C;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        /* Credits Section */
+        .credits-section {
+            text-align: center;
+            padding-bottom: 80px;
+        }
+        
+        .credits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .credit-card {
+            background: rgba(20, 20, 40, 0.6);
+            border: 1px solid rgba(139, 69, 255, 0.2);
+            border-radius: 16px;
+            padding: 25px;
+        }
+        
+        .credit-card h4 {
+            color: #8B45FF;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        
+        .credit-card p {
+            color: #BFD1E0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .credit-card .quote {
+            font-style: italic;
+            color: #7A8B9A;
+            margin-top: 10px;
+        }
+        
+        .credit-card a {
+            color: #3498DB;
+            text-decoration: none;
+        }
+        
+        .credit-card a:hover {
+            text-decoration: underline;
+        }
+        
+        .special-thanks {
+            margin-top: 40px;
+            padding: 30px;
+            background: rgba(139, 69, 255, 0.1);
+            border: 1px solid rgba(139, 69, 255, 0.3);
+            border-radius: 16px;
+        }
+        
+        .special-thanks h4 {
+            color: #F2C94C;
+            margin-bottom: 20px;
+        }
+        
+        .thanks-list {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .thanks-item {
+            color: #BFD1E0;
+        }
+        
+        .thanks-item a {
+            color: #3498DB;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .thanks-item a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Resources Section */
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+        
+        .resource-link {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background: rgba(20, 20, 40, 0.6);
+            border: 1px solid rgba(139, 69, 255, 0.3);
+            border-radius: 12px;
+            color: #BFD1E0;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .resource-link:hover {
+            background: rgba(139, 69, 255, 0.2);
+            border-color: #8B45FF;
+            transform: translateY(-3px);
+        }
+        
+        .resource-link .icon {
+            font-size: 28px;
+        }
+        
+        .resource-link .text {
+            font-weight: 600;
+        }
+        
+        .resource-link .subtext {
+            font-size: 12px;
+            color: #7A8B9A;
+        }
+        
+        /* Footer */
+        footer {
+            background: rgba(10, 10, 26, 0.9);
+            border-top: 1px solid rgba(139, 69, 255, 0.3);
+            padding: 40px 20px;
+            text-align: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: #7A8B9A;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .footer-links a:hover {
+            color: #8B45FF;
+        }
+        
+        .footer-copyright {
+            color: #7A8B9A;
+            font-size: 14px;
+        }
+        
+        .footer-copyright .heart {
+            color: #EB5757;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div id="animatedBackground"></div>
+    <div id="backgroundOverlay"></div>
+    
+    <!-- Header -->
+    <header>
+        <div class="hackathon-badge">
+            🏆 <a href="https://zypherpunk.devfolio.co/overview" target="_blank">Zypherpunk Hackathon Entry</a> | 
+            <a href="https://zypherpunk.xyz/" target="_blank">zypherpunk.xyz</a>
+        </div>
+        <h1 class="logo">Tunnels of Privacy</h1>
+        <h2 style="font-size: 42px; font-weight: 700; color: #27AE60; margin-bottom: 15px; text-shadow: 0 0 30px rgba(39, 174, 96, 0.4);">featuring ZLOCK ZHAINER Arcade</h2>
+        <p class="tagline">Privacy runs deep.</p>
+        <p class="subtitle">Two interconnected games celebrating financial privacy, self-sovereignty, and the power of community. Built for Zcash enthusiasts and gamers alike.</p>
+    </header>
+    
+    <!-- Problem Statement -->
+    <section class="problem-section">
+        <div class="container">
+            <h2 class="section-title"><span class="title-icon icon-zcash"></span>The Problem We're Solving</h2>
+            <p class="section-subtitle">Privacy matters. Gaming should too.</p>
+            <div style="display: flex; align-items: flex-start; gap: 40px;">
+                <div style="flex-shrink: 0; margin-left: -200px;">
+                    <img src="website/zooko_taunt.webp" alt="Zooko" style="width: 512px; height: auto; border-radius: 12px;" loop autoplay>
+                </div>
+                <div class="problem-grid" style="flex: 1;">
+                <div class="problem-card">
+                    <div class="custom-icon icon-camping"></div>
+                    <h3>Self-Hosted Privacy</h3>
+                    <p>Your game, your server, your data. No tracking, no telemetry, no corporate surveillance. Run locally or host your own multiplayer server.</p>
+                </div>
+                <div class="problem-card">
+                    <div class="custom-icon icon-arcade"></div>
+                    <h3>Privacy Education Through Play</h3>
+                    <p>Learn about Zcash, financial privacy, and digital sovereignty through entertaining gameplay. Privacy messaging woven into every aspect.</p>
+                </div>
+                <div class="problem-card">
+                    <div class="custom-icon icon-combat"></div>
+                    <h3>Community Building</h3>
+                    <p>Bringing privacy advocates together through gaming. Building a balanced, healthy Zcash ecosystem one dungeon crawl at a time.</p>
+                </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Games Section -->
+    <section class="games-section">
+        <div class="container">
+            <h2 class="section-title"><span class="title-icon icon-arcade"></span>Two Games, One Universe</h2>
+            <p class="section-subtitle">Heroes travel between games via the Portal System. Progress carries over!</p>
+            
+            <div class="games-grid">
+                <!-- Arcade Game -->
+                <div class="game-card arcade">
+                    <div class="game-video">
+                        <iframe src="https://www.youtube.com/embed/QYCb-e5aX4E" title="ZLOCK ZHAINER Trailer" allowfullscreen></iframe>
+                    </div>
+                    <div class="game-info">
+                        <h3 class="game-title">ZLOCK ZHAINER</h3>
+                        <p class="game-type">3D Arcade Puzzle • Three.js</p>
+                        <p class="game-description">Fast-paced 3D puzzle action inspired by Lumines and Columns. Drop chain blocks, match colors, charge special abilities, and climb the leaderboard!</p>
+                        <div class="game-features">
+                            <span class="feature-tag">3D Graphics</span>
+                            <span class="feature-tag">4 Heroes</span>
+                            <span class="feature-tag">Special Abilities</span>
+                            <span class="feature-tag">Chain Combos</span>
+                        </div>
+                        <a href="zlock_consensus.html" class="play-btn">▶ PLAY ARCADE</a>
+                    </div>
+                </div>
+                
+                <!-- Dungeon Game -->
+                <div class="game-card dungeon">
+                    <div class="game-video">
+                        <iframe src="https://www.youtube.com/embed/R967tFtDSME" title="Tunnels of Privacy Intro" allowfullscreen></iframe>
+                    </div>
+                    <div class="game-info">
+                        <h3 class="game-title">TUNNELS OF PRIVACY</h3>
+                        <p class="game-type">Dungeon Crawler RPG • Canvas2D</p>
+                        <p class="game-description">Classic dungeon crawler inspired by Tunnels of Doom. Explore 100 levels, battle bosses, rescue captives, and discover the King's Keys recovery phrase!</p>
+                        <div class="game-features">
+                            <span class="feature-tag">100 Levels</span>
+                            <span class="feature-tag">AI Dungeon Master</span>
+                            <span class="feature-tag">4-Player Co-op</span>
+                            <span class="feature-tag">Turn-Based Combat</span>
+                        </div>
+                        <a href="tunnels_of_privacy.html" class="play-btn">▶ PLAY DUNGEON</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Core Features -->
+    <section>
+        <div class="container">
+            <h2 class="section-title">✨ Core Features</h2>
+            <p class="section-subtitle">Cutting-edge technology meets classic gaming</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="custom-icon icon-zcash"></div>
+                    <h3>Zcash Integration</h3>
+                    <p>Privacy-focused messaging, shielded transactions education, and recovery phrase puzzle system teaching real crypto concepts.</p>
+                    <span class="tag tag-zcash">Zcash</span>
+                </div>
+                <div class="feature-card">
+                    <div class="custom-icon icon-quest"></div>
+                    <h3>Rich Lore System</h3>
+                    <p>Educational content woven into gameplay. NPCs share privacy knowledge, enemies represent surveillance threats, and the story celebrates financial freedom.</p>
+                    <span class="tag tag-zcash">Zcash</span>
+                </div>
+                <div class="feature-card">
+                    <div class="custom-icon icon-dm"></div>
+                    <h3>LLM AI Integration</h3>
+                    <p>Chat with NPCs using real AI. Dynamic conversations, negotiation systems, and personality-driven responses powered by Groq & OpenRouter.</p>
+                    <span class="tag tag-ai">AI-Powered</span>
+                </div>
+                <div class="feature-card">
+                    <div class="custom-icon icon-narrate"></div>
+                    <h3>Text-to-Speech</h3>
+                    <p>Local TTS narrator using Piper voices. Characters speak their dialogue with distinct personalities. Runs locally - no cloud required!</p>
+                    <span class="tag tag-local">Local AI</span>
+                </div>
+                <div class="feature-card">
+                    <div class="custom-icon icon-explore"></div>
+                    <h3>AI Dungeon Master</h3>
+                    <p>Dynamic encounter generation creates unique boss backstories, mob personalities, and NPC dialogues. Every playthrough is different.</p>
+                    <span class="tag tag-ai">AI-Powered</span>
+                </div>
+                <div class="feature-card">
+                    <div class="custom-icon icon-combat"></div>
+                    <h3>4-Player Co-op</h3>
+                    <p>Host-authoritative multiplayer via WebSockets. Play with friends, each controlling a hero. Optional manual Dungeon Master mode!</p>
+                    <span class="tag tag-multiplayer">Multiplayer</span>
+                </div>
+                <div class="feature-card">
+                    <div class="custom-icon icon-arcade"></div>
+                    <h3>Portal Save System</h3>
+                    <p>Bidirectional hero progression between games. Power up in arcade, continue in dungeon. Single unified save file for both games.</p>
+                    <span class="tag tag-local">Local-First</span>
+                </div>
+                <div class="feature-card">
+                    <div class="custom-icon icon-settings"></div>
+                    <h3>Self-Hosted</h3>
+                    <p>Run your own server with one command. No dependencies on cloud services. Your game, your rules, your privacy.</p>
+                    <span class="tag tag-local">Self-Hosted</span>
+                </div>
+                <div class="feature-card">
+                    <div class="custom-icon icon-loot"></div>
+                    <h3>Custom Particle System</h3>
+                    <p>Full particle editor for creating effects in both 2D and 3D. Design explosions, magic, and visual feedback for your games.</p>
+                    <span class="tag tag-local">Editor Included</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Hackathon Entry Video -->
+    <section>
+        <div class="container">
+            <div style="max-width: 800px; margin: 0 auto 40px; text-align: center;">
+                <h3 style="color: #F2C94C; margin-bottom: 15px; font-size: 24px;">🏆 Hackathon Entry Video</h3>
+                <div style="position: relative; width: 100%; padding-top: 56.25%; border-radius: 16px; overflow: hidden; border: 3px solid #F2C94C; box-shadow: 0 10px 40px rgba(242, 201, 76, 0.3);">
+                    <iframe src="https://www.youtube.com/embed/HG5E0tVdof8" title="Hackathon Entry Video" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Screenshot Gallery -->
+    <section class="gallery-section">
+        <div class="container">
+            <h2 class="section-title"><span class="title-icon icon-explore"></span>Screenshots</h2>
+            
+            <!-- Tunnels of Privacy Screenshots -->
+            <h3 style="text-align: center; color: #27AE60; margin-top: 30px; margin-bottom: 20px; font-size: 24px;">Tunnels of Privacy</h3>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="website/screenshots_battle_chat.PNG" alt="Battle Chat">
+                    <div class="gallery-label">Battle Chat</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="website/screenshots_bosses.PNG" alt="Bosses">
+                    <div class="gallery-label">Bosses</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="website/screenshots_coop_roll.PNG" alt="Co-op Roll">
+                    <div class="gallery-label">Co-op Roll</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="website/screenshots_coop_select.PNG" alt="Co-op Select">
+                    <div class="gallery-label">Co-op Select</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="website/screenshots_dashboard.PNG" alt="Dashboard">
+                    <div class="gallery-label">Dashboard</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="website/screenshots_dungeon_menu.PNG" alt="Dungeon Menu">
+                    <div class="gallery-label">Dungeon Menu</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="website/screenshots_dungeon_menu_achivements.PNG" alt="Achievements">
+                    <div class="gallery-label">Achievements</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="website/screenshots_dungeon_menu_bosses.PNG" alt="Bestiary">
+                    <div class="gallery-label">Bestiary</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="website/screenshots_dungeon_menu_dungeon_master.PNG" alt="Dungeon Master">
+                    <div class="gallery-label">Dungeon Master</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="website/screenshots_dungeon_menu_store.PNG" alt="Store">
+                    <div class="gallery-label">Store</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="website/screenshots_encounter.PNG" alt="Encounter">
+                    <div class="gallery-label">Encounter</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="website/screenshots_exploration.PNG" alt="Exploration">
+                    <div class="gallery-label">Exploration</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="website/screenshots_inventory.PNG" alt="Inventory">
+                    <div class="gallery-label">Inventory</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="website/screenshots_keys.PNG" alt="King's Keys">
+                    <div class="gallery-label">King's Keys</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="website/screenshots_mini_bosses.PNG" alt="Mini Bosses">
+                    <div class="gallery-label">Mini Bosses</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="website/screenshots_stats_a.PNG" alt="Hero Stats">
+                    <div class="gallery-label">Hero Stats</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="website/screenshots_stats_b.PNG" alt="Combat Stats">
+                    <div class="gallery-label">Combat Stats</div>
+                </div>
+            </div>
+            
+            <!-- ZLOCK ZHAINER Screenshots -->
+            <h3 style="text-align: center; color: #8B45FF; margin-top: 50px; margin-bottom: 20px; font-size: 24px;">ZLOCK ZHAINER Arcade</h3>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="website/screenshots_zblock_1.PNG" alt="ZLOCK 1">
+                    <div class="gallery-label">Gameplay 1</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="website/screenshots_zblock_2.PNG" alt="ZLOCK 2">
+                    <div class="gallery-label">Gameplay 2</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="website/screenshots_zblock_3.PNG" alt="ZLOCK 3">
+                    <div class="gallery-label">Gameplay 3</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="website/screenshots_zblock_4.PNG" alt="ZLOCK 4">
+                    <div class="gallery-label">Gameplay 4</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="website/screenshots_zblock_5.PNG" alt="ZLOCK 5">
+                    <div class="gallery-label">Gameplay 5</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="website/screenshots_zblock_6.PNG" alt="ZLOCK 6">
+                    <div class="gallery-label">Gameplay 6</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="website/screenshots_zblock_7.PNG" alt="ZLOCK 7">
+                    <div class="gallery-label">Gameplay 7</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="website/screenshots_zblock_8.PNG" alt="ZLOCK 8">
+                    <div class="gallery-label">Gameplay 8</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="website/screenshots_zblock_9.PNG" alt="ZLOCK 9">
+                    <div class="gallery-label">Gameplay 9</div>
+                </div>
+            </div>
+            
+            <!-- Hero Sprites -->
+            <h3 style="text-align: center; color: #F2C94C; margin-top: 50px; margin-bottom: 10px;">Meet the Heroes</h3>
+            <p style="text-align: center; color: #7A8B9A; margin-bottom: 20px;">Four unique heroes with distinct abilities - Click to meet them!</p>
+            <div class="asset-gallery">
+                <div class="hero-sprite" onclick="playHeroVideo('zooko')">
+                    <img src="tunnelsofprivacy/heros/zooko.png" alt="Zooko">
+                    <div class="name">Zooko</div>
+                    <div class="play-hint">▶ Meet the Hero</div>
+                </div>
+                <div class="hero-sprite" onclick="playHeroVideo('nate')">
+                    <img src="tunnelsofprivacy/heros/nate.png" alt="Nate">
+                    <div class="name">Nate</div>
+                    <div class="play-hint">▶ Meet the Hero</div>
+                </div>
+                <div class="hero-sprite" onclick="playHeroVideo('zancas')">
+                    <img src="tunnelsofprivacy/heros/zancas.png" alt="Zancas">
+                    <div class="name">Zancas</div>
+                    <div class="play-hint">▶ Meet the Hero</div>
+                </div>
+                <div class="hero-sprite" onclick="playHeroVideo('cyberaxe')">
+                    <img src="tunnelsofprivacy/heros/cyberaxe.png" alt="CyberAxe">
+                    <div class="name">CyberAxe</div>
+                    <div class="play-hint">▶ Meet the Hero</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Bestiary Section -->
+    <section class="bestiary-section">
+        <div class="container">
+            <h2 class="section-title"><span class="title-icon icon-combat"></span>Bestiary - 99 Unique Bosses</h2>
+            <p class="section-subtitle">Every level features a unique boss with custom art, backstory, and abilities</p>
+            
+            <div class="bestiary-tabs">
+                <button class="bestiary-tab active" onclick="showBestiary('easy')">Easy (Lv 2-34)</button>
+                <button class="bestiary-tab" onclick="showBestiary('normal')">Normal (Lv 35-67)</button>
+                <button class="bestiary-tab" onclick="showBestiary('hard')">Hard (Lv 68-100)</button>
+            </div>
+            
+            <div id="bestiaryGrid" class="bestiary-grid">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+    </section>
+    
+    <!-- Technical Section -->
+    <section class="tech-section">
+        <div class="container">
+            <h2 class="section-title">⚙️ Technical Architecture</h2>
+            <p class="section-subtitle">Built for privacy, performance, and portability</p>
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <h3>🖥️ Server Stack</h3>
+                    <ul>
+                        <li>Python HTTP server (port 4243)</li>
+                        <li>WebSocket multiplayer (port 8765)</li>
+                        <li>Piper TTS for local voice synthesis</li>
+                        <li>Single-file deployment - no build step</li>
+                        <li>Cross-platform (Windows, Linux, Mac)</li>
+                    </ul>
+                </div>
+                <div class="tech-card">
+                    <h3>🤖 AI APIs</h3>
+                    <ul>
+                        <li>Groq - Free LLM API (recommended)</li>
+                        <li>OpenRouter - Premium model access</li>
+                        <li>10 LLM models with auto-rotation</li>
+                        <li>Rate limit handling & failover</li>
+                        <li>Local-first - works offline too</li>
+                    </ul>
+                </div>
+                <div class="tech-card">
+                    <h3>🎮 Game Tech</h3>
+                    <ul>
+                        <li>Three.js for 3D arcade graphics</li>
+                        <li>Canvas2D for dungeon sprites</li>
+                        <li>Vanilla JavaScript - no frameworks</li>
+                        <li>localStorage save system</li>
+                        <li>Custom particle system with editor</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Quick Start -->
+    <section class="quickstart-section">
+        <div class="container">
+            <h2 class="section-title">🚀 Quick Start</h2>
+            <p class="section-subtitle">Up and running in seconds</p>
+            <div class="quickstart-box">
+                <h3>Start Playing Locally</h3>
+                <div class="code-block">
+<span class="code-comment"># Clone the repository</span>
+git clone https://github.com/Jbenisek/ZLOCK-ZHAINER.git
+
+<span class="code-comment"># Navigate to folder</span>
+cd ZLOCK-ZHAINER
+
+<span class="code-comment"># Start the server</span>
+python zlock_server.py
+
+<span class="code-comment"># Open browser to:</span>
+http://localhost:4243/
+                </div>
+                <p class="quickstart-note">
+                    ⚠️ Always use <code>zlock_server.py</code> - standard Python servers won't serve 3D models correctly.<br>
+                    📖 For API setup and advanced configuration, see the <a href="README.md" target="_blank">full README</a>.
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- About & Donate -->
+    <section class="about-section">
+        <div class="container">
+            <h2 class="section-title"><span class="title-icon icon-dm"></span>About & Support</h2>
+            
+            <!-- Full Story Video -->
+            <div style="max-width: 800px; margin: 0 auto 40px; text-align: center;">
+                <h3 style="color: #F2C94C; margin-bottom: 15px; font-size: 24px;">📺 Watch the Full Story</h3>
+                <div style="position: relative; width: 100%; padding-top: 56.25%; border-radius: 16px; overflow: hidden; border: 3px solid #F2C94C; box-shadow: 0 10px 40px rgba(242, 201, 76, 0.3);">
+                    <iframe src="https://www.youtube.com/embed/GukOAeaMuyw" title="ZLOCK ZHAINER Full Story" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"></iframe>
+                </div>
+            </div>
+            
+            <div class="about-content">
+                <!-- Creator Info -->
+                <div class="about-creator">
+                    <img src="people/cyberaxe_a_head_compressed.png" alt="CyberAxe" class="creator-avatar">
+                    <h3 class="creator-name">CyberAxe</h3>
+                    <p class="creator-title">Creator & Developer</p>
+                    <div class="creator-links">
+                        <a href="https://www.OutlandishlyCrafted.com" target="_blank" class="creator-link">
+                            🎨 OutlandishlyCrafted.com
+                        </a>
+                        <a href="https://www.Dontpanic.biz" target="_blank" class="creator-link">
+                            💼 Dontpanic.biz
+                        </a>
+                        <a href="https://github.com/Jbenisek/ZLOCK-ZHAINER" target="_blank" class="creator-link">
+                            🐙 GitHub Repository
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Donate -->
+                <div class="donate-card">
+                    <h3 class="donate-title">💚 Support Development</h3>
+                    <p class="donate-description">Love the game? Help fuel continued development with a Zcash donation. Every contribution helps bring more features, content, and privacy-focused gaming to life!</p>
+                    <div class="zcash-label">🛡️ Zcash Shielded</div>
+                    <div class="qr-code">
+                        <img src="items/CyberAxeZcashWalletQR.PNG" alt="Zcash Donation QR Code">
+                    </div>
+                    <div class="wallet-address">
+                        u1gvnthgukm0ecnan3tgj3h6pdhrmmv8zyqx8ayup9yg9er4t5l7nesas6leavc4x3rsj98n65nn2w3ekzur9yejadlmv7k4vjgu8kp58q
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Resources -->
+    <section>
+        <div class="container">
+            <h2 class="section-title"><span class="title-icon icon-help"></span>Resources</h2>
+            <div class="resources-grid">
+                <a href="https://github.com/Jbenisek/ZLOCK-ZHAINER" target="_blank" class="resource-link">
+                    <span class="custom-icon-sm icon-help"></span>
+                    <div>
+                        <div class="text">GitHub Repository</div>
+                        <div class="subtext">Source code, issues, support</div>
+                    </div>
+                </a>
+                <a href="README.md" target="_blank" class="resource-link">
+                    <span class="custom-icon-sm icon-quest"></span>
+                    <div>
+                        <div class="text">Documentation</div>
+                        <div class="subtext">Setup guides & API info</div>
+                    </div>
+                </a>
+                <a href="particle_editor.html" class="resource-link">
+                    <span class="custom-icon-sm icon-loot"></span>
+                    <div>
+                        <div class="text">Particle Editor</div>
+                        <div class="subtext">Create custom effects</div>
+                    </div>
+                </a>
+                <a href="https://github.com/Jbenisek/ZLOCK-ZHAINER/issues" target="_blank" class="resource-link">
+                    <span class="custom-icon-sm icon-combat"></span>
+                    <div>
+                        <div class="text">Report Issues</div>
+                        <div class="subtext">Bug reports & feature requests</div>
+                    </div>
+                </a>
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Credits -->
+    <section class="credits-section">
+        <div class="container">
+            <h2 class="section-title">🙏 Credits & Special Thanks</h2>
+            
+            <div class="credits-grid">
+                <div class="credit-card">
+                    <h4>🎵 Music Inspiration</h4>
+                    <p><strong>Hank Mishkoff</strong></p>
+                    <p class="quote">"Thank you for decades of enjoyment"<br>— CyberAxe</p>
+                </div>
+                <div class="credit-card">
+                    <h4>🎬 AI Video</h4>
+                    <p>Hero intro videos and animations powered by</p>
+                    <p><a href="https://aivideo.com" target="_blank">AiVideo.com</a></p>
+                </div>
+                <div class="credit-card">
+                    <h4>🎨 3D Models</h4>
+                    <p>Character models and assets created with</p>
+                    <p><a href="https://meshy.com" target="_blank">Meshy.com</a></p>
+                </div>
+                <div class="credit-card">
+                    <h4>🖼️ Assets & Audio</h4>
+                    <p>Additional assets and sound effects from</p>
+                    <p><a href="https://envato.com" target="_blank">Envato.com</a></p>
+                </div>
+            </div>
+            
+            <div class="special-thanks">
+                <h4>Special Thanks to Support Teams</h4>
+                <div class="thanks-list">
+                    <div class="thanks-item"><a href="https://aivideo.com" target="_blank">AiVideo.com</a></div>
+                    <div class="thanks-item"><a href="https://meshy.com" target="_blank">Meshy.com</a></div>
+                    <div class="thanks-item"><a href="https://envato.com" target="_blank">Envato.com</a></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <a href="zlock_consensus.html">Play Arcade</a>
+            <a href="tunnels_of_privacy.html">Play Dungeon</a>
+            <a href="https://github.com/Jbenisek/ZLOCK-ZHAINER" target="_blank">GitHub</a>
+            <a href="README.md" target="_blank">Documentation</a>
+            <a href="particle_editor.html">Particle Editor</a>
+        </div>
+        <p class="footer-copyright">
+            Made with <span class="heart">❤️</span> by CyberAxe | Privacy is a Human Right
+        </p>
+    </footer>
+    
+    <!-- Hero Video Overlay -->
+    <div id="heroVideoOverlay" onclick="closeHeroVideo()">
+        <video id="heroVideo">
+            <source id="heroVideoSource" src="" type="video/mp4">
+        </video>
+    </div>
+    
+    <script>
+        // Animated background - same system as game title screens
+        const INTRO_COLS = 8;
+        const INTRO_ROWS = 16;
+        const INTRO_TOTAL_FRAMES = 128;
+        const INTRO_FPS = 16;
+        
+        let storyIntroCurrentFrame = 0;
+        let storyIntroDirection = 1;
+        
+        function animateBackground() {
+            const bgElement = document.getElementById('animatedBackground');
+            if (!bgElement) return;
+            
+            const col = storyIntroCurrentFrame % INTRO_COLS;
+            const row = Math.floor(storyIntroCurrentFrame / INTRO_COLS);
+            
+            const xPercent = (col / (INTRO_COLS - 1)) * 100;
+            const yPercent = (row / (INTRO_ROWS - 1)) * 100;
+            bgElement.style.backgroundPosition = `${xPercent}% ${yPercent}%`;
+            
+            storyIntroCurrentFrame += storyIntroDirection;
+            
+            if (storyIntroCurrentFrame >= INTRO_TOTAL_FRAMES - 1) {
+                storyIntroCurrentFrame = INTRO_TOTAL_FRAMES - 1;
+                storyIntroDirection = -1;
+            } else if (storyIntroCurrentFrame <= 0) {
+                storyIntroCurrentFrame = 0;
+                storyIntroDirection = 1;
+            }
+        }
+        
+        // Start animation at 16fps
+        setInterval(animateBackground, 1000 / INTRO_FPS);
+        
+        // ===== HERO INTRO VIDEOS =====
+        const heroIntroVideos = {
+            zooko: ['tunnelsofprivacy/videos/zooko_intro.mp4', 'tunnelsofprivacy/videos/zooko_intro_a.mp4'],
+            nate: ['tunnelsofprivacy/videos/nate_zashi.mp4', 'tunnelsofprivacy/videos/nate_intro_a.mp4'],
+            zancas: ['tunnelsofprivacy/videos/zancas_intro.mp4', 'tunnelsofprivacy/videos/zancas_intro_a.mp4'],
+            cyberaxe: ['tunnelsofprivacy/videos/cyberaxe_intro.mp4', 'tunnelsofprivacy/videos/cyberaxe_intro_a.mp4']
+        };
+        
+        const heroVideoToggle = { zooko: 0, nate: 0, zancas: 0, cyberaxe: 0 };
+        
+        function playHeroVideo(heroName) {
+            const overlay = document.getElementById('heroVideoOverlay');
+            const video = document.getElementById('heroVideo');
+            const source = document.getElementById('heroVideoSource');
+            
+            const heroKey = heroName.toLowerCase();
+            const videoPaths = heroIntroVideos[heroKey];
+            if (!videoPaths) return;
+            
+            const currentIndex = heroVideoToggle[heroKey] || 0;
+            const videoPath = videoPaths[currentIndex];
+            heroVideoToggle[heroKey] = (currentIndex + 1) % videoPaths.length;
+            
+            source.src = videoPath;
+            video.load();
+            overlay.style.display = 'flex';
+            
+            video.play().catch(err => console.error('Video play failed:', err));
+            
+            video.onended = () => closeHeroVideo();
+            video.ontimeupdate = () => {
+                if (video.duration && video.currentTime >= video.duration - 0.5) {
+                    closeHeroVideo();
+                }
+            };
+        }
+        
+        function closeHeroVideo() {
+            const overlay = document.getElementById('heroVideoOverlay');
+            const video = document.getElementById('heroVideo');
+            video.pause();
+            video.currentTime = 0;
+            overlay.style.display = 'none';
+        }
+        
+        // ===== BESTIARY SYSTEM =====
+        // Build BOSS_DATA the same way as the game (not from JSON)
+        const BOSS_DATA = [];
+        for (let level = 2; level <= 100; level++) {
+            const bossNames = {
+                2: 'Metadata Swarm Mass', 3: 'Open Ledger Golem', 4: 'Leak-Channel Imp',
+                5: 'Fingerprint Fiend', 6: 'Cookie Stalker', 7: 'Browser Phantom',
+                8: 'Data Broker Beast', 9: 'Spyware Specter', 10: 'Tracker Titan',
+                11: 'Keylogger Kraken', 12: 'Phishing Phantom', 13: 'Ransomware Reaper',
+                14: 'Botnet Behemoth', 15: 'Zero-Day Zealot', 16: 'Backdoor Basilisk',
+                17: 'Rootkit Revenant', 18: 'Trojan Tyrant', 19: 'Worm Warden',
+                20: 'Virus Vanguard', 21: 'Adware Aberration', 22: 'Scareware Shade',
+                23: 'Cryptojacker', 24: 'Man-in-Middle Monster', 25: 'SQL Injector',
+                26: 'XSS Executor',
+                100: 'Auric Hoard Dragon'
+            };
+            
+            let bossName = bossNames[level];
+            if (!bossName) {
+                const prefixes = ['Shadow', 'Dark', 'Corrupted', 'Malicious', 'Invasive', 'Lurking', 'Hidden', 'Surveilling'];
+                const types = ['Watcher', 'Harvester', 'Tracker', 'Leaker', 'Breacher', 'Collector', 'Stalker', 'Exposer'];
+                const prefix = prefixes[(level * 7) % prefixes.length];
+                const type = types[(level * 13) % types.length];
+                bossName = `${prefix} ${type} ${level}`;
+            }
+            
+            const hasArt = (level >= 2 && level <= 100);
+            const spritePath = hasArt 
+                ? `tunnelsofprivacy/bosses/lvl${level}/boss_lvl${level}.png`
+                : null;
+            
+            BOSS_DATA.push({
+                level: level,
+                name: bossName,
+                spritePath: spritePath,
+                hasArt: hasArt
+            });
+        }
+
+        function showBestiary(difficulty) {
+            // Update active tab
+            document.querySelectorAll('.bestiary-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.textContent.toLowerCase().includes(difficulty)) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            // Determine level range
+            let startLevel, endLevel;
+            if (difficulty === 'easy') {
+                startLevel = 2; endLevel = 34;
+            } else if (difficulty === 'normal') {
+                startLevel = 35; endLevel = 67;
+            } else {
+                startLevel = 68; endLevel = 100;
+            }
+            
+            // Filter bosses by level
+            const bosses = BOSS_DATA.filter(b => b.level >= startLevel && b.level <= endLevel);
+            
+            const grid = document.getElementById('bestiaryGrid');
+            let html = '';
+            
+            bosses.forEach(boss => {
+                const portraitStyle = boss.hasArt 
+                    ? `background-image: url('${boss.spritePath}');`
+                    : `background: linear-gradient(135deg, #2a2a4a, #1a1a2e); display: flex; align-items: center; justify-content: center;`;
+                
+                html += `
+                    <div class="boss-entry">
+                        <div class="boss-portrait" style="${portraitStyle}">
+                            ${!boss.hasArt ? '<span style="color: #666; font-size: 20px;">?</span>' : ''}
+                        </div>
+                        <div class="boss-level">Lv ${boss.level}</div>
+                        <div class="boss-tooltip">
+                            <div class="boss-tooltip-name">${boss.name}</div>
+                            <div class="boss-tooltip-stats">
+                                <div>Level ${boss.level} Boss</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            grid.innerHTML = html;
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            showBestiary('easy');
+        });
+    </script>
+</body>
+</html>

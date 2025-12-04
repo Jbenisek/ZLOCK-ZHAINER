@@ -2,6 +2,29 @@
 
 # Changelog
 
+## v0.4.15 - CyberAxe Taunt Animation (2025-12-03)
+- **Added cyberaxe_taunt animation:**
+  - New taunt animation for CyberAxe hero (5x19 sprite sheet, 95 frames)
+  - Added path to `HERO_ANIM_PATHS.cyberaxe.taunt`
+  - Added metadata to `HERO_ANIM_CONFIG.cyberaxe` with 768px frame size
+  - CyberAxe now has taunt capability matching other heroes
+
+## v0.4.14 - Game Data Preloading (2025-12-03)
+- **Preload all game data JSON files during loading screen:**
+  - Boss data (all 3 difficulty files: easy, normal, hard)
+  - Mob data (mobs_data.json)
+  - Level data (level_data_perlevel.json)
+  - Eliminates fetch timeouts during gameplay on slow connections
+  - Data cached in `gameDataCache` object for instant access
+
+- **New loading screen category:**
+  - Added "📊 Data: X/5" counter to loading screen
+  - Shows progress of JSON file preloading alongside Art and Sound
+
+- **Fallback fetch system:**
+  - If cache miss occurs, falls back to fetch and caches result
+  - Prevents game breakage if preload fails
+
 ## v0.4.13 - Server & Multiplayer Fixes (2025-12-03)
 - **Fixed piper-tts installation on Linux (Debian/Ubuntu):**
   - Server now handles PEP 668 "externally-managed-environment" error

@@ -3,7 +3,7 @@
 A 3D blockchain-themed puzzle game inspired by classics like Lumines and Columns. Match colored chain links in a 6×6×25 grid to clear blocks and unleash devastating special abilities!
 
 **Arcade Version:** 0.21.2  
-**Tunnels Version:** 0.2.54  
+**Tunnels Version:** 0.4.13  
 **Created by:** CyberAxe of [OutlandishlyCrafted.com](https://OutlandishlyCrafted.com)
 
 ---
@@ -16,7 +16,7 @@ ZLOCK CHAINER is a **two-game universe** combining arcade puzzle action with dun
 A fast-paced 3D puzzle game where you drop falling chains into a grid and match 6 or more connected blocks of the same color to clear them. As you progress through levels, unlock new chain types including encrypted chains, glowing chains, and multi-colored chains. Charge up four unique character abilities to turn the tide when the grid gets full!
 
 ### **TUNNELS OF PRIVACY (Dungeon Crawler)** - `tunnels_of_privacy.html`
-A classic dungeon crawler RPG inspired by TI-99's "Tunnels of Doom". Take the same four heroes from the arcade game into a 10-level dungeon quest to find the king's scepter. Features D&D-style stats, turn-based combat, and roguelike exploration.
+A classic dungeon crawler RPG inspired by TI-99's "Tunnels of Doom". Take the same four heroes from the arcade game into a 10-level dungeon quest to find the king's scepter. Features D&D-style stats, turn-based combat, AI-powered NPC conversations, and multiplayer co-op!
 
 ### **Portal System - Seamless Game Integration**
 Both games share a unified save file system with **bidirectional hero progression**:
@@ -24,6 +24,136 @@ Both games share a unified save file system with **bidirectional hero progressio
 - Explore dungeon, level up heroes, exit portal → return to arcade with upgraded stats
 - Single save file (`top_shared_save`) stores progress for both games
 - Download/upload save files for backups and cross-browser play
+
+---
+
+## 🚀 Quick Start
+
+### Windows (Local Development)
+```powershell
+# Navigate to game folder
+cd path\to\zlock
+
+# Start the server
+python zlock_server.py
+```
+Then open your browser to `http://localhost:4243/zlock_consensus.html`
+
+### Linux Server (Production/Hosting)
+```bash
+# Navigate to game folder
+cd ~/webhosting/zlock/wwwroot
+
+# Stop any existing server
+bash zlock_server.sh stop
+
+# Start the server (runs in background)
+bash zlock_server.sh start
+
+# Check server status
+bash zlock_server.sh status
+
+# View logs
+cat /tmp/zlock_server.log
+```
+
+### Server Commands Reference
+
+| Platform | Start | Stop | Status |
+|----------|-------|------|--------|
+| **Windows** | `python zlock_server.py` | Ctrl+C | (runs in foreground) |
+| **Linux** | `bash zlock_server.sh start` | `bash zlock_server.sh stop` | `bash zlock_server.sh status` |
+
+**⚠️ Important:** Always use `zlock_server.py` - do NOT use `python -m http.server` or other simple servers. They won't serve 3D model files (.glb) correctly!
+
+---
+
+## 🤖 AI Features (Optional)
+
+The dungeon crawler includes **AI-powered NPC conversations** and **text-to-speech voices**. These are optional features - the game works fine without them!
+
+### Setting Up AI Chat (LLM)
+
+On first run, the server will ask for API keys:
+
+```
+🔑 API KEY SETUP
+============================================================
+LLM features require API keys for Groq and/or OpenRouter.
+Press Enter to skip (LLM chat will be disabled).
+
+GROQ API Key (FREE - get one at console.groq.com):
+  > 
+
+OpenRouter API Key (PAID - get one at openrouter.ai):
+  > 
+```
+
+**Groq (Recommended - FREE):**
+1. Go to [console.groq.com](https://console.groq.com)
+2. Create a free account
+3. Generate an API key
+4. Paste it when prompted
+
+**OpenRouter (Optional - PAID):**
+1. Go to [openrouter.ai](https://openrouter.ai)
+2. Create an account and add credits
+3. Generate an API key
+4. Paste it when prompted
+
+**What do they do?**
+- **With API keys:** NPCs respond with unique AI-generated dialogue based on their personality
+- **Without API keys:** NPCs use pre-written fallback responses (game still fully playable)
+
+**Resetting API Keys:**
+Delete the `.zlock_api_keys.json` file and restart the server to be prompted again.
+
+### Text-to-Speech (TTS)
+
+The server automatically installs **Piper TTS** for character voices. On first run you'll see:
+```
+📦 Installing piper-tts (first-time setup)...
+✓ piper-tts installed successfully
+
+🎤 Checking TTS voice models...
+   (20 voices for variety - ~200MB total on first run)
+```
+
+This downloads ~200MB of voice models on first run. After that, voices work offline!
+
+**What does TTS do?**
+- Heroes and NPCs speak their dialogue aloud with unique voices
+- 20 different British/American voices for variety
+- Fully optional - game works without it
+
+---
+
+## 🎮 Multiplayer Co-op (Dungeon Crawler)
+
+Tunnels of Privacy supports **4-player online co-op**!
+
+### How to Play Together
+
+**Host a Game:**
+1. Start the dungeon crawler
+2. Click **HOST CO-OP GAME**
+3. Share the 6-character room code with friends
+4. Each player picks one of the four heroes
+5. Start the adventure!
+
+**Join a Game:**
+1. Start the dungeon crawler
+2. Click **JOIN CO-OP GAME**
+3. Enter the room code from your host
+4. Pick an available hero
+5. Wait for host to start
+
+### Multiplayer Requirements
+- All players connect to the same server (host's IP:8765 for WebSocket)
+- Host controls game flow and saves progress
+- Clients see real-time updates but don't save locally
+
+---
 
 ## Features
 
@@ -41,10 +171,11 @@ Both games share a unified save file system with **bidirectional hero progressio
 - **Classic Dungeon Crawling** - Inspired by TI-99's "Tunnels of Doom"
 - **Four Playable Heroes** - Same heroes from arcade with D&D-style stats (STR, DEX, CON, INT, WIS, CHA)
 - **Hero Progression** - Stats, HP, AC, XP, and levels carry between both games
+- **AI NPC Chat** - Talk to NPCs with AI-generated responses (requires API key)
+- **Text-to-Speech** - Characters speak with neural TTS voices
+- **4-Player Co-op** - Team up online for dungeon adventures
 - **Educational Ticker** - Learn about Zcash and privacy tech while browsing menu
 - **Music System** - 10 theme tracks with scrolling ticker display
-- **Loading Screen** - Full asset preload system with progress tracking
-- **Settings Panel** - Independent music/volume controls
 - **Exit Portal** - Return to arcade game with preserved progress
 
 ### Portal Save System
@@ -53,14 +184,10 @@ Both games share a unified save file system with **bidirectional hero progressio
 - **Load Save File** - Upload save files to restore progress or play across browsers
 - **Cross-Game Progression** - Hero stats update in real-time across both games
 - **localStorage Persistence** - Automatic save on portal entry/exit
-- **Version Migration** - Future-proof save system with version compatibility
+
+---
 
 ## How to Play
-
-### Getting Started
-1. Open `zlock_consensus.html` to play the arcade puzzle game
-2. OR open `tunnels_of_privacy.html` to start the dungeon crawler
-3. Use the **Portal System** to switch between games while preserving hero progress
 
 ### Portal System Usage
 **From Arcade Game:**
@@ -104,6 +231,8 @@ Connect 6 or more blocks of the same color to clear them and score points. Don't
 - **Start** - Pause
 - **Select** - Toggle top-down view
 
+---
+
 ## Chain Types
 
 - **Standard Chains** - Four colors (Gold, Blue, Green, Red)
@@ -120,156 +249,39 @@ Charge abilities by clearing matching colored chains:
 - **Zancas (3 or D-Pad Left)** - Transforms the 2 most common types to gold
 - **CyberAxe (4 or D-Pad Right)** - Fires laser down the falling chain's column
 
-## Installation
+---
 
-### Quick Start
-1. Clone or download this repository
-2. **IMPORTANT:** Run the Python server: `python zlock_server.py`
-   - Server runs on `http://localhost:4243`
-   - Required for proper MIME types for 3D models (.glb files)
-   - Do NOT use other simple HTTP servers (they will fail on GLB files)
-3. Open browser to:
-   - `http://localhost:4243/zlock_consensus.html` - Arcade game
-   - `http://localhost:4243/tunnels_of_privacy.html` - Dungeon crawler
-4. No build process required - runs entirely in the browser!
+## Troubleshooting
 
-### File Structure
-- `zlock_consensus.html` - Main arcade puzzle game
-- `tunnels_of_privacy.html` - Dungeon crawler RPG
-- `particle_editor.html` - Particle effect creation tool
-- `zlock_server.py` - Development server (REQUIRED for local play)
-- `effect/` - Particle effect JSON files
-- `models/` - 3D models (GLB format)
-- `music/` - Theme music tracks (10 songs shared across both games)
-- `sound_effects/` - SFX for gameplay
-- `story/` - Story intro/outro animations
-- `ticker_facts.json` - Educational Zcash/privacy facts for ticker
-
-### Save Files
-- **Shared Save:** `localStorage['top_shared_save']` - Heroes + arcade state + dungeon state
-- **Arcade Settings:** `localStorage['zlock_settings']` - Arcade-specific settings
-- **Tunnels Settings:** `localStorage['top_tunnels_settings']` - Dungeon-specific settings
-- **Download Format:** JSON files compatible with both games
-
-## Development
-
-### Technology Stack
-- **Three.js** - 3D rendering for arcade game
-- **GLTFLoader** - 3D model loading
-- **Vanilla JavaScript** - No frameworks, no build step
-- **Custom Particle System** - Sprite sheet animation engine
-- **localStorage API** - Cross-game save system
-- **FileReader/Blob APIs** - Save file download/upload
-
-### Project Architecture
-- **Monolithic Design** - Both games are single-file HTML with embedded JavaScript
-- **No Build Step** - Edit HTML/JS files directly, refresh browser to test
-- **Python Server Required** - `zlock_server.py` serves correct MIME types for GLB models
-- **Particle Editor** - Standalone tool (`particle_editor.html`) for creating visual effects
-
-### AI Coding Standards for This Project
-
-**CRITICAL RULES - ALL AI ASSISTANTS MUST FOLLOW:**
-
-1. **Standardization is MANDATORY:**
-   - When told to implement features "the same way" as arcade game, DO NOT create new names/structures
-   - Use EXACT variable names, function names, and patterns from reference code
-   - Example: Use `themeTracks` NOT `dungeonMusicTracks`
-   - Example: Use `loadMusic()` NOT `loadDungeonMusic()`
-   - Search ALL occurrences before renaming - fix all references in ONE operation
-
-2. **Complete Feature Copying:**
-   - When copying a system from arcade to tunnels (or vice versa), copy ALL parts
-   - Do NOT skip features like ticker facts, hover effects, or educational content
-   - If arcade has ticker facts system, tunnels MUST have identical ticker facts system
-   - "The same" means IDENTICAL, not "similar" or "close enough"
-
-3. **Multi-Operation Changes:**
-   - Use `multi_replace_string_in_file` for related changes across same/multiple files
-   - Do NOT make partial changes that require follow-up fixes
-   - Example: Renaming a function? Fix ALL call sites in same operation
-   - Search for dependencies BEFORE making changes, not after
-
-4. **No Assumptions - Verify Everything:**
-   - Do NOT assume code works without reading it
-   - Do NOT claim features exist without verifying in actual code
-   - If unsure, read the file and search for actual implementation
-   - User reports are accurate - trust them over assumptions
-
-5. **File Structure Awareness:**
-   - `zlock_consensus.html` - Arcade game (~16,500 lines)
-   - `tunnels_of_privacy.html` - Dungeon crawler (~1,400 lines)
-   - Both are monolithic single-file architectures
-   - Search before adding to avoid duplication
-
-6. **Save System Standards:**
-   - Shared save key: `top_shared_save`
-   - Contains: `saveVersion`, `lastPlayed`, `arcadeState`, `dungeonState`, `heroes`
-   - Heroes object has 4 heroes: `zooko`, `nate`, `zancas`, `cyberaxe`
-   - Each hero has: `str`, `dex`, `con`, `int`, `wis`, `cha`, `hp`, `maxHp`, `ac`, `xp`, `level`
-   - NEVER export just `gameState` - always export complete shared save
-
-7. **Music System Standards (BOTH GAMES):**
-   - Variable name: `themeTracks` (NOT dungeonMusicTracks, NOT musicTracks)
-   - Function name: `loadMusic()` (NOT loadDungeonMusic, NOT playMusic)
-   - Ticker format: `♫ Theme Song: [name] ♫ • [Random Fact]`
-   - Ticker structure: `#musicTicker` > `#musicTickerWrapper` > `.tickerText` spans
-   - Hover effect: 30s animation → 60s on hover
-   - Facts loaded from: `ticker_facts.json`
-
-8. **Volume System Standards:**
-   - Slider range: 1-150 (user-facing)
-   - Audio element range: 0.0-1.0 (browser API)
-   - Conversion: `Math.min(1.0, sliderValue / 100)`
-   - NEVER set audio.volume above 1.0 (causes IndexSizeError)
-
-9. **Testing Requirements:**
-   - After implementing feature, verify it works
-   - Check for console errors
-   - Test hover effects, button clicks, state changes
-   - If user reports bug, investigate actual code - don't guess
-
-10. **Documentation Updates:**
-    - Update version numbers in BOTH title and GAME_VERSION constant
-    - Add comprehensive changelog entries with technical details
-    - Document breaking changes and migration paths
-    - Include code examples in changelogs for complex features
-
-### Particle System Development
-Includes a particle effect editor (`particle_editor.html`) for creating and editing particle effects. Effects saved as JSON in `effect/` directory and loaded by both games.
-
-### Common Development Tasks
-
-**Starting Development Server:**
-```powershell
-python zlock_server.py
+### "Port 4243 is already in use"
+Another server is running. On Linux:
+```bash
+bash zlock_server.sh stop
+# or manually:
+sudo lsof -ti:4243,8765 | xargs sudo kill -9
 ```
 
-**Editing Game Logic:**
-- Search for existing functions before adding new ones (files are large)
-- Read surrounding code to understand state flow
-- UI elements are HTML overlaid on canvas (`#hud`, `#titleScreen`)
+### 3D models not loading / GLB errors
+You're using the wrong server. Always use `python zlock_server.py` - never use `python -m http.server`.
 
-**Creating Particle Effects:**
-1. Open `particle_editor.html` in browser
-2. Design effect with visual editor
-3. Export JSON to `effect/` directory
-4. Reference in game code by filename
+### API key prompt not appearing
+Keys are already saved. Delete `.zlock_api_keys.json` to reset:
+```bash
+rm .zlock_api_keys.json
+```
 
-**Testing Portal System:**
-1. Start from arcade game
-2. Play a few levels to generate save data
-3. Click "Enter Portal" in pause menu
-4. Verify hero stats appear in dungeon game
-5. Click "Exit Portal" in dungeon
-6. Verify return to arcade with same state
+### TTS not working on Linux
+The server auto-installs piper-tts. If it fails, manually install:
+```bash
+pip install piper-tts --break-system-packages
+```
 
-**Save File Testing:**
-1. Download save file from arcade game
-2. Clear localStorage or switch browser
-3. Load save file from title screen
-4. Verify all data restored correctly
-5. Test in both arcade and dungeon games
+### Multiplayer not connecting
+- Make sure port 8765 is open (WebSocket)
+- All players must connect to the same server
+- Check firewall: `sudo ufw allow 8765/tcp`
+
+---
 
 ## Support the Developer
 
