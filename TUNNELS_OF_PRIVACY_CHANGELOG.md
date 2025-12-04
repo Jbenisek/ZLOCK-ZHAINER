@@ -2,6 +2,115 @@
 
 # Changelog
 
+## v0.4.12 - Inventory & Store Fixes (2025-12-03)
+- **Fixed party meal inventory limit bug:**
+  - Store "FULL" check now uses `partyInventory.maxSlots` instead of hardcoded 10
+  - `buyItem()` meal limit now uses `partyInventory.maxSlots` instead of hardcoded 10
+  - Higher party levels can now buy more meals (up to 36 at level 60+)
+
+- **Fixed King's Keys word notification timing:**
+  - Word notifications now display in the result UI text (exploration/NPC choice results)
+  - Exploration success: Shows word in "✨ Hero completed the challenge! (+XP) 🔑 Word: X"
+  - NPC help: Shows word in "✨ You showed kindness! (-Gold, +XP) 🔑 Word: X"
+  - NPC steal: Shows curse count appended to result
+
+- **Fixed word save race condition:**
+  - XP/HP/Gold changes now saved BEFORE calling word functions
+  - Prevents word being overwritten by stale save data
+
+## v0.4.11 - King's Keys Difficulty Overhaul (2025-12-03)
+- **Massive difficulty increase for King's Keys puzzle:**
+  - Players must now play 60-80% of the game to collect enough true words
+  - Slot 16 reserved for Level 100 Boss - REQUIRED to complete puzzle
+
+- **Updated Word Source Rates:**
+  - **Level 100 Boss**: Always gives final word (slot 16) - required to win
+  - **Regular Bosses**: 10% TRUE / 90% FAKE (was 100% true)
+  - **Captive Rescues**: 15% TRUE / 85% FAKE (was 70% true)
+  - **Exploration Success**: 10% TRUE / 90% FAKE (NEW source)
+  - **Help NPC**: 20% TRUE / 80% FAKE (NEW source)
+  - **Steal from NPC**: Adds 5 FAKE words as punishment! (NEW)
+
+- **Slot 16 - Final Boss Slot:**
+  - Visually marked with purple glow and 👹100 label
+  - Cannot place any word until Level 100 Boss defeated
+  - Tooltip explains "Level 100 Boss Only"
+  - Epic triple notification sequence when acquired
+
+- **New Word Source Functions:**
+  - `giveRecoveryWordFromExploration()` - triggers on exploration success
+  - `giveRecoveryWordFromNPC(name, interaction)` - 'help' or 'steal'
+  - Updated `giveRecoveryWordFromCaptive()` with new rates
+
+- **UI Improvements:**
+  - Panel widened to 470px (was 420px)
+  - 8x2 slot grid layout (was 4x4)
+  - Larger word buttons (12px font)
+  - Better containment for collected words list
+
+- **DM Test Button:**
+  - "ADD ALL WORDS (16 TRUE + 16 FAKE)" in Dungeon Masters panel
+  - For testing the puzzle system
+
+- **Hero Level Up System:**
+  - `checkHeroLevelUp()` - checks if hero XP exceeds level threshold
+  - `checkAllHeroLevelUps()` - checks all heroes with staggered notifications
+  - Notification: "⭐ [Hero] LEVELED UP! ⭐ Now Level X!"
+  - Plays `tunnelsofprivacy/sounds/events/level_up.mp3`
+  - HP increases based on CON modifier
+
+## v0.4.10 - King's Keys Recovery Phrase Puzzle (2025-12-03)
+- **New Feature: King's Keys Recovery Phrase**
+  - 16-word puzzle to recover the King's Keys and save the kingdom
+  - UI panel on left side of dungeon menu with 8x2 grid of word slots
+  - Collected words list below slots - click word then click slot to test
+  - Correct placement locks word in green, awards 1000 XP to each hero
+  - Progress tracked: "Words Discovered: X/16" display
+
+- **Word Collection System:**
+  - Multiple sources with varying TRUE/FAKE rates
+  - Starting decoy word "zcash" (not a solution word)
+  - Words highlighted when selected, grayed out when already used
+
+- **Data Structure:**
+  - `dungeonState.recoveryPhrase` in shared save
+  - `solutionWords`: 16 correct words (randomized from 32-word fantasy pool)
+  - `collectedWords`: words player has gathered
+  - `solvedSlots`: locked correct answers { slotIndex: word }
+  - `initialized`: flag set after puzzle generated
+
+- **Multiplayer Support:**
+  - `recovery_phrase_update` message type added to server
+  - Host broadcasts phrase state to clients on word collection/solve
+  - Clients update UI from host broadcasts (never save locally)
+  - Full sync included in `game_start` message
+
+## v0.4.09 - Animation Load Fix & Performance HUD (2025-12-03)
+- **Fixed animation flash/flicker on state transitions:**
+  - `setAnimationState()` now waits for sprite sheet to load before applying state changes
+  - Old animation continues displaying until new sheet is fully loaded
+  - All state changes (frame, grid config, sheet) applied atomically after load
+  - Prevents flash of nothing when switching between idle/attack/hurt/etc.
+  - Fixes issues with heroes, bosses, and mobs during combat animations
+
+- **Performance HUD:**
+  - Added FPS, Memory, and Particle count display in top-right corner
+  - Color-coded values (green/yellow/red) based on performance thresholds
+  - FPS: Green ≥55, Yellow ≥30, Red <30
+  - Memory: Green <50%, Yellow <75%, Red ≥75% of heap limit
+  - Particles: Green <100, Yellow <500, Red ≥500
+  - Auto-hides in dungeon menu (was covering Zancas face)
+  - `startPerfHud()` and `togglePerfHud()` functions
+  - `perfHudState` object tracks enabled state and metrics
+
+- **lvl2 Boss animation support:**
+  - Added per-animation grid configs for lvl2 boss
+  - idle: 9x9 grid, 81 frames, 704px frame size
+  - attack: 9x9 grid, 81 frames, 704px frame size
+  - hurt: 9x9 grid, 81 frames, 720px frame size
+  - death: 5x19 grid, 95 frames, 768px frame size
+  - `BOSS_ANIM_CONFIG` now supports per-state configs (e.g., `lvl2.idle`, `lvl2.death`)
+
 ## v0.4.08 - Event Videos & Dynamic Panel Widths (2025-12-03)
 - **NPC Help choice now plays video:**
   - "Help Them" option plays `zooko_cup.mp4` before awarding rewards

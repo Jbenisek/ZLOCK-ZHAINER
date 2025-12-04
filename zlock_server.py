@@ -1909,6 +1909,14 @@ async def handle_websocket(websocket, path):
                         await client.send(message)
                     print(f"[WS] Host synced equipment to room {client_room}")
             
+            # RECOVERY PHRASE UPDATE (host only - sync King's Keys puzzle to clients)
+            elif msg_type == 'recovery_phrase_update':
+                if client_room and client_room in rooms and client_role == 'host':
+                    # Broadcast recovery phrase update to all clients
+                    for client in rooms[client_room]['clients']:
+                        await client.send(message)
+                    print(f"[WS] Host synced recovery phrase to room {client_room}")
+            
             # SAVE SYNC (host only)
             elif msg_type == 'save_sync':
                 if client_room and client_room in rooms and client_role == 'host':
